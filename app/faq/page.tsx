@@ -87,7 +87,7 @@ export default function FaqPage() {
                 Contact
               </Link>
               <a
-                href="https://wa.me/385912345678"
+                href="https://wa.me/4917634658003"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#25D366] text-white font-bold text-xs tracking-widest uppercase px-6 py-3 hover:bg-[#1EBD5A] transition-colors flex items-center justify-center gap-2"

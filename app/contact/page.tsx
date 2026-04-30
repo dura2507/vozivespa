@@ -37,7 +37,7 @@ export default function ContactPage() {
             {/* Contact info */}
             <div className="flex flex-col gap-4">
               <a
-                href="https://wa.me/385912345678"
+                href="https://wa.me/4917634658003"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-5 bg-[#25D366]/10 border border-[#25D366]/20 px-5 py-5 hover:bg-[#25D366]/15 transition-colors group"
@@ -49,13 +49,13 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="font-bold text-ink text-sm">WhatsApp</p>
-                  <p className="text-muted text-sm">+385 91 234 5678</p>
+                  <p className="text-muted text-sm">+49 176 34658003</p>
                   <p className="text-[#25D366] text-xs font-semibold mt-0.5 group-hover:underline">Chat now →</p>
                 </div>
               </a>
 
               <a
-                href="tel:+385912345678"
+                href="tel:+4917634658003"
                 className="flex items-center gap-5 bg-sand px-5 py-5 hover:bg-sand/80 transition-colors"
               >
                 <div className="w-12 h-12 bg-red/10 flex items-center justify-center shrink-0">
@@ -65,7 +65,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="font-bold text-ink text-sm">Phone</p>
-                  <p className="text-muted text-sm">+385 91 234 5678</p>
+                  <p className="text-muted text-sm">+49 176 34658003</p>
                 </div>
               </a>
 
