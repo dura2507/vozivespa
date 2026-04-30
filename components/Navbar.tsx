@@ -92,7 +92,7 @@ export default function Navbar() {
         {/* Mobile dropdown */}
         <div
           className={`md:hidden bg-off-white border-t border-ink/8 overflow-hidden transition-all duration-300 ${
-            open ? "max-h-80 pb-4" : "max-h-0"
+            open ? "max-h-[32rem] pb-6" : "max-h-0"
           }`}
         >
           <nav className="flex flex-col px-5 pt-3">
