@@ -8,7 +8,7 @@ export default function GalleryPage() {
   return (
     <>
       <Navbar />
-      <main className="pt-24 pb-24 md:pb-16 min-h-screen">
+      <main className="pt-28 pb-24 md:pb-16 min-h-screen">
 
         {/* Header */}
         <div className="px-5 md:px-12 max-w-7xl mx-auto mb-10">

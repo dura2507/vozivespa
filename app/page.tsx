@@ -87,7 +87,7 @@ export default function HomePage() {
       <Navbar />
 
       {/* ─── HERO ─── */}
-      <section className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden pt-24 pb-24 bg-ink">
+      <section className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden pt-28 pb-24 bg-ink">
         <Image
           src="/bikes/bike-390.jpg"
           alt="SickMotos bike rental Zadar"

@@ -37,14 +37,14 @@ export default function Navbar() {
             : "bg-off-white/97 backdrop-blur-md border-b border-ink/8"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-5 md:px-8 h-18 flex items-center justify-between" style={{ height: "4.5rem" }}>
+        <div className="max-w-7xl mx-auto px-5 md:px-8 flex items-center justify-between" style={{ height: "5.5rem" }}>
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 shrink-0">
+          <Link href="/" className="flex items-center gap-4 shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/sickmotos.svg"
               alt="SickMotos"
-              className={`h-10 md:h-12 w-auto transition-all ${
+              className={`h-14 sm:h-16 md:h-[68px] w-auto transition-all ${
                 transparent ? "" : "invert"
               }`}
             />
@@ -52,7 +52,7 @@ export default function Navbar() {
             <img
               src="/rentamoto.svg"
               alt="Rent a Moto"
-              className="hidden sm:block h-3 md:h-3.5 w-auto"
+              className="h-4 sm:h-5 md:h-6 w-auto"
             />
           </Link>
 

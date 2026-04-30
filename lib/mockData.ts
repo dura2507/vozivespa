@@ -57,7 +57,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     id: "bike-125-a",
-    name: "Motobike 125 #1",
+    name: "Motobike 125",
     tag: "RIDE",
     tagColor: "bg-red",
     price: "55€",
@@ -72,7 +72,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     id: "bike-125-b",
-    name: "Motobike 125 #2",
+    name: "Motobike 125",
     tag: "RIDE",
     tagColor: "bg-red",
     price: "55€",
