@@ -56,8 +56,8 @@ export const CATEGORIES: Category[] = [
     extraHour: "9€/h",
   },
   {
-    id: "bike-125",
-    name: "Motobike 125",
+    id: "bike-125-a",
+    name: "Motobike 125 #1",
     tag: "RIDE",
     tagColor: "bg-red",
     price: "55€",
@@ -69,6 +69,20 @@ export const CATEGORIES: Category[] = [
     maxSpeed: "100 km/h",
     extraHour: "9€/h",
     featured: true,
+  },
+  {
+    id: "bike-125-b",
+    name: "Motobike 125 #2",
+    tag: "RIDE",
+    tagColor: "bg-red",
+    price: "55€",
+    priceUnit: "/day",
+    description:
+      "Real motorbike feeling with 125cc. Great for confident riders looking to explore the coastal roads.",
+    image: "/bikes/bike-125-b.jpg",
+    licence: "A1 category",
+    maxSpeed: "100 km/h",
+    extraHour: "9€/h",
   },
   {
     id: "bike-390",
@@ -148,15 +162,14 @@ export const REVIEWS: Review[] = [
   },
 ];
 
-// Gallery uses the same bike photos for now — drop more shots in
-// public/bikes/ or public/gallery/ and add them here.
+// Gallery — drop more action shots in public/gallery/ and add them here.
 export const GALLERY_IMAGES = [
   "/bikes/bike-390.jpg",
   "/bikes/bike-125.jpg",
+  "/bikes/bike-125-b.jpg",
   "/bikes/scooter-125.jpg",
   "/bikes/scooter-50.jpg",
-  "/bikes/bike-390.jpg",
-  "/bikes/bike-125.jpg",
+  "/bikes/scooter-50-b.jpg",
 ];
 
 export const FAQ_ITEMS = [
@@ -236,7 +249,8 @@ export const BLOCKED_DATES_BIKE_390: BlockedRange[] = [
 export const BLOCKED_BY_ID: Record<string, BlockedRange[]> = {
   "scooter-50": BLOCKED_DATES_SCOOTER_50,
   "scooter-125": BLOCKED_DATES_SCOOTER_125,
-  "bike-125": BLOCKED_DATES_BIKE_125,
+  "bike-125-a": BLOCKED_DATES_BIKE_125,
+  "bike-125-b": BLOCKED_DATES_BIKE_125,
   "bike-390": BLOCKED_DATES_BIKE_390,
 };
 
@@ -248,8 +262,8 @@ export const BRAND = {
   oib: "84055846851",
   address: "Velebitska Ulica 2, 23000 Zadar",
   hours: "09:00 — 19:00, Monday to Sunday",
-  phone: "+385 95 819 5453",
-  phoneRaw: "385958195453",
+  phone: "+49 176 34658003",
+  phoneRaw: "4917634658003",
   email: "info@sickmotos.com",
   instagram: "sickmotos_bike_rental_zadar",
   instagramUrl: "https://instagram.com/sickmotos_bike_rental_zadar",

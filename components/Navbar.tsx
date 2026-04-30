@@ -39,18 +39,20 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-5 md:px-8 h-18 flex items-center justify-between" style={{ height: "4.5rem" }}>
           {/* Logo */}
-          <Link href="/" className="flex flex-col items-start shrink-0 gap-0.5">
-            <span className="font-barlow font-black text-2xl md:text-3xl leading-none uppercase tracking-tight">
-              <span className={`transition-colors ${transparent ? "text-white" : "text-ink"}`}>
-                Sick
-              </span>
-              <span className="text-red transition-colors">Motos</span>
-            </span>
+          <Link href="/" className="flex items-center gap-3 shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/sickmotos.svg"
+              alt="SickMotos"
+              className={`h-10 md:h-12 w-auto transition-all ${
+                transparent ? "" : "invert"
+              }`}
+            />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/rentamoto.svg"
               alt="Rent a Moto"
-              className="h-2.5 md:h-3 w-auto"
+              className="hidden sm:block h-3 md:h-3.5 w-auto"
             />
           </Link>
 

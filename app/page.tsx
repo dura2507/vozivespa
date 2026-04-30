@@ -89,7 +89,7 @@ export default function HomePage() {
       {/* ─── HERO ─── */}
       <section className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden pt-24 pb-24 bg-ink">
         <Image
-          src={CATEGORIES[3].image}
+          src="/bikes/bike-390.jpg"
           alt="SickMotos bike rental Zadar"
           fill
           priority
@@ -126,7 +126,7 @@ export default function HomePage() {
 
         {/* Stats — desktop only, right side */}
         <div className="absolute bottom-8 right-8 md:right-12 hidden md:flex gap-12 text-right">
-          {[["4", "Bikes & scooters"], ["50+", "5-star reviews"], ["∞", "Km included"]].map(
+          {[["5", "Bikes & scooters"], ["50+", "5-star reviews"], ["∞", "Km included"]].map(
             ([num, label]) => (
               <div key={label}>
                 <p className="font-barlow font-black text-4xl text-white leading-none">{num}</p>
@@ -148,7 +148,7 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
             {CATEGORIES.map((cat) => (
               <Link href="/bookings" key={cat.id} className="group block bg-sand">
                 <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[4/5]">

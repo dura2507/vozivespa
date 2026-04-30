@@ -15,12 +15,14 @@ export default function Footer() {
       <div className="max-w-5xl mx-auto px-5 md:px-12 py-16 flex flex-col items-center text-center">
         {/* Brand */}
         <Link href="/" className="mb-4">
-          <span className="font-barlow font-black text-3xl leading-none uppercase tracking-tight">
-            <span className="text-white">Sick</span>
-            <span className="text-red">Motos</span>
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/sickmotos.svg"
+            alt="SickMotos"
+            className="h-16 w-auto"
+          />
         </Link>
-        <p className="text-[10px] tracking-[0.3em] uppercase text-white/30 mb-6">
+        <p className="text-[10px] tracking-[0.3em] uppercase text-white/40 mb-6">
           {BRAND.tagline} · Zadar, Croatia
         </p>
         <p className="text-sm leading-relaxed text-white/50 max-w-md mb-10">
