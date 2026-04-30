@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --color-red: #C8462B;
-  --color-red-dark: #A8381F;
+  --color-red: #E01530;
+  --color-red-dark: #B30D24;
   --color-ink: #111111;
   --color-off-white: #F8F5EF;
   --color-sand: #EDE9E0;
@@ -32,13 +32,13 @@ html { scrollbar-width: none; -ms-overflow-style: none; }
 
 /* react-day-picker override for new design */
 .rdp-root {
-  --rdp-accent-color: #C8462B;
-  --rdp-accent-background-color: rgba(200, 70, 43, 0.1);
-  --rdp-range-start-background: #C8462B;
-  --rdp-range-end-background: #C8462B;
-  --rdp-range-middle-background-color: rgba(200, 70, 43, 0.1);
+  --rdp-accent-color: #E01530;
+  --rdp-accent-background-color: rgba(224, 21, 48, 0.1);
+  --rdp-range-start-background: #E01530;
+  --rdp-range-end-background: #E01530;
+  --rdp-range-middle-background-color: rgba(224, 21, 48, 0.1);
   --rdp-range-start-color: white;
   --rdp-range-end-color: white;
-  --rdp-today-color: #C8462B;
+  --rdp-today-color: #E01530;
   --rdp-disabled-opacity: 0.25;
 }

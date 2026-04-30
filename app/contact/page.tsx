@@ -20,7 +20,7 @@ export default function ContactPage() {
   return (
     <>
       <Navbar />
-      <main className="pt-28 pb-24 md:pb-16 px-5 md:px-12 min-h-screen">
+      <main className="pt-32 pb-24 md:pb-16 px-5 md:px-12 min-h-screen">
         <div className="max-w-5xl mx-auto">
 
           {/* Header */}
