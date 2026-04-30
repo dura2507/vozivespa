@@ -39,7 +39,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-5 md:px-8 flex items-center justify-between" style={{ height: "6.5rem" }}>
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-1.5 md:gap-2 shrink-0">
+          <Link href="/" className="flex items-center gap-0.5 md:gap-1 shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/sickmotos.svg"
