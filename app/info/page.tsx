@@ -34,8 +34,9 @@ const REQUIREMENTS = [
     Icon: LicenceIcon,
     title: "Licence Requirements",
     items: [
-      "Vespa 50cc: valid car licence (B category) or moped licence",
-      "Vespa 150cc: valid motorcycle licence (A, A1, or A2)",
+      "Scooter 50cc: B or AM category licence + scooter experience",
+      "Scooter 125cc / Motobike 125cc: A1 category licence",
+      "Motobike 390cc: A2 category licence",
       "We verify your licence at pick-up",
     ],
   },
@@ -43,27 +44,30 @@ const REQUIREMENTS = [
     Icon: PaymentIcon,
     title: "Deposit & Payment",
     items: [
-      "Refundable security deposit required at pick-up",
-      "Payment accepted: cash, card, or bank transfer",
-      "No payment required when submitting the online request",
+      "Security deposit: 250€ for every bike",
+      "Payment: PayPal, bank transfer, Revolut, or cash",
+      "We don't accept credit cards",
+      "20% booking fee secures your reservation",
     ],
   },
   {
     Icon: PickupIcon,
     title: "Pick-Up & Return",
     items: [
-      "Pick-up in Zadar city centre — address confirmed on booking",
-      "Hotel/accommodation delivery available on request",
-      "Return at the agreed time — extensions possible if available",
+      "Pick-up & drop-off at Velebitska Ulica 2, 23000 Zadar",
+      "Open 09:00 — 19:00, Monday to Sunday",
+      "15 min grace period — late returns incur extra fees",
+      "Send transaction screenshot after paying",
     ],
   },
   {
     Icon: InsuranceIcon,
     title: "Insurance & Safety",
     items: [
-      "Basic third-party liability insurance included",
-      "Helmets always provided (1 or 2)",
-      "Roadside assistance within the Zadar region",
+      "Basic insurance covers theft + engine damage",
+      "Accidents, scratches, flat tires are renter's responsibility",
+      "Helmets always provided",
+      "Roadside help: free up to 20km, then 50€",
     ],
   },
 ];
@@ -110,7 +114,7 @@ export default function InfoPage() {
             <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3.5rem)] tracking-tight text-ink mb-6">
               Pricing
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {CATEGORIES.map((cat) => (
                 <div key={cat.id} className="overflow-hidden">
                   <div className="relative h-48">
@@ -143,7 +147,7 @@ export default function InfoPage() {
               ))}
             </div>
             <p className="text-muted text-xs mt-4">
-              All prices include helmets, phone holder, unlimited km, insurance & assistance.
+              All prices per day (up to 24h) and include helmets, unlimited km and basic insurance. Security deposit 250€ per bike.
             </p>
           </div>
 

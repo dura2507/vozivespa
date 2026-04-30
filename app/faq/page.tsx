@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { FAQ_ITEMS } from "@/lib/mockData";
+import { FAQ_ITEMS, BRAND } from "@/lib/mockData";
 
 function Accordion({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
@@ -36,7 +36,7 @@ function Accordion({ question, answer }: { question: string; answer: string }) {
 
       <div
         className={`overflow-hidden transition-all duration-300 ${
-          open ? "max-h-48 pb-5" : "max-h-0"
+          open ? "max-h-[32rem] pb-5" : "max-h-0"
         }`}
       >
         <p className="text-muted text-sm leading-relaxed pl-9">{answer}</p>
@@ -87,7 +87,7 @@ export default function FaqPage() {
                 Contact
               </Link>
               <a
-                href="https://wa.me/4917634658003"
+                href={`https://wa.me/${BRAND.phoneRaw}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#25D366] text-white font-bold text-xs tracking-widest uppercase px-6 py-3 hover:bg-[#1EBD5A] transition-colors flex items-center justify-center gap-2"

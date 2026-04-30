@@ -39,20 +39,12 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-5 md:px-8 h-18 flex items-center justify-between" style={{ height: "4.5rem" }}>
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 shrink-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://vozivespa.com/wp-content/uploads/2025/02/vespa-icon.png"
-              alt=""
-              className={`w-11 h-11 object-contain transition-all ${
-                transparent ? "brightness-0 invert" : "brightness-0"
-              }`}
-            />
-            <span className="font-dancing font-bold text-3xl leading-none">
+          <Link href="/" className="flex items-center shrink-0">
+            <span className="font-barlow font-black text-2xl md:text-3xl leading-none uppercase tracking-tight">
               <span className={`transition-colors ${transparent ? "text-white" : "text-ink"}`}>
-                Vozi
+                Sick
               </span>
-              <span className={`transition-colors ${transparent ? "text-red/90" : "text-red"}`}> Vespa</span>
+              <span className={`transition-colors ${transparent ? "text-red" : "text-red"}`}>Motos</span>
             </span>
           </Link>
 
@@ -127,8 +119,8 @@ export default function Navbar() {
       {/* Mobile sticky bottom bar */}
       <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-ink text-white flex items-center justify-between px-5 py-3 border-t border-white/10">
         <div>
-          <p className="text-[10px] text-white/50 uppercase tracking-wider">Vespa rental</p>
-          <p className="text-sm font-bold">From 50€ / day</p>
+          <p className="text-[10px] text-white/50 uppercase tracking-wider">Bike rental Zadar</p>
+          <p className="text-sm font-bold">From 39€ / day</p>
         </div>
         <Link
           href="/bookings"

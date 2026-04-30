@@ -10,7 +10,7 @@ import "react-day-picker/style.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppMockup from "@/components/WhatsAppMockup";
-import { CATEGORIES, BLOCKED_DATES_150, BLOCKED_DATES_50 } from "@/lib/mockData";
+import { CATEGORIES, BLOCKED_BY_ID, BRAND } from "@/lib/mockData";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -21,7 +21,7 @@ type FormData = {
   notes: string;
 };
 
-const VESPA_CATEGORIES = CATEGORIES.filter((c) => c.id !== "picnic");
+const BIKE_CATEGORIES = CATEGORIES;
 
 function StepIndicator({ step }: { step: Step }) {
   const steps = ["Choose", "Dates", "Details", "Done"];
@@ -92,19 +92,19 @@ export default function BookingsPage() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const blockedDates =
-    selectedCategory === "vespa150" ? BLOCKED_DATES_150 : BLOCKED_DATES_50;
+  const blockedDates = selectedCategory ? (BLOCKED_BY_ID[selectedCategory] ?? []) : [];
 
-  const categoryLabel =
-    VESPA_CATEGORIES.find((c) => c.id === selectedCategory)?.name ?? "";
+  const selectedCat = BIKE_CATEGORIES.find((c) => c.id === selectedCategory);
+  const categoryLabel = selectedCat?.name ?? "";
 
   const nights =
     range?.from && range?.to
       ? differenceInCalendarDays(range.to, range.from)
       : 0;
 
-  const pricePerDay = selectedCategory === "vespa150" ? 80 : 50;
+  const pricePerDay = selectedCat ? parseInt(selectedCat.price, 10) : 0;
   const totalPrice = nights * pricePerDay;
+  const bookingFee = Math.round(totalPrice * 0.2 * 100) / 100;
 
   function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -127,10 +127,10 @@ export default function BookingsPage() {
               Reserve your ride
             </p>
             <h1 className="font-barlow font-black uppercase text-[clamp(3rem,10vw,6rem)] leading-none tracking-tight text-ink">
-              Book a Vespa
+              Book a Bike
             </h1>
             <p className="text-muted mt-3 text-sm">
-              Pick your Vespa, select dates, and we&apos;ll confirm via WhatsApp within minutes.
+              Pick your bike, select dates, and we&apos;ll confirm via WhatsApp within minutes.
             </p>
           </div>
 
@@ -140,7 +140,7 @@ export default function BookingsPage() {
           {step === 1 && (
             <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {VESPA_CATEGORIES.map((cat) => (
+                {BIKE_CATEGORIES.map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => {
@@ -188,14 +188,14 @@ export default function BookingsPage() {
 
               <div className="mt-6 bg-sand px-5 py-4 flex gap-3 items-start border-l-2 border-red">
                 <svg className="w-5 h-5 text-red shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
                 </svg>
                 <div>
                   <p className="font-semibold text-ink text-sm">
-                    Picnic Package — +60€
+                    Add-ons available
                   </p>
                   <p className="text-muted text-xs mt-0.5">
-                    Mention it in the notes and we&apos;ll add it to your booking.
+                    In-ear navigation, premium helmets, secret locations map — mention in the notes.
                   </p>
                 </div>
               </div>
@@ -329,7 +329,7 @@ export default function BookingsPage() {
               {/* Summary strip */}
               <div className="bg-ink text-white px-5 py-4 mb-7 flex flex-wrap gap-6 text-sm">
                 <div>
-                  <p className="text-white/40 text-[10px] uppercase tracking-wider">Vespa</p>
+                  <p className="text-white/40 text-[10px] uppercase tracking-wider">Bike</p>
                   <p className="font-semibold mt-0.5">{categoryLabel}</p>
                 </div>
                 <div>
@@ -405,7 +405,7 @@ export default function BookingsPage() {
                   <textarea
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                    placeholder="E.g. need 2 helmets, add picnic package, delivery to hotel..."
+                    placeholder="E.g. need 2 helmets, in-ear navigation, premium helmet, delivery to hotel..."
                     rows={3}
                     className={`${inputClass} resize-none`}
                   />

@@ -20,9 +20,9 @@ const dancing = Dancing_Script({
 });
 
 export const metadata: Metadata = {
-  title: "Vozi Vespa — Ride in Style | Zadar",
+  title: "SickMotos — Scooter & Bike Rental Zadar",
   description:
-    "Rent a Vespa in Zadar, Croatia. Explore the Dalmatian coast in style. Vespa 50 & 150 rentals, picnic packages, no hidden fees.",
+    "Rent a scooter or motorbike in Zadar, Croatia. 50cc, 125cc and 390cc bikes from 39€/day. Helmets and insurance included.",
 };
 
 export default function RootLayout({

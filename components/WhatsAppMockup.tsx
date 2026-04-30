@@ -30,8 +30,8 @@ export default function WhatsAppMockup({ category, range, name, phone, notes }: 
               </svg>
             </div>
             <div>
-              <p className="text-white text-sm font-semibold">Vozi Vespa</p>
-              <p className="text-white/70 text-xs">Neue Anfrage</p>
+              <p className="text-white text-sm font-semibold">SickMotos</p>
+              <p className="text-white/70 text-xs">New booking request</p>
             </div>
           </div>
 
@@ -39,30 +39,30 @@ export default function WhatsAppMockup({ category, range, name, phone, notes }: 
           <div className="p-4 space-y-3 min-h-[260px]">
             {/* Timestamp */}
             <p className="text-center text-[10px] text-[#667781] bg-white/60 rounded-full px-3 py-1 w-fit mx-auto">
-              Heute
+              Today
             </p>
 
             {/* Message bubble */}
             <div className="bg-white rounded-xl rounded-tl-sm p-3 shadow-sm max-w-[90%]">
               <p className="text-[11px] leading-relaxed text-[#111]">
-                🛵 <strong>Neue Buchungsanfrage!</strong>
+                <strong>New booking request</strong>
               </p>
               <div className="mt-2 space-y-1 text-[11px] text-[#333]">
                 <p>
-                  <strong>Vespa:</strong> {category}
+                  <strong>Bike:</strong> {category}
                 </p>
                 <p>
-                  📅 {from} – {to}
+                  {from} – {to}
                 </p>
                 <p>
-                  👤 {name || "—"}
+                  {name || "—"}
                 </p>
                 <p>
-                  📞 {phone || "—"}
+                  {phone || "—"}
                 </p>
                 {notes && (
                   <p>
-                    📝 &quot;{notes}&quot;
+                    &quot;{notes}&quot;
                   </p>
                 )}
               </div>
@@ -70,15 +70,13 @@ export default function WhatsAppMockup({ category, range, name, phone, notes }: 
               {/* Action links */}
               <div className="mt-3 flex flex-col gap-1.5">
                 <div className="flex items-center gap-2 bg-[#25D366]/15 rounded-lg px-2.5 py-2">
-                  <span className="text-lg">✅</span>
                   <span className="text-[10px] font-semibold text-[#25D366]">
-                    Bestätigen — vozivespa.com/confirm/…
+                    Confirm — sickmotos.com/confirm/…
                   </span>
                 </div>
                 <div className="flex items-center gap-2 bg-red-50 rounded-lg px-2.5 py-2">
-                  <span className="text-lg">❌</span>
                   <span className="text-[10px] font-semibold text-red-400">
-                    Ablehnen — vozivespa.com/reject/…
+                    Decline — sickmotos.com/reject/…
                   </span>
                 </div>
               </div>
@@ -92,7 +90,7 @@ export default function WhatsAppMockup({ category, range, name, phone, notes }: 
           {/* Input bar */}
           <div className="bg-[#F0F0F0] px-3 py-2 flex items-center gap-2">
             <div className="flex-1 bg-white rounded-full px-3 py-1.5 text-[10px] text-[#999]">
-              Nachricht…
+              Message…
             </div>
             <div className="w-7 h-7 bg-[#25D366] rounded-full flex items-center justify-center">
               <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24">
