@@ -26,9 +26,6 @@ export type BlockedRange = {
   to: Date;
 };
 
-// NOTE: bike photos are placeholders. Replace with the real photos at
-// public/bikes/{scooter-50,scooter-125,bike-125,bike-390}.jpg or update
-// the `image` URLs below.
 export const CATEGORIES: Category[] = [
   {
     id: "scooter-50",
@@ -39,8 +36,7 @@ export const CATEGORIES: Category[] = [
     priceUnit: "/day",
     description:
       "Black Piaggio Liberty 50cc. Perfect for cruising the city — easy to handle, ideal for first-time riders.",
-    image:
-      "https://images.unsplash.com/photo-1568708998037-69d0c1f13e25?w=1200&q=80",
+    image: "/bikes/scooter-50.jpg",
     licence: "B or AM category",
     maxSpeed: "45 km/h",
     extraHour: "6€/h",
@@ -54,8 +50,7 @@ export const CATEGORIES: Category[] = [
     priceUnit: "/day",
     description:
       "125cc scooter — same easy handling as the 50, more power for highways and longer day trips.",
-    image:
-      "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=1200&q=80",
+    image: "/bikes/scooter-125.jpg",
     licence: "A1 category",
     maxSpeed: "110 km/h",
     extraHour: "9€/h",
@@ -69,8 +64,7 @@ export const CATEGORIES: Category[] = [
     priceUnit: "/day",
     description:
       "Real motorbike feeling with 125cc. Great for confident riders looking to explore the coastal roads.",
-    image:
-      "https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?w=1200&q=80",
+    image: "/bikes/bike-125.jpg",
     licence: "A1 category",
     maxSpeed: "100 km/h",
     extraHour: "9€/h",
@@ -85,8 +79,7 @@ export const CATEGORIES: Category[] = [
     priceUnit: "/day",
     description:
       "Top-of-the-range 390cc bike. Highway-ready performance for experienced riders who want the full experience.",
-    image:
-      "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=1200&q=80",
+    image: "/bikes/bike-390.jpg",
     licence: "A2 category",
     maxSpeed: "140 km/h",
     extraHour: "10€/h",
@@ -155,18 +148,15 @@ export const REVIEWS: Review[] = [
   },
 ];
 
-// NOTE: gallery photos are placeholders. Replace with real shots of the bikes
-// and rides — drop them in public/gallery/ and update the URLs below.
+// Gallery uses the same bike photos for now — drop more shots in
+// public/bikes/ or public/gallery/ and add them here.
 export const GALLERY_IMAGES = [
-  "https://images.unsplash.com/photo-1568708998037-69d0c1f13e25?w=1200&q=80",
-  "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=1200&q=80",
-  "https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?w=1200&q=80",
-  "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=1200&q=80",
-  "https://images.unsplash.com/photo-1547549082-6bc09f2049ae?w=1200&q=80",
-  "https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=1200&q=80",
-  "https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=1200&q=80",
-  "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1200&q=80",
-  "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=1200&q=80",
+  "/bikes/bike-390.jpg",
+  "/bikes/bike-125.jpg",
+  "/bikes/scooter-125.jpg",
+  "/bikes/scooter-50.jpg",
+  "/bikes/bike-390.jpg",
+  "/bikes/bike-125.jpg",
 ];
 
 export const FAQ_ITEMS = [

@@ -39,13 +39,19 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-5 md:px-8 h-18 flex items-center justify-between" style={{ height: "4.5rem" }}>
           {/* Logo */}
-          <Link href="/" className="flex items-center shrink-0">
+          <Link href="/" className="flex flex-col items-start shrink-0 gap-0.5">
             <span className="font-barlow font-black text-2xl md:text-3xl leading-none uppercase tracking-tight">
               <span className={`transition-colors ${transparent ? "text-white" : "text-ink"}`}>
                 Sick
               </span>
-              <span className={`transition-colors ${transparent ? "text-red" : "text-red"}`}>Motos</span>
+              <span className="text-red transition-colors">Motos</span>
             </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/rentamoto.svg"
+              alt="Rent a Moto"
+              className="h-2.5 md:h-3 w-auto"
+            />
           </Link>
 
           {/* Desktop nav */}
