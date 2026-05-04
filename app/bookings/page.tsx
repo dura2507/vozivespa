@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
 import { format, differenceInCalendarDays } from "date-fns";
@@ -73,9 +74,15 @@ function StepIndicator({ step }: { step: Step }) {
   );
 }
 
-export default function BookingsPage() {
-  const [step, setStep] = useState<Step>(1);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+function BookingsPageInner() {
+  const searchParams = useSearchParams();
+  const preselectedBike = searchParams.get("bike");
+  const validPreselected = preselectedBike && BIKE_CATEGORIES.some((c) => c.id === preselectedBike)
+    ? preselectedBike
+    : null;
+
+  const [step, setStep] = useState<Step>(validPreselected ? 2 : 1);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(validPreselected);
   const [range, setRange] = useState<DateRange | undefined>();
   const [form, setForm] = useState<FormData>({
     name: "",
@@ -141,14 +148,10 @@ export default function BookingsPage() {
             <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {BIKE_CATEGORIES.map((cat) => (
-                  <button
+                  <Link
+                    href={`/fleet/${cat.id}`}
                     key={cat.id}
-                    onClick={() => {
-                      setSelectedCategory(cat.id);
-                      setRange(undefined);
-                      setStep(2);
-                    }}
-                    className="group relative overflow-hidden text-left"
+                    className="group relative overflow-hidden text-left block"
                   >
                     <div className="relative aspect-[4/3]">
                       <Image
@@ -176,13 +179,13 @@ export default function BookingsPage() {
                     <div className="bg-sand px-4 py-3 flex items-center justify-between">
                       <p className="text-xs text-muted leading-relaxed line-clamp-1">{cat.description}</p>
                       <span className="text-red font-bold text-xs tracking-widest uppercase shrink-0 ml-3 flex items-center gap-1">
-                        Select
+                        View Bike
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                         </svg>
                       </span>
                     </div>
-                  </button>
+                  </Link>
                 ))}
               </div>
 
@@ -480,5 +483,21 @@ export default function BookingsPage() {
 
       <Footer />
     </>
+  );
+}
+
+export default function BookingsPage() {
+  return (
+    <Suspense
+      fallback={
+        <>
+          <Navbar />
+          <main className="pt-32 pb-24 px-5 md:px-12 min-h-screen" />
+          <Footer />
+        </>
+      }
+    >
+      <BookingsPageInner />
+    </Suspense>
   );
 }

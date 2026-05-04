@@ -148,9 +148,9 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
+          <div id="fleet" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
             {CATEGORIES.map((cat) => (
-              <Link href="/bookings" key={cat.id} className="group block bg-sand">
+              <Link href={`/fleet/${cat.id}`} key={cat.id} className="group block bg-sand">
                 <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[4/5]">
                   <Image
                     src={cat.image}
@@ -180,7 +180,7 @@ export default function HomePage() {
                     {cat.licence} · {cat.maxSpeed}
                   </p>
                   <span className="inline-flex items-center gap-1.5 text-red font-bold text-[11px] sm:text-xs tracking-[0.2em] uppercase border-b-2 border-red pb-1 group-hover:gap-3 transition-all">
-                    Book Now
+                    View Bike
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>

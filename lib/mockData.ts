@@ -1,15 +1,34 @@
+export type PricingTiers = {
+  day: string;
+  weekend: string;
+  week: string;
+  month: string;
+};
+
 export type Category = {
   id: string;
   name: string;
+  model: string;
   tag: string;
   tagColor: string;
   price: string;
   priceUnit: string;
   description: string;
+  longDescription: string;
   image: string;
+  gallery: string[];
   licence: string;
   maxSpeed: string;
   extraHour: string;
+  displacement: string;
+  power: string;
+  seats: number;
+  tank: string;
+  weight: string;
+  year: string;
+  pricing: PricingTiers;
+  deposit: string;
+  season: string;
   featured?: boolean;
 };
 
@@ -26,79 +45,154 @@ export type BlockedRange = {
   to: Date;
 };
 
+const PLACEHOLDER_PRICING: PricingTiers = {
+  day: "—",
+  weekend: "—",
+  week: "—",
+  month: "—",
+};
+
 export const CATEGORIES: Category[] = [
   {
     id: "scooter-50",
     name: "Scooter 50",
+    model: "Piaggio Liberty 50",
     tag: "BEGINNER",
     tagColor: "bg-red",
     price: "39€",
     priceUnit: "/day",
     description:
       "Black Piaggio Liberty 50cc. Perfect for cruising the city — easy to handle, ideal for first-time riders.",
+    longDescription:
+      "Black Piaggio Liberty 50cc. Perfect for cruising the city — easy to handle, ideal for first-time riders.",
     image: "/bikes/scooter-50.jpg",
+    gallery: ["/bikes/scooter-50.jpg", "/bikes/scooter-50-b.jpg"],
     licence: "B or AM category",
     maxSpeed: "45 km/h",
     extraHour: "6€/h",
+    displacement: "50cc",
+    power: "—",
+    seats: 2,
+    tank: "—",
+    weight: "—",
+    year: "—",
+    pricing: { day: "39€", weekend: "—", week: "—", month: "—" },
+    deposit: "—",
+    season: "April – October",
   },
   {
     id: "scooter-125",
     name: "Scooter 125",
+    model: "Scooter 125",
     tag: "CITY",
     tagColor: "bg-red",
     price: "55€",
     priceUnit: "/day",
     description:
       "125cc scooter — same easy handling as the 50, more power for highways and longer day trips.",
+    longDescription:
+      "125cc scooter — same easy handling as the 50, more power for highways and longer day trips.",
     image: "/bikes/scooter-125.jpg",
+    gallery: ["/bikes/scooter-125.jpg"],
     licence: "A1 category",
     maxSpeed: "110 km/h",
     extraHour: "9€/h",
+    displacement: "125cc",
+    power: "—",
+    seats: 2,
+    tank: "—",
+    weight: "—",
+    year: "—",
+    pricing: { day: "55€", weekend: "—", week: "—", month: "—" },
+    deposit: "—",
+    season: "April – October",
   },
   {
     id: "bike-125-a",
     name: "Motobike 125",
+    model: "Motobike 125",
     tag: "RIDE",
     tagColor: "bg-red",
     price: "55€",
     priceUnit: "/day",
     description:
       "Real motorbike feeling with 125cc. Great for confident riders looking to explore the coastal roads.",
+    longDescription:
+      "Real motorbike feeling with 125cc. Great for confident riders looking to explore the coastal roads.",
     image: "/bikes/bike-125.jpg",
+    gallery: ["/bikes/bike-125.jpg"],
     licence: "A1 category",
     maxSpeed: "100 km/h",
     extraHour: "9€/h",
+    displacement: "125cc",
+    power: "—",
+    seats: 1,
+    tank: "—",
+    weight: "—",
+    year: "—",
+    pricing: { day: "55€", weekend: "—", week: "—", month: "—" },
+    deposit: "—",
+    season: "April – October",
     featured: true,
   },
   {
     id: "bike-125-b",
     name: "Motobike 125",
+    model: "Motobike 125",
     tag: "RIDE",
     tagColor: "bg-red",
     price: "55€",
     priceUnit: "/day",
     description:
       "Real motorbike feeling with 125cc. Great for confident riders looking to explore the coastal roads.",
+    longDescription:
+      "Real motorbike feeling with 125cc. Great for confident riders looking to explore the coastal roads.",
     image: "/bikes/bike-125-b.jpg",
+    gallery: ["/bikes/bike-125-b.jpg"],
     licence: "A1 category",
     maxSpeed: "100 km/h",
     extraHour: "9€/h",
+    displacement: "125cc",
+    power: "—",
+    seats: 2,
+    tank: "—",
+    weight: "—",
+    year: "—",
+    pricing: { day: "55€", weekend: "—", week: "—", month: "—" },
+    deposit: "—",
+    season: "April – October",
   },
   {
     id: "bike-390",
     name: "Motobike 390",
+    model: "KTM Duke 390",
     tag: "POWER",
     tagColor: "bg-red",
     price: "65€",
     priceUnit: "/day",
     description:
-      "Top-of-the-range 390cc bike. Highway-ready performance for experienced riders who want the full experience.",
+      "KTM Duke 390 — A2-ready power for the coast. Light, agile and built for city, country and curves.",
+    longDescription:
+      "Dein Bike. Deine Saison. Flexibel, unkompliziert und voller Fahrspaß. Leicht, wendig und perfekt für Stadt, Land und Kurven — ob du nur einen Tag oder den ganzen Monat willst.",
     image: "/bikes/bike-390.jpg",
+    gallery: ["/bikes/bike-390.jpg"],
     licence: "A2 category",
     maxSpeed: "140 km/h",
     extraHour: "10€/h",
+    displacement: "390cc",
+    power: "—",
+    seats: 2,
+    tank: "—",
+    weight: "—",
+    year: "—",
+    pricing: { day: "65€", weekend: "180€", week: "300€", month: "1000€" },
+    deposit: "250€",
+    season: "April – October",
   },
 ];
+
+// Used for any bike not yet specified
+export { PLACEHOLDER_PRICING };
 
 export type AddOn = {
   label: string;
