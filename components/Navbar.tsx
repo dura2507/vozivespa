@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
-  { label: "Bookings", href: "/bookings" },
+  { label: "Fleet", href: "/#fleet" },
   { label: "Gallery", href: "/gallery" },
   { label: "Info", href: "/info" },
   { label: "FAQ", href: "/faq" },
@@ -70,7 +70,7 @@ export default function Navbar() {
               </Link>
             ))}
             <Link
-              href="/bookings"
+              href="/#fleet"
               className="ml-2 bg-red text-white text-xs font-bold tracking-[0.15em] uppercase px-6 py-3 hover:bg-red-dark transition-colors"
             >
               Book Now
@@ -114,7 +114,7 @@ export default function Navbar() {
               </Link>
             ))}
             <Link
-              href="/bookings"
+              href="/#fleet"
               onClick={() => setOpen(false)}
               className="mt-4 bg-red text-white text-center text-sm font-bold tracking-widest uppercase py-3"
             >
@@ -131,7 +131,7 @@ export default function Navbar() {
           <p className="text-sm font-bold">From 39€ / day</p>
         </div>
         <Link
-          href="/bookings"
+          href="/#fleet"
           className="bg-red text-white text-xs font-bold tracking-widest uppercase px-6 py-3"
         >
           Book Now →

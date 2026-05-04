@@ -2,7 +2,7 @@ import Link from "next/link";
 import { BRAND } from "@/lib/mockData";
 
 const NAV_LINKS = [
-  { label: "Bookings", href: "/bookings" },
+  { label: "Fleet", href: "/#fleet" },
   { label: "Gallery", href: "/gallery" },
   { label: "Info", href: "/info" },
   { label: "FAQ", href: "/faq" },

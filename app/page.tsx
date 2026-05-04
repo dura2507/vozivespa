@@ -112,7 +112,7 @@ export default function HomePage() {
           </p>
           <div className="flex items-center gap-4 flex-wrap">
             <Link
-              href="/bookings"
+              href="/#fleet"
               className="inline-flex items-center gap-2 bg-red text-white font-bold text-sm tracking-widest uppercase px-8 py-4 hover:bg-red-dark transition-colors"
             >
               Check Availability
@@ -258,7 +258,7 @@ export default function HomePage() {
             </div>
             <div className="mt-14 flex justify-center">
               <Link
-                href="/bookings"
+                href="/#fleet"
                 className="inline-flex items-center gap-2 bg-red text-white font-bold text-sm tracking-widest uppercase px-8 py-4 hover:bg-red-dark transition-colors"
               >
                 Book a Bike →
@@ -330,7 +330,7 @@ export default function HomePage() {
             </h2>
           </div>
           <Link
-            href="/bookings"
+            href="/#fleet"
             className="shrink-0 inline-flex items-center gap-2 bg-white text-red font-bold text-sm tracking-widest uppercase px-8 py-4 hover:bg-off-white transition-colors"
           >
             Check Availability →

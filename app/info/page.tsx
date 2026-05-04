@@ -160,7 +160,7 @@ export default function InfoPage() {
               </h2>
             </div>
             <Link
-              href="/bookings"
+              href="/#fleet"
               className="shrink-0 bg-white text-red font-bold text-xs tracking-widest uppercase px-8 py-4 hover:bg-off-white transition-colors"
             >
               Book Now →
