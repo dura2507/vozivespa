@@ -159,16 +159,23 @@ export default function HomePage() {
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   />
-                  <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
-                    <span className="bg-ink/85 backdrop-blur-sm text-white text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-1.5">
-                      {cat.tag}
-                    </span>
-                  </div>
                   <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-red text-white px-3 py-1.5 sm:px-4 sm:py-2 shadow-lg">
                     <p className="font-barlow font-black text-xl sm:text-2xl leading-none">
+                      {cat.priceFrom && (
+                        <span className="text-[10px] font-normal opacity-80 mr-1 align-middle">from</span>
+                      )}
                       {cat.price}
                       <span className="text-xs font-normal opacity-80 ml-0.5">{cat.priceUnit}</span>
                     </p>
+                  </div>
+                  <div
+                    className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-ink text-white flex flex-col items-center justify-center shadow-lg"
+                    title={`Licence required: ${cat.licence}`}
+                  >
+                    <span className="text-[8px] tracking-widest uppercase text-white/55 leading-none">Licence</span>
+                    <span className="font-barlow font-black text-base sm:text-lg leading-none mt-0.5">
+                      {cat.licenceCode}
+                    </span>
                   </div>
                 </div>
                 <div className="px-5 pt-5 pb-5 sm:px-6 sm:pt-7 sm:pb-7 text-center">
@@ -177,7 +184,7 @@ export default function HomePage() {
                   </h3>
                   <p className="text-xs sm:text-sm text-muted leading-relaxed mb-4 sm:mb-5">{cat.description}</p>
                   <p className="text-[10px] tracking-[0.15em] uppercase text-ink/40 font-bold mb-4">
-                    {cat.licence} · {cat.maxSpeed}
+                    {cat.displacement} · {cat.maxSpeed}
                   </p>
                   <span className="inline-flex items-center gap-1.5 text-red font-bold text-[11px] sm:text-xs tracking-[0.2em] uppercase border-b-2 border-red pb-1 group-hover:gap-3 transition-all">
                     View Bike
@@ -206,6 +213,38 @@ export default function HomePage() {
                   <p className="text-xs text-muted leading-relaxed">{item.sub}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── GOOD TO KNOW ─── */}
+        <section className="px-5 md:px-12 py-20 max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">Heads up</p>
+            <h2 className="font-barlow font-black uppercase text-[clamp(2rem,6vw,4rem)] tracking-tight text-ink">
+              Good to Know
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-ink/10">
+            <div className="bg-off-white px-6 py-7 flex flex-col items-start gap-3">
+              <span className="font-barlow font-black text-3xl text-red leading-none">{BRAND.deposit}</span>
+              <p className="font-bold text-ink text-sm">Deposit</p>
+              <p className="text-xs text-muted leading-relaxed">Per bike, refunded after drop-off if no damage.</p>
+            </div>
+            <div className="bg-off-white px-6 py-7 flex flex-col items-start gap-3">
+              <span className="font-barlow font-black text-3xl text-red leading-none">No</span>
+              <p className="font-bold text-ink text-sm">Phone holders</p>
+              <p className="text-xs text-muted leading-relaxed">We don&apos;t offer or fit phone holders. None of our bikes have one.</p>
+            </div>
+            <div className="bg-off-white px-6 py-7 flex flex-col items-start gap-3">
+              <span className="font-barlow font-black text-3xl text-red leading-none">Apr–Oct</span>
+              <p className="font-bold text-ink text-sm">Riding season</p>
+              <p className="text-xs text-muted leading-relaxed">We rent April through October. Full tank in, full tank out.</p>
+            </div>
+            <div className="bg-off-white px-6 py-7 flex flex-col items-start gap-3">
+              <span className="text-3xl leading-none">{BRAND.languages.join(" ")}</span>
+              <p className="font-bold text-ink text-sm">Languages</p>
+              <p className="text-xs text-muted leading-relaxed">We speak German and English — chat with us on WhatsApp.</p>
             </div>
           </div>
         </section>

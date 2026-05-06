@@ -13,12 +13,14 @@ export type Category = {
   tagColor: string;
   price: string;
   priceUnit: string;
+  priceFrom?: boolean;
   description: string;
   longDescription: string;
   tagline: string;
   image: string;
   gallery: string[];
   licence: string;
+  licenceCode: string;
   maxSpeed: string;
   extraHour: string;
   displacement: string;
@@ -29,8 +31,10 @@ export type Category = {
   range: string;
   year: string;
   pricing: PricingTiers;
-  deposit: string;
   season: string;
+  experienceNote?: string;
+  variantNote?: string;
+  placeholder?: boolean;
   featured?: boolean;
 };
 
@@ -61,16 +65,18 @@ export const CATEGORIES: Category[] = [
     model: "Piaggio Liberty 50 iGet",
     tag: "BEGINNER",
     tagColor: "bg-red",
-    price: "39€",
+    price: "35€",
     priceUnit: "/day",
+    priceFrom: true,
     description:
-      "Piaggio Liberty 50 iGet — sparsam, leicht zu fahren, ideal für die Stadt und Touristen.",
+      "Sparsam, leicht zu fahren, ideal für die Stadt und Touristen.",
     longDescription:
-      "Piaggio Liberty 50 iGet (Modelljahr 2024) — sehr sparsam, leicht zu handhaben und perfekt für entspanntes Cruisen durch Zadar und an der Küste.",
+      "Sehr sparsam, leicht zu handhaben und perfekt für entspanntes Cruisen durch Zadar und an der Küste.",
     tagline: "Sehr sparsam, ideal für Touristen / Stadt.",
     image: "/bikes/scooter-50.jpg",
     gallery: ["/bikes/scooter-50.jpg", "/bikes/scooter-50-b.jpg"],
     licence: "B or AM category",
+    licenceCode: "AM",
     maxSpeed: "45 km/h",
     extraHour: "6€/h",
     displacement: "50cc",
@@ -80,9 +86,42 @@ export const CATEGORIES: Category[] = [
     consumption: "~2,5 L / 100 km",
     range: "200–240 km",
     year: "2024",
-    pricing: { day: "39€", weekend: "95€", week: "210€", month: "690€" },
-    deposit: "—",
+    pricing: { day: "35€", weekend: "—", week: "—", month: "—" },
     season: "April – October",
+    experienceNote: "Driver should be experienced.",
+    variantNote:
+      "Two variants: without topcase from 35€/day, with topcase 39€/day. Topcase variant photo and tier prices coming soon.",
+  },
+  {
+    id: "scooter-50-topcase",
+    name: "Scooter 50",
+    model: "Piaggio Liberty 50 iGet — Topcase",
+    tag: "BEGINNER",
+    tagColor: "bg-red",
+    price: "39€",
+    priceUnit: "/day",
+    description:
+      "Same Piaggio Liberty 50 with a topcase for extra storage. Photo and full pricing coming soon.",
+    longDescription:
+      "Gleiches Modell wie der Standard-50er, zusätzlich mit Topcase für mehr Stauraum. Bild und vollständige Daten folgen.",
+    tagline: "Mit Topcase für mehr Stauraum — Details folgen.",
+    image: "/bikes/scooter-50.jpg",
+    gallery: ["/bikes/scooter-50.jpg"],
+    licence: "B or AM category",
+    licenceCode: "AM",
+    maxSpeed: "45 km/h",
+    extraHour: "6€/h",
+    displacement: "50cc",
+    power: "~3 PS",
+    seats: 2,
+    tank: "6,0 L",
+    consumption: "~2,5 L / 100 km",
+    range: "200–240 km",
+    year: "2024",
+    pricing: { day: "39€", weekend: "—", week: "—", month: "—" },
+    season: "April – October",
+    experienceNote: "Driver should be experienced.",
+    placeholder: true,
   },
   {
     id: "scooter-125",
@@ -93,13 +132,14 @@ export const CATEGORIES: Category[] = [
     price: "55€",
     priceUnit: "/day",
     description:
-      "Piaggio Liberty 125 iGet — perfekter Allround-Roller für Stadt und Küste.",
+      "Perfekter Allround-Roller für Stadt und Küste.",
     longDescription:
-      "Piaggio Liberty 125 iGet (Modelljahr 2024) — gleiches komfortables Handling wie der 50er, mehr Leistung für Tagestouren entlang der Küste.",
+      "Gleiches komfortables Handling wie der 50er, mit mehr Leistung für Tagestouren entlang der Küste.",
     tagline: "Perfekter Allround-Roller (Stadt + Küste).",
     image: "/bikes/scooter-125.jpg",
     gallery: ["/bikes/scooter-125.jpg"],
     licence: "A1 category",
+    licenceCode: "A1",
     maxSpeed: "110 km/h",
     extraHour: "9€/h",
     displacement: "125cc",
@@ -110,7 +150,6 @@ export const CATEGORIES: Category[] = [
     range: "220–260 km",
     year: "2024",
     pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€" },
-    deposit: "—",
     season: "April – October",
   },
   {
@@ -122,13 +161,14 @@ export const CATEGORIES: Category[] = [
     price: "55€",
     priceUnit: "/day",
     description:
-      "Beta RR 125 LC — sportlich und wendig, perfekt für aktive Fahrer.",
+      "Sportlich und wendig, perfekt für aktive Fahrer.",
     longDescription:
-      "Beta RR 125 LC (Modelljahr 2021) — Supermoto-Feeling mit 125cc. Leicht, wendig und optimal für sportliche Fahrer, die Kurven und Küstenstraßen lieben.",
+      "Supermoto-Feeling mit 125cc. Leicht, wendig und optimal für sportliche Fahrer, die Kurven und Küstenstraßen lieben.",
     tagline: "Sportlich, aber höherer Verbrauch durch Fahrweise.",
     image: "/bikes/bike-125.jpg",
     gallery: ["/bikes/bike-125.jpg"],
     licence: "A1 category",
+    licenceCode: "A1",
     maxSpeed: "100 km/h",
     extraHour: "9€/h",
     displacement: "125cc",
@@ -139,7 +179,6 @@ export const CATEGORIES: Category[] = [
     range: "180–230 km",
     year: "2021",
     pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€" },
-    deposit: "—",
     season: "April – October",
     featured: true,
   },
@@ -152,13 +191,14 @@ export const CATEGORIES: Category[] = [
     price: "55€",
     priceUnit: "/day",
     description:
-      "KTM Duke 125 — naked-bike Feeling mit großer Reichweite und sportlichem Charakter.",
+      "Naked-Bike-Feeling mit großer Reichweite und sportlichem Charakter.",
     longDescription:
-      "KTM Duke 125 (Modelljahr 2014) — echtes Naked-Bike-Feeling mit 125cc. Sehr gute Reichweite, ideal für längere Touren entlang der Küste und auf die Inseln.",
+      "Echtes Naked-Bike-Feeling mit 125cc. Sehr gute Reichweite, ideal für längere Touren entlang der Küste und auf die Inseln.",
     tagline: "Sehr gute Reichweite – wichtig für Vermietung!",
     image: "/bikes/bike-125-b.jpg",
     gallery: ["/bikes/bike-125-b.jpg"],
     licence: "A1 category",
+    licenceCode: "A1",
     maxSpeed: "100 km/h",
     extraHour: "9€/h",
     displacement: "125cc",
@@ -169,7 +209,6 @@ export const CATEGORIES: Category[] = [
     range: "300–400 km",
     year: "2014",
     pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€" },
-    deposit: "—",
     season: "April – October",
   },
   {
@@ -181,13 +220,14 @@ export const CATEGORIES: Category[] = [
     price: "65€",
     priceUnit: "/day",
     description:
-      "KTM Duke 390 — A2-ready power for the coast. Light, agile and built for city, country and curves.",
+      "A2-ready power for the coast. Light, agile and built for city, country and curves.",
     longDescription:
-      "KTM Duke 390 (Modelljahr 2014) — Premium-Bike mit A2-konformer Leistung. Leicht, wendig und perfekt für Stadt, Land und Kurven — ob du nur einen Tag oder den ganzen Monat willst.",
+      "Premium-Bike mit A2-konformer Leistung. Leicht, wendig und perfekt für Stadt, Land und Kurven — ob du nur einen Tag oder den ganzen Monat willst.",
     tagline: "Stark + attraktiv für Touristen (Premium Bike).",
     image: "/bikes/bike-390.jpg",
     gallery: ["/bikes/bike-390.jpg"],
     licence: "A2 category",
+    licenceCode: "A2",
     maxSpeed: "140 km/h",
     extraHour: "10€/h",
     displacement: "390cc",
@@ -198,7 +238,6 @@ export const CATEGORIES: Category[] = [
     range: "300–380 km",
     year: "2014",
     pricing: { day: "65€", weekend: "160€", week: "360€", month: "1150€" },
-    deposit: "250€",
     season: "April – October",
   },
 ];
@@ -300,6 +339,11 @@ export const FAQ_ITEMS = [
     answer:
       "Always confirm availability with us first — it can change quickly. A 20% booking fee secures your dates. Pay via PayPal, bank transfer, Revolut or cash on arrival. After paying, send us a screenshot of the transaction. If you arrive more than 1 hour late without notice, the reservation is automatically cancelled. We don't accept credit cards.",
   },
+  {
+    question: "Do you offer phone holders?",
+    answer:
+      "No. We don't offer or fit phone holders. None of our bikes come with one — please plan your route before you head out.",
+  },
 ];
 
 // Mock blocked date ranges for the booking calendar
@@ -330,6 +374,7 @@ export const BLOCKED_DATES_BIKE_390: BlockedRange[] = [
 
 export const BLOCKED_BY_ID: Record<string, BlockedRange[]> = {
   "scooter-50": BLOCKED_DATES_SCOOTER_50,
+  "scooter-50-topcase": BLOCKED_DATES_SCOOTER_50,
   "scooter-125": BLOCKED_DATES_SCOOTER_125,
   "bike-125-a": BLOCKED_DATES_BIKE_125,
   "bike-125-b": BLOCKED_DATES_BIKE_125,
@@ -337,6 +382,14 @@ export const BLOCKED_BY_ID: Record<string, BlockedRange[]> = {
 };
 
 // Brand info
+export type Contact = {
+  label: string;
+  phone: string;
+  phoneRaw: string;
+  languages: string[];
+  placeholder?: boolean;
+};
+
 export const BRAND = {
   name: "SickMotos",
   tagline: "Rent a Moto",
@@ -351,4 +404,21 @@ export const BRAND = {
   instagram: "sickmotos_bike_rental_zadar",
   instagramUrl: "https://instagram.com/sickmotos_bike_rental_zadar",
   reviewsUrl: "https://maps.app.goo.gl/XCr6kKfFqrfR1PXR6?g_st=ic",
+  deposit: "250€",
+  noPhoneHolder: true,
+  contacts: [
+    {
+      label: "Primary",
+      phone: "+49 176 34658003",
+      phoneRaw: "4917634658003",
+      languages: ["🇩🇪", "🇬🇧"],
+    },
+    {
+      label: "Alternate",
+      phone: "Coming soon",
+      phoneRaw: "",
+      languages: ["🇩🇪", "🇬🇧"],
+      placeholder: true,
+    },
+  ] satisfies Contact[],
 };
