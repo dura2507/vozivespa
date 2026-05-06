@@ -17,8 +17,10 @@ const INCLUDED = [
   },
   {
     icon: (
-      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 14a8 8 0 0116 0v3.5a1.5 1.5 0 01-1.5 1.5H17v-2h-2v2H9v-2H7v2H5.5A1.5 1.5 0 014 17.5V14z" />
+        <path d="M4.5 14h15" />
+        <path d="M9.5 9.5c.8-.5 1.7-.8 2.5-.8s1.7.3 2.5.8" />
       </svg>
     ),
     label: "Helmets",
@@ -120,7 +122,7 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
-            <span className="text-white/60 text-sm">From 39€/day</span>
+            <span className="text-white/60 text-sm">From 35€/day</span>
           </div>
         </div>
 
@@ -169,12 +171,17 @@ export default function HomePage() {
                     </p>
                   </div>
                   <div
-                    className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-ink text-white flex flex-col items-center justify-center shadow-lg"
+                    className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 w-16 h-16 sm:w-[4.5rem] sm:h-[4.5rem] rounded-full bg-red text-white flex flex-col items-center justify-center shadow-xl ring-2 ring-white/30"
                     title={`Licence required: ${cat.licence}`}
                   >
-                    <span className="text-[8px] tracking-widest uppercase text-white/55 leading-none">Licence</span>
-                    <span className="font-barlow font-black text-base sm:text-lg leading-none mt-0.5">
+                    <span className="text-[8px] tracking-[0.15em] uppercase text-white/85 leading-none font-bold">
+                      Required
+                    </span>
+                    <span className="font-barlow font-black text-xl sm:text-2xl leading-none mt-1">
                       {cat.licenceCode}
+                    </span>
+                    <span className="text-[8px] tracking-widest uppercase text-white/85 leading-none mt-0.5">
+                      Licence
                     </span>
                   </div>
                 </div>
@@ -184,7 +191,7 @@ export default function HomePage() {
                   </h3>
                   <p className="text-xs sm:text-sm text-muted leading-relaxed mb-4 sm:mb-5">{cat.description}</p>
                   <p className="text-[10px] tracking-[0.15em] uppercase text-ink/40 font-bold mb-4">
-                    {cat.displacement} · {cat.maxSpeed}
+                    {cat.maxSpeed}
                   </p>
                   <span className="inline-flex items-center gap-1.5 text-red font-bold text-[11px] sm:text-xs tracking-[0.2em] uppercase border-b-2 border-red pb-1 group-hover:gap-3 transition-all">
                     View Bike

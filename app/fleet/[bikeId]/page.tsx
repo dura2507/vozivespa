@@ -132,13 +132,19 @@ export default function BikeDetailPage({
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
                 />
-                <div className="absolute top-4 left-4">
-                  <span className="bg-red text-white text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-1.5">
-                    {bike.tag}
+                <div
+                  className="absolute bottom-4 left-4 w-20 h-20 rounded-full bg-red text-white flex flex-col items-center justify-center shadow-xl ring-2 ring-white/30"
+                  title={`Licence required: ${bike.licence}`}
+                >
+                  <span className="text-[8px] tracking-[0.15em] uppercase text-white/85 leading-none font-bold">
+                    Required
                   </span>
-                </div>
-                <div className="absolute top-4 right-4 bg-ink/85 backdrop-blur-sm text-white px-3 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase">
-                  {bike.licence}
+                  <span className="font-barlow font-black text-2xl leading-none mt-1">
+                    {bike.licenceCode}
+                  </span>
+                  <span className="text-[8px] tracking-widest uppercase text-white/85 leading-none mt-0.5">
+                    Licence
+                  </span>
                 </div>
               </div>
               {bike.gallery.length > 1 && (
@@ -187,6 +193,23 @@ export default function BikeDetailPage({
                 <p className="text-white/60 text-xs tracking-wider uppercase">
                   Unlimited km · Insurance included · {BRAND.deposit} deposit
                 </p>
+
+                <div className="mt-5 pt-5 border-t border-white/10 flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-full bg-red text-white font-barlow font-black text-xl flex items-center justify-center shrink-0 ring-2 ring-white/15">
+                    {bike.licenceCode}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">
+                      Required licence
+                    </p>
+                    <p className="text-white text-sm font-semibold leading-snug">
+                      {bike.licence}
+                    </p>
+                    <p className="text-white/50 text-xs leading-snug mt-0.5">
+                      Bring your valid licence to pickup — no licence, no ride.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {(bike.variantNote || bike.experienceNote) && (
@@ -296,14 +319,14 @@ export default function BikeDetailPage({
           </section>
 
           {/* Important info — applies to every rental */}
-          <section className="mb-16 grid grid-cols-1 md:grid-cols-3 gap-px bg-ink/10">
+          <section className="mb-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-ink/10">
             <div className="bg-off-white px-5 py-5 flex items-start gap-3">
               <svg className="w-5 h-5 text-red shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
               <div>
                 <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">No phone holders</p>
-                <p className="text-ink text-sm leading-snug">We don&apos;t offer or fit phone holders. None of our bikes come with one.</p>
+                <p className="text-ink text-sm leading-snug">We don&apos;t offer or fit phone holders.</p>
               </div>
             </div>
             <div className="bg-off-white px-5 py-5 flex items-start gap-3">
@@ -317,11 +340,20 @@ export default function BikeDetailPage({
             </div>
             <div className="bg-off-white px-5 py-5 flex items-start gap-3">
               <svg className="w-5 h-5 text-red shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
               </svg>
               <div>
                 <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">Season</p>
-                <p className="text-ink text-sm leading-snug">{bike.season}. Full tank in, full tank out.</p>
+                <p className="text-ink text-sm leading-snug">{bike.season}. We rent only in this window.</p>
+              </div>
+            </div>
+            <div className="bg-off-white px-5 py-5 flex items-start gap-3">
+              <svg className="w-5 h-5 text-red shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
+              </svg>
+              <div>
+                <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">Full tank policy</p>
+                <p className="text-ink text-sm leading-snug">Bike is delivered with a full tank. Return it full.</p>
               </div>
             </div>
           </section>

@@ -61,7 +61,7 @@ const PLACEHOLDER_PRICING: PricingTiers = {
 export const CATEGORIES: Category[] = [
   {
     id: "scooter-50",
-    name: "Scooter 50",
+    name: "Piaggio Liberty 50",
     model: "Piaggio Liberty 50 iGet",
     tag: "BEGINNER",
     tagColor: "bg-red",
@@ -94,7 +94,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     id: "scooter-50-topcase",
-    name: "Scooter 50",
+    name: "Piaggio Liberty 50 Topcase",
     model: "Piaggio Liberty 50 iGet — Topcase",
     tag: "BEGINNER",
     tagColor: "bg-red",
@@ -125,7 +125,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     id: "scooter-125",
-    name: "Scooter 125",
+    name: "Piaggio Liberty 125",
     model: "Piaggio Liberty 125 iGet",
     tag: "CITY",
     tagColor: "bg-red",
@@ -344,6 +344,11 @@ export const FAQ_ITEMS = [
     answer:
       "No. We don't offer or fit phone holders. None of our bikes come with one — please plan your route before you head out.",
   },
+  {
+    question: "How does the fuel work — full tank, empty tank?",
+    answer:
+      "Every bike is handed over with a full tank. Please return it with a full tank as well. If you return the bike not fully fuelled, we charge the missing fuel plus a refuelling fee.",
+  },
 ];
 
 // Mock blocked date ranges for the booking calendar
@@ -408,16 +413,16 @@ export const BRAND = {
   noPhoneHolder: true,
   contacts: [
     {
-      label: "Primary",
+      label: "Deutsch",
       phone: "+49 176 34658003",
       phoneRaw: "4917634658003",
-      languages: ["🇩🇪", "🇬🇧"],
+      languages: ["🇩🇪"],
     },
     {
-      label: "Alternate",
+      label: "English",
       phone: "Coming soon",
       phoneRaw: "",
-      languages: ["🇩🇪", "🇬🇧"],
+      languages: ["🇬🇧"],
       placeholder: true,
     },
   ] satisfies Contact[],
