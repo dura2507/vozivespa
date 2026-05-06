@@ -36,6 +36,7 @@ export type Category = {
   variantNote?: string;
   placeholder?: boolean;
   featured?: boolean;
+  imageFit?: "cover" | "contain";
 };
 
 export type Review = {
@@ -181,6 +182,7 @@ export const CATEGORIES: Category[] = [
     pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€" },
     season: "April – October",
     featured: true,
+    imageFit: "contain",
   },
   {
     id: "bike-125-b",

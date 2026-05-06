@@ -128,7 +128,7 @@ export default function BikeDetailPage({
                   src={activeImage}
                   alt={bike.model}
                   fill
-                  className="object-cover"
+                  className={bike.imageFit === "contain" ? "object-contain" : "object-cover"}
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
                 />
