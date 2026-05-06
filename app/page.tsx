@@ -3,7 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ReviewCarousel from "@/components/ReviewCarousel";
-import { CATEGORIES, REVIEWS, GALLERY_IMAGES, ADD_ONS, BRAND } from "@/lib/mockData";
+import { CATEGORIES, REVIEWS, GALLERY_IMAGES, BRAND } from "@/lib/mockData";
 
 const INCLUDED = [
   {
@@ -208,32 +208,6 @@ export default function HomePage() {
               ))}
             </div>
           </div>
-        </section>
-
-        {/* ─── ADD-ONS ─── */}
-        <section className="px-5 md:px-12 py-20 max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">Make it yours</p>
-            <h2 className="font-barlow font-black uppercase text-[clamp(2rem,6vw,4rem)] tracking-tight text-ink">
-              Add-Ons
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {ADD_ONS.map((addon) => (
-              <div key={addon.label} className="bg-sand px-6 py-7 flex flex-col">
-                <div className="flex items-baseline justify-between mb-3">
-                  <h3 className="font-barlow font-black uppercase text-ink text-xl tracking-wide leading-none">
-                    {addon.label}
-                  </h3>
-                  <span className="font-barlow font-bold text-red text-lg shrink-0">{addon.price}</span>
-                </div>
-                <p className="text-sm text-muted leading-relaxed">{addon.detail}</p>
-              </div>
-            ))}
-          </div>
-          <p className="text-center text-muted text-xs mt-6">
-            Mention any add-on in the booking notes — we&apos;ll add it to your rental.
-          </p>
         </section>
 
         {/* ─── HOW IT WORKS ─── */}

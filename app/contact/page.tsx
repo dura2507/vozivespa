@@ -49,7 +49,12 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="font-bold text-ink text-sm">WhatsApp</p>
+                  <p className="font-bold text-ink text-sm flex items-center gap-2">
+                    WhatsApp
+                    <span className="text-base leading-none" aria-label="German and English spoken">
+                      {BRAND.languages.join(" ")}
+                    </span>
+                  </p>
                   <p className="text-muted text-sm">{BRAND.phone}</p>
                   <p className="text-[#25D366] text-xs font-semibold mt-0.5 group-hover:underline">Chat now →</p>
                 </div>
@@ -65,7 +70,12 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="font-bold text-ink text-sm">Phone</p>
+                  <p className="font-bold text-ink text-sm flex items-center gap-2">
+                    Phone
+                    <span className="text-base leading-none" aria-label="German and English spoken">
+                      {BRAND.languages.join(" ")}
+                    </span>
+                  </p>
                   <p className="text-muted text-sm">{BRAND.phone}</p>
                 </div>
               </a>

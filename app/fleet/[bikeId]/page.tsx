@@ -88,11 +88,11 @@ export default function BikeDetailPage({
     { label: "Engine", value: bike.displacement },
     { label: "Power", value: bike.power },
     { label: "Top Speed", value: bike.maxSpeed },
-    { label: "Seats", value: String(bike.seats) },
     { label: "Tank", value: bike.tank },
-    { label: "Weight", value: bike.weight },
+    { label: "Consumption", value: bike.consumption },
+    { label: "Range", value: bike.range },
+    { label: "Seats", value: String(bike.seats) },
     { label: "Year", value: bike.year },
-    { label: "Licence", value: bike.licence },
   ];
 
   const tiers: { label: string; sub: string; price: string }[] = [
@@ -165,9 +165,15 @@ export default function BikeDetailPage({
               <h1 className="font-barlow font-black uppercase text-[clamp(2.5rem,7vw,4.5rem)] leading-[0.9] tracking-tight text-ink mb-5">
                 {bike.model}
               </h1>
-              <p className="text-muted text-base leading-relaxed mb-7">
+              <p className="text-muted text-base leading-relaxed mb-5">
                 {bike.longDescription}
               </p>
+
+              <div className="border-l-2 border-red pl-4 py-1 mb-7">
+                <p className="text-ink text-sm font-semibold italic">
+                  {bike.tagline}
+                </p>
+              </div>
 
               <div className="bg-ink text-white p-6 mb-6">
                 <div className="flex items-baseline gap-2 mb-1">
@@ -458,7 +464,7 @@ export default function BikeDetailPage({
                     <textarea
                       value={form.notes}
                       onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                      placeholder="E.g. need 2 helmets, in-ear navigation, premium helmet, delivery to hotel..."
+                      placeholder="E.g. need 2 helmets, special pickup time, anything else..."
                       rows={3}
                       className={`${inputClass} resize-none`}
                     />
@@ -534,6 +540,9 @@ export default function BikeDetailPage({
                 <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] tracking-tight">
                   Ask on WhatsApp
                 </h2>
+                <p className="text-white/70 text-xs mt-2">
+                  We speak <span className="text-base align-middle">{BRAND.languages.join(" ")}</span>
+                </p>
               </div>
               <a
                 href={`https://wa.me/${BRAND.phoneRaw}?text=${encodeURIComponent(

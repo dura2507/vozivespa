@@ -15,6 +15,7 @@ export type Category = {
   priceUnit: string;
   description: string;
   longDescription: string;
+  tagline: string;
   image: string;
   gallery: string[];
   licence: string;
@@ -24,7 +25,8 @@ export type Category = {
   power: string;
   seats: number;
   tank: string;
-  weight: string;
+  consumption: string;
+  range: string;
   year: string;
   pricing: PricingTiers;
   deposit: string;
@@ -56,115 +58,123 @@ export const CATEGORIES: Category[] = [
   {
     id: "scooter-50",
     name: "Scooter 50",
-    model: "Piaggio Liberty 50",
+    model: "Piaggio Liberty 50 iGet",
     tag: "BEGINNER",
     tagColor: "bg-red",
     price: "39€",
     priceUnit: "/day",
     description:
-      "Black Piaggio Liberty 50cc. Perfect for cruising the city — easy to handle, ideal for first-time riders.",
+      "Piaggio Liberty 50 iGet — sparsam, leicht zu fahren, ideal für die Stadt und Touristen.",
     longDescription:
-      "Black Piaggio Liberty 50cc. Perfect for cruising the city — easy to handle, ideal for first-time riders.",
+      "Piaggio Liberty 50 iGet (Modelljahr 2024) — sehr sparsam, leicht zu handhaben und perfekt für entspanntes Cruisen durch Zadar und an der Küste.",
+    tagline: "Sehr sparsam, ideal für Touristen / Stadt.",
     image: "/bikes/scooter-50.jpg",
     gallery: ["/bikes/scooter-50.jpg", "/bikes/scooter-50-b.jpg"],
     licence: "B or AM category",
     maxSpeed: "45 km/h",
     extraHour: "6€/h",
     displacement: "50cc",
-    power: "—",
+    power: "~3 PS",
     seats: 2,
-    tank: "—",
-    weight: "—",
-    year: "—",
-    pricing: { day: "39€", weekend: "—", week: "—", month: "—" },
+    tank: "6,0 L",
+    consumption: "~2,5 L / 100 km",
+    range: "200–240 km",
+    year: "2024",
+    pricing: { day: "39€", weekend: "95€", week: "210€", month: "690€" },
     deposit: "—",
     season: "April – October",
   },
   {
     id: "scooter-125",
     name: "Scooter 125",
-    model: "Scooter 125",
+    model: "Piaggio Liberty 125 iGet",
     tag: "CITY",
     tagColor: "bg-red",
     price: "55€",
     priceUnit: "/day",
     description:
-      "125cc scooter — same easy handling as the 50, more power for highways and longer day trips.",
+      "Piaggio Liberty 125 iGet — perfekter Allround-Roller für Stadt und Küste.",
     longDescription:
-      "125cc scooter — same easy handling as the 50, more power for highways and longer day trips.",
+      "Piaggio Liberty 125 iGet (Modelljahr 2024) — gleiches komfortables Handling wie der 50er, mehr Leistung für Tagestouren entlang der Küste.",
+    tagline: "Perfekter Allround-Roller (Stadt + Küste).",
     image: "/bikes/scooter-125.jpg",
     gallery: ["/bikes/scooter-125.jpg"],
     licence: "A1 category",
     maxSpeed: "110 km/h",
     extraHour: "9€/h",
     displacement: "125cc",
-    power: "—",
+    power: "~11 PS (8,1 kW)",
     seats: 2,
-    tank: "—",
-    weight: "—",
-    year: "—",
-    pricing: { day: "55€", weekend: "—", week: "—", month: "—" },
+    tank: "6,0 L",
+    consumption: "~2,5 L / 100 km",
+    range: "220–260 km",
+    year: "2024",
+    pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€" },
     deposit: "—",
     season: "April – October",
   },
   {
     id: "bike-125-a",
-    name: "Motobike 125",
-    model: "Motobike 125",
-    tag: "RIDE",
+    name: "Beta RR 125",
+    model: "Beta RR 125 LC",
+    tag: "SPORT",
     tagColor: "bg-red",
     price: "55€",
     priceUnit: "/day",
     description:
-      "Real motorbike feeling with 125cc. Great for confident riders looking to explore the coastal roads.",
+      "Beta RR 125 LC — sportlich und wendig, perfekt für aktive Fahrer.",
     longDescription:
-      "Real motorbike feeling with 125cc. Great for confident riders looking to explore the coastal roads.",
+      "Beta RR 125 LC (Modelljahr 2021) — Supermoto-Feeling mit 125cc. Leicht, wendig und optimal für sportliche Fahrer, die Kurven und Küstenstraßen lieben.",
+    tagline: "Sportlich, aber höherer Verbrauch durch Fahrweise.",
     image: "/bikes/bike-125.jpg",
     gallery: ["/bikes/bike-125.jpg"],
     licence: "A1 category",
     maxSpeed: "100 km/h",
     extraHour: "9€/h",
     displacement: "125cc",
-    power: "—",
+    power: "~15 PS",
     seats: 1,
-    tank: "—",
-    weight: "—",
-    year: "—",
-    pricing: { day: "55€", weekend: "—", week: "—", month: "—" },
+    tank: "7,5 L",
+    consumption: "~3,0–3,5 L / 100 km",
+    range: "180–230 km",
+    year: "2021",
+    pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€" },
     deposit: "—",
     season: "April – October",
     featured: true,
   },
   {
     id: "bike-125-b",
-    name: "Motobike 125",
-    model: "Motobike 125",
+    name: "KTM Duke 125",
+    model: "KTM Duke 125",
     tag: "RIDE",
     tagColor: "bg-red",
     price: "55€",
     priceUnit: "/day",
     description:
-      "Real motorbike feeling with 125cc. Great for confident riders looking to explore the coastal roads.",
+      "KTM Duke 125 — naked-bike Feeling mit großer Reichweite und sportlichem Charakter.",
     longDescription:
-      "Real motorbike feeling with 125cc. Great for confident riders looking to explore the coastal roads.",
+      "KTM Duke 125 (Modelljahr 2014) — echtes Naked-Bike-Feeling mit 125cc. Sehr gute Reichweite, ideal für längere Touren entlang der Küste und auf die Inseln.",
+    tagline: "Sehr gute Reichweite – wichtig für Vermietung!",
     image: "/bikes/bike-125-b.jpg",
     gallery: ["/bikes/bike-125-b.jpg"],
     licence: "A1 category",
     maxSpeed: "100 km/h",
     extraHour: "9€/h",
     displacement: "125cc",
-    power: "—",
+    power: "~15 PS",
     seats: 2,
-    tank: "—",
-    weight: "—",
-    year: "—",
-    pricing: { day: "55€", weekend: "—", week: "—", month: "—" },
+    tank: "11 L",
+    consumption: "~2,5–3,0 L / 100 km",
+    range: "300–400 km",
+    year: "2014",
+    pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€" },
     deposit: "—",
     season: "April – October",
   },
   {
     id: "bike-390",
-    name: "Motobike 390",
+    name: "KTM Duke 390",
     model: "KTM Duke 390",
     tag: "POWER",
     tagColor: "bg-red",
@@ -173,19 +183,21 @@ export const CATEGORIES: Category[] = [
     description:
       "KTM Duke 390 — A2-ready power for the coast. Light, agile and built for city, country and curves.",
     longDescription:
-      "Dein Bike. Deine Saison. Flexibel, unkompliziert und voller Fahrspaß. Leicht, wendig und perfekt für Stadt, Land und Kurven — ob du nur einen Tag oder den ganzen Monat willst.",
+      "KTM Duke 390 (Modelljahr 2014) — Premium-Bike mit A2-konformer Leistung. Leicht, wendig und perfekt für Stadt, Land und Kurven — ob du nur einen Tag oder den ganzen Monat willst.",
+    tagline: "Stark + attraktiv für Touristen (Premium Bike).",
     image: "/bikes/bike-390.jpg",
     gallery: ["/bikes/bike-390.jpg"],
     licence: "A2 category",
     maxSpeed: "140 km/h",
     extraHour: "10€/h",
     displacement: "390cc",
-    power: "—",
+    power: "~44 PS",
     seats: 2,
-    tank: "—",
-    weight: "—",
-    year: "—",
-    pricing: { day: "65€", weekend: "180€", week: "300€", month: "1000€" },
+    tank: "13,4 L",
+    consumption: "~3,5–4,0 L / 100 km",
+    range: "300–380 km",
+    year: "2014",
+    pricing: { day: "65€", weekend: "160€", week: "360€", month: "1150€" },
     deposit: "250€",
     season: "April – October",
   },
@@ -193,30 +205,6 @@ export const CATEGORIES: Category[] = [
 
 // Used for any bike not yet specified
 export { PLACEHOLDER_PRICING };
-
-export type AddOn = {
-  label: string;
-  price: string;
-  detail: string;
-};
-
-export const ADD_ONS: AddOn[] = [
-  {
-    label: "In-Ear Navigation",
-    price: "+10€",
-    detail: "Bluetooth in-ear set so you get turn-by-turn directions without taking your eyes off the road.",
-  },
-  {
-    label: "Premium Helmet",
-    price: "+15€",
-    detail: "Upgrade from the standard helmet to a premium open-face or full-face helmet with sun visor.",
-  },
-  {
-    label: "Secret Locations Map",
-    price: "+5€",
-    detail: "Curated map of hidden beaches, viewpoints and restaurants only locals know about.",
-  },
-];
 
 export const REVIEWS: Review[] = [
   {
@@ -358,6 +346,7 @@ export const BRAND = {
   hours: "09:00 — 19:00, Monday to Sunday",
   phone: "+49 176 34658003",
   phoneRaw: "4917634658003",
+  languages: ["🇩🇪", "🇬🇧"],
   email: "info@sickmotos.com",
   instagram: "sickmotos_bike_rental_zadar",
   instagramUrl: "https://instagram.com/sickmotos_bike_rental_zadar",
