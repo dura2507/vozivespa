@@ -74,7 +74,7 @@ export const CATEGORIES: Category[] = [
       "Sehr sparsam, leicht zu handhaben und perfekt für entspanntes Cruisen durch Zadar und an der Küste.",
     tagline: "Sehr sparsam, ideal für Touristen / Stadt.",
     image: "/bikes/scooter-50.jpg",
-    gallery: ["/bikes/scooter-50.jpg", "/bikes/scooter-50-b.jpg"],
+    gallery: ["/bikes/scooter-50.jpg", "/bikes/scooter-50-b.jpg", "/bikes/scooter-50-c.jpg"],
     licence: "B or AM category",
     licenceCode: "AM",
     maxSpeed: "45 km/h",
@@ -166,7 +166,7 @@ export const CATEGORIES: Category[] = [
       "Supermoto-Feeling mit 125cc. Leicht, wendig und optimal für sportliche Fahrer, die Kurven und Küstenstraßen lieben.",
     tagline: "Sportlich, aber höherer Verbrauch durch Fahrweise.",
     image: "/bikes/bike-125.jpg",
-    gallery: ["/bikes/bike-125.jpg"],
+    gallery: ["/bikes/bike-125.jpg", "/bikes/bike-125-c.jpg"],
     licence: "A1 category",
     licenceCode: "A1",
     maxSpeed: "100 km/h",
@@ -225,7 +225,7 @@ export const CATEGORIES: Category[] = [
       "Premium-Bike mit A2-konformer Leistung. Leicht, wendig und perfekt für Stadt, Land und Kurven — ob du nur einen Tag oder den ganzen Monat willst.",
     tagline: "Stark + attraktiv für Touristen (Premium Bike).",
     image: "/bikes/bike-390.jpg",
-    gallery: ["/bikes/bike-390.jpg"],
+    gallery: ["/bikes/bike-390.jpg", "/bikes/bike-390-b.jpg", "/bikes/bike-390-c.jpg"],
     licence: "A2 category",
     licenceCode: "A2",
     maxSpeed: "140 km/h",
@@ -285,12 +285,19 @@ export const REVIEWS: Review[] = [
 
 // Gallery — drop more action shots in public/gallery/ and add them here.
 export const GALLERY_IMAGES = [
+  "/gallery/mountain-ride.jpg",
+  "/bikes/bike-390-b.jpg",
+  "/gallery/tunnel.jpg",
+  "/bikes/bike-390-c.jpg",
+  "/gallery/runway.jpg",
+  "/bikes/bike-125-c.jpg",
+  "/gallery/bus-window.jpg",
+  "/bikes/scooter-50-c.jpg",
   "/bikes/bike-390.jpg",
   "/bikes/bike-125.jpg",
   "/bikes/bike-125-b.jpg",
   "/bikes/scooter-125.jpg",
   "/bikes/scooter-50.jpg",
-  "/bikes/scooter-50-b.jpg",
 ];
 
 export const FAQ_ITEMS = [
