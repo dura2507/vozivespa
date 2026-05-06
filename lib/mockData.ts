@@ -349,6 +349,11 @@ export const FAQ_ITEMS = [
     answer:
       "Every bike is handed over with a full tank. Please return it with a full tank as well. If you return the bike not fully fuelled, we charge the missing fuel plus a refuelling fee.",
   },
+  {
+    question: "How do I navigate without a phone holder?",
+    answer:
+      "Two practical options: ride with a passenger (Sozius) who handles directions, or use a Bluetooth in-ear navigation set for turn-by-turn audio without taking your eyes off the road. Either way, plan your route before pickup.",
+  },
 ];
 
 // Mock blocked date ranges for the booking calendar
