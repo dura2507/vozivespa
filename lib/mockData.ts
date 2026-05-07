@@ -75,10 +75,10 @@ export const CATEGORIES: Category[] = [
     price: "35€",
     priceUnit: "/day",
     description:
-      "Light on fuel, easy to handle — ideal for first-time riders and city use.",
+      "Light on fuel, easy to handle, perfect for the city.",
     longDescription:
       "Very fuel-efficient, easy to handle and perfect for relaxed cruising through Zadar and along the coast.",
-    tagline: "Fuel-friendly, ideal for tourists & city.",
+    tagline: "Fuel-friendly. Previous riding experience required.",
     image: "/bikes/scooter-50.jpg",
     gallery: ["/bikes/scooter-50.jpg", "/bikes/scooter-50-b.jpg", "/bikes/scooter-50-c.jpg"],
     licence: "B or AM category",
@@ -92,9 +92,9 @@ export const CATEGORIES: Category[] = [
     consumption: "~2,5 L / 100 km",
     range: "200–240 km",
     year: "2024",
-    pricing: { day: "35€", weekend: "—", week: "—", month: "—" },
+    pricing: { day: "35€", weekend: "85€", week: "190€", month: "620€" },
     season: "April – October",
-    experienceNote: "Driver should be experienced.",
+    experienceNote: "Previous riding experience required — no first-time riders.",
     variantNote:
       "Two variants: without topcase from 35€/day, with topcase 39€/day. Topcase variant photo and tier prices coming soon.",
   },
@@ -124,9 +124,9 @@ export const CATEGORIES: Category[] = [
     consumption: "~2,5 L / 100 km",
     range: "200–240 km",
     year: "2024",
-    pricing: { day: "39€", weekend: "—", week: "—", month: "—" },
+    pricing: { day: "39€", weekend: "95€", week: "210€", month: "690€" },
     season: "April – October",
-    experienceNote: "Driver should be experienced.",
+    experienceNote: "Previous riding experience required — no first-time riders.",
     placeholder: true,
   },
   {
@@ -291,13 +291,25 @@ export const REVIEWS: Review[] = [
 
 // Gallery — drop more action shots in public/gallery/ and add them here.
 export const GALLERY_IMAGES = [
+  "/gallery/duke-with-dog.jpg",
   "/gallery/bike-390-coast.jpg",
+  "/gallery/group-ride.jpg",
   "/gallery/mountain-ride.jpg",
+  "/gallery/duke-marina.jpg",
+  "/gallery/sunset-bikes.jpg",
   "/gallery/tunnel.jpg",
-  "/gallery/bike-390-bay.jpg",
+  "/gallery/cliff-pair.jpg",
+  "/gallery/liberty-sea.jpg",
+  "/gallery/duke-twilight.jpg",
   "/gallery/runway.jpg",
+  "/gallery/selfie-pov.jpg",
   "/gallery/beta-trail.jpg",
+  "/gallery/duke-rider.jpg",
   "/gallery/bus-window.jpg",
+  "/gallery/liberty-island.jpg",
+  "/gallery/bike-390-bay.jpg",
+  "/gallery/liberty-olive.jpg",
+  "/gallery/liberty-grass.jpg",
   "/gallery/piaggio-plitvice.jpg",
 ];
 
