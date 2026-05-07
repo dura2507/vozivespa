@@ -68,7 +68,6 @@ export const CATEGORIES: Category[] = [
     tagColor: "bg-red",
     price: "35€",
     priceUnit: "/day",
-    priceFrom: true,
     description:
       "Sparsam, leicht zu fahren, ideal für die Stadt und Touristen.",
     longDescription:
@@ -77,7 +76,7 @@ export const CATEGORIES: Category[] = [
     image: "/bikes/scooter-50.jpg",
     gallery: ["/bikes/scooter-50.jpg", "/bikes/scooter-50-b.jpg", "/bikes/scooter-50-c.jpg"],
     licence: "B or AM category",
-    licenceCode: "AM",
+    licenceCode: "B/AM",
     maxSpeed: "45 km/h",
     extraHour: "6€/h",
     displacement: "50cc",
@@ -109,7 +108,7 @@ export const CATEGORIES: Category[] = [
     image: "/bikes/scooter-50.jpg",
     gallery: ["/bikes/scooter-50.jpg"],
     licence: "B or AM category",
-    licenceCode: "AM",
+    licenceCode: "B/AM",
     maxSpeed: "45 km/h",
     extraHour: "6€/h",
     displacement: "50cc",
@@ -182,7 +181,6 @@ export const CATEGORIES: Category[] = [
     pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€" },
     season: "April – October",
     featured: true,
-    imageFit: "contain",
   },
   {
     id: "bike-125-b",
@@ -434,10 +432,9 @@ export const BRAND = {
     },
     {
       label: "English",
-      phone: "Coming soon",
-      phoneRaw: "",
+      phone: "+385 95 8195 453",
+      phoneRaw: "385958195453",
       languages: ["🇬🇧"],
-      placeholder: true,
     },
-  ] satisfies Contact[],
+  ] as Contact[],
 };

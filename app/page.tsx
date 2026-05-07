@@ -153,7 +153,7 @@ export default function HomePage() {
           <div id="fleet" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
             {CATEGORIES.map((cat) => (
               <Link href={`/fleet/${cat.id}`} key={cat.id} className="group block bg-sand">
-                <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[4/5]">
+                <div className="relative overflow-hidden aspect-square">
                   <Image
                     src={cat.image}
                     alt={cat.name}
@@ -171,18 +171,27 @@ export default function HomePage() {
                     </p>
                   </div>
                   <div
-                    className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 w-16 h-16 sm:w-[4.5rem] sm:h-[4.5rem] rounded-full bg-red text-white flex flex-col items-center justify-center shadow-xl ring-2 ring-white/30"
+                    className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4"
                     title={`Licence required: ${cat.licence}`}
                   >
-                    <span className="text-[8px] tracking-[0.15em] uppercase text-white/85 leading-none font-bold">
-                      Required
-                    </span>
-                    <span className="font-barlow font-black text-xl sm:text-2xl leading-none mt-1">
-                      {cat.licenceCode}
-                    </span>
-                    <span className="text-[8px] tracking-widest uppercase text-white/85 leading-none mt-0.5">
-                      Licence
-                    </span>
+                    <div className="relative w-[4.5rem] h-[4.5rem] sm:w-20 sm:h-20 rounded-full bg-ink shadow-xl flex flex-col items-center justify-center text-white">
+                      <span className="absolute inset-[3px] rounded-full ring-1 ring-white/15 pointer-events-none" />
+                      <span
+                        className={`font-barlow font-black leading-none ${
+                          cat.licenceCode.length > 2 ? "text-base sm:text-lg" : "text-2xl sm:text-3xl"
+                        }`}
+                      >
+                        {cat.licenceCode}
+                      </span>
+                      <div className="flex items-center gap-0.5 mt-1">
+                        <svg className="w-2.5 h-2.5 text-red" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-[7px] tracking-[0.15em] uppercase font-bold text-white/80">
+                          Licence
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="px-5 pt-5 pb-5 sm:px-6 sm:pt-7 sm:pb-7 text-center">
