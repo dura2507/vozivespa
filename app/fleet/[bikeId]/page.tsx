@@ -123,7 +123,7 @@ export default function BikeDetailPage({
           {/* Hero — image + title */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
             <div>
-              <div className="relative aspect-square bg-sand overflow-hidden">
+              <div className="relative aspect-[4/3] bg-sand overflow-hidden">
                 <Image
                   src={activeImage}
                   alt={bike.model}
@@ -136,22 +136,21 @@ export default function BikeDetailPage({
                   className="absolute bottom-4 left-4"
                   title={`Licence required: ${bike.licence}`}
                 >
-                  <div className="relative w-20 h-20 rounded-full bg-ink shadow-xl flex flex-col items-center justify-center text-white">
-                    <span className="absolute inset-[3px] rounded-full ring-1 ring-white/15 pointer-events-none" />
+                  <div className="relative w-24 h-24 rounded-full bg-ink shadow-2xl ring-[3px] ring-white/95 flex flex-col items-center justify-center text-white">
                     <span
                       className={`font-barlow font-black leading-none ${
-                        bike.licenceCode.length > 2 ? "text-lg" : "text-3xl"
+                        bike.licenceCode.length > 2 ? "text-2xl" : "text-4xl"
                       }`}
                     >
                       {bike.licenceCode}
                     </span>
-                    <div className="flex items-center gap-0.5 mt-1">
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-[8px] tracking-[0.15em] uppercase font-bold text-white">
+                        Required
+                      </span>
                       <svg className="w-3 h-3 text-red" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
-                      <span className="text-[8px] tracking-[0.15em] uppercase font-bold text-white/80">
-                        Licence
-                      </span>
                     </div>
                   </div>
                 </div>
