@@ -123,17 +123,19 @@ export default function BikeDetailPage({
           {/* Hero — image + title */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
             <div>
-              <div className="relative aspect-[4/3] bg-sand overflow-hidden">
-                <Image
-                  src={activeImage}
-                  alt={bike.model}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                />
+              <div className="relative">
+                <div className="relative aspect-[4/3] bg-sand overflow-hidden">
+                  <Image
+                    src={activeImage}
+                    alt={bike.model}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    priority
+                  />
+                </div>
                 <div
-                  className="absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2"
+                  className="absolute -bottom-5 -left-5 z-10 pointer-events-none"
                   title={`Licence required: ${bike.licence}`}
                 >
                   <Image
@@ -192,6 +194,18 @@ export default function BikeDetailPage({
                 <p className="text-white/60 text-xs tracking-wider uppercase">
                   Unlimited km · Insurance included · {BRAND.deposit} deposit
                 </p>
+
+                <div className="mt-5 pt-5 border-t border-white/10">
+                  <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">
+                    Required licence
+                  </p>
+                  <p className="text-white text-sm font-semibold leading-snug">
+                    {bike.licence}
+                  </p>
+                  <p className="text-white/50 text-xs leading-snug mt-1">
+                    Bring your valid licence to pickup — no licence, no ride.
+                  </p>
+                </div>
               </div>
 
               {(bike.variantNote || bike.experienceNote) && (

@@ -58,9 +58,9 @@ export default function Footer() {
                 </svg>
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] tracking-[0.15em] uppercase text-white/45 font-bold flex items-center gap-1.5">
-                  <span className="text-base leading-none">{contact.languages.join(" ")}</span>
-                  <span>WhatsApp / Phone</span>
+                <p className="text-[10px] tracking-[0.15em] uppercase font-bold flex items-center gap-1.5">
+                  <span className="text-base leading-none opacity-100">{contact.languages.join(" ")}</span>
+                  <span className="text-white/85">WhatsApp / Phone</span>
                 </p>
                 <p className="text-white text-sm font-semibold mt-0.5 truncate">{contact.phone}</p>
               </div>

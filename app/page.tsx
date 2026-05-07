@@ -153,25 +153,27 @@ export default function HomePage() {
           <div id="fleet" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
             {CATEGORIES.map((cat) => (
               <Link href={`/fleet/${cat.id}`} key={cat.id} className="group flex flex-col bg-sand">
-                <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[4/5]">
-                  <Image
-                    src={cat.image}
-                    alt={cat.name}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  />
-                  <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-red text-white px-3 py-1.5 sm:px-4 sm:py-2 shadow-lg">
-                    <p className="font-barlow font-black text-xl sm:text-2xl leading-none">
-                      {cat.priceFrom && (
-                        <span className="text-[10px] font-normal opacity-80 mr-1 align-middle">from</span>
-                      )}
-                      {cat.price}
-                      <span className="text-xs font-normal opacity-80 ml-0.5">{cat.priceUnit}</span>
-                    </p>
+                <div className="relative">
+                  <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[4/5]">
+                    <Image
+                      src={cat.image}
+                      alt={cat.name}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                    <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-red text-white px-3 py-1.5 sm:px-4 sm:py-2 shadow-lg">
+                      <p className="font-barlow font-black text-xl sm:text-2xl leading-none">
+                        {cat.priceFrom && (
+                          <span className="text-[10px] font-normal opacity-80 mr-1 align-middle">from</span>
+                        )}
+                        {cat.price}
+                        <span className="text-xs font-normal opacity-80 ml-0.5">{cat.priceUnit}</span>
+                      </p>
+                    </div>
                   </div>
                   <div
-                    className="absolute bottom-0 left-0"
+                    className="absolute -bottom-4 -left-4 z-10 pointer-events-none"
                     title={`Licence required: ${cat.licence}`}
                   >
                     <Image
