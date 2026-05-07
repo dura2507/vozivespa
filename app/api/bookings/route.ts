@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getServiceClient } from "@/lib/supabase";
+import { getServiceClient, type BookingRow } from "@/lib/supabase";
+import { sendOwnerBookingEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -106,12 +107,17 @@ export async function POST(request: Request) {
       date_to: to,
       total_price_cents: totalPriceCents,
     })
-    .select("id, status")
+    .select("*")
     .single();
   if (insertError || !booking) {
     console.error("[/api/bookings] insert error", insertError);
     return NextResponse.json({ error: "Could not save booking" }, { status: 500 });
   }
+
+  // 4. Owner notification — best effort, never blocks the response.
+  sendOwnerBookingEmail(booking as BookingRow).catch((err) =>
+    console.error("[/api/bookings] owner email failed", err),
+  );
 
   return NextResponse.json(
     { id: booking.id, status: booking.status },
