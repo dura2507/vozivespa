@@ -4,8 +4,6 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 export type BikeRow = {
   id: string;
-  name: string;
-  model: string;
   active: boolean;
   created_at: string;
 };
@@ -23,11 +21,9 @@ export type BookingRow = {
   date_to: string;
   total_price_cents: number | null;
   status: BookingStatus;
-  confirm_token: string;
-  decline_token: string;
+  secret_token: string;
   created_at: string;
   decided_at: string | null;
-  decline_reason: string | null;
 };
 
 export type BlockedDateRow = {
@@ -35,7 +31,7 @@ export type BlockedDateRow = {
   bike_id: string;
   date_from: string;
   date_to: string;
-  reason: "booking" | "manual" | "maintenance";
+  // Null → manual block by owner. Set → auto-block from confirmed booking.
   booking_id: string | null;
   created_at: string;
 };
