@@ -462,14 +462,13 @@ export default function BikeDetailPage({
                       week: "",
                       day: "text-center p-0.5",
                       day_button:
-                        "w-9 h-9 text-sm font-medium text-ink transition-colors hover:bg-red/10 cursor-pointer",
+                        "w-9 h-9 text-sm font-medium text-ink transition-colors hover:bg-red/10 cursor-pointer disabled:bg-ink/10 disabled:text-ink/30 disabled:cursor-not-allowed disabled:line-through disabled:hover:bg-ink/10",
                       selected: "bg-red text-white hover:bg-red",
                       range_start: "bg-red text-white",
                       range_end: "bg-red text-white",
                       range_middle: "bg-red/15 text-ink",
                       today: "font-bold text-red",
                       outside: "text-ink/20",
-                      disabled: "text-ink/20 cursor-not-allowed hover:bg-transparent line-through",
                       hidden: "invisible",
                     }}
                   />
