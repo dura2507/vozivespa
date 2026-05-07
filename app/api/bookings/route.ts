@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { sendOwnerBookingEmail } from "@/lib/email";
+import { sendOwnerBookingTelegram } from "@/lib/telegram";
 
 export const dynamic = "force-dynamic";
 
@@ -114,9 +114,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not save booking" }, { status: 500 });
   }
 
-  // 4. Owner notification — best effort, never blocks the response.
-  sendOwnerBookingEmail(booking as BookingRow).catch((err) =>
-    console.error("[/api/bookings] owner email failed", err),
+  // 4. Owner notification — Telegram, best effort, never blocks the response.
+  sendOwnerBookingTelegram(booking as BookingRow).catch((err) =>
+    console.error("[/api/bookings] owner telegram failed", err),
   );
 
   return NextResponse.json(
