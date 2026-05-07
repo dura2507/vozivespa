@@ -3,7 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ReviewCarousel from "@/components/ReviewCarousel";
-import { CATEGORIES, REVIEWS, GALLERY_IMAGES, BRAND } from "@/lib/mockData";
+import { CATEGORIES, REVIEWS, GALLERY_IMAGES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
 
 const INCLUDED = [
   {
@@ -171,26 +171,16 @@ export default function HomePage() {
                     </p>
                   </div>
                   <div
-                    className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4"
+                    className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3"
                     title={`Licence required: ${cat.licence}`}
                   >
-                    <div className="relative w-[4.5rem] h-[4.5rem] sm:w-20 sm:h-20 rounded-full bg-ink shadow-2xl ring-[3px] ring-white/95 flex flex-col items-center justify-center text-white">
-                      <span
-                        className={`font-barlow font-black leading-none ${
-                          cat.licenceCode.length > 2 ? "text-lg sm:text-xl" : "text-3xl sm:text-4xl"
-                        }`}
-                      >
-                        {cat.licenceCode}
-                      </span>
-                      <div className="flex items-center gap-1 mt-1">
-                        <span className="text-[7px] sm:text-[8px] tracking-[0.15em] uppercase font-bold text-white">
-                          Required
-                        </span>
-                        <svg className="w-2.5 h-2.5 text-red" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                    </div>
+                    <Image
+                      src={LICENCE_BADGE[cat.licenceCode]}
+                      alt={`${cat.licenceCode} licence required`}
+                      width={120}
+                      height={120}
+                      className="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-xl"
+                    />
                   </div>
                 </div>
                 <div className="px-5 pt-5 pb-5 sm:px-6 sm:pt-7 sm:pb-7 text-center">

@@ -11,7 +11,7 @@ import "react-day-picker/style.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppMockup from "@/components/WhatsAppMockup";
-import { CATEGORIES, BLOCKED_BY_ID, BRAND } from "@/lib/mockData";
+import { CATEGORIES, BLOCKED_BY_ID, BRAND, LICENCE_BADGE } from "@/lib/mockData";
 
 type FormData = {
   name: string;
@@ -133,26 +133,16 @@ export default function BikeDetailPage({
                   priority
                 />
                 <div
-                  className="absolute bottom-4 left-4"
+                  className="absolute bottom-3 left-3"
                   title={`Licence required: ${bike.licence}`}
                 >
-                  <div className="relative w-24 h-24 rounded-full bg-ink shadow-2xl ring-[3px] ring-white/95 flex flex-col items-center justify-center text-white">
-                    <span
-                      className={`font-barlow font-black leading-none ${
-                        bike.licenceCode.length > 2 ? "text-2xl" : "text-4xl"
-                      }`}
-                    >
-                      {bike.licenceCode}
-                    </span>
-                    <div className="flex items-center gap-1 mt-1">
-                      <span className="text-[8px] tracking-[0.15em] uppercase font-bold text-white">
-                        Required
-                      </span>
-                      <svg className="w-3 h-3 text-red" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  </div>
+                  <Image
+                    src={LICENCE_BADGE[bike.licenceCode]}
+                    alt={`${bike.licenceCode} licence required`}
+                    width={140}
+                    height={140}
+                    className="w-28 h-28 drop-shadow-xl"
+                  />
                 </div>
               </div>
               {bike.gallery.length > 1 && (
@@ -203,9 +193,13 @@ export default function BikeDetailPage({
                 </p>
 
                 <div className="mt-5 pt-5 border-t border-white/10 flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-red text-white font-barlow font-black text-xl flex items-center justify-center shrink-0 ring-2 ring-white/15">
-                    {bike.licenceCode}
-                  </div>
+                  <Image
+                    src={LICENCE_BADGE[bike.licenceCode]}
+                    alt={`${bike.licenceCode} licence required`}
+                    width={80}
+                    height={80}
+                    className="w-16 h-16 shrink-0"
+                  />
                   <div className="min-w-0">
                     <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">
                       Required licence

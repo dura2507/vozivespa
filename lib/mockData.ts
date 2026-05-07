@@ -52,6 +52,12 @@ export type BlockedRange = {
   to: Date;
 };
 
+export const LICENCE_BADGE: Record<string, string> = {
+  "A1": "/badges/licence-a1.png",
+  "A2": "/badges/licence-a2.png",
+  "AM/B": "/badges/licence-am-b.png",
+};
+
 const PLACEHOLDER_PRICING: PricingTiers = {
   day: "—",
   weekend: "—",
@@ -76,7 +82,7 @@ export const CATEGORIES: Category[] = [
     image: "/bikes/scooter-50.jpg",
     gallery: ["/bikes/scooter-50.jpg", "/bikes/scooter-50-b.jpg", "/bikes/scooter-50-c.jpg"],
     licence: "B or AM category",
-    licenceCode: "B/AM",
+    licenceCode: "AM/B",
     maxSpeed: "45 km/h",
     extraHour: "6€/h",
     displacement: "50cc",
@@ -108,7 +114,7 @@ export const CATEGORIES: Category[] = [
     image: "/bikes/scooter-50.jpg",
     gallery: ["/bikes/scooter-50.jpg"],
     licence: "B or AM category",
-    licenceCode: "B/AM",
+    licenceCode: "AM/B",
     maxSpeed: "45 km/h",
     extraHour: "6€/h",
     displacement: "50cc",
