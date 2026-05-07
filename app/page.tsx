@@ -171,15 +171,16 @@ export default function HomePage() {
                     </p>
                   </div>
                   <div
-                    className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3"
+                    className="absolute bottom-1 left-1 sm:bottom-1.5 sm:left-1.5"
                     title={`Licence required: ${cat.licence}`}
                   >
                     <Image
                       src={LICENCE_BADGE[cat.licenceCode]}
                       alt={`${cat.licenceCode} licence required`}
-                      width={120}
-                      height={120}
-                      className="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-xl"
+                      width={256}
+                      height={256}
+                      quality={100}
+                      className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl"
                     />
                   </div>
                 </div>

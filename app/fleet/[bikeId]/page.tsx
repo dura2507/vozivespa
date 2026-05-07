@@ -133,15 +133,16 @@ export default function BikeDetailPage({
                   priority
                 />
                 <div
-                  className="absolute bottom-3 left-3"
+                  className="absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2"
                   title={`Licence required: ${bike.licence}`}
                 >
                   <Image
                     src={LICENCE_BADGE[bike.licenceCode]}
                     alt={`${bike.licenceCode} licence required`}
-                    width={140}
-                    height={140}
-                    className="w-28 h-28 drop-shadow-xl"
+                    width={320}
+                    height={320}
+                    quality={100}
+                    className="w-32 h-32 sm:w-36 sm:h-36 drop-shadow-2xl"
                   />
                 </div>
               </div>
@@ -196,9 +197,10 @@ export default function BikeDetailPage({
                   <Image
                     src={LICENCE_BADGE[bike.licenceCode]}
                     alt={`${bike.licenceCode} licence required`}
-                    width={80}
-                    height={80}
-                    className="w-16 h-16 shrink-0"
+                    width={160}
+                    height={160}
+                    quality={100}
+                    className="w-20 h-20 shrink-0"
                   />
                   <div className="min-w-0">
                     <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">
