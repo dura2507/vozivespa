@@ -75,10 +75,10 @@ export const CATEGORIES: Category[] = [
     price: "35€",
     priceUnit: "/day",
     description:
-      "Sparsam, leicht zu fahren, ideal für die Stadt und Touristen.",
+      "Light on fuel, easy to handle — ideal for first-time riders and city use.",
     longDescription:
-      "Sehr sparsam, leicht zu handhaben und perfekt für entspanntes Cruisen durch Zadar und an der Küste.",
-    tagline: "Sehr sparsam, ideal für Touristen / Stadt.",
+      "Very fuel-efficient, easy to handle and perfect for relaxed cruising through Zadar and along the coast.",
+    tagline: "Fuel-friendly, ideal for tourists & city.",
     image: "/bikes/scooter-50.jpg",
     gallery: ["/bikes/scooter-50.jpg", "/bikes/scooter-50-b.jpg", "/bikes/scooter-50-c.jpg"],
     licence: "B or AM category",
@@ -107,10 +107,10 @@ export const CATEGORIES: Category[] = [
     price: "39€",
     priceUnit: "/day",
     description:
-      "Same Piaggio Liberty 50 with a topcase for extra storage. Photo and full pricing coming soon.",
+      "Piaggio Liberty 50 with topcase — extra storage.",
     longDescription:
-      "Gleiches Modell wie der Standard-50er, zusätzlich mit Topcase für mehr Stauraum. Bild und vollständige Daten folgen.",
-    tagline: "Mit Topcase für mehr Stauraum — Details folgen.",
+      "Same Liberty 50 as the standard, fitted with a topcase for extra storage on longer rides.",
+    tagline: "Topcase included — extra storage.",
     image: "/bikes/scooter-50.jpg",
     gallery: ["/bikes/scooter-50.jpg"],
     licence: "B or AM category",
@@ -138,10 +138,10 @@ export const CATEGORIES: Category[] = [
     price: "55€",
     priceUnit: "/day",
     description:
-      "Perfekter Allround-Roller für Stadt und Küste.",
+      "Perfect all-rounder for city and coastal rides.",
     longDescription:
-      "Gleiches komfortables Handling wie der 50er, mit mehr Leistung für Tagestouren entlang der Küste.",
-    tagline: "Perfekter Allround-Roller (Stadt + Küste).",
+      "Same easy handling as the 50, with more power for day trips along the coast.",
+    tagline: "All-rounder for city and coast.",
     image: "/bikes/scooter-125.jpg",
     gallery: ["/bikes/scooter-125.jpg"],
     licence: "A1 category",
@@ -167,10 +167,10 @@ export const CATEGORIES: Category[] = [
     price: "55€",
     priceUnit: "/day",
     description:
-      "Sportlich und wendig, perfekt für aktive Fahrer.",
+      "Sporty and agile, made for active riders.",
     longDescription:
-      "Supermoto-Feeling mit 125cc. Leicht, wendig und optimal für sportliche Fahrer, die Kurven und Küstenstraßen lieben.",
-    tagline: "Sportlich, aber höherer Verbrauch durch Fahrweise.",
+      "Supermoto feel with 125cc. Light, agile and ideal for spirited riders who love curves and coastal roads.",
+    tagline: "Sporty — higher fuel use due to riding style.",
     image: "/bikes/bike-125.jpg",
     gallery: ["/bikes/bike-125.jpg", "/bikes/bike-125-c.jpg"],
     licence: "A1 category",
@@ -197,10 +197,10 @@ export const CATEGORIES: Category[] = [
     price: "55€",
     priceUnit: "/day",
     description:
-      "Naked-Bike-Feeling mit großer Reichweite und sportlichem Charakter.",
+      "Naked-bike feel with great range and sporty character.",
     longDescription:
-      "Echtes Naked-Bike-Feeling mit 125cc. Sehr gute Reichweite, ideal für längere Touren entlang der Küste und auf die Inseln.",
-    tagline: "Sehr gute Reichweite – wichtig für Vermietung!",
+      "Real naked-bike character at 125cc. Excellent range — perfect for longer tours along the coast and to the islands.",
+    tagline: "Great range — perfect for longer trips.",
     image: "/bikes/bike-125-b.jpg",
     gallery: ["/bikes/bike-125-b.jpg"],
     licence: "A1 category",
@@ -226,10 +226,10 @@ export const CATEGORIES: Category[] = [
     price: "65€",
     priceUnit: "/day",
     description:
-      "A2-ready power for the coast. Light, agile and built for city, country and curves.",
+      "A2-ready power for the coast. Light, agile, built for city, country and curves.",
     longDescription:
-      "Premium-Bike mit A2-konformer Leistung. Leicht, wendig und perfekt für Stadt, Land und Kurven — ob du nur einen Tag oder den ganzen Monat willst.",
-    tagline: "Stark + attraktiv für Touristen (Premium Bike).",
+      "Premium A2-compliant bike. Light, agile and perfect for city, country and curves — whether you want it for a day or the full month.",
+    tagline: "Strong & premium — top pick for confident riders.",
     image: "/bikes/bike-390.jpg",
     gallery: ["/bikes/bike-390.jpg", "/bikes/bike-390-b.jpg", "/bikes/bike-390-c.jpg"],
     licence: "A2 category",
@@ -291,19 +291,14 @@ export const REVIEWS: Review[] = [
 
 // Gallery — drop more action shots in public/gallery/ and add them here.
 export const GALLERY_IMAGES = [
+  "/gallery/bike-390-coast.jpg",
   "/gallery/mountain-ride.jpg",
-  "/bikes/bike-390-b.jpg",
   "/gallery/tunnel.jpg",
-  "/bikes/bike-390-c.jpg",
+  "/gallery/bike-390-bay.jpg",
   "/gallery/runway.jpg",
-  "/bikes/bike-125-c.jpg",
+  "/gallery/beta-trail.jpg",
   "/gallery/bus-window.jpg",
-  "/bikes/scooter-50-c.jpg",
-  "/bikes/bike-390.jpg",
-  "/bikes/bike-125.jpg",
-  "/bikes/bike-125-b.jpg",
-  "/bikes/scooter-125.jpg",
-  "/bikes/scooter-50.jpg",
+  "/gallery/piaggio-plitvice.jpg",
 ];
 
 export const FAQ_ITEMS = [
