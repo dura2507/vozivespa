@@ -197,10 +197,10 @@ export default function BikeDetailPage({
                   <Image
                     src={LICENCE_BADGE[bike.licenceCode]}
                     alt={`${bike.licenceCode} licence required`}
-                    width={160}
-                    height={160}
+                    width={320}
+                    height={320}
                     quality={100}
-                    className="w-20 h-20 shrink-0"
+                    className="w-32 h-32 sm:w-36 sm:h-36 shrink-0"
                   />
                   <div className="min-w-0">
                     <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">

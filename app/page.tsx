@@ -171,7 +171,7 @@ export default function HomePage() {
                     </p>
                   </div>
                   <div
-                    className="absolute bottom-1 left-1 sm:bottom-1.5 sm:left-1.5"
+                    className="absolute bottom-0 left-0"
                     title={`Licence required: ${cat.licence}`}
                   >
                     <Image
