@@ -446,6 +446,11 @@ export default function BikeDetailPage({
                     disabled={[{ before: new Date() }, ...blocked]}
                     excludeDisabled
                     min={1}
+                    modifiers={{ booked: blocked }}
+                    modifiersClassNames={{
+                      booked:
+                        "[&_button]:!bg-ink/10 [&_button]:!text-ink/40 [&_button]:!line-through",
+                    }}
                     classNames={{
                       root: "font-sans",
                       months: "flex flex-col sm:flex-row gap-6",
@@ -462,7 +467,7 @@ export default function BikeDetailPage({
                       week: "",
                       day: "text-center p-0.5",
                       day_button:
-                        "w-9 h-9 text-sm font-medium text-ink transition-colors hover:bg-red/10 cursor-pointer disabled:bg-ink/10 disabled:text-ink/30 disabled:cursor-not-allowed disabled:line-through disabled:hover:bg-ink/10",
+                        "w-9 h-9 text-sm font-medium text-ink transition-colors hover:bg-red/10 cursor-pointer disabled:text-ink/20 disabled:cursor-not-allowed disabled:hover:bg-transparent",
                       selected: "bg-red text-white hover:bg-red",
                       range_start: "bg-red text-white",
                       range_end: "bg-red text-white",
