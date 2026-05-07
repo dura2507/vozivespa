@@ -208,38 +208,24 @@ export default function BikeDetailPage({
                 </div>
               </div>
 
-              {(bike.variantNote || bike.experienceNote) && (
-                <div className="bg-sand px-4 py-3 mb-6 border-l-2 border-ink/30 text-xs space-y-1.5">
-                  {bike.variantNote && (
-                    <p className="text-ink leading-relaxed">
-                      <span className="font-bold uppercase tracking-wider text-[10px] mr-2">Note</span>
-                      {bike.variantNote}
-                    </p>
-                  )}
-                  {bike.experienceNote && (
-                    <p className="text-ink leading-relaxed">
-                      <span className="font-bold uppercase tracking-wider text-[10px] mr-2">Heads up</span>
-                      {bike.experienceNote}
-                    </p>
-                  )}
+              {bike.experienceNote && (
+                <div className="bg-sand px-4 py-3 mb-6 border-l-2 border-red text-xs">
+                  <p className="text-ink leading-relaxed">
+                    <span className="font-bold uppercase tracking-wider text-[10px] mr-2">Heads up</span>
+                    {bike.experienceNote}
+                  </p>
                 </div>
               )}
 
-              {bike.placeholder ? (
-                <div className="bg-ink/5 border border-ink/15 px-5 py-4 text-sm text-ink/70">
-                  This variant is being added soon. Photo and full pricing tiers coming. Contact us on WhatsApp for availability.
-                </div>
-              ) : (
-                <button
-                  onClick={scrollToCalendar}
-                  className="inline-flex items-center justify-center gap-2 bg-red text-white font-bold text-sm tracking-widest uppercase px-8 py-5 hover:bg-red-dark transition-colors"
-                >
-                  Check Availability
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              )}
+              <button
+                onClick={scrollToCalendar}
+                className="inline-flex items-center justify-center gap-2 bg-red text-white font-bold text-sm tracking-widest uppercase px-8 py-5 hover:bg-red-dark transition-colors"
+              >
+                Check Availability
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -355,7 +341,6 @@ export default function BikeDetailPage({
           </section>
 
           {/* Booking flow — calendar + form + success */}
-          {!bike.placeholder && (
           <section ref={calendarRef} className="mb-16 scroll-mt-28">
             {bookingStep !== "done" && (
               <>
@@ -614,7 +599,6 @@ export default function BikeDetailPage({
               </div>
             )}
           </section>
-          )}
 
           {/* Bottom WhatsApp CTA — only when not in done state */}
           {bookingStep !== "done" && (

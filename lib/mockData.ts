@@ -95,8 +95,6 @@ export const CATEGORIES: Category[] = [
     pricing: { day: "35€", weekend: "85€", week: "190€", month: "620€" },
     season: "April – October",
     experienceNote: "Previous riding experience required — no first-time riders.",
-    variantNote:
-      "Two variants: without topcase from 35€/day, with topcase 39€/day. Topcase variant photo and tier prices coming soon.",
   },
   {
     id: "scooter-50-topcase",
@@ -127,7 +125,6 @@ export const CATEGORIES: Category[] = [
     pricing: { day: "39€", weekend: "95€", week: "210€", month: "690€" },
     season: "April – October",
     experienceNote: "Previous riding experience required — no first-time riders.",
-    placeholder: true,
   },
   {
     id: "scooter-125",
