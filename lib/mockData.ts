@@ -344,7 +344,7 @@ export const FAQ_ITEMS = [
   {
     question: "What happens if the bike is damaged?",
     answer:
-      "The deposit covers initial repair costs. The bike is inspected and repaired by a brand dealership and the renter pays the full repair costs per the workshop invoice. If repairs exceed the deposit, the renter pays the difference. A copy of the invoice is provided.",
+      "The deposit covers initial repair costs. We take the bike to a local mechanic for assessment and repair, and the renter pays the full repair costs per the mechanic's invoice. If repairs exceed the deposit, the renter pays the difference. A copy of the invoice is always provided for transparency.",
   },
   {
     question: "What if I lose the key?",

@@ -374,6 +374,8 @@ export default function BikeDetailPage({
                     onSelect={setRange}
                     numberOfMonths={isMobile ? 1 : 2}
                     disabled={[{ before: new Date() }, ...blocked]}
+                    excludeDisabled
+                    min={1}
                     classNames={{
                       root: "font-sans",
                       months: "flex flex-col sm:flex-row gap-6",
