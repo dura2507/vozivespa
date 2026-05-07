@@ -142,7 +142,7 @@ export default function HomePage() {
       <main className="pb-20 md:pb-0">
 
         {/* ─── RIDES ─── */}
-        <section className="px-5 md:px-12 pt-20 pb-16 max-w-7xl mx-auto">
+        <section id="fleet" className="px-5 md:px-12 pt-20 pb-16 max-w-7xl mx-auto scroll-mt-28">
           <div className="text-center mb-12">
             <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">Choose your ride</p>
             <h2 className="font-barlow font-black uppercase text-[clamp(2.5rem,7vw,5rem)] leading-none tracking-tight text-ink">
@@ -150,7 +150,7 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <div id="fleet" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
             {CATEGORIES.map((cat) => (
               <Link href={`/fleet/${cat.id}`} key={cat.id} className="group flex flex-col bg-sand">
                 <div className="relative">

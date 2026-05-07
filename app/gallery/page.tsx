@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,28 +19,20 @@ export default function GalleryPage() {
           </h1>
         </div>
 
-        {/* Masonry grid */}
+        {/* Masonry — show every image in full */}
         <div className="px-5 md:px-12 max-w-7xl mx-auto">
-          <div className="columns-2 md:columns-3 gap-3 space-y-3">
-            {GALLERY_IMAGES.map((src, i) => {
-              const tall = i % 3 === 0;
-              return (
-                <div
-                  key={i}
-                  className="relative overflow-hidden group break-inside-avoid"
-                  style={{ height: tall ? "22rem" : "15rem" }}
-                >
-                  <Image
-                    src={src}
-                    alt={`Gallery ${i + 1}`}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                </div>
-              );
-            })}
+          <div className="columns-2 md:columns-3 gap-3 [&>div]:mb-3">
+            {GALLERY_IMAGES.map((src, i) => (
+              <div key={i} className="break-inside-avoid overflow-hidden group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={src}
+                  alt={`Gallery ${i + 1}`}
+                  loading="lazy"
+                  className="w-full h-auto block group-hover:scale-[1.02] transition-transform duration-700"
+                />
+              </div>
+            ))}
           </div>
         </div>
 
