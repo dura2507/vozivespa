@@ -8,6 +8,10 @@ function getResend() {
   return new Resend(key);
 }
 
+function fromAddress(): string {
+  return process.env.RESEND_FROM?.trim() || "onboarding@resend.dev";
+}
+
 function fmtDate(iso: string): string {
   const [y, m, d] = iso.split("-");
   return `${d}.${m}.${y}`;
@@ -28,105 +32,218 @@ function escape(s: string | null | undefined): string {
     .replaceAll('"', "&quot;");
 }
 
-/**
- * Send the owner the new-booking email with confirm / decline buttons.
- * Best-effort: errors are logged, never thrown — a failed email must not
- * break the booking-create transaction.
- */
-export async function sendOwnerBookingEmail(booking: BookingRow): Promise<void> {
-  const resend = getResend();
-  const ownerEmail = process.env.OWNER_EMAIL?.trim();
-  const fromAddress = process.env.RESEND_FROM?.trim() || "onboarding@resend.dev";
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
-
-  if (!resend) {
-    console.warn("[email] RESEND_API_KEY not set — skipping owner notification");
-    return;
-  }
-  if (!ownerEmail) {
-    console.warn("[email] OWNER_EMAIL not set — skipping owner notification");
-    return;
-  }
-
+function bikeNameFor(booking: BookingRow): string {
   const bike = CATEGORIES.find((c) => c.id === booking.bike_id);
-  const bikeName = bike?.model ?? booking.bike_id;
-  const nights = nightsBetween(booking.date_from, booking.date_to);
-  const total = booking.total_price_cents
+  return bike?.model ?? booking.bike_id;
+}
+
+function totalEur(booking: BookingRow): string {
+  return booking.total_price_cents
     ? `${(booking.total_price_cents / 100).toFixed(0)}€`
     : "—";
-  const tokenPath = encodeURIComponent(booking.secret_token);
-  const confirmUrl = `${siteUrl}/booking/${tokenPath}/confirm`;
-  const declineUrl = `${siteUrl}/booking/${tokenPath}/decline`;
-  const waPrefill = encodeURIComponent(
-    `Hi ${booking.customer_name}, this is ${BRAND.name}. Confirming your ${bikeName} from ${fmtDate(
-      booking.date_from,
-    )} to ${fmtDate(booking.date_to)}. Total ${total}. See you in Zadar!`,
-  );
-  const waUrl = `https://wa.me/${booking.customer_phone.replace(/[^\d]/g, "")}?text=${waPrefill}`;
+}
 
-  const subject = `New booking — ${bikeName} ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`;
+function ownerWaLink(): string {
+  return `https://wa.me/${BRAND.contacts[0].phoneRaw}`;
+}
 
-  const html = `<!doctype html>
+// ---------- Shared HTML layout ----------------------------------------------
+
+function htmlLayout({
+  preheader,
+  headline,
+  accent,
+  bodyHtml,
+}: {
+  preheader: string;
+  headline: string;
+  accent: "red" | "green" | "ink";
+  bodyHtml: string;
+}): string {
+  const accentColor =
+    accent === "green" ? "#25D366" : accent === "red" ? "#B61F36" : "#1a1a1a";
+  return `<!doctype html>
 <html><body style="margin:0;padding:0;background:#f6f5f1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;">
+  <span style="display:none!important;visibility:hidden;opacity:0;color:transparent;height:0;width:0;">${escape(preheader)}</span>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f5f1;padding:32px 16px;">
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:4px;overflow:hidden;">
         <tr><td style="background:#1a1a1a;padding:24px 32px;color:#fff;">
-          <p style="margin:0;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:#ffffff80;">${BRAND.name}</p>
-          <h1 style="margin:8px 0 0;font-size:22px;font-weight:800;letter-spacing:-.01em;">New booking request</h1>
+          <p style="margin:0;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:#ffffff80;">${BRAND.name} · Rent a Moto · Zadar</p>
+          <h1 style="margin:8px 0 0;font-size:24px;font-weight:800;letter-spacing:-.01em;color:${accentColor};">${escape(headline)}</h1>
         </td></tr>
         <tr><td style="padding:28px 32px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;">
-            <tr><td style="padding:6px 0;color:#6b6b6b;width:130px;">Bike</td><td style="padding:6px 0;font-weight:600;">${escape(bikeName)}</td></tr>
-            <tr><td style="padding:6px 0;color:#6b6b6b;">Dates</td><td style="padding:6px 0;font-weight:600;">${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)} (${nights} ${nights === 1 ? "day" : "days"})</td></tr>
-            <tr><td style="padding:6px 0;color:#6b6b6b;">Total</td><td style="padding:6px 0;font-weight:600;color:#B61F36;">${total}</td></tr>
-            <tr><td style="padding:6px 0;color:#6b6b6b;">Name</td><td style="padding:6px 0;font-weight:600;">${escape(booking.customer_name)}</td></tr>
-            <tr><td style="padding:6px 0;color:#6b6b6b;">Email</td><td style="padding:6px 0;"><a href="mailto:${escape(booking.customer_email)}" style="color:#1a1a1a;">${escape(booking.customer_email)}</a></td></tr>
-            <tr><td style="padding:6px 0;color:#6b6b6b;">Phone</td><td style="padding:6px 0;"><a href="${waUrl}" style="color:#25D366;font-weight:600;">${escape(booking.customer_phone)} · WhatsApp →</a></td></tr>
-            ${booking.notes ? `<tr><td style="padding:6px 0;color:#6b6b6b;vertical-align:top;">Notes</td><td style="padding:6px 0;white-space:pre-wrap;">${escape(booking.notes)}</td></tr>` : ""}
-          </table>
-
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;">
-            <tr>
-              <td style="padding-right:8px;">
-                <a href="${confirmUrl}" style="display:block;background:#B61F36;color:#ffffff;text-decoration:none;text-align:center;padding:16px 24px;font-weight:700;font-size:13px;letter-spacing:.15em;text-transform:uppercase;">✓ Confirm booking</a>
-              </td>
-              <td style="padding-left:8px;">
-                <a href="${declineUrl}" style="display:block;background:#1a1a1a;color:#ffffff;text-decoration:none;text-align:center;padding:16px 24px;font-weight:700;font-size:13px;letter-spacing:.15em;text-transform:uppercase;">✗ Decline</a>
-              </td>
-            </tr>
-          </table>
-
-          <p style="margin:24px 0 0;font-size:12px;color:#6b6b6b;line-height:1.6;">Confirming locks the dates on the website automatically. You can also reach out via WhatsApp first using the link above.</p>
+          ${bodyHtml}
+        </td></tr>
+        <tr><td style="background:#f6f5f1;padding:18px 32px;border-top:1px solid #e6e4dd;">
+          <p style="margin:0;font-size:11px;color:#6b6b6b;line-height:1.6;">
+            ${BRAND.legal} · OIB ${BRAND.oib} · ${escape(BRAND.address)}<br/>
+            <a href="${ownerWaLink()}" style="color:#25D366;text-decoration:none;font-weight:600;">WhatsApp ${escape(BRAND.contacts[0].phone)}</a> · <a href="mailto:${BRAND.email}" style="color:#1a1a1a;text-decoration:none;">${BRAND.email}</a>
+          </p>
         </td></tr>
       </table>
     </td></tr>
   </table>
 </body></html>`;
+}
 
-  const text = `New booking request
+function bookingSummaryHtml(booking: BookingRow): string {
+  const bikeName = bikeNameFor(booking);
+  const nights = nightsBetween(booking.date_from, booking.date_to);
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
+    <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Bike</td><td style="padding:4px 0;font-weight:600;">${escape(bikeName)}</td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;">Dates</td><td style="padding:4px 0;font-weight:600;">${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)} (${nights} ${nights === 1 ? "day" : "days"})</td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;">Total</td><td style="padding:4px 0;font-weight:600;color:#B61F36;">${totalEur(booking)}</td></tr>
+  </table>`;
+}
+
+// ---------- Customer: booking received --------------------------------------
+
+export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Promise<void> {
+  const resend = getResend();
+  if (!resend) {
+    console.warn("[email] RESEND_API_KEY not set — skipping customer received email");
+    return;
+  }
+
+  const bikeName = bikeNameFor(booking);
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escape(booking.customer_name)},</p>
+    <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">thanks for your booking request. We've forwarded it to the owner — you'll hear back within a few hours via WhatsApp or email with confirmation.</p>
+    ${bookingSummaryHtml(booking)}
+    <p style="margin:24px 0 8px;font-size:14px;color:#6b6b6b;line-height:1.6;">In the meantime, anything urgent?</p>
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;"><a href="${ownerWaLink()}" style="color:#25D366;font-weight:600;text-decoration:none;">💬 WhatsApp us at ${escape(BRAND.contacts[0].phone)}</a></p>
+    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">See you in Zadar 🛵</p>
+  `;
+
+  const html = htmlLayout({
+    preheader: `We got your booking request for the ${bikeName}. Owner confirms shortly.`,
+    headline: "Got your request",
+    accent: "ink",
+    bodyHtml,
+  });
+
+  const text = `Hi ${booking.customer_name},
+
+Thanks for your booking request. We've forwarded it to the owner — you'll hear back within a few hours.
 
 Bike: ${bikeName}
-Dates: ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)} (${nights} ${nights === 1 ? "day" : "days"})
-Total: ${total}
-Name: ${booking.customer_name}
-Email: ${booking.customer_email}
-Phone: ${booking.customer_phone}
-${booking.notes ? `Notes: ${booking.notes}\n` : ""}
-Confirm: ${confirmUrl}
-Decline: ${declineUrl}
-WhatsApp customer: ${waUrl}`;
+Dates: ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}
+Total: ${totalEur(booking)}
+
+Anything urgent? WhatsApp us: ${ownerWaLink()}
+
+See you in Zadar.
+${BRAND.name}`;
 
   try {
     await resend.emails.send({
-      from: fromAddress,
-      to: ownerEmail,
-      subject,
+      from: fromAddress(),
+      to: booking.customer_email,
+      subject: `We got your booking — ${bikeName} ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`,
       html,
       text,
-      replyTo: booking.customer_email,
+      replyTo: BRAND.email,
     });
   } catch (err) {
-    console.error("[email] sendOwnerBookingEmail failed", err);
+    console.error("[email] sendCustomerBookingReceivedEmail failed", err);
+  }
+}
+
+// ---------- Customer: booking decided (confirmed / declined) ----------------
+
+export async function sendCustomerBookingDecidedEmail(
+  booking: BookingRow,
+  decision: "confirmed" | "declined",
+): Promise<void> {
+  const resend = getResend();
+  if (!resend) {
+    console.warn("[email] RESEND_API_KEY not set — skipping customer decided email");
+    return;
+  }
+
+  const bikeName = bikeNameFor(booking);
+  const isConfirmed = decision === "confirmed";
+
+  const headline = isConfirmed ? "✓ Booking confirmed" : "Update on your booking";
+  const accent = isConfirmed ? "green" : "ink";
+
+  const bodyHtml = isConfirmed
+    ? `
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escape(booking.customer_name)},</p>
+      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">your ${escape(bikeName)} is locked in. See you in Zadar.</p>
+      ${bookingSummaryHtml(booking)}
+      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">Pickup</h3>
+      <p style="margin:0 0 4px;font-size:14px;line-height:1.6;font-weight:600;">${escape(BRAND.address)}</p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#6b6b6b;">Open ${escape(BRAND.hours)}</p>
+      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">Bring with you</h3>
+      <ul style="margin:0 0 16px;padding-left:18px;font-size:14px;line-height:1.7;">
+        <li>Valid motorcycle licence (we can't hand over without it)</li>
+        <li>${escape(BRAND.deposit)} deposit (cash on arrival, refunded after drop-off if no damage)</li>
+        <li>Bike comes with a full tank — please return it full</li>
+      </ul>
+      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">Pickup time?</h3>
+      <p style="margin:0 0 18px;font-size:14px;line-height:1.6;">Drop us a quick WhatsApp so we can pin down a time:</p>
+      <p style="margin:0 0 16px;"><a href="${ownerWaLink()}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;padding:14px 24px;font-weight:700;font-size:13px;letter-spacing:.15em;text-transform:uppercase;">💬 WhatsApp ${escape(BRAND.contacts[0].phone)}</a></p>
+    `
+    : `
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escape(booking.customer_name)},</p>
+      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">unfortunately we can't accommodate the ${escape(bikeName)} for these dates. Sorry about that.</p>
+      ${bookingSummaryHtml(booking)}
+      <p style="margin:24px 0 16px;font-size:14px;line-height:1.6;">Want to try other dates or another bike? Drop us a line — we'll do our best to find something that works.</p>
+      <p style="margin:0 0 16px;"><a href="${ownerWaLink()}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;padding:14px 24px;font-weight:700;font-size:13px;letter-spacing:.15em;text-transform:uppercase;">💬 WhatsApp ${escape(BRAND.contacts[0].phone)}</a></p>
+    `;
+
+  const html = htmlLayout({
+    preheader: isConfirmed
+      ? `Your ${bikeName} is confirmed for ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}.`
+      : `Update on your ${bikeName} booking — these dates didn't work out.`,
+    headline,
+    accent,
+    bodyHtml,
+  });
+
+  const text = isConfirmed
+    ? `Hi ${booking.customer_name},
+
+Your ${bikeName} is locked in.
+
+Dates: ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}
+Total: ${totalEur(booking)}
+
+Pickup: ${BRAND.address}
+Open: ${BRAND.hours}
+
+Bring:
+- Valid motorcycle licence (no licence, no ride)
+- ${BRAND.deposit} deposit cash, refunded after drop-off
+- Full tank in / full tank out
+
+Pin down a pickup time on WhatsApp: ${ownerWaLink()}
+
+See you in Zadar.
+${BRAND.name}`
+    : `Hi ${booking.customer_name},
+
+Unfortunately we can't accommodate the ${bikeName} for ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}.
+
+Want to try other dates or another bike? WhatsApp us: ${ownerWaLink()}
+
+${BRAND.name}`;
+
+  try {
+    await resend.emails.send({
+      from: fromAddress(),
+      to: booking.customer_email,
+      subject: isConfirmed
+        ? `✓ Confirmed — ${bikeName} ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`
+        : `Update on your booking — ${bikeName}`,
+      html,
+      text,
+      replyTo: BRAND.email,
+    });
+  } catch (err) {
+    console.error("[email] sendCustomerBookingDecidedEmail failed", err);
   }
 }

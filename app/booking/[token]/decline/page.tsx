@@ -1,4 +1,5 @@
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
+import { sendCustomerBookingDecidedEmail } from "@/lib/email";
 import { DecisionView } from "@/app/booking/_components/decision-view";
 
 export const dynamic = "force-dynamic";
@@ -64,6 +65,11 @@ export default async function DeclineBookingPage({
       />
     );
   }
+
+  // Notify customer — best effort, never block the page render.
+  sendCustomerBookingDecidedEmail(updated, "declined").catch((err) =>
+    console.error("[booking/decline] customer email failed", err),
+  );
 
   return <DecisionView tone="declined" booking={updated} />;
 }
