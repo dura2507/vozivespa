@@ -11,7 +11,7 @@ import "react-day-picker/style.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppMockup from "@/components/WhatsAppMockup";
-import { CATEGORIES, BLOCKED_BY_ID, BRAND, LICENCE_BADGE } from "@/lib/mockData";
+import { CATEGORIES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
 
 type FormData = {
   name: string;
@@ -20,7 +20,17 @@ type FormData = {
   notes: string;
 };
 
-type BookingStep = "dates" | "form" | "done";
+type BookingStep = "dates" | "form" | "submitting" | "done";
+
+type BlockedRange = { from: Date; to: Date };
+
+function toIsoDate(d: Date): string {
+  // Local-time YYYY-MM-DD — DayPicker gives us Date objects in local TZ.
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
 
 export default function BikeDetailPage({
   params,
@@ -28,13 +38,14 @@ export default function BikeDetailPage({
   params: Promise<{ bikeId: string }>;
 }) {
   const { bikeId } = use(params);
-  const bike = CATEGORIES.find((c) => c.id === bikeId);
-  if (!bike) notFound();
+  const bikeOrUndef = CATEGORIES.find((c) => c.id === bikeId);
+  if (!bikeOrUndef) notFound();
+  const bike = bikeOrUndef;
 
-  const blocked = BLOCKED_BY_ID[bike.id] ?? [];
   const [activeImage, setActiveImage] = useState(bike.image);
   const [range, setRange] = useState<DateRange | undefined>();
   const [bookingStep, setBookingStep] = useState<BookingStep>("dates");
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>({
     name: "",
     email: "",
@@ -53,6 +64,27 @@ export default function BikeDetailPage({
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  // Live availability from Supabase via /api/availability
+  const [blocked, setBlocked] = useState<BlockedRange[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/availability?bikeId=${encodeURIComponent(bike.id)}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r)))
+      .then((json: { blocked: { from: string; to: string }[] }) => {
+        if (cancelled) return;
+        setBlocked(
+          json.blocked.map((b) => ({
+            from: new Date(`${b.from}T00:00:00`),
+            to: new Date(`${b.to}T00:00:00`),
+          })),
+        );
+      })
+      .catch((err) => console.error("Failed to load availability", err));
+    return () => {
+      cancelled = true;
+    };
+  }, [bike.id]);
+
   const nights =
     range?.from && range?.to ? differenceInCalendarDays(range.to, range.from) : 0;
   const pricePerDay = parseInt(bike.pricing.day, 10) || 0;
@@ -70,18 +102,56 @@ export default function BikeDetailPage({
     }, 50);
   }
 
-  function handleFormSubmit(e: React.FormEvent) {
+  async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setBookingStep("done");
-    setTimeout(() => {
-      successRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
+    if (!range?.from || !range?.to) return;
+
+    setSubmitError(null);
+    setBookingStep("submitting");
+
+    try {
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bikeId: bike.id,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          notes: form.notes || null,
+          from: toIsoDate(range.from),
+          to: toIsoDate(range.to),
+          totalPriceCents: totalPrice * 100,
+        }),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        const message =
+          typeof body?.error === "string"
+            ? body.error
+            : "Something went wrong — please try again.";
+        setSubmitError(message);
+        setBookingStep("form");
+        return;
+      }
+
+      setBookingStep("done");
+      setTimeout(() => {
+        successRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    } catch (err) {
+      console.error("booking submit failed", err);
+      setSubmitError("Network error — please try again.");
+      setBookingStep("form");
+    }
   }
 
   function resetBooking() {
     setBookingStep("dates");
     setRange(undefined);
     setForm({ name: "", email: "", phone: "", notes: "" });
+    setSubmitError(null);
   }
 
   const specs: { label: string; value: string }[] = [
@@ -442,7 +512,7 @@ export default function BikeDetailPage({
             )}
 
             {/* Form */}
-            {bookingStep === "form" && (
+            {(bookingStep === "form" || bookingStep === "submitting") && (
               <div ref={formRef} className="mt-12 scroll-mt-28">
                 <div className="flex items-center gap-3 mb-6">
                   <button
@@ -542,11 +612,16 @@ export default function BikeDetailPage({
                     />
                   </label>
 
+                  {submitError && (
+                    <p className="text-red text-sm text-center font-semibold">{submitError}</p>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full py-4 bg-red text-white font-bold text-xs tracking-widest uppercase hover:bg-red-dark transition-colors"
+                    disabled={bookingStep === "submitting"}
+                    className="w-full py-4 bg-red text-white font-bold text-xs tracking-widest uppercase hover:bg-red-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    Send Request →
+                    {bookingStep === "submitting" ? "Sending…" : "Send Request →"}
                   </button>
 
                   <p className="text-center text-muted text-xs">
