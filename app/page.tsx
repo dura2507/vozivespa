@@ -192,10 +192,7 @@ export default function HomePage() {
                   </h3>
                   <p className="text-xs sm:text-sm text-muted leading-relaxed mb-4 sm:mb-5">{cat.description}</p>
                   {cat.experienceNote && (
-                    <p className="inline-flex items-center justify-center gap-1.5 self-center mb-3 px-2.5 py-1 bg-red/10 text-red text-[9px] sm:text-[10px] tracking-[0.15em] uppercase font-bold">
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                      </svg>
+                    <p className="text-[10px] tracking-[0.15em] uppercase text-red font-bold mb-3">
                       Experience required
                     </p>
                   )}
