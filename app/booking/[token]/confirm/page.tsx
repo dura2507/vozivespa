@@ -44,7 +44,7 @@ export default async function ConfirmBookingPage({
       <DecisionView
         tone="error"
         booking={booking}
-        message={`This booking can no longer be confirmed — it is currently '${booking.status}'.`}
+        message={`This booking can no longer be confirmed - it is currently '${booking.status}'.`}
       />
     );
   }

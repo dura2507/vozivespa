@@ -43,7 +43,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 /**
  * Browser / server client using the public anon key.
- * Subject to RLS — currently nothing is exposed.
+ * Subject to RLS - currently nothing is exposed.
  */
 export function getPublicClient(): SupabaseClient {
   if (!supabaseUrl || !supabaseAnonKey) {
@@ -55,7 +55,7 @@ export function getPublicClient(): SupabaseClient {
 }
 
 /**
- * Server-only client using the service_role key — bypasses RLS.
+ * Server-only client using the service_role key - bypasses RLS.
  * Never import this from a Client Component or expose it to the browser.
  */
 export function getServiceClient(): SupabaseClient {

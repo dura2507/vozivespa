@@ -55,10 +55,10 @@ export default function WhatsAppMockup({ category, range, name, phone, notes }: 
                   {from} – {to}
                 </p>
                 <p>
-                  {name || "—"}
+                  {name || "-"}
                 </p>
                 <p>
-                  {phone || "—"}
+                  {phone || "-"}
                 </p>
                 {notes && (
                   <p>
@@ -71,12 +71,12 @@ export default function WhatsAppMockup({ category, range, name, phone, notes }: 
               <div className="mt-3 flex flex-col gap-1.5">
                 <div className="flex items-center gap-2 bg-[#25D366]/15 rounded-lg px-2.5 py-2">
                   <span className="text-[10px] font-semibold text-[#25D366]">
-                    Confirm — sickmotos.com/confirm/…
+                    Confirm - sickmotos.com/confirm/…
                   </span>
                 </div>
                 <div className="flex items-center gap-2 bg-red-50 rounded-lg px-2.5 py-2">
                   <span className="text-[10px] font-semibold text-red-400">
-                    Decline — sickmotos.com/reject/…
+                    Decline - sickmotos.com/reject/…
                   </span>
                 </div>
               </div>

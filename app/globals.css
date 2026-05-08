@@ -17,6 +17,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Fixed navbar is 6.5rem tall - keep that much padding for any anchor jump. */
+  scroll-padding-top: 6.5rem;
 }
 
 body {

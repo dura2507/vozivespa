@@ -76,7 +76,7 @@ export default function FaqPage() {
                 Still have a question?
               </h2>
               <p className="text-muted text-sm">
-                Message us via WhatsApp or the contact form — we reply fast.
+                Message us via WhatsApp or the contact form - we reply fast.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 shrink-0">

@@ -55,8 +55,8 @@ const REQUIREMENTS = [
     title: "Pick-Up & Return",
     items: [
       "Pick-up & drop-off at Velebitska Ulica 2, 23000 Zadar",
-      "Open 09:00 — 19:00, Monday to Sunday",
-      "15 min grace period — late returns incur extra fees",
+      "Open 09:00 - 19:00, Monday to Sunday",
+      "15 min grace period - late returns incur extra fees",
       "Send transaction screenshot after paying",
     ],
   },
@@ -100,7 +100,7 @@ export default function InfoPage() {
                 <ul className="space-y-2.5">
                   {req.items.map((item) => (
                     <li key={item} className="flex items-center gap-2.5 text-sm text-ink/70">
-                      <span className="text-red shrink-0 leading-none">—</span>
+                      <span className="text-red shrink-0 leading-none">-</span>
                       {item}
                     </li>
                   ))}

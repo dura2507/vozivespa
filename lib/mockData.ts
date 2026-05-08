@@ -59,10 +59,10 @@ export const LICENCE_BADGE: Record<string, string> = {
 };
 
 const PLACEHOLDER_PRICING: PricingTiers = {
-  day: "—",
-  weekend: "—",
-  week: "—",
-  month: "—",
+  day: "-",
+  weekend: "-",
+  week: "-",
+  month: "-",
 };
 
 export const CATEGORIES: Category[] = [
@@ -94,21 +94,21 @@ export const CATEGORIES: Category[] = [
     year: "2024",
     pricing: { day: "35€", weekend: "85€", week: "190€", month: "620€" },
     season: "April – October",
-    experienceNote: "Previous riding experience required — no first-time riders.",
+    experienceNote: "Previous riding experience required - no first-time riders.",
   },
   {
     id: "scooter-50-topcase",
     name: "Piaggio Liberty 50 Topcase",
-    model: "Piaggio Liberty 50 iGet — Topcase",
+    model: "Piaggio Liberty 50 iGet - Topcase",
     tag: "BEGINNER",
     tagColor: "bg-red",
     price: "39€",
     priceUnit: "/day",
     description:
-      "Piaggio Liberty 50 with topcase — extra storage.",
+      "Piaggio Liberty 50 with topcase - extra storage.",
     longDescription:
       "Same Liberty 50 as the standard, fitted with a topcase for extra storage on longer rides.",
-    tagline: "Topcase included — extra storage.",
+    tagline: "Topcase included - extra storage.",
     image: "/bikes/scooter-50.jpg",
     gallery: ["/bikes/scooter-50.jpg"],
     licence: "B or AM category",
@@ -124,7 +124,7 @@ export const CATEGORIES: Category[] = [
     year: "2024",
     pricing: { day: "39€", weekend: "95€", week: "210€", month: "690€" },
     season: "April – October",
-    experienceNote: "Previous riding experience required — no first-time riders.",
+    experienceNote: "Previous riding experience required - no first-time riders.",
   },
   {
     id: "scooter-125",
@@ -167,7 +167,7 @@ export const CATEGORIES: Category[] = [
       "Sporty and agile, made for active riders.",
     longDescription:
       "Supermoto feel with 125cc. Light, agile and ideal for spirited riders who love curves and coastal roads.",
-    tagline: "Sporty — higher fuel use due to riding style.",
+    tagline: "Sporty - higher fuel use due to riding style.",
     image: "/bikes/bike-125.jpg",
     gallery: ["/bikes/bike-125.jpg", "/bikes/bike-125-c.jpg"],
     licence: "A1 category",
@@ -196,8 +196,8 @@ export const CATEGORIES: Category[] = [
     description:
       "Naked-bike feel with great range and sporty character.",
     longDescription:
-      "Real naked-bike character at 125cc. Excellent range — perfect for longer tours along the coast and to the islands.",
-    tagline: "Great range — perfect for longer trips.",
+      "Real naked-bike character at 125cc. Excellent range - perfect for longer tours along the coast and to the islands.",
+    tagline: "Great range - perfect for longer trips.",
     image: "/bikes/bike-125-b.jpg",
     gallery: ["/bikes/bike-125-b.jpg"],
     licence: "A1 category",
@@ -225,8 +225,8 @@ export const CATEGORIES: Category[] = [
     description:
       "A2-ready power for the coast. Light, agile, built for city, country and curves.",
     longDescription:
-      "Premium A2-compliant bike. Light, agile and perfect for city, country and curves — whether you want it for a day or the full month.",
-    tagline: "Strong & premium — top pick for confident riders.",
+      "Premium A2-compliant bike. Light, agile and perfect for city, country and curves - whether you want it for a day or the full month.",
+    tagline: "Strong & premium - top pick for confident riders.",
     image: "/bikes/bike-390.jpg",
     gallery: ["/bikes/bike-390.jpg", "/bikes/bike-390-b.jpg", "/bikes/bike-390-c.jpg"],
     licence: "A2 category",
@@ -261,14 +261,14 @@ export const REVIEWS: Review[] = [
     name: "Ana Ivanic",
     date: "4 May 2025",
     rating: 5,
-    text: "Bikes are beautifully maintained and a joy to ride. We took them along the coast and onto the islands — unforgettable experience. Top service.",
+    text: "Bikes are beautifully maintained and a joy to ride. We took them along the coast and onto the islands - unforgettable experience. Top service.",
   },
   {
     id: "3",
     name: "Patrick Murphy",
     date: "23 September 2024",
     rating: 5,
-    text: "Excellent service. Trustworthy, professional, deposit returned right after drop-off. Easy and straightforward — couldn't recommend more.",
+    text: "Excellent service. Trustworthy, professional, deposit returned right after drop-off. Easy and straightforward - couldn't recommend more.",
   },
   {
     id: "4",
@@ -286,7 +286,7 @@ export const REVIEWS: Review[] = [
   },
 ];
 
-// Gallery — drop more action shots in public/gallery/ and add them here.
+// Gallery - drop more action shots in public/gallery/ and add them here.
 export const GALLERY_IMAGES = [
   "/gallery/duke-with-dog.jpg",
   "/gallery/bike-390-coast.jpg",
@@ -324,7 +324,7 @@ export const FAQ_ITEMS = [
   {
     question: "What insurance is included?",
     answer:
-      "Basic insurance covers theft of the bike and engine damage. Accidents, scratches, damage and flat tires are the renter's responsibility. If a third party causes an accident, you must call the police and obtain an official report — the responsible party is liable.",
+      "Basic insurance covers theft of the bike and engine damage. Accidents, scratches, damage and flat tires are the renter's responsibility. If a third party causes an accident, you must call the police and obtain an official report - the responsible party is liable.",
   },
   {
     question: "What is your cancellation policy?",
@@ -334,7 +334,7 @@ export const FAQ_ITEMS = [
   {
     question: "When and where do I return the bike?",
     answer:
-      "At the agreed time and location. We give a 15-minute grace period — late returns beyond that incur extra fees. Drop-off at our address: Velebitska Ulica 2, 23000 Zadar.",
+      "At the agreed time and location. We give a 15-minute grace period - late returns beyond that incur extra fees. Drop-off at our address: Velebitska Ulica 2, 23000 Zadar.",
   },
   {
     question: "Who is responsible for accidents or injuries?",
@@ -354,15 +354,15 @@ export const FAQ_ITEMS = [
   {
     question: "How do I make a reservation?",
     answer:
-      "Always confirm availability with us first — it can change quickly. A 20% booking fee secures your dates. Pay via PayPal, bank transfer, Revolut or cash on arrival. After paying, send us a screenshot of the transaction. If you arrive more than 1 hour late without notice, the reservation is automatically cancelled. We don't accept credit cards.",
+      "Always confirm availability with us first - it can change quickly. A 20% booking fee secures your dates. Pay via PayPal, bank transfer, Revolut or cash on arrival. After paying, send us a screenshot of the transaction. If you arrive more than 1 hour late without notice, the reservation is automatically cancelled. We don't accept credit cards.",
   },
   {
     question: "Do you offer phone holders?",
     answer:
-      "No. We don't offer or fit phone holders. None of our bikes come with one — please plan your route before you head out.",
+      "No. We don't offer or fit phone holders. None of our bikes come with one - please plan your route before you head out.",
   },
   {
-    question: "How does the fuel work — full tank, empty tank?",
+    question: "How does the fuel work - full tank, empty tank?",
     answer:
       "Every bike is handed over with a full tank. Please return it with a full tank as well. If you return the bike not fully fuelled, we charge the missing fuel plus a refuelling fee.",
   },
@@ -370,6 +370,11 @@ export const FAQ_ITEMS = [
     question: "How do I navigate without a phone holder?",
     answer:
       "Two practical options: ride with a passenger (Sozius) who handles directions, or use a Bluetooth in-ear navigation set for turn-by-turn audio without taking your eyes off the road. Either way, plan your route before pickup.",
+  },
+  {
+    question: "What if you decide I'm not experienced enough?",
+    answer:
+      "Riding requires prior experience. If at pickup we determine you don't have enough experience to safely handle the bike, we reserve the right to decline the rental. In that case the booking fee is non-refundable, so please be honest about your experience when booking.",
   },
 ];
 
@@ -423,7 +428,7 @@ export const BRAND = {
   legal: "Joyful d.o.o.",
   oib: "84055846851",
   address: "Velebitska Ulica 2, 23000 Zadar",
-  hours: "09:00 — 19:00, Monday to Sunday",
+  hours: "09:00 - 19:00, Monday to Sunday",
   phone: "+49 176 34658003",
   phoneRaw: "4917634658003",
   languages: ["🇩🇪", "🇬🇧"],

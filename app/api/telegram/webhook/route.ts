@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 // Telegram webhook entry point.
 //
-// Verified via the X-Telegram-Bot-Api-Secret-Token header — set when calling
+// Verified via the X-Telegram-Bot-Api-Secret-Token header - set when calling
 // /setWebhook with a secret_token parameter. Telegram echoes that back on
 // every request, anyone else gets 403.
 
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
   if (error) {
     console.error("[telegram/webhook] booking lookup error", error);
-    await answerTelegramCallback(cb.id, "Database error — try again");
+    await answerTelegramCallback(cb.id, "Database error - try again");
     return NextResponse.json({ ok: true });
   }
 
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
 
   if (updateError || !updated) {
     console.error("[telegram/webhook] update error", updateError);
-    await answerTelegramCallback(cb.id, "Update failed — try again");
+    await answerTelegramCallback(cb.id, "Update failed - try again");
     return NextResponse.json({ ok: true });
   }
 
@@ -101,13 +101,13 @@ export async function POST(request: Request) {
     newStatus === "confirmed"
       ? wasFromPending
         ? "✓ Booking confirmed"
-        : "✓ Re-confirmed — dates blocked again"
+        : "✓ Re-confirmed - dates blocked again"
       : wasFromPending
         ? "✗ Booking declined"
-        : "✗ Declined — dates released";
+        : "✗ Declined - dates released";
   await answerTelegramCallback(cb.id, toast);
 
-  // Heavy work after the response — Vercel keeps the function alive for these.
+  // Heavy work after the response - Vercel keeps the function alive for these.
   after(async () => {
     await editTelegramMessageForBooking(
       cb.message!.chat.id,

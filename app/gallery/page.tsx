@@ -19,7 +19,7 @@ export default function GalleryPage() {
           </h1>
         </div>
 
-        {/* Masonry — show every image in full */}
+        {/* Masonry - show every image in full */}
         <div className="px-5 md:px-12 max-w-7xl mx-auto">
           <div className="columns-2 md:columns-3 gap-3 [&>div]:mb-3">
             {GALLERY_IMAGES.map((src, i) => (

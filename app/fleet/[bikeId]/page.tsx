@@ -24,7 +24,7 @@ type BookingStep = "dates" | "form" | "submitting" | "done";
 type BlockedRange = { from: Date; to: Date };
 
 function toIsoDate(d: Date): string {
-  // Local-time YYYY-MM-DD — DayPicker gives us Date objects in local TZ.
+  // Local-time YYYY-MM-DD - DayPicker gives us Date objects in local TZ.
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
@@ -129,7 +129,7 @@ export default function BikeDetailPage({
         const message =
           typeof body?.error === "string"
             ? body.error
-            : "Something went wrong — please try again.";
+            : "Something went wrong - please try again.";
         setSubmitError(message);
         setBookingStep("form");
         return;
@@ -141,7 +141,7 @@ export default function BikeDetailPage({
       }, 50);
     } catch (err) {
       console.error("booking submit failed", err);
-      setSubmitError("Network error — please try again.");
+      setSubmitError("Network error - please try again.");
       setBookingStep("form");
     }
   }
@@ -189,7 +189,7 @@ export default function BikeDetailPage({
             <span className="text-ink">{bike.model}</span>
           </div>
 
-          {/* Hero — image + title */}
+          {/* Hero - image + title */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
             <div>
               <div className="relative">
@@ -272,7 +272,7 @@ export default function BikeDetailPage({
                     {bike.licence}
                   </p>
                   <p className="text-white/50 text-xs leading-snug mt-1">
-                    Bring your valid licence to pickup — no licence, no ride.
+                    Bring your valid licence to pickup - no licence, no ride.
                   </p>
                 </div>
               </div>
@@ -369,7 +369,7 @@ export default function BikeDetailPage({
             </div>
           </section>
 
-          {/* Important info — applies to every rental */}
+          {/* Important info - applies to every rental */}
           <section className="mb-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-ink/10">
             <div className="bg-off-white px-5 py-5 flex items-start gap-3">
               <svg className="w-5 h-5 text-red shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -409,7 +409,7 @@ export default function BikeDetailPage({
             </div>
           </section>
 
-          {/* Booking flow — calendar + form + success */}
+          {/* Booking flow - calendar + form + success */}
           <section ref={calendarRef} className="mb-16 scroll-mt-28">
             {bookingStep !== "done" && (
               <>
@@ -484,7 +484,7 @@ export default function BikeDetailPage({
                       <span className="font-semibold">{format(range.from, "dd MMM")}</span>
                       {range.to && (
                         <>
-                          {" — "}
+                          {" - "}
                           <span className="font-semibold">{format(range.to, "dd MMM yyyy")}</span>
                           <span className="text-muted ml-2">
                             ({nights} {nights === 1 ? "day" : "days"})
@@ -539,13 +539,13 @@ export default function BikeDetailPage({
                   <div>
                     <p className="text-white/40 text-[10px] uppercase tracking-wider">From</p>
                     <p className="font-semibold mt-0.5">
-                      {range?.from ? format(range.from, "dd MMM yyyy") : "—"}
+                      {range?.from ? format(range.from, "dd MMM yyyy") : "-"}
                     </p>
                   </div>
                   <div>
                     <p className="text-white/40 text-[10px] uppercase tracking-wider">To</p>
                     <p className="font-semibold mt-0.5">
-                      {range?.to ? format(range.to, "dd MMM yyyy") : "—"}
+                      {range?.to ? format(range.to, "dd MMM yyyy") : "-"}
                     </p>
                   </div>
                   <div className="ml-auto">
@@ -589,17 +589,31 @@ export default function BikeDetailPage({
 
                   <label className="block">
                     <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                      WhatsApp / Phone *
+                      Phone (with country code) *
                     </span>
                     <input
                       type="tel"
                       required
                       value={form.phone}
-                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      onChange={(e) => {
+                        let v = e.target.value;
+                        // Auto-prefix '+' if user starts typing without it
+                        if (v && !v.startsWith("+")) v = "+" + v.replace(/^\++/, "");
+                        setForm({ ...form, phone: v });
+                      }}
+                      onFocus={(e) => {
+                        if (!form.phone) setForm({ ...form, phone: "+" });
+                        // Place cursor at end so the user types after '+'
+                        const el = e.target;
+                        requestAnimationFrame(() => el.setSelectionRange(el.value.length, el.value.length));
+                      }}
+                      pattern="^\+[0-9 ]{6,}$"
                       placeholder="+49 170 1234567"
                       className={inputClass}
                     />
-                    <p className="text-muted text-xs mt-1.5">We&apos;ll confirm via WhatsApp.</p>
+                    <p className="text-muted text-xs mt-1.5">
+                      Include your country code (e.g. <span className="font-semibold">+49</span> for Germany, <span className="font-semibold">+385</span> for Croatia, <span className="font-semibold">+41</span> for Switzerland).
+                    </p>
                   </label>
 
                   <label className="block">
@@ -628,7 +642,7 @@ export default function BikeDetailPage({
                   </button>
 
                   <p className="text-center text-muted text-xs">
-                    No payment required. We&apos;ll confirm availability by email.
+                    We&apos;ll confirm availability by email and send payment details for the 20% booking fee.
                   </p>
                 </form>
               </div>
@@ -646,10 +660,10 @@ export default function BikeDetailPage({
                   Request Sent!
                 </h2>
                 <p className="text-ink text-base leading-relaxed mb-2">
-                  Thanks {form.name} — we&apos;ll review and get back to you shortly.
+                  Thanks {form.name} - we&apos;ll review and get back to you shortly.
                 </p>
                 <p className="text-muted text-sm leading-relaxed mb-8">
-                  A confirmation email is on its way to <span className="font-semibold text-ink">{form.email}</span>. The final booking confirmation comes by email once the owner reviews — usually within a few hours.
+                  A confirmation email is on its way to <span className="font-semibold text-ink">{form.email}</span>. The final booking confirmation comes by email once the owner reviews - usually within a few hours.
                 </p>
 
                 <div className="bg-sand px-5 py-4 mb-10 text-left text-sm">
@@ -684,7 +698,7 @@ export default function BikeDetailPage({
             )}
           </section>
 
-          {/* Bottom WhatsApp CTA — only when not in done state */}
+          {/* Bottom WhatsApp CTA - only when not in done state */}
           {bookingStep !== "done" && (
             <section className="bg-red text-white px-8 md:px-12 py-12 md:py-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
               <div>

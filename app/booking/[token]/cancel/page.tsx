@@ -44,7 +44,7 @@ export default async function CancelBookingPage({
       <DecisionView
         tone="declined"
         booking={booking}
-        message="This booking was already declined — nothing to cancel."
+        message="This booking was already declined - nothing to cancel."
       />
     );
   }
@@ -68,7 +68,7 @@ export default async function CancelBookingPage({
     );
   }
 
-  // Tell the owner — best effort, runs after response.
+  // Tell the owner - best effort, runs after response.
   after(async () => {
     await sendOwnerCancellationTelegram(updated);
   });
@@ -77,7 +77,7 @@ export default async function CancelBookingPage({
     <DecisionView
       tone="declined"
       booking={updated}
-      message="Your booking is cancelled and the dates are released. Sorry to see you go — drop us a line on WhatsApp anytime if plans change."
+      message="Your booking is cancelled and the dates are released. Sorry to see you go - drop us a line on WhatsApp anytime if plans change."
     />
   );
 }

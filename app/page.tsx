@@ -69,7 +69,7 @@ const HOW_IT_WORKS = [
   {
     n: "01",
     title: "Pick your ride",
-    text: "Choose your scooter or motobike — from the 50cc city cruiser up to the 390cc highway machine.",
+    text: "Choose your scooter or motobike - from the 50cc city cruiser up to the 390cc highway machine.",
   },
   {
     n: "02",
@@ -98,7 +98,7 @@ export default function HomePage() {
           className="object-cover object-center opacity-60"
           sizes="100vw"
         />
-        {/* Gradient overlays — top + bottom for legibility */}
+        {/* Gradient overlays - top + bottom for legibility */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/80" />
 
         {/* Content */}
@@ -110,7 +110,7 @@ export default function HomePage() {
             Ride<br />the Coast
           </h1>
           <p className="text-white/75 text-base md:text-lg mt-6 mb-8 leading-relaxed max-w-md">
-            Scooter and bike rental in Zadar — 50cc to 390cc, helmets and basic insurance included. Coastal roads, islands, freedom.
+            Scooter and bike rental in Zadar - 50cc to 390cc, helmets and basic insurance included. Coastal roads, islands, freedom.
           </p>
           <div className="flex items-center gap-4 flex-wrap">
             <Link
@@ -126,7 +126,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Stats — desktop only, right side */}
+        {/* Stats - desktop only, right side */}
         <div className="absolute bottom-8 right-8 md:right-12 hidden md:flex gap-12 text-right">
           {[["5", "Bikes & scooters"], ["50+", "5-star reviews"], ["∞", "Km included"]].map(
             ([num, label]) => (
@@ -142,7 +142,7 @@ export default function HomePage() {
       <main className="pb-20 md:pb-0">
 
         {/* ─── RIDES ─── */}
-        <section id="fleet" className="px-5 md:px-12 pt-20 pb-16 max-w-7xl mx-auto scroll-mt-28">
+        <section id="fleet" className="px-5 md:px-12 pt-20 pb-16 max-w-7xl mx-auto scroll-mt-[6.5rem]">
           <div className="text-center mb-12">
             <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">Choose your ride</p>
             <h2 className="font-barlow font-black uppercase text-[clamp(2.5rem,7vw,5rem)] leading-none tracking-tight text-ink">
@@ -257,7 +257,7 @@ export default function HomePage() {
             <div className="bg-off-white px-6 py-7 flex flex-col items-start gap-3">
               <span className="text-3xl leading-none">{BRAND.languages.join(" ")}</span>
               <p className="font-bold text-ink text-sm">Languages</p>
-              <p className="text-xs text-muted leading-relaxed">We speak German and English — chat with us on WhatsApp.</p>
+              <p className="text-xs text-muted leading-relaxed">We speak German and English - chat with us on WhatsApp.</p>
             </div>
           </div>
         </section>

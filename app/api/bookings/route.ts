@@ -31,7 +31,7 @@ function asIsoDate(v: unknown): string | null {
 // POST /api/bookings
 //
 // Creates a pending booking. The owner notification (email / WhatsApp) is a
-// later step — for now the booking just lands in the DB with status 'pending'.
+// later step - for now the booking just lands in the DB with status 'pending'.
 export async function POST(request: Request) {
   let body: BookingPayload;
   try {
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not save booking" }, { status: 500 });
   }
 
-  // 4. Notifications — run AFTER the response so the customer gets a snappy
+  // 4. Notifications - run AFTER the response so the customer gets a snappy
   //    'Request sent' UI but the function stays alive long enough to actually
   //    fire telegram + email (Vercel kills detached Promises otherwise).
   const finalBooking = booking as BookingRow;

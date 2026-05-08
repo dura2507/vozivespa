@@ -26,7 +26,7 @@ export default function Footer() {
           {BRAND.tagline} · Zadar, Croatia
         </p>
         <p className="text-sm leading-relaxed text-white/50 max-w-md mb-10">
-          Scooter and bike rental in Zadar — explore the Dalmatian coast on two wheels.
+          Scooter and bike rental in Zadar - explore the Dalmatian coast on two wheels.
         </p>
 
         {/* Navigation */}
@@ -42,7 +42,7 @@ export default function Footer() {
           ))}
         </nav>
 
-        {/* WhatsApp / Phone — both contacts */}
+        {/* WhatsApp / Phone - both contacts */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl mb-6">
           {BRAND.contacts.map((contact, i) => (
             <a

@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 // GET /api/availability?bikeId=bike-390
 //
-// Returns the date ranges that are not bookable for the given bike — both
+// Returns the date ranges that are not bookable for the given bike - both
 // auto-blocks coming from confirmed bookings and any manual owner blocks.
 //
 // Response: { blocked: Array<{ from: string; to: string }> }

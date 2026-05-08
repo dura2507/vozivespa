@@ -44,7 +44,7 @@ export default async function DeclineBookingPage({
       <DecisionView
         tone="error"
         booking={booking}
-        message={`This booking can no longer be declined — it is currently '${booking.status}'.`}
+        message={`This booking can no longer be declined - it is currently '${booking.status}'.`}
       />
     );
   }

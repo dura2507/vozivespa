@@ -61,7 +61,7 @@ function bikeNameFor(booking: BookingRow): string {
 function totalEur(booking: BookingRow): string {
   return booking.total_price_cents
     ? `${(booking.total_price_cents / 100).toFixed(0)}€`
-    : "—";
+    : "-";
 }
 
 // ----- Inline keyboard builder ---------------------------------------------
@@ -135,7 +135,7 @@ function buildText(booking: BookingRow): string {
 export async function sendOwnerBookingTelegram(booking: BookingRow): Promise<void> {
   const chatId = ownerChatId();
   if (!chatId) {
-    console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set — skipping owner notification");
+    console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping owner notification");
     return;
   }
   await callTelegram("sendMessage", {
@@ -177,7 +177,7 @@ export async function answerTelegramCallback(
 export async function sendOwnerCancellationTelegram(booking: BookingRow): Promise<void> {
   const chatId = ownerChatId();
   if (!chatId) {
-    console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set — skipping cancellation notification");
+    console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping cancellation notification");
     return;
   }
 
@@ -190,7 +190,7 @@ export async function sendOwnerCancellationTelegram(booking: BookingRow): Promis
     `*Name:* ${escapeMd(booking.customer_name)}`,
     `*Phone:* ${escapeMd(booking.customer_phone)}`,
     "",
-    "_Dates are released — calendar updated automatically\\._",
+    "_Dates are released - calendar updated automatically\\._",
   ];
 
   const phoneDigits = booking.customer_phone.replace(/[^\d]/g, "");
