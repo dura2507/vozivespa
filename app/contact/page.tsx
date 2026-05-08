@@ -9,7 +9,7 @@ export default function ContactPage() {
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -202,6 +202,32 @@ export default function ContactPage() {
                         placeholder="your@email.com"
                         className={inputClass}
                       />
+                    </label>
+
+                    <label className="block">
+                      <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
+                        Phone (optional, with country code)
+                      </span>
+                      <input
+                        type="tel"
+                        value={form.phone}
+                        onChange={(e) => {
+                          let v = e.target.value;
+                          if (v && !v.startsWith("+")) v = "+" + v.replace(/^\++/, "");
+                          setForm({ ...form, phone: v });
+                        }}
+                        onFocus={(e) => {
+                          if (!form.phone) setForm({ ...form, phone: "+" });
+                          const el = e.target;
+                          requestAnimationFrame(() => el.setSelectionRange(el.value.length, el.value.length));
+                        }}
+                        pattern="^\+[0-9 ]{6,}$|^$"
+                        placeholder="+49 170 1234567"
+                        className={inputClass}
+                      />
+                      <p className="text-muted text-xs mt-1.5">
+                        Leave blank if you prefer email only.
+                      </p>
                     </label>
 
                     <label className="block">

@@ -256,6 +256,7 @@ ${BRAND.name}`;
 export async function sendOwnerContactEmail(input: {
   name: string;
   email: string;
+  phone?: string | null;
   message: string;
 }): Promise<void> {
   const ownerEmail = process.env.OWNER_EMAIL?.trim();
@@ -265,11 +266,20 @@ export async function sendOwnerContactEmail(input: {
   }
 
   const messageHtml = escape(input.message).replace(/\n/g, "<br/>");
+  const phoneDigits = input.phone ? input.phone.replace(/[^\d]/g, "") : "";
+
+  const phoneRowHtml = input.phone
+    ? `<p style="margin:0 0 18px;font-size:14px;line-height:1.6;">
+         <a href="tel:${escape(input.phone)}" style="color:#1a1a1a;text-decoration:none;font-weight:600;">${escape(input.phone)}</a>
+         ${phoneDigits ? ` &middot; <a href="https://wa.me/${phoneDigits}" style="color:#25D366;text-decoration:none;font-weight:600;">WhatsApp →</a>` : ""}
+       </p>`
+    : "";
 
   const bodyHtml = `
     <p style="margin:0 0 8px;font-size:14px;line-height:1.6;color:#6b6b6b;">From</p>
     <p style="margin:0 0 16px;font-size:16px;line-height:1.6;font-weight:600;">${escape(input.name)}</p>
-    <p style="margin:0 0 18px;font-size:14px;line-height:1.6;"><a href="mailto:${escape(input.email)}?subject=${encodeURIComponent("Re: your message to SickMotos")}" style="color:#B61F36;text-decoration:none;font-weight:600;">${escape(input.email)}</a></p>
+    <p style="margin:0 0 8px;font-size:14px;line-height:1.6;"><a href="mailto:${escape(input.email)}?subject=${encodeURIComponent("Re: your message to SickMotos")}" style="color:#B61F36;text-decoration:none;font-weight:600;">${escape(input.email)}</a></p>
+    ${phoneRowHtml}
     <div style="background:#f6f5f1;padding:18px;font-size:14px;line-height:1.6;border-left:3px solid #B61F36;">${messageHtml}</div>
     <p style="margin:24px 0 0;padding-top:16px;border-top:1px solid #e6e4dd;font-size:13px;color:#6b6b6b;line-height:1.6;">Hit <strong>Reply</strong> in your email client to answer ${escape(input.name)} directly - their address is set as the reply-to so it goes straight to them.</p>
   `;
@@ -283,7 +293,7 @@ export async function sendOwnerContactEmail(input: {
 
   const text = `New contact message
 
-From: ${input.name} <${input.email}>
+From: ${input.name} <${input.email}>${input.phone ? `\nPhone: ${input.phone}` : ""}
 
 ${input.message}
 
@@ -302,5 +312,53 @@ Reply to ${input.email} to respond.`;
     html,
     text,
     replyTo: `${input.name} <${input.email}>`,
+  });
+}
+
+// ---------- Customer: contact form acknowledgement --------------------------
+
+export async function sendCustomerContactReceivedEmail(input: {
+  name: string;
+  email: string;
+  message: string;
+}): Promise<void> {
+  const messageHtml = escape(input.message).replace(/\n/g, "<br/>");
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escape(input.name)},</p>
+    <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">thanks for getting in touch. Your message landed with us and we&apos;ll reply as soon as we can - usually within a few hours.</p>
+    <p style="margin:0 0 8px;font-size:13px;color:#6b6b6b;">Your message</p>
+    <div style="background:#f6f5f1;padding:18px;font-size:14px;line-height:1.6;border-left:3px solid #B61F36;">${messageHtml}</div>
+    <p style="margin:24px 0 8px;font-size:14px;line-height:1.6;">Anything urgent in the meantime?</p>
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;"><a href="${ownerWaLink()}" style="color:#25D366;font-weight:600;text-decoration:none;">💬 WhatsApp ${escape(BRAND.contacts[0].phone)}</a> or <a href="tel:+${BRAND.contacts[0].phoneRaw}" style="color:#1a1a1a;font-weight:600;text-decoration:none;">📞 Call us</a></p>
+    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">See you in Zadar 🛵</p>
+  `;
+
+  const html = htmlLayout({
+    preheader: "Got your message - we'll reply shortly.",
+    headline: "Got your message",
+    accent: "ink",
+    bodyHtml,
+  });
+
+  const text = `Hi ${input.name},
+
+Thanks for getting in touch. Your message landed with us and we'll reply as soon as we can - usually within a few hours.
+
+Your message:
+${input.message}
+
+Anything urgent? WhatsApp us: ${ownerWaLink()}
+
+See you in Zadar.
+${BRAND.name}`;
+
+  await sendWithRetry("customerContact", {
+    from: fromAddress(),
+    to: input.email,
+    subject: "We got your message - SickMotos",
+    html,
+    text,
+    replyTo: BRAND.email,
   });
 }

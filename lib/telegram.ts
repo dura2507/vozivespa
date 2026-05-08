@@ -175,6 +175,7 @@ export async function answerTelegramCallback(
 export async function sendOwnerContactMessage(input: {
   name: string;
   email: string;
+  phone?: string | null;
   message: string;
 }): Promise<void> {
   const chatId = ownerChatId();
@@ -188,11 +189,18 @@ export async function sendOwnerContactMessage(input: {
     "",
     `*From:* ${escapeMd(input.name)}`,
     `*Email:* \`${escapeMd(input.email)}\``,
-    "",
-    escapeMd(input.message),
-    "",
-    "_Reply to the email I just sent you to answer this message\\._",
   ];
+  if (input.phone) {
+    lines.push(`*Phone:* \`${escapeMd(input.phone)}\``);
+  }
+  lines.push("", escapeMd(input.message), "", "_Reply to the email I just sent you to answer this message\\._");
+
+  type InlineKeyboardButton = { text: string; url: string };
+  const phoneDigits = input.phone ? input.phone.replace(/[^\d]/g, "") : "";
+  const buttons: InlineKeyboardButton[] = [];
+  if (phoneDigits) {
+    buttons.push({ text: "💬 WhatsApp", url: `https://wa.me/${phoneDigits}` });
+  }
 
   // No mailto: button — Telegram inline-keyboard URLs must be http(s) only,
   // so we put the email inside a code-span (tap to copy) and tell the owner
@@ -201,6 +209,9 @@ export async function sendOwnerContactMessage(input: {
     chat_id: chatId,
     text: lines.join("\n"),
     parse_mode: "MarkdownV2",
+    ...(buttons.length > 0
+      ? { reply_markup: { inline_keyboard: [buttons] } }
+      : {}),
   });
 }
 

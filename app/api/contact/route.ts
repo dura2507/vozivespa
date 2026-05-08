@@ -1,12 +1,16 @@
 import { NextResponse, after } from "next/server";
 import { sendOwnerContactMessage } from "@/lib/telegram";
-import { sendOwnerContactEmail } from "@/lib/email";
+import {
+  sendOwnerContactEmail,
+  sendCustomerContactReceivedEmail,
+} from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
 type ContactPayload = {
   name?: unknown;
   email?: unknown;
+  phone?: unknown;
   message?: unknown;
 };
 
@@ -16,7 +20,8 @@ function asString(v: unknown): string | null {
 
 // POST /api/contact - generic contact-form submission. Customer-without-WhatsApp
 // path: name + email + message land as a Telegram ping for the owner and an
-// email so the message is in their inbox too.
+// email so the message is in their inbox too. Customer also gets a quick
+// 'we got your message' acknowledgement.
 export async function POST(request: Request) {
   let body: ContactPayload;
   try {
@@ -27,6 +32,7 @@ export async function POST(request: Request) {
 
   const name = asString(body.name);
   const email = asString(body.email);
+  const phone = asString(body.phone);
   const message = asString(body.message);
 
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -36,12 +42,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Message is too long" }, { status: 400 });
   }
 
-  const payload = { name, email, message };
+  const payload = { name, email, phone, message };
 
   after(async () => {
     await Promise.allSettled([
       sendOwnerContactMessage(payload),
       sendOwnerContactEmail(payload),
+      sendCustomerContactReceivedEmail(payload),
     ]);
   });
 
