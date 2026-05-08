@@ -267,9 +267,11 @@ export async function sendOwnerContactEmail(input: {
   const messageHtml = escape(input.message).replace(/\n/g, "<br/>");
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;">From <strong>${escape(input.name)}</strong> &lt;<a href="mailto:${escape(input.email)}" style="color:#1a1a1a;">${escape(input.email)}</a>&gt;</p>
+    <p style="margin:0 0 8px;font-size:14px;line-height:1.6;color:#6b6b6b;">From</p>
+    <p style="margin:0 0 16px;font-size:16px;line-height:1.6;font-weight:600;">${escape(input.name)}</p>
+    <p style="margin:0 0 18px;font-size:14px;line-height:1.6;"><a href="mailto:${escape(input.email)}?subject=${encodeURIComponent("Re: your message to SickMotos")}" style="color:#B61F36;text-decoration:none;font-weight:600;">${escape(input.email)}</a></p>
     <div style="background:#f6f5f1;padding:18px;font-size:14px;line-height:1.6;border-left:3px solid #B61F36;">${messageHtml}</div>
-    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;">Hit reply to message ${escape(input.name)} directly.</p>
+    <p style="margin:24px 0 0;padding-top:16px;border-top:1px solid #e6e4dd;font-size:13px;color:#6b6b6b;line-height:1.6;">Hit <strong>Reply</strong> in your email client to answer ${escape(input.name)} directly - their address is set as the reply-to so it goes straight to them.</p>
   `;
 
   const html = htmlLayout({
@@ -287,12 +289,18 @@ ${input.message}
 
 Reply to ${input.email} to respond.`;
 
+  // Tag the From-name with the customer's name so the inbox preview reads
+  // "Kristian (via SickMotos)" instead of just SickMotos Bookings.
+  const fromMatch = fromAddress().match(/^(.+?)\s*<(.+)>$/);
+  const fromAddr = fromMatch ? fromMatch[2] : fromAddress();
+  const customisedFrom = `${input.name} (via SickMotos) <${fromAddr}>`;
+
   await sendWithRetry("ownerContact", {
-    from: fromAddress(),
+    from: customisedFrom,
     to: ownerEmail,
     subject: `Contact form - ${input.name}`,
     html,
     text,
-    replyTo: input.email,
+    replyTo: `${input.name} <${input.email}>`,
   });
 }

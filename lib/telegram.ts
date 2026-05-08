@@ -187,20 +187,20 @@ export async function sendOwnerContactMessage(input: {
     "✉️ *New contact message*",
     "",
     `*From:* ${escapeMd(input.name)}`,
-    `*Email:* ${escapeMd(input.email)}`,
+    `*Email:* \`${escapeMd(input.email)}\``,
     "",
-    `${escapeMd(input.message)}`,
+    escapeMd(input.message),
+    "",
+    "_Reply to the email I just sent you to answer this message\\._",
   ];
 
+  // No mailto: button — Telegram inline-keyboard URLs must be http(s) only,
+  // so we put the email inside a code-span (tap to copy) and tell the owner
+  // to reply to the parallel email.
   await callTelegram("sendMessage", {
     chat_id: chatId,
     text: lines.join("\n"),
     parse_mode: "MarkdownV2",
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "✉️ Reply by email", url: `mailto:${input.email}` }],
-      ],
-    },
   });
 }
 
