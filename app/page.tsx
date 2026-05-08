@@ -79,7 +79,7 @@ const HOW_IT_WORKS = [
   {
     n: "03",
     title: "We confirm and you ride",
-    text: "We confirm via WhatsApp within minutes. Pay the 20% booking fee, pick up your bike and go.",
+    text: "We email confirmation within a few hours. Pay the 20% booking fee, pick up your bike, and go.",
   },
 ];
 
