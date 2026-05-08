@@ -250,3 +250,49 @@ ${BRAND.name}`;
     replyTo: BRAND.email,
   });
 }
+
+// ---------- Owner: contact form submission ----------------------------------
+
+export async function sendOwnerContactEmail(input: {
+  name: string;
+  email: string;
+  message: string;
+}): Promise<void> {
+  const ownerEmail = process.env.OWNER_EMAIL?.trim();
+  if (!ownerEmail) {
+    console.warn("[email] OWNER_EMAIL not set - skipping contact email");
+    return;
+  }
+
+  const messageHtml = escape(input.message).replace(/\n/g, "<br/>");
+
+  const bodyHtml = `
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;">From <strong>${escape(input.name)}</strong> &lt;<a href="mailto:${escape(input.email)}" style="color:#1a1a1a;">${escape(input.email)}</a>&gt;</p>
+    <div style="background:#f6f5f1;padding:18px;font-size:14px;line-height:1.6;border-left:3px solid #B61F36;">${messageHtml}</div>
+    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;">Hit reply to message ${escape(input.name)} directly.</p>
+  `;
+
+  const html = htmlLayout({
+    preheader: `Contact form: ${input.name}`,
+    headline: "New contact message",
+    accent: "ink",
+    bodyHtml,
+  });
+
+  const text = `New contact message
+
+From: ${input.name} <${input.email}>
+
+${input.message}
+
+Reply to ${input.email} to respond.`;
+
+  await sendWithRetry("ownerContact", {
+    from: fromAddress(),
+    to: ownerEmail,
+    subject: `Contact form - ${input.name}`,
+    html,
+    text,
+    replyTo: input.email,
+  });
+}

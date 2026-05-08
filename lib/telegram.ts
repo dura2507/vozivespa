@@ -170,6 +170,41 @@ export async function answerTelegramCallback(
 }
 
 /**
+ * Generic contact-form submission notification to the owner.
+ */
+export async function sendOwnerContactMessage(input: {
+  name: string;
+  email: string;
+  message: string;
+}): Promise<void> {
+  const chatId = ownerChatId();
+  if (!chatId) {
+    console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping contact notification");
+    return;
+  }
+
+  const lines = [
+    "✉️ *New contact message*",
+    "",
+    `*From:* ${escapeMd(input.name)}`,
+    `*Email:* ${escapeMd(input.email)}`,
+    "",
+    `${escapeMd(input.message)}`,
+  ];
+
+  await callTelegram("sendMessage", {
+    chat_id: chatId,
+    text: lines.join("\n"),
+    parse_mode: "MarkdownV2",
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "✉️ Reply by email", url: `mailto:${input.email}` }],
+      ],
+    },
+  });
+}
+
+/**
  * Standalone heads-up to the owner when the customer cancels themselves
  * via the link in the confirmation email. The original booking message
  * may already be far up the chat, so we send a fresh one.
