@@ -169,6 +169,47 @@ export async function answerTelegramCallback(
   await callTelegram("answerCallbackQuery", body);
 }
 
+/**
+ * Standalone heads-up to the owner when the customer cancels themselves
+ * via the link in the confirmation email. The original booking message
+ * may already be far up the chat, so we send a fresh one.
+ */
+export async function sendOwnerCancellationTelegram(booking: BookingRow): Promise<void> {
+  const chatId = ownerChatId();
+  if (!chatId) {
+    console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set — skipping cancellation notification");
+    return;
+  }
+
+  const bikeName = bikeNameFor(booking);
+  const lines = [
+    "🚫 *Customer cancelled*",
+    "",
+    `*Bike:* ${escapeMd(bikeName)}`,
+    `*Dates:* ${escapeMd(fmtDate(booking.date_from))} → ${escapeMd(fmtDate(booking.date_to))}`,
+    `*Name:* ${escapeMd(booking.customer_name)}`,
+    `*Phone:* ${escapeMd(booking.customer_phone)}`,
+    "",
+    "_Dates are released — calendar updated automatically\\._",
+  ];
+
+  const phoneDigits = booking.customer_phone.replace(/[^\d]/g, "");
+  const reply_markup = phoneDigits
+    ? {
+        inline_keyboard: [
+          [{ text: "💬 WhatsApp Customer", url: `https://wa.me/${phoneDigits}` }],
+        ],
+      }
+    : undefined;
+
+  await callTelegram("sendMessage", {
+    chat_id: chatId,
+    text: lines.join("\n"),
+    parse_mode: "MarkdownV2",
+    ...(reply_markup ? { reply_markup } : {}),
+  });
+}
+
 export type CallbackAction = "confirm" | "decline";
 
 export function parseCallbackData(

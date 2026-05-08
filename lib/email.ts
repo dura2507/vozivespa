@@ -165,6 +165,8 @@ export async function sendCustomerBookingDecidedEmail(
 ): Promise<void> {
   const bikeName = bikeNameFor(booking);
   const isConfirmed = decision === "confirmed";
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+  const cancelUrl = `${siteUrl}/booking/${encodeURIComponent(booking.secret_token)}/cancel`;
 
   const headline = isConfirmed ? "✓ Booking confirmed" : "Update on your booking";
   const accent = isConfirmed ? "green" : "ink";
@@ -186,6 +188,7 @@ export async function sendCustomerBookingDecidedEmail(
       <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">Pickup time?</h3>
       <p style="margin:0 0 18px;font-size:14px;line-height:1.6;">Drop us a quick WhatsApp so we can pin down a time:</p>
       <p style="margin:0 0 16px;"><a href="${ownerWaLink()}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;padding:14px 24px;font-weight:700;font-size:13px;letter-spacing:.15em;text-transform:uppercase;">💬 WhatsApp ${escape(BRAND.contacts[0].phone)}</a></p>
+      <p style="margin:32px 0 0;padding-top:18px;border-top:1px solid #e6e4dd;font-size:12px;color:#6b6b6b;line-height:1.6;">Plans changed? <a href="${cancelUrl}" style="color:#B61F36;">Cancel this booking</a> — the dates open up immediately for someone else.</p>
     `
     : `
       <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escape(booking.customer_name)},</p>
@@ -221,6 +224,8 @@ Bring:
 - Full tank in / full tank out
 
 Pin down a pickup time on WhatsApp: ${ownerWaLink()}
+
+Plans changed? Cancel anytime: ${cancelUrl}
 
 See you in Zadar.
 ${BRAND.name}`
