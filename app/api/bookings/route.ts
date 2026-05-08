@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail } from "@/lib/email";
@@ -115,13 +115,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not save booking" }, { status: 500 });
   }
 
-  // 4. Notifications — best effort, never block the response.
-  sendOwnerBookingTelegram(booking as BookingRow).catch((err) =>
-    console.error("[/api/bookings] owner telegram failed", err),
-  );
-  sendCustomerBookingReceivedEmail(booking as BookingRow).catch((err) =>
-    console.error("[/api/bookings] customer email failed", err),
-  );
+  // 4. Notifications — run AFTER the response so the customer gets a snappy
+  //    'Request sent' UI but the function stays alive long enough to actually
+  //    fire telegram + email (Vercel kills detached Promises otherwise).
+  const finalBooking = booking as BookingRow;
+  after(async () => {
+    await Promise.allSettled([
+      sendOwnerBookingTelegram(finalBooking),
+      sendCustomerBookingReceivedEmail(finalBooking),
+    ]);
+  });
 
   return NextResponse.json(
     { id: booking.id, status: booking.status },

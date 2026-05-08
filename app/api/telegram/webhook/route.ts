@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendCustomerBookingDecidedEmail } from "@/lib/email";
 import {
@@ -96,18 +96,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  // Customer email — only on the first decision out of pending (toggles
-  // afterwards are usually corrections; don't spam the customer).
-  if (wasFromPending) {
-    sendCustomerBookingDecidedEmail(updated, newStatus).catch((err) =>
-      console.error("[telegram/webhook] customer email failed", err),
-    );
-  }
-
-  // Update the original Telegram message with the new state + keyboard.
-  await editTelegramMessageForBooking(cb.message.chat.id, cb.message.message_id, updated);
-
-  // Toast in Telegram client.
+  // Toast immediately so Telegram stops spinning on the user's button.
   const toast =
     newStatus === "confirmed"
       ? wasFromPending
@@ -117,6 +106,18 @@ export async function POST(request: Request) {
         ? "✗ Booking declined"
         : "✗ Declined — dates released";
   await answerTelegramCallback(cb.id, toast);
+
+  // Heavy work after the response — Vercel keeps the function alive for these.
+  after(async () => {
+    await editTelegramMessageForBooking(
+      cb.message!.chat.id,
+      cb.message!.message_id,
+      updated,
+    );
+    if (wasFromPending) {
+      await sendCustomerBookingDecidedEmail(updated, newStatus);
+    }
+  });
 
   return NextResponse.json({ ok: true });
 }

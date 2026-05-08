@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendCustomerBookingDecidedEmail } from "@/lib/email";
 import { DecisionView } from "@/app/booking/_components/decision-view";
@@ -66,10 +67,10 @@ export default async function ConfirmBookingPage({
     );
   }
 
-  // Notify customer — best effort, never block the page render.
-  sendCustomerBookingDecidedEmail(updated, "confirmed").catch((err) =>
-    console.error("[booking/confirm] customer email failed", err),
-  );
+  // Notify customer after the page renders so it doesn't slow the owner.
+  after(async () => {
+    await sendCustomerBookingDecidedEmail(updated, "confirmed");
+  });
 
   return <DecisionView tone="confirmed" booking={updated} />;
 }
