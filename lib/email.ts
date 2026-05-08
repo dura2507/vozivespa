@@ -76,8 +76,10 @@ function htmlLayout({
   accent: "red" | "green" | "ink";
   bodyHtml: string;
 }): string {
+  // Header background is dark, so 'ink' headline reads as plain white;
+  // 'red' / 'green' keep their accent colour for the confirmed/declined states.
   const accentColor =
-    accent === "green" ? "#25D366" : accent === "red" ? "#B61F36" : "#1a1a1a";
+    accent === "green" ? "#25D366" : accent === "red" ? "#B61F36" : "#ffffff";
   return `<!doctype html>
 <html><body style="margin:0;padding:0;background:#f6f5f1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;">
   <span style="display:none!important;visibility:hidden;opacity:0;color:transparent;height:0;width:0;">${escape(preheader)}</span>
@@ -120,7 +122,7 @@ export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Pro
 
   const bodyHtml = `
     <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escape(booking.customer_name)},</p>
-    <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">thanks for your booking request. We've forwarded it to the owner — you'll hear back within a few hours via WhatsApp or email with confirmation.</p>
+    <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">thanks for your booking request. We&apos;ll review it and confirm by email shortly — usually within a few hours.</p>
     ${bookingSummaryHtml(booking)}
     <p style="margin:24px 0 8px;font-size:14px;color:#6b6b6b;line-height:1.6;">In the meantime, anything urgent?</p>
     <p style="margin:0 0 16px;font-size:14px;line-height:1.6;"><a href="${ownerWaLink()}" style="color:#25D366;font-weight:600;text-decoration:none;">💬 WhatsApp us at ${escape(BRAND.contacts[0].phone)}</a></p>
@@ -136,7 +138,7 @@ export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Pro
 
   const text = `Hi ${booking.customer_name},
 
-Thanks for your booking request. We've forwarded it to the owner — you'll hear back within a few hours.
+Thanks for your booking request. We'll review it and confirm by email shortly — usually within a few hours.
 
 Bike: ${bikeName}
 Dates: ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}

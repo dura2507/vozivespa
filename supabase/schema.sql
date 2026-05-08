@@ -31,8 +31,10 @@ create table public.bookings (
   total_price_cents integer,
   status text not null default 'pending'
     check (status in ('pending', 'confirmed', 'declined', 'cancelled')),
-  -- random opaque token used in owner email links so booking IDs aren't exposed
-  secret_token text not null default encode(gen_random_bytes(24), 'base64'),
+  -- random opaque token used in owner email links so booking IDs aren't exposed.
+  -- Hex-encoded so it's URL-safe — base64 produces '+' and '/' which break some
+  -- URL routers and email clients.
+  secret_token text not null default encode(gen_random_bytes(24), 'hex'),
   created_at timestamptz not null default now(),
   decided_at timestamptz,
   constraint bookings_date_order check (date_from <= date_to)
