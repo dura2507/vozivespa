@@ -1,11 +1,27 @@
-import { Resend } from "resend";
+import { Resend, type CreateEmailOptions } from "resend";
 import { CATEGORIES, BRAND } from "@/lib/mockData";
+import { retry } from "@/lib/retry";
 import type { BookingRow } from "@/lib/supabase";
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
   if (!key) return null;
   return new Resend(key);
+}
+
+async function sendWithRetry(
+  label: string,
+  options: CreateEmailOptions,
+): Promise<void> {
+  const resend = getResend();
+  if (!resend) {
+    console.warn(`[email:${label}] RESEND_API_KEY not set — skipping`);
+    return;
+  }
+  await retry(`email:${label}`, async () => {
+    const { error } = await resend.emails.send(options);
+    if (error) throw new Error(`resend ${label}: ${error.message}`);
+  });
 }
 
 function fromAddress(): string {
@@ -100,12 +116,6 @@ function bookingSummaryHtml(booking: BookingRow): string {
 // ---------- Customer: booking received --------------------------------------
 
 export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Promise<void> {
-  const resend = getResend();
-  if (!resend) {
-    console.warn("[email] RESEND_API_KEY not set — skipping customer received email");
-    return;
-  }
-
   const bikeName = bikeNameFor(booking);
 
   const bodyHtml = `
@@ -137,18 +147,14 @@ Anything urgent? WhatsApp us: ${ownerWaLink()}
 See you in Zadar.
 ${BRAND.name}`;
 
-  try {
-    await resend.emails.send({
-      from: fromAddress(),
-      to: booking.customer_email,
-      subject: `We got your booking — ${bikeName} ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`,
-      html,
-      text,
-      replyTo: BRAND.email,
-    });
-  } catch (err) {
-    console.error("[email] sendCustomerBookingReceivedEmail failed", err);
-  }
+  await sendWithRetry("customerReceived", {
+    from: fromAddress(),
+    to: booking.customer_email,
+    subject: `We got your booking — ${bikeName} ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`,
+    html,
+    text,
+    replyTo: BRAND.email,
+  });
 }
 
 // ---------- Customer: booking decided (confirmed / declined) ----------------
@@ -157,12 +163,6 @@ export async function sendCustomerBookingDecidedEmail(
   booking: BookingRow,
   decision: "confirmed" | "declined",
 ): Promise<void> {
-  const resend = getResend();
-  if (!resend) {
-    console.warn("[email] RESEND_API_KEY not set — skipping customer decided email");
-    return;
-  }
-
   const bikeName = bikeNameFor(booking);
   const isConfirmed = decision === "confirmed";
 
@@ -232,18 +232,14 @@ Want to try other dates or another bike? WhatsApp us: ${ownerWaLink()}
 
 ${BRAND.name}`;
 
-  try {
-    await resend.emails.send({
-      from: fromAddress(),
-      to: booking.customer_email,
-      subject: isConfirmed
-        ? `✓ Confirmed — ${bikeName} ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`
-        : `Update on your booking — ${bikeName}`,
-      html,
-      text,
-      replyTo: BRAND.email,
-    });
-  } catch (err) {
-    console.error("[email] sendCustomerBookingDecidedEmail failed", err);
-  }
+  await sendWithRetry(`customer${isConfirmed ? "Confirmed" : "Declined"}`, {
+    from: fromAddress(),
+    to: booking.customer_email,
+    subject: isConfirmed
+      ? `✓ Confirmed — ${bikeName} ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`
+      : `Update on your booking — ${bikeName}`,
+    html,
+    text,
+    replyTo: BRAND.email,
+  });
 }

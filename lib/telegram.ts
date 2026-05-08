@@ -1,7 +1,25 @@
 import { CATEGORIES } from "@/lib/mockData";
+import { retry } from "@/lib/retry";
 import type { BookingRow } from "@/lib/supabase";
 
 const TG_API = "https://api.telegram.org";
+
+async function callTelegram(method: string, body: Record<string, unknown>): Promise<void> {
+  const tok = token();
+  if (!tok) throw new Error("TELEGRAM_BOT_TOKEN not set");
+
+  await retry(`tg:${method}`, async () => {
+    const res = await fetch(`${TG_API}/bot${tok}/${method}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`telegram ${method} ${res.status}: ${text}`);
+    }
+  });
+}
 
 // ----- Helpers --------------------------------------------------------------
 
@@ -109,37 +127,17 @@ function buildText(booking: BookingRow): string {
 // ----- Public API: send / edit / answer ------------------------------------
 
 export async function sendOwnerBookingTelegram(booking: BookingRow): Promise<void> {
-  const tok = token();
   const chatId = ownerChatId();
-  if (!tok) {
-    console.warn("[telegram] TELEGRAM_BOT_TOKEN not set — skipping owner notification");
-    return;
-  }
   if (!chatId) {
     console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set — skipping owner notification");
     return;
   }
-
-  const body = {
+  await callTelegram("sendMessage", {
     chat_id: chatId,
     text: buildText(booking),
     parse_mode: "MarkdownV2",
     reply_markup: { inline_keyboard: buildKeyboard(booking) },
-  };
-
-  try {
-    const res = await fetch(`${TG_API}/bot${tok}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      console.error("[telegram] sendMessage failed", res.status, text);
-    }
-  } catch (err) {
-    console.error("[telegram] sendOwnerBookingTelegram failed", err);
-  }
+  });
 }
 
 export async function editTelegramMessageForBooking(
@@ -147,51 +145,22 @@ export async function editTelegramMessageForBooking(
   messageId: number,
   booking: BookingRow,
 ): Promise<void> {
-  const tok = token();
-  if (!tok) return;
-
-  const body = {
+  await callTelegram("editMessageText", {
     chat_id: chatId,
     message_id: messageId,
     text: buildText(booking),
     parse_mode: "MarkdownV2",
     reply_markup: { inline_keyboard: buildKeyboard(booking) },
-  };
-
-  try {
-    const res = await fetch(`${TG_API}/bot${tok}/editMessageText`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      console.error("[telegram] editMessageText failed", res.status, text);
-    }
-  } catch (err) {
-    console.error("[telegram] editTelegramMessageForBooking failed", err);
-  }
+  });
 }
 
 export async function answerTelegramCallback(
   callbackQueryId: string,
   text?: string,
 ): Promise<void> {
-  const tok = token();
-  if (!tok) return;
-
   const body: Record<string, unknown> = { callback_query_id: callbackQueryId };
   if (text) body.text = text;
-
-  try {
-    await fetch(`${TG_API}/bot${tok}/answerCallbackQuery`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-  } catch (err) {
-    console.error("[telegram] answerTelegramCallback failed", err);
-  }
+  await callTelegram("answerCallbackQuery", body);
 }
 
 export type CallbackAction = "confirm" | "decline";
