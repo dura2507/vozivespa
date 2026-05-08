@@ -89,12 +89,18 @@ function buildKeyboard(booking: BookingRow): InlineKeyboard {
   const phoneDigits = booking.customer_phone.replace(/[^\d]/g, "");
   const waUrl = `https://wa.me/${phoneDigits}`;
 
+  // Button labels adapt to current status so it's obvious what each click does:
+  //   pending   → [Confirm] [Decline]
+  //   confirmed → [Release dates] (un-confirm, frees the calendar)
+  //   declined  → [Confirm anyway]
   const row1: InlineKeyboardButton[] = [];
-  if (booking.status !== "confirmed") {
+  if (booking.status === "pending") {
     row1.push({ text: "✓ Confirm", callback_data: `confirm:${booking.secret_token}` });
-  }
-  if (booking.status !== "declined") {
     row1.push({ text: "✗ Decline", callback_data: `decline:${booking.secret_token}` });
+  } else if (booking.status === "confirmed") {
+    row1.push({ text: "↻ Release dates", callback_data: `decline:${booking.secret_token}` });
+  } else if (booking.status === "declined") {
+    row1.push({ text: "✓ Confirm anyway", callback_data: `confirm:${booking.secret_token}` });
   }
 
   const rows: InlineKeyboard = [];
