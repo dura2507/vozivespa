@@ -94,10 +94,12 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile dropdown */}
+        {/* Mobile dropdown — border only renders when open so the
+            collapsed (max-h-0) state doesn't leave a 1px white seam
+            against the transparent header on the homepage hero. */}
         <div
-          className={`md:hidden bg-off-white border-t border-ink/8 overflow-hidden transition-all duration-300 ${
-            open ? "max-h-[32rem] pb-6" : "max-h-0"
+          className={`md:hidden bg-off-white overflow-hidden transition-all duration-300 ${
+            open ? "max-h-[32rem] pb-6 border-t border-ink/8" : "max-h-0"
           }`}
         >
           <nav className="flex flex-col px-5 pt-3">
