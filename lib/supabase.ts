@@ -19,6 +19,8 @@ export type BookingRow = {
   notes: string | null;
   date_from: string; // ISO date YYYY-MM-DD
   date_to: string;
+  pickup_time: string; // HH:MM:SS (Postgres time)
+  return_time: string;
   total_price_cents: number | null;
   status: BookingStatus;
   secret_token: string;

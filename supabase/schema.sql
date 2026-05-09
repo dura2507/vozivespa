@@ -28,6 +28,11 @@ create table public.bookings (
   notes text,
   date_from date not null,
   date_to date not null,
+  -- Pickup / return clock-times in the local Zadar window (09:00–19:00, 30-min slots).
+  -- Stored separate from date_from/_to so the calendar/blocked_dates logic stays
+  -- whole-day and so we can show "Pickup Fri 14:00, Return Sun 18:30" everywhere.
+  pickup_time time not null default '09:00',
+  return_time time not null default '19:00',
   total_price_cents integer,
   status text not null default 'pending'
     check (status in ('pending', 'confirmed', 'declined', 'cancelled')),

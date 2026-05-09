@@ -6,11 +6,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
-import { format, differenceInCalendarDays } from "date-fns";
+import { format } from "date-fns";
 import "react-day-picker/style.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CATEGORIES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
+import { buildSlots, calculatePrice, TIER_LABEL } from "@/lib/pricing";
 
 type FormData = {
   name: string;
@@ -43,6 +44,8 @@ export default function BikeDetailPage({
 
   const [activeImage, setActiveImage] = useState(bike.image);
   const [range, setRange] = useState<DateRange | undefined>();
+  const [pickupTime, setPickupTime] = useState("09:00");
+  const [returnTime, setReturnTime] = useState("19:00");
   const [bookingStep, setBookingStep] = useState<BookingStep>("dates");
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>({
@@ -51,6 +54,7 @@ export default function BikeDetailPage({
     phone: "",
     notes: "",
   });
+  const slots = buildSlots();
   const formRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -84,63 +88,13 @@ export default function BikeDetailPage({
     };
   }, [bike.id]);
 
-  const nights =
-    range?.from && range?.to ? differenceInCalendarDays(range.to, range.from) : 0;
-
-  // Apply the cheapest applicable rate. We try every plausible combination
-  // (day-only, weekend if Fri-Sun, week-blocks + leftover days, full
-  // months + leftover days) and pick the lowest total.
-  const { totalPrice, appliedTier } = (() => {
-    if (!range?.from || nights <= 0) {
-      return { totalPrice: 0, appliedTier: null as null | string };
-    }
-    const dayP = parseInt(bike.pricing.day, 10) || 0;
-    const weekendP = parseInt(bike.pricing.weekend, 10);
-    const weekP = parseInt(bike.pricing.week, 10);
-    const monthP = parseInt(bike.pricing.month, 10);
-
-    type Candidate = { price: number; tier: string };
-    const candidates: Candidate[] = [{ price: dayP * nights, tier: "day" }];
-
-    // Weekend: Fri pickup, Sun return = 2 nights
-    if (nights === 2 && range.from.getDay() === 5 && weekendP) {
-      candidates.push({ price: weekendP, tier: "weekend" });
-    }
-    // Pure week / weeks + day leftovers
-    if (weekP && nights >= 7) {
-      const weeks = Math.floor(nights / 7);
-      const rem = nights - weeks * 7;
-      candidates.push({
-        price: weeks * weekP + rem * dayP,
-        tier: weeks === 1 && rem === 0 ? "week" : "week-mix",
-      });
-    }
-    // Pure month / months + day leftovers
-    if (monthP && nights >= 30) {
-      const months = Math.floor(nights / 30);
-      const rem = nights - months * 30;
-      candidates.push({
-        price: months * monthP + rem * dayP,
-        tier: months === 1 && rem === 0 ? "month" : "month-mix",
-      });
-    }
-
-    const best = candidates.reduce(
-      (acc, c) => (c.price < acc.price ? c : acc),
-      candidates[0],
-    );
-    return { totalPrice: best.price, appliedTier: best.tier };
-  })();
-
-  const tierLabel: Record<string, string> = {
-    day: "Daily rate",
-    weekend: "Weekend rate (Fri-Sun)",
-    week: "Week rate",
-    "week-mix": "Week + day mix",
-    month: "Month rate",
-    "month-mix": "Month + day mix",
-  };
-  const bookingFee = Math.round(totalPrice * 0.2 * 100) / 100;
+  const priceResult =
+    range?.from && range?.to
+      ? calculatePrice(range.from, range.to, pickupTime, returnTime, bike.pricing)
+      : null;
+  const totalPrice = priceResult?.totalPrice ?? 0;
+  const appliedTier = priceResult?.appliedTier ?? null;
+  const billableDays = priceResult?.billableDays ?? 0;
 
   function scrollToCalendar() {
     calendarRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -172,6 +126,8 @@ export default function BikeDetailPage({
           notes: form.notes || null,
           from: toIsoDate(range.from),
           to: toIsoDate(range.to),
+          pickupTime,
+          returnTime,
           totalPriceCents: totalPrice * 100,
         }),
       });
@@ -201,6 +157,8 @@ export default function BikeDetailPage({
   function resetBooking() {
     setBookingStep("dates");
     setRange(undefined);
+    setPickupTime("09:00");
+    setReturnTime("19:00");
     setForm({ name: "", email: "", phone: "", notes: "" });
     setSubmitError(null);
   }
@@ -530,39 +488,81 @@ export default function BikeDetailPage({
                   />
                 </div>
 
-                {range?.from && (
-                  <div className="mt-4 bg-sand px-5 py-4 flex flex-wrap items-center justify-between gap-4">
-                    <div className="text-sm text-ink">
-                      <span className="font-semibold">{format(range.from, "dd MMM")}</span>
-                      {range.to && (
-                        <>
-                          {" - "}
-                          <span className="font-semibold">{format(range.to, "dd MMM yyyy")}</span>
-                          <span className="text-muted ml-2">
-                            ({nights} {nights === 1 ? "day" : "days"})
-                          </span>
-                        </>
-                      )}
+                {range?.from && range?.to && (
+                  <>
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <label className="block">
+                        <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
+                          Pickup time · {format(range.from, "EEE dd MMM")}
+                        </span>
+                        <select
+                          value={pickupTime}
+                          onChange={(e) => setPickupTime(e.target.value)}
+                          className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all"
+                        >
+                          {slots.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="block">
+                        <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
+                          Return time · {format(range.to, "EEE dd MMM")}
+                        </span>
+                        <select
+                          value={returnTime}
+                          onChange={(e) => setReturnTime(e.target.value)}
+                          className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all"
+                        >
+                          {slots.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
                     </div>
-                    {nights > 0 && (
-                      <div className="text-right">
-                        <div className="font-barlow font-black text-red text-2xl leading-none">
-                          {totalPrice}€
-                        </div>
-                        {appliedTier && appliedTier !== "day" && (
-                          <p className="text-[10px] tracking-[0.15em] uppercase text-muted font-bold mt-1">
-                            {tierLabel[appliedTier]}
-                          </p>
+                    <p className="text-muted text-xs mt-2">
+                      Shop hours 09:00–19:00. Pickup or return outside this window isn&apos;t possible.
+                    </p>
+
+                    <div className="mt-4 bg-sand px-5 py-4 flex flex-wrap items-center justify-between gap-4">
+                      <div className="text-sm text-ink">
+                        <span className="font-semibold">
+                          {format(range.from, "dd MMM")} {pickupTime}
+                        </span>
+                        {" → "}
+                        <span className="font-semibold">
+                          {format(range.to, "dd MMM yyyy")} {returnTime}
+                        </span>
+                        {billableDays > 0 && (
+                          <span className="text-muted ml-2">
+                            ({billableDays} {billableDays === 1 ? "day" : "days"})
+                          </span>
                         )}
                       </div>
-                    )}
-                  </div>
+                      {totalPrice > 0 && (
+                        <div className="text-right">
+                          <div className="font-barlow font-black text-red text-2xl leading-none">
+                            {totalPrice}€
+                          </div>
+                          {appliedTier && appliedTier !== "day" && (
+                            <p className="text-[10px] tracking-[0.15em] uppercase text-muted font-bold mt-1">
+                              {TIER_LABEL[appliedTier]}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
 
                 {bookingStep === "dates" && (
                   <div className="mt-5 flex justify-end">
                     <button
-                      disabled={!range?.from || !range?.to || nights === 0}
+                      disabled={!range?.from || !range?.to || totalPrice === 0}
                       onClick={handleContinueToForm}
                       className="bg-red text-white font-bold text-xs tracking-widest uppercase px-8 py-4 hover:bg-red-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
@@ -596,15 +596,15 @@ export default function BikeDetailPage({
                     <p className="font-semibold mt-0.5">{bike.model}</p>
                   </div>
                   <div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">From</p>
+                    <p className="text-white/40 text-[10px] uppercase tracking-wider">Pickup</p>
                     <p className="font-semibold mt-0.5">
-                      {range?.from ? format(range.from, "dd MMM yyyy") : "-"}
+                      {range?.from ? `${format(range.from, "dd MMM yyyy")} · ${pickupTime}` : "-"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">To</p>
+                    <p className="text-white/40 text-[10px] uppercase tracking-wider">Return</p>
                     <p className="font-semibold mt-0.5">
-                      {range?.to ? format(range.to, "dd MMM yyyy") : "-"}
+                      {range?.to ? `${format(range.to, "dd MMM yyyy")} · ${returnTime}` : "-"}
                     </p>
                   </div>
                   <div className="ml-auto">
@@ -729,10 +729,16 @@ export default function BikeDetailPage({
                   <p className="text-[10px] tracking-[0.2em] uppercase text-muted mb-2 font-bold">What you booked</p>
                   <p className="text-ink"><span className="text-muted">Bike: </span>{bike.model}</p>
                   {range?.from && range?.to && (
-                    <p className="text-ink">
-                      <span className="text-muted">Dates: </span>
-                      {format(range.from, "dd MMM yyyy")} → {format(range.to, "dd MMM yyyy")}
-                    </p>
+                    <>
+                      <p className="text-ink">
+                        <span className="text-muted">Pickup: </span>
+                        {format(range.from, "dd MMM yyyy")} · {pickupTime}
+                      </p>
+                      <p className="text-ink">
+                        <span className="text-muted">Return: </span>
+                        {format(range.to, "dd MMM yyyy")} · {returnTime}
+                      </p>
+                    </>
                   )}
                   {totalPrice > 0 && (
                     <p className="text-ink"><span className="text-muted">Total: </span>{totalPrice}€</p>

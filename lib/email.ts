@@ -33,6 +33,12 @@ function fmtDate(iso: string): string {
   return `${d}.${m}.${y}`;
 }
 
+// Postgres `time` returns 'HH:MM:SS' — keep just HH:MM for display.
+function fmtTimeOfDay(t: string | null | undefined): string {
+  if (!t) return "";
+  return t.slice(0, 5);
+}
+
 function nightsBetween(from: string, to: string): number {
   const a = new Date(`${from}T00:00:00Z`).getTime();
   const b = new Date(`${to}T00:00:00Z`).getTime();
@@ -140,9 +146,12 @@ function htmlLayout({
 function bookingSummaryHtml(booking: BookingRow): string {
   const bikeName = bikeNameFor(booking);
   const nights = nightsBetween(booking.date_from, booking.date_to);
+  const pickup = fmtTimeOfDay(booking.pickup_time);
+  const ret = fmtTimeOfDay(booking.return_time);
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
     <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Bike</td><td style="padding:4px 0;font-weight:600;">${escape(bikeName)}</td></tr>
-    <tr><td style="padding:4px 0;color:#6b6b6b;">Dates</td><td style="padding:4px 0;font-weight:600;">${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)} (${nights} ${nights === 1 ? "day" : "days"})</td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;">Pickup</td><td style="padding:4px 0;font-weight:600;">${fmtDate(booking.date_from)}${pickup ? ` &middot; ${pickup}` : ""}</td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;">Return</td><td style="padding:4px 0;font-weight:600;">${fmtDate(booking.date_to)}${ret ? ` &middot; ${ret}` : ""} <span style="color:#6b6b6b;font-weight:400;">(${nights} ${nights === 1 ? "day" : "days"})</span></td></tr>
     <tr><td style="padding:4px 0;color:#6b6b6b;">Total</td><td style="padding:4px 0;font-weight:600;color:#B61F36;">${totalEur(booking)}</td></tr>
   </table>`;
 }
@@ -168,12 +177,15 @@ export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Pro
     bodyHtml,
   });
 
+  const pickup = fmtTimeOfDay(booking.pickup_time);
+  const ret = fmtTimeOfDay(booking.return_time);
   const text = `Hi ${booking.customer_name},
 
 Thanks for your booking request. We'll review it and confirm by email shortly - usually within a few hours.
 
 Bike: ${bikeName}
-Dates: ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}
+Pickup: ${fmtDate(booking.date_from)}${pickup ? ` · ${pickup}` : ""}
+Return: ${fmtDate(booking.date_to)}${ret ? ` · ${ret}` : ""}
 Total: ${totalEur(booking)}
 
 Anything urgent? WhatsApp us: ${ownerWaLink()}
@@ -219,8 +231,8 @@ export async function sendCustomerBookingDecidedEmail(
         <li>${escape(BRAND.deposit)} deposit (cash on arrival, refunded after drop-off if no damage)</li>
         <li>Bike comes with a full tank - please return it full</li>
       </ul>
-      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">Pickup time?</h3>
-      <p style="margin:0 0 8px;font-size:14px;line-height:1.6;">Reach out so we can pin down a pickup time:</p>
+      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">Need to adjust?</h3>
+      <p style="margin:0 0 8px;font-size:14px;line-height:1.6;">Pickup is locked in for ${escape(fmtDate(booking.date_from))} at ${escape(fmtTimeOfDay(booking.pickup_time))}, return ${escape(fmtDate(booking.date_to))} by ${escape(fmtTimeOfDay(booking.return_time))}. Reach out if anything changes:</p>
       ${contactButtonsHtml()}
       <p style="margin:32px 0 0;padding-top:18px;border-top:1px solid #e6e4dd;font-size:12px;color:#6b6b6b;line-height:1.6;">Plans changed? <a href="${cancelUrl}" style="color:#B61F36;">Cancel this booking</a> - the dates open up immediately for someone else.</p>
     `
@@ -241,23 +253,26 @@ export async function sendCustomerBookingDecidedEmail(
     bodyHtml,
   });
 
+  const pickupT = fmtTimeOfDay(booking.pickup_time);
+  const returnT = fmtTimeOfDay(booking.return_time);
   const text = isConfirmed
     ? `Hi ${booking.customer_name},
 
 Your ${bikeName} is locked in.
 
-Dates: ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}
+Pickup: ${fmtDate(booking.date_from)}${pickupT ? ` · ${pickupT}` : ""}
+Return: ${fmtDate(booking.date_to)}${returnT ? ` · ${returnT}` : ""}
 Total: ${totalEur(booking)}
 
-Pickup: ${BRAND.address}
-Open: ${BRAND.hours}
+Pickup location: ${BRAND.address}
+Shop hours: ${BRAND.hours}
 
 Bring:
 - Valid motorcycle licence (no licence, no ride)
 - ${BRAND.deposit} deposit cash, refunded after drop-off
 - Full tank in / full tank out
 
-Pin down a pickup time on WhatsApp: ${ownerWaLink()}
+Need to adjust? WhatsApp us: ${ownerWaLink()}
 
 Plans changed? Cancel anytime: ${cancelUrl}
 

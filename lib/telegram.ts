@@ -42,6 +42,12 @@ function fmtTime(iso: string): string {
   return d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
 }
 
+// Postgres `time` comes back as 'HH:MM:SS' — drop seconds for display.
+function fmtTimeOfDay(t: string | null | undefined): string {
+  if (!t) return "";
+  return t.slice(0, 5);
+}
+
 function nightsBetween(from: string, to: string): number {
   const a = new Date(`${from}T00:00:00Z`).getTime();
   const b = new Date(`${to}T00:00:00Z`).getTime();
@@ -112,12 +118,15 @@ function buildKeyboard(booking: BookingRow): InlineKeyboard {
 function buildText(booking: BookingRow): string {
   const bikeName = bikeNameFor(booking);
   const nights = nightsBetween(booking.date_from, booking.date_to);
+  const pickup = fmtTimeOfDay(booking.pickup_time);
+  const ret = fmtTimeOfDay(booking.return_time);
 
   const lines = [
     "🛵 *New booking request*",
     "",
     `*Bike:* ${escapeMd(bikeName)}`,
-    `*Dates:* ${escapeMd(fmtDate(booking.date_from))} → ${escapeMd(fmtDate(booking.date_to))} \\(${nights} ${nights === 1 ? "day" : "days"}\\)`,
+    `*Pickup:* ${escapeMd(fmtDate(booking.date_from))}${pickup ? ` ${escapeMd(pickup)}` : ""}`,
+    `*Return:* ${escapeMd(fmtDate(booking.date_to))}${ret ? ` ${escapeMd(ret)}` : ""} \\(${nights} ${nights === 1 ? "day" : "days"}\\)`,
     `*Total:* ${escapeMd(totalEur(booking))}`,
     "",
     `*Name:* ${escapeMd(booking.customer_name)}`,
@@ -228,11 +237,14 @@ export async function sendOwnerCancellationTelegram(booking: BookingRow): Promis
   }
 
   const bikeName = bikeNameFor(booking);
+  const pickup = fmtTimeOfDay(booking.pickup_time);
+  const ret = fmtTimeOfDay(booking.return_time);
   const lines = [
     "🚫 *Customer cancelled*",
     "",
     `*Bike:* ${escapeMd(bikeName)}`,
-    `*Dates:* ${escapeMd(fmtDate(booking.date_from))} → ${escapeMd(fmtDate(booking.date_to))}`,
+    `*Pickup:* ${escapeMd(fmtDate(booking.date_from))}${pickup ? ` ${escapeMd(pickup)}` : ""}`,
+    `*Return:* ${escapeMd(fmtDate(booking.date_to))}${ret ? ` ${escapeMd(ret)}` : ""}`,
     `*Name:* ${escapeMd(booking.customer_name)}`,
     `*Phone:* ${escapeMd(booking.customer_phone)}`,
     "",

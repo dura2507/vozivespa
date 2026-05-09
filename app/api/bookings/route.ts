@@ -2,6 +2,7 @@ import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail } from "@/lib/email";
+import { isValidSlot, parseTime } from "@/lib/pricing";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,8 @@ type BookingPayload = {
   notes?: unknown;
   from?: unknown; // ISO YYYY-MM-DD
   to?: unknown; // ISO YYYY-MM-DD
+  pickupTime?: unknown; // HH:MM, 09:00–19:00, 30-min slots
+  returnTime?: unknown;
   totalPriceCents?: unknown;
 };
 
@@ -26,6 +29,11 @@ function asIsoDate(v: unknown): string | null {
   if (typeof v !== "string" || !ISO_DATE.test(v)) return null;
   const d = new Date(`${v}T00:00:00Z`);
   return Number.isNaN(d.getTime()) ? null : v;
+}
+
+function asSlot(v: unknown): string | null {
+  if (typeof v !== "string") return null;
+  return isValidSlot(v) ? v : null;
 }
 
 // POST /api/bookings
@@ -47,6 +55,8 @@ export async function POST(request: Request) {
   const notes = asString(body.notes);
   const from = asIsoDate(body.from);
   const to = asIsoDate(body.to);
+  const pickupTime = asSlot(body.pickupTime);
+  const returnTime = asSlot(body.returnTime);
   const totalPriceCents =
     typeof body.totalPriceCents === "number" && Number.isFinite(body.totalPriceCents)
       ? Math.round(body.totalPriceCents)
@@ -58,6 +68,18 @@ export async function POST(request: Request) {
   if (!phone) return NextResponse.json({ error: "Phone is required" }, { status: 400 });
   if (!from || !to) return NextResponse.json({ error: "Valid dates are required" }, { status: 400 });
   if (from > to) return NextResponse.json({ error: "from must be on or before to" }, { status: 400 });
+  if (!pickupTime || !returnTime) {
+    return NextResponse.json(
+      { error: "Pickup and return times must be 09:00–19:00 in 30-minute slots" },
+      { status: 400 },
+    );
+  }
+  if (from === to && parseTime(pickupTime)! >= parseTime(returnTime)!) {
+    return NextResponse.json(
+      { error: "Return time must be later than pickup time on a same-day booking" },
+      { status: 400 },
+    );
+  }
 
   const supabase = getServiceClient();
 
@@ -106,6 +128,8 @@ export async function POST(request: Request) {
       notes,
       date_from: from,
       date_to: to,
+      pickup_time: pickupTime,
+      return_time: returnTime,
       total_price_cents: totalPriceCents,
     })
     .select("*")
