@@ -466,7 +466,7 @@ export default function BikeDetailPage({
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-[linear-gradient(135deg,_transparent_50%,_rgba(26,26,26,0.15)_50%)]" />
-                    Pickup / return day
+                    Half day · still bookable
                   </div>
                 </div>
 
@@ -476,7 +476,11 @@ export default function BikeDetailPage({
                     selected={range}
                     onSelect={setRange}
                     numberOfMonths={isMobile ? 1 : 2}
-                    disabled={[{ before: new Date() }, ...blocked]}
+                    disabled={[
+                      { before: new Date() },
+                      ...bookedFullDays,
+                      ...bookedMiddleRanges,
+                    ]}
                     excludeDisabled
                     min={1}
                     modifiers={{

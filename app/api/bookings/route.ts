@@ -97,24 +97,60 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Bike not available" }, { status: 404 });
   }
 
-  // 2. No overlap with existing blocked dates
-  // Two ranges [from, to] and [df, dt] overlap iff df <= to && dt >= from.
-  const { data: overlaps, error: overlapError } = await supabase
+  // 2. Overlap check.
+  //    - Manual blocks (booking_id null in blocked_dates) are full-day:
+  //      any date overlap rejects.
+  //    - Confirmed bookings overlap by datetime so back-to-back pickups
+  //      on a shared day are allowed when the times don't actually clash
+  //      (e.g. existing returns 15.05 14:00, new picks up 15.05 14:30).
+  const { data: manualBlocks, error: manualErr } = await supabase
     .from("blocked_dates")
-    .select("date_from, date_to")
+    .select("id")
     .eq("bike_id", bikeId)
+    .is("booking_id", null)
     .lte("date_from", to)
     .gte("date_to", from)
     .limit(1);
-  if (overlapError) {
-    console.error("[/api/bookings] overlap lookup error", overlapError);
+  if (manualErr) {
+    console.error("[/api/bookings] manual block lookup error", manualErr);
     return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
   }
-  if (overlaps && overlaps.length > 0) {
+  if (manualBlocks && manualBlocks.length > 0) {
     return NextResponse.json(
       { error: "Selected dates are no longer available" },
       { status: 409 },
     );
+  }
+
+  const { data: candidates, error: candErr } = await supabase
+    .from("bookings")
+    .select("date_from, date_to, pickup_time, return_time")
+    .eq("bike_id", bikeId)
+    .eq("status", "confirmed")
+    .lte("date_from", to)
+    .gte("date_to", from);
+  if (candErr) {
+    console.error("[/api/bookings] booking overlap lookup error", candErr);
+    return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
+  }
+  const toMs = (date: string, time: string) => {
+    const t = time.length === 5 ? `${time}:00` : time;
+    return new Date(`${date}T${t}`).getTime();
+  };
+  const newStart = toMs(from, pickupTime);
+  const newEnd = toMs(to, returnTime);
+  for (const b of candidates ?? []) {
+    const bStart = toMs(b.date_from, b.pickup_time);
+    const bEnd = toMs(b.date_to, b.return_time);
+    // Strict overlap. Touching boundaries (newStart === bEnd, etc.) are OK.
+    if (newStart < bEnd && bStart < newEnd) {
+      return NextResponse.json(
+        {
+          error: "Time conflict with another booking on those dates - try a later pickup or earlier return time",
+        },
+        { status: 409 },
+      );
+    }
   }
 
   // 3. Insert
