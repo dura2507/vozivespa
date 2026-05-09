@@ -67,7 +67,7 @@ const REQUIREMENTS = [
       "Basic insurance covers theft + engine damage",
       "Accidents, scratches, flat tires are renter's responsibility",
       "Helmets always provided",
-      "Roadside help: free up to 20km, then 50€",
+      "Roadside help: free up to 20 km, 50€ over that, more for islands",
     ],
   },
 ];
