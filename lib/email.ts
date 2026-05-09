@@ -78,11 +78,13 @@ function contactButtonsHtml(): string {
   const rows = BRAND.contacts
     .filter((c) => c.phoneRaw)
     .map((c) => {
+      const flag = c.languages.join(" ");
       const callHref = `tel:+${c.phoneRaw}`;
       const waHref = `https://wa.me/${c.phoneRaw}`;
       return `<tr>
     <td style="padding:6px 12px 6px 0;font-size:13px;line-height:1.4;color:#1a1a1a;white-space:nowrap;">
-      <strong>${escape(c.label)}</strong><br/>
+      <span style="font-size:16px;line-height:1;vertical-align:middle;">${flag}</span>
+      &nbsp;<strong>${escape(c.label)}</strong><br/>
       <span style="color:#6b6b6b;font-size:12px;">${escape(c.phone)}</span>
     </td>
     <td style="padding:6px 8px 6px 0;">
