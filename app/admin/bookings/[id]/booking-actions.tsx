@@ -91,6 +91,18 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
     }
   }
 
+  const status = booking.status;
+  const helpText: Record<string, string> = {
+    pending:
+      "Confirm books the dates and emails the customer. Decline rejects the request and emails the customer.",
+    confirmed:
+      "Cancel releases the dates back to the calendar and emails the customer.",
+    declined:
+      "Re-confirm undoes the decline and locks the dates back in.",
+    cancelled:
+      "Re-confirm puts this booking back on the calendar.",
+  };
+
   return (
     <div className="bg-white border border-ink/10 p-5 space-y-5">
       <div>
@@ -98,32 +110,44 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
           Decision
         </p>
         <div className="flex gap-2 flex-wrap">
-          <ActionButton
-            label="Confirm"
-            tone="green"
-            onClick={() => decide("confirmed")}
-            disabled={busy !== null || booking.status === "confirmed"}
-            pending={busy === "confirmed"}
-          />
-          <ActionButton
-            label="Decline"
-            tone="ink"
-            onClick={() => decide("declined")}
-            disabled={busy !== null || booking.status === "declined"}
-            pending={busy === "declined"}
-          />
-          <ActionButton
-            label="Cancel"
-            tone="red"
-            onClick={() => decide("cancelled")}
-            disabled={busy !== null || booking.status === "cancelled"}
-            pending={busy === "cancelled"}
-          />
+          {status === "pending" && (
+            <>
+              <ActionButton
+                label="Confirm"
+                tone="green"
+                onClick={() => decide("confirmed")}
+                disabled={busy !== null}
+                pending={busy === "confirmed"}
+              />
+              <ActionButton
+                label="Decline"
+                tone="ink"
+                onClick={() => decide("declined")}
+                disabled={busy !== null}
+                pending={busy === "declined"}
+              />
+            </>
+          )}
+          {status === "confirmed" && (
+            <ActionButton
+              label="Release dates / Cancel"
+              tone="red"
+              onClick={() => decide("cancelled")}
+              disabled={busy !== null}
+              pending={busy === "cancelled"}
+            />
+          )}
+          {(status === "declined" || status === "cancelled") && (
+            <ActionButton
+              label="Re-confirm"
+              tone="green"
+              onClick={() => decide("confirmed")}
+              disabled={busy !== null}
+              pending={busy === "confirmed"}
+            />
+          )}
         </div>
-        <p className="text-xs text-muted mt-2">
-          Confirm + decline notify the customer by email. Cancel just flips the
-          status and frees the dates.
-        </p>
+        <p className="text-xs text-muted mt-2">{helpText[status]}</p>
       </div>
 
       <div>

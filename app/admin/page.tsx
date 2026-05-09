@@ -69,10 +69,10 @@ function BookingRow({
   return (
     <Link
       href={`/admin/bookings/${booking.id}`}
-      className="grid grid-cols-[1fr_auto] sm:grid-cols-[2fr_2fr_auto_auto] gap-3 items-center bg-white border border-ink/10 px-4 py-3 hover:border-red transition-colors"
+      className="block bg-white border border-ink/10 px-4 py-3 hover:border-red transition-colors"
     >
-      <div className="min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex items-center justify-between gap-3 mb-1">
+        <div className="flex items-center gap-2 flex-wrap min-w-0">
           <span className="font-semibold text-ink truncate">
             {booking.customer_name}
           </span>
@@ -85,22 +85,26 @@ function BookingRow({
             </span>
           )}
         </div>
-        <p className="text-xs text-muted truncate mt-0.5">{booking.bikeName}</p>
+        <p className="font-bold text-ink shrink-0">{totalEur(booking)}</p>
       </div>
-      <div className="text-xs text-ink hidden sm:block">
-        <div>
+      <p className="text-xs text-muted truncate">{booking.bikeName}</p>
+      <div className="text-xs text-ink mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <span>
           {fmtDate(booking.date_from)} {fmtTimeOfDay(booking.pickup_time)}
-        </div>
-        <div className="text-muted">
-          → {fmtDate(booking.date_to)} {fmtTimeOfDay(booking.return_time)}
-        </div>
-        {subtitle && <div className="text-red font-bold mt-0.5">{subtitle}</div>}
+        </span>
+        <span className="text-muted">→</span>
+        <span>
+          {fmtDate(booking.date_to)} {fmtTimeOfDay(booking.return_time)}
+        </span>
+        {subtitle && (
+          <span className="text-red font-bold">· {subtitle}</span>
+        )}
       </div>
-      <div className="text-right">
-        <p className="font-bold text-ink">{totalEur(booking)}</p>
-        <p className="text-[10px] text-muted">{paymentMethodLabel(booking.payment_method)}</p>
-      </div>
-      <span className="text-red text-xs font-bold tracking-widest uppercase hidden sm:inline">→</span>
+      {booking.payment_method && (
+        <p className="text-[10px] tracking-[0.1em] uppercase text-ink/40 mt-1">
+          {paymentMethodLabel(booking.payment_method)}
+        </p>
+      )}
     </Link>
   );
 }
