@@ -425,10 +425,17 @@ export type Contact = {
 export type PaymentMethod = {
   id: "paypal_ff" | "paypal_company" | "bank";
   label: string;
-  // Headline value the customer copies (email or IBAN).
+  // Headline value (email or IBAN). Shown formatted for humans.
   value: string;
-  // Optional second line (account holder name, etc.).
+  // Optional override for what gets put on the clipboard — e.g.
+  // IBAN with spaces displayed but bare digits copied so banking
+  // apps don't choke.
+  valueCopy?: string;
+  // Field label for `value` ("IBAN", "Email", etc).
+  valueLabel?: string;
+  // Optional second copyable field, typically the account holder.
   subValue?: string;
+  subValueLabel?: string;
   // Short note shown beneath the option (fees, instructions, etc.).
   note?: string;
   // Recommended option appears first and is highlighted.
@@ -455,6 +462,7 @@ export const BRAND = {
     {
       id: "paypal_ff",
       label: "PayPal · Friends & Family",
+      valueLabel: "Email",
       value: "priscilla_sebastiani@yahoo.com.br",
       note: "No fee. Use Friends & Family option.",
       recommended: true,
@@ -462,13 +470,17 @@ export const BRAND = {
     {
       id: "paypal_company",
       label: "PayPal · Company",
+      valueLabel: "Email",
       value: "Ktoms_braap284@freenet.de",
       note: "Standard PayPal — small fee applies.",
     },
     {
       id: "bank",
       label: "Bank Transfer (SEPA)",
+      valueLabel: "IBAN",
       value: "DE71 7205 0000 0240 7231 30",
+      valueCopy: "DE71720500000240723130",
+      subValueLabel: "Account holder",
       subValue: "Thomas Krawietz",
       note: "Use instant transfer. Currency conversion may add a fee.",
     },

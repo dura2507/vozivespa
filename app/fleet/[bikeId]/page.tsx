@@ -885,26 +885,52 @@ export default function BikeDetailPage({
                                   )}
                                 </div>
                                 {selected && (
-                                  <div className="mt-2">
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                      <code className="text-ink text-sm font-mono break-all">
-                                        {p.value}
-                                      </code>
-                                      <button
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.preventDefault();
-                                          copyValue(p.value, p.id);
-                                        }}
-                                        className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red transition-colors px-2 py-1 border border-ink/15 hover:border-red"
-                                      >
-                                        {copied === p.id ? "✓ Copied" : "Copy"}
-                                      </button>
+                                  <div className="mt-2 space-y-2">
+                                    <div>
+                                      {p.valueLabel && (
+                                        <p className="text-[10px] tracking-[0.15em] uppercase text-muted mb-0.5">
+                                          {p.valueLabel}
+                                        </p>
+                                      )}
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        <code className="text-ink text-sm font-mono break-all">
+                                          {p.value}
+                                        </code>
+                                        <button
+                                          type="button"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            copyValue(p.valueCopy ?? p.value, `${p.id}-value`);
+                                          }}
+                                          className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red transition-colors px-2 py-1 border border-ink/15 hover:border-red"
+                                        >
+                                          {copied === `${p.id}-value` ? "✓ Copied" : "Copy"}
+                                        </button>
+                                      </div>
                                     </div>
                                     {p.subValue && (
-                                      <p className="text-muted text-xs mt-1.5">
-                                        Account holder: <span className="text-ink font-semibold">{p.subValue}</span>
-                                      </p>
+                                      <div>
+                                        {p.subValueLabel && (
+                                          <p className="text-[10px] tracking-[0.15em] uppercase text-muted mb-0.5">
+                                            {p.subValueLabel}
+                                          </p>
+                                        )}
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                          <code className="text-ink text-sm font-mono break-all">
+                                            {p.subValue}
+                                          </code>
+                                          <button
+                                            type="button"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              copyValue(p.subValue!, `${p.id}-sub`);
+                                            }}
+                                            className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red transition-colors px-2 py-1 border border-ink/15 hover:border-red"
+                                          >
+                                            {copied === `${p.id}-sub` ? "✓ Copied" : "Copy"}
+                                          </button>
+                                        </div>
+                                      </div>
                                     )}
                                   </div>
                                 )}
@@ -918,34 +944,59 @@ export default function BikeDetailPage({
                       })}
                     </div>
 
-                    <label className="block">
-                      <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
+                    <div>
+                      <p className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em] mb-1.5">
                         Receipt screenshot *
-                      </span>
-                      <div className="mt-1.5 flex items-center gap-3">
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf"
-                          onChange={handleReceiptChange}
-                          required
-                          className="block w-full text-sm text-ink file:mr-3 file:py-2.5 file:px-4 file:border-0 file:text-[10px] file:font-bold file:tracking-widest file:uppercase file:bg-ink file:text-white file:cursor-pointer hover:file:bg-red transition-colors"
-                        />
+                      </p>
+                      <input
+                        id="receipt-file"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf"
+                        onChange={handleReceiptChange}
+                        required
+                        className="sr-only"
+                      />
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <label
+                          htmlFor="receipt-file"
+                          className="inline-flex items-center cursor-pointer bg-ink text-white font-bold text-[10px] tracking-widest uppercase px-4 py-2.5 hover:bg-red transition-colors"
+                        >
+                          {receipt ? "Change file" : "Choose file"}
+                        </label>
+                        <span className="text-sm text-ink min-w-0 break-all">
+                          {receipt ? (
+                            <>
+                              <span className="font-semibold">{receipt.name}</span>
+                              <span className="text-muted ml-2">
+                                ({(receipt.size / 1024).toFixed(0)} KB)
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-muted">No file chosen</span>
+                          )}
+                        </span>
+                        {receipt && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setReceipt(null);
+                              setReceiptError(null);
+                              const el = document.getElementById("receipt-file") as HTMLInputElement | null;
+                              if (el) el.value = "";
+                            }}
+                            className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red transition-colors px-2 py-1 border border-ink/15 hover:border-red"
+                          >
+                            Remove
+                          </button>
+                        )}
                       </div>
-                      {receipt && (
-                        <p className="text-ink text-xs mt-2">
-                          <span className="font-semibold">{receipt.name}</span>
-                          <span className="text-muted ml-2">
-                            ({(receipt.size / 1024).toFixed(0)} KB)
-                          </span>
-                        </p>
-                      )}
                       {receiptError && (
                         <p className="text-red text-xs mt-2 font-semibold">{receiptError}</p>
                       )}
                       <p className="text-muted text-xs mt-2">
                         JPG, PNG, HEIC or PDF · max 4 MB
                       </p>
-                    </label>
+                    </div>
                   </div>
 
                   {submitError && (
