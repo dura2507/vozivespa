@@ -21,7 +21,10 @@ export default function AnchorOffsetFix() {
       const el = document.getElementById(id);
       if (!el) return false;
       const rect = el.getBoundingClientRect();
-      const top = window.scrollY + rect.top - navHeight() - 8; // 8px breathing room
+      // Land exactly under the navbar — overshoot by 1px so the previous
+      // section's bottom edge stays hidden behind the bar even with browser
+      // sub-pixel rounding.
+      const top = window.scrollY + rect.top - navHeight() + 1;
       window.scrollTo({ top: Math.max(0, top), behavior });
       return true;
     }
