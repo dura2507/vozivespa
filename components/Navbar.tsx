@@ -27,6 +27,9 @@ export default function Navbar() {
   const transparent = isHome && !scrolled && !open;
   const textColor = transparent ? "text-white" : "text-ink";
   const hoverColor = transparent ? "hover:text-white/70" : "hover:text-red";
+  // Bike-detail page already has its own booking flow inline; the
+  // sticky CTA at the bottom would just cover the booking form.
+  const hideMobileCta = pathname.startsWith("/fleet/");
 
   return (
     <>
@@ -128,19 +131,21 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile sticky bottom bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-ink text-white flex items-center justify-between px-5 py-3 border-t border-white/10">
-        <div>
-          <p className="text-[10px] text-white/50 uppercase tracking-wider">Bike rental Zadar</p>
-          <p className="text-sm font-bold">From 35€ / day</p>
+      {/* Mobile sticky bottom bar — hidden on bike-detail pages. */}
+      {!hideMobileCta && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-ink text-white flex items-center justify-between px-5 py-3 border-t border-white/10">
+          <div>
+            <p className="text-[10px] text-white/50 uppercase tracking-wider">Bike rental Zadar</p>
+            <p className="text-sm font-bold">From 35€ / day</p>
+          </div>
+          <Link
+            href="/#fleet"
+            className="bg-red text-white text-xs font-bold tracking-widest uppercase px-6 py-3"
+          >
+            Book Now →
+          </Link>
         </div>
-        <Link
-          href="/#fleet"
-          className="bg-red text-white text-xs font-bold tracking-widest uppercase px-6 py-3"
-        >
-          Book Now →
-        </Link>
-      </div>
+      )}
     </>
   );
 }

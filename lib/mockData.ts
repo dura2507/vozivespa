@@ -109,8 +109,8 @@ export const CATEGORIES: Category[] = [
     longDescription:
       "Same Liberty 50 as the standard, fitted with a topcase for extra storage on longer rides.",
     tagline: "Topcase included - extra storage.",
-    image: "/bikes/scooter-50.jpg",
-    gallery: ["/bikes/scooter-50.jpg"],
+    image: "/bikes/scooter-50-topcase.jpg",
+    gallery: ["/bikes/scooter-50-topcase.jpg"],
     licence: "B or AM category",
     licenceCode: "AM/B",
     maxSpeed: "45 km/h",
