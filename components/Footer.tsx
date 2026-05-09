@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { label: "Info", href: "/info" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
+  { label: "Terms", href: "/terms" },
 ];
 
 export default function Footer() {

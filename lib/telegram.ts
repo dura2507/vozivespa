@@ -97,6 +97,12 @@ function paymentLabel(id: BookingRow["payment_method"]): string {
   )[id];
 }
 
+function ridingStyleLabel(s: BookingRow["riding_style"]): string {
+  if (s === "solo") return "Solo";
+  if (s === "with_passenger") return "With passenger";
+  return "-";
+}
+
 // Telegram sendPhoto only handles JPEG/PNG/WebP reliably. Anything else
 // (HEIC, PDF) goes via sendDocument so the file at least lands.
 const PHOTO_MIMES = new Set(["image/jpeg", "image/png", "image/webp"]);
@@ -169,6 +175,8 @@ function buildText(booking: BookingRow, unitLabel?: string | null): string {
     `*Name:* ${escapeMd(booking.customer_name)}`,
     `*Phone:* ${escapeMd(booking.customer_phone)}`,
     `*Email:* ${escapeMd(booking.customer_email)}`,
+    `*Licence:* ${escapeMd(booking.drivers_licence ?? "-")}`,
+    `*Riding:* ${escapeMd(ridingStyleLabel(booking.riding_style))}`,
   ];
   if (booking.notes) {
     lines.push(`*Notes:* ${escapeMd(booking.notes)}`);

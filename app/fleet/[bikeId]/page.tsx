@@ -31,6 +31,17 @@ type CustomerForm = {
 
 type PaymentMethodId = "paypal_ff" | "paypal_company" | "bank";
 
+const LICENCE_OPTIONS = [
+  { value: "AM", label: "AM (moped / 50cc)" },
+  { value: "A1", label: "A1 (up to 125cc)" },
+  { value: "A2", label: "A2 (up to 35 kW)" },
+  { value: "A", label: "A (unrestricted)" },
+  { value: "B", label: "B (car licence — covers AM/50cc)" },
+] as const;
+type Licence = (typeof LICENCE_OPTIONS)[number]["value"];
+
+type RidingStyleId = "solo" | "with_passenger";
+
 type BookingStep = "dates" | "form" | "submitting" | "done";
 
 type BlockedRange = { from: Date; to: Date };
@@ -66,9 +77,12 @@ export default function BikeDetailPage({
     notes: "",
   });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId>("paypal_ff");
+  const [driversLicence, setDriversLicence] = useState<Licence | "">("");
+  const [ridingStyle, setRidingStyle] = useState<RidingStyleId | "">("");
   const [receipt, setReceipt] = useState<File | null>(null);
   const [receiptError, setReceiptError] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const isSinglePassenger = bike.seats === 1;
   const formRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -80,6 +94,14 @@ export default function BikeDetailPage({
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+
+  // Single-seat bikes can only be ridden solo — pre-fill so the
+  // customer doesn't have to think about it.
+  useEffect(() => {
+    if (isSinglePassenger && ridingStyle !== "solo") {
+      setRidingStyle("solo");
+    }
+  }, [isSinglePassenger, ridingStyle]);
 
   // Live availability from Supabase via /api/availability — split so
   // confirmed bookings expose pickup/return times (used to filter the
@@ -214,6 +236,8 @@ export default function BikeDetailPage({
       fd.set("pickupTime", pickupTime);
       fd.set("returnTime", returnTime);
       fd.set("paymentMethod", paymentMethod);
+      fd.set("driversLicence", driversLicence);
+      fd.set("ridingStyle", ridingStyle);
       fd.set("totalPriceCents", String(totalPrice * 100));
       fd.set("receipt", receipt);
 
@@ -251,6 +275,8 @@ export default function BikeDetailPage({
     setReturnTime("19:00");
     setForm({ name: "", email: "", phone: "", notes: "" });
     setPaymentMethod("paypal_ff");
+    setDriversLicence("");
+    setRidingStyle("");
     setReceipt(null);
     setReceiptError(null);
     setSubmitError(null);
@@ -297,7 +323,12 @@ export default function BikeDetailPage({
   }
 
   const bookingFee = Math.round(totalPrice * 0.2 * 100) / 100;
-  const canSubmit = bookingStep === "form" && !!receipt && !receiptError;
+  const canSubmit =
+    bookingStep === "form" &&
+    !!receipt &&
+    !receiptError &&
+    !!driversLicence &&
+    !!ridingStyle;
 
   const specs: { label: string; value: string }[] = [
     { label: "Engine", value: bike.displacement },
@@ -835,6 +866,58 @@ export default function BikeDetailPage({
                     </p>
                   </label>
 
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <label className="block">
+                      <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
+                        Driver&apos;s licence *
+                      </span>
+                      <select
+                        required
+                        value={driversLicence}
+                        onChange={(e) => setDriversLicence(e.target.value as Licence | "")}
+                        className={inputClass}
+                      >
+                        <option value="" disabled>
+                          Pick your licence
+                        </option>
+                        {LICENCE_OPTIONS.map((o) => (
+                          <option key={o.value} value={o.value}>
+                            {o.label}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="text-muted text-xs mt-1.5">
+                        Bike requires{" "}
+                        <span className="font-semibold text-ink">{bike.licence}</span>.
+                      </p>
+                    </label>
+                    <label className="block">
+                      <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
+                        Riding style *
+                      </span>
+                      <select
+                        required
+                        value={ridingStyle}
+                        onChange={(e) => setRidingStyle(e.target.value as RidingStyleId | "")}
+                        disabled={isSinglePassenger}
+                        className={inputClass}
+                      >
+                        <option value="" disabled>
+                          Pick a style
+                        </option>
+                        <option value="solo">Solo</option>
+                        {!isSinglePassenger && (
+                          <option value="with_passenger">With passenger</option>
+                        )}
+                      </select>
+                      <p className="text-muted text-xs mt-1.5">
+                        {isSinglePassenger
+                          ? "This bike is a single-seater — solo only."
+                          : `Up to ${bike.seats} riders allowed.`}
+                      </p>
+                    </label>
+                  </div>
+
                   <label className="block">
                     <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
                       Notes (optional)
@@ -1026,6 +1109,11 @@ export default function BikeDetailPage({
 
                   <p className="text-center text-muted text-xs">
                     We&apos;ll review your deposit screenshot and confirm by email — usually within a few hours.
+                    By sending you agree to our{" "}
+                    <Link href="/terms" target="_blank" className="text-red font-semibold underline">
+                      terms
+                    </Link>
+                    .
                   </p>
                 </form>
               </div>

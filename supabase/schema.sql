@@ -60,6 +60,11 @@ create table public.bookings (
   -- time and possibly reassigned at confirm-time if the originally-
   -- chosen unit is no longer free.
   bike_unit_id uuid references public.bike_units(id) on delete restrict,
+  -- Customer-provided licence category and intended riding style.
+  -- Owner uses these at pickup to verify entitlement and plan helmet
+  -- count.
+  drivers_licence text check (drivers_licence in ('A','A1','A2','AM','B')),
+  riding_style text check (riding_style in ('solo','with_passenger')),
   status text not null default 'pending'
     check (status in ('pending', 'confirmed', 'declined', 'cancelled')),
   -- random opaque token used in owner email links so booking IDs aren't exposed.

@@ -17,6 +17,12 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const PAYMENT_METHODS = ["paypal_ff", "paypal_company", "bank"] as const;
 type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
+const LICENCES = ["A", "A1", "A2", "AM", "B"] as const;
+type Licence = (typeof LICENCES)[number];
+
+const RIDING_STYLES = ["solo", "with_passenger"] as const;
+type RidingStyle = (typeof RIDING_STYLES)[number];
+
 function asString(v: FormDataEntryValue | null): string | null {
   return typeof v === "string" && v.trim().length > 0 ? v.trim() : null;
 }
@@ -35,6 +41,16 @@ function asSlot(v: FormDataEntryValue | null): string | null {
 function asPaymentMethod(v: FormDataEntryValue | null): PaymentMethod | null {
   if (typeof v !== "string") return null;
   return (PAYMENT_METHODS as readonly string[]).includes(v) ? (v as PaymentMethod) : null;
+}
+
+function asLicence(v: FormDataEntryValue | null): Licence | null {
+  if (typeof v !== "string") return null;
+  return (LICENCES as readonly string[]).includes(v) ? (v as Licence) : null;
+}
+
+function asRidingStyle(v: FormDataEntryValue | null): RidingStyle | null {
+  if (typeof v !== "string") return null;
+  return (RIDING_STYLES as readonly string[]).includes(v) ? (v as RidingStyle) : null;
 }
 
 function extensionFor(mime: string): string {
@@ -83,6 +99,8 @@ export async function POST(request: Request) {
   const pickupTime = asSlot(form.get("pickupTime"));
   const returnTime = asSlot(form.get("returnTime"));
   const paymentMethod = asPaymentMethod(form.get("paymentMethod"));
+  const driversLicence = asLicence(form.get("driversLicence"));
+  const ridingStyle = asRidingStyle(form.get("ridingStyle"));
   const totalPriceRaw = form.get("totalPriceCents");
   const totalPriceCents =
     typeof totalPriceRaw === "string" && /^\d+$/.test(totalPriceRaw)
@@ -110,6 +128,12 @@ export async function POST(request: Request) {
   }
   if (!paymentMethod) {
     return NextResponse.json({ error: "Pick a payment method for the deposit" }, { status: 400 });
+  }
+  if (!driversLicence) {
+    return NextResponse.json({ error: "Pick your driver's licence category" }, { status: 400 });
+  }
+  if (!ridingStyle) {
+    return NextResponse.json({ error: "Pick a riding style" }, { status: 400 });
   }
   if (!(receipt instanceof File) || receipt.size === 0) {
     return NextResponse.json({ error: "Upload a receipt screenshot" }, { status: 400 });
@@ -189,6 +213,8 @@ export async function POST(request: Request) {
       total_price_cents: totalPriceCents,
       payment_method: paymentMethod,
       bike_unit_id: assignedUnitId,
+      drivers_licence: driversLicence,
+      riding_style: ridingStyle,
     })
     .select("*")
     .single();

@@ -38,6 +38,8 @@ export type BookingRow = {
   // time; may be reassigned at confirm-time if the original unit isn't
   // free anymore.
   bike_unit_id: string | null;
+  drivers_licence: "A" | "A1" | "A2" | "AM" | "B" | null;
+  riding_style: "solo" | "with_passenger" | null;
   status: BookingStatus;
   secret_token: string;
   created_at: string;

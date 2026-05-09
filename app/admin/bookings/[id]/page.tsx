@@ -104,6 +104,16 @@ export default async function AdminBookingDetail({
           <Field label="Deposit via">
             {b.payment_method ? PAYMENT_LABEL[b.payment_method] ?? b.payment_method : "—"}
           </Field>
+          <Field label="Licence">
+            {b.drivers_licence ?? "—"}
+          </Field>
+          <Field label="Riding">
+            {b.riding_style === "solo"
+              ? "Solo"
+              : b.riding_style === "with_passenger"
+              ? "With passenger"
+              : "—"}
+          </Field>
           <Field label="Email">
             <a href={`mailto:${b.customer_email}`} className="text-red">
               {b.customer_email}

@@ -154,6 +154,12 @@ function paymentLabel(id: BookingRow["payment_method"]): string {
   )[id];
 }
 
+function ridingStyleLabel(s: BookingRow["riding_style"]): string {
+  if (s === "solo") return "Solo";
+  if (s === "with_passenger") return "With passenger";
+  return "-";
+}
+
 function bookingSummaryHtml(booking: BookingRow): string {
   const bikeName = bikeNameFor(booking);
   const nights = nightsBetween(booking.date_from, booking.date_to);
@@ -193,6 +199,8 @@ export async function sendOwnerBookingEmail(
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
       ${unitLabel ? `<tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Unit</td><td style="padding:4px 0;font-weight:600;">${escape(unitLabel)}</td></tr>` : ""}
       <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Deposit via</td><td style="padding:4px 0;font-weight:600;">${escape(paymentLabel(booking.payment_method))}</td></tr>
+      <tr><td style="padding:4px 0;color:#6b6b6b;">Licence</td><td style="padding:4px 0;font-weight:600;">${escape(booking.drivers_licence ?? "-")}</td></tr>
+      <tr><td style="padding:4px 0;color:#6b6b6b;">Riding</td><td style="padding:4px 0;font-weight:600;">${escape(ridingStyleLabel(booking.riding_style))}</td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Email</td><td style="padding:4px 0;"><a href="mailto:${escape(booking.customer_email)}" style="color:#1a1a1a;">${escape(booking.customer_email)}</a></td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Phone</td><td style="padding:4px 0;">${escape(booking.customer_phone)}${waLink ? ` &middot; <a href="${waLink}" style="color:#25D366;text-decoration:none;font-weight:600;">WhatsApp →</a>` : ""}</td></tr>
       ${booking.notes ? `<tr><td style="padding:4px 0;color:#6b6b6b;vertical-align:top;">Notes</td><td style="padding:4px 0;white-space:pre-wrap;">${escape(booking.notes)}</td></tr>` : ""}
@@ -219,6 +227,8 @@ Pickup: ${fmtDate(booking.date_from)} ${fmtTimeOfDay(booking.pickup_time)}
 Return: ${fmtDate(booking.date_to)} ${fmtTimeOfDay(booking.return_time)}
 Total: ${totalEur(booking)}
 Deposit via: ${paymentLabel(booking.payment_method)}
+Licence: ${booking.drivers_licence ?? "-"}
+Riding: ${ridingStyleLabel(booking.riding_style)}
 
 Customer: ${booking.customer_name}
 Email: ${booking.customer_email}
