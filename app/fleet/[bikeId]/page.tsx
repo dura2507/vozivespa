@@ -514,6 +514,7 @@ export default function BikeDetailPage({
                     mode="range"
                     selected={range}
                     onSelect={setRange}
+                    weekStartsOn={1}
                     numberOfMonths={isMobile ? 1 : 2}
                     disabled={[
                       { before: new Date() },
