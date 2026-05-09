@@ -4,11 +4,16 @@ import type { BookingRow } from "@/lib/supabase";
 
 const TG_API = "https://api.telegram.org";
 
-async function callTelegram(method: string, body: Record<string, unknown>): Promise<void> {
+type TelegramResponse<T = unknown> = { ok: boolean; result?: T };
+
+async function callTelegram<T = unknown>(
+  method: string,
+  body: Record<string, unknown>,
+): Promise<TelegramResponse<T>> {
   const tok = token();
   if (!tok) throw new Error("TELEGRAM_BOT_TOKEN not set");
 
-  await retry(`tg:${method}`, async () => {
+  return await retry(`tg:${method}`, async () => {
     const res = await fetch(`${TG_API}/bot${tok}/${method}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -18,6 +23,7 @@ async function callTelegram(method: string, body: Record<string, unknown>): Prom
       const text = await res.text().catch(() => "");
       throw new Error(`telegram ${method} ${res.status}: ${text}`);
     }
+    return (await res.json()) as TelegramResponse<T>;
   });
 }
 
@@ -36,10 +42,20 @@ function fmtDate(iso: string): string {
   return `${d}.${m}.${y}`;
 }
 
-function fmtTime(iso: string): string {
+// Render a timestamptz in the owner's local timezone (Zadar, Croatia).
+// Vercel functions run in UTC otherwise, which would show times shifted
+// by 1–2 hours depending on DST.
+function fmtDateTime(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleString("de-DE", {
+    timeZone: "Europe/Zagreb",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 // Postgres `time` comes back as 'HH:MM:SS' — drop seconds for display.
@@ -94,13 +110,14 @@ type InlineKeyboardButton =
 type InlineKeyboard = InlineKeyboardButton[][];
 
 function statusBanner(booking: BookingRow): string {
+  const decidedAt = booking.decided_at ? ` · ${escapeMd(fmtDateTime(booking.decided_at))}` : "";
   switch (booking.status) {
     case "confirmed":
-      return `\n\n✅ *Confirmed*${booking.decided_at ? ` at ${escapeMd(fmtTime(booking.decided_at))}` : ""}`;
+      return `\n\n*Confirmed*${decidedAt}`;
     case "declined":
-      return `\n\n❌ *Declined*${booking.decided_at ? ` at ${escapeMd(fmtTime(booking.decided_at))}` : ""}`;
+      return `\n\n*Declined*${decidedAt}`;
     case "cancelled":
-      return `\n\n🚫 *Cancelled*`;
+      return `\n\n*Cancelled*${decidedAt}`;
     default:
       return "";
   }
@@ -126,7 +143,7 @@ function buildKeyboard(booking: BookingRow): InlineKeyboard {
 
   const rows: InlineKeyboard = [];
   if (row1.length > 0) rows.push(row1);
-  if (phoneDigits) rows.push([{ text: "💬 WhatsApp Customer", url: waUrl }]);
+  if (phoneDigits) rows.push([{ text: "WhatsApp Customer", url: waUrl }]);
   return rows;
 }
 
@@ -137,7 +154,7 @@ function buildText(booking: BookingRow): string {
   const ret = fmtTimeOfDay(booking.return_time);
 
   const lines = [
-    "🛵 *New booking request*",
+    "*New booking request*",
     "",
     `*Bike:* ${escapeMd(bikeName)}`,
     `*Pickup:* ${escapeMd(fmtDate(booking.date_from))}${pickup ? ` ${escapeMd(pickup)}` : ""}`,
@@ -167,26 +184,30 @@ export async function sendOwnerBookingTelegram(
     return;
   }
 
-  // Send the receipt first so the actionable booking message lands
-  // last in the chat with its Confirm / Decline buttons within thumb's
-  // reach. Photo for common image formats, document for PDFs / HEIC.
-  if (receipt?.url) {
-    const isPhoto = PHOTO_MIMES.has(receipt.mime);
-    const caption = `📎 Deposit receipt · ${escapeMd(bikeNameFor(booking))} · ${escapeMd(booking.customer_name)}`;
-    await callTelegram(isPhoto ? "sendPhoto" : "sendDocument", {
-      chat_id: chatId,
-      [isPhoto ? "photo" : "document"]: receipt.url,
-      caption,
-      parse_mode: "MarkdownV2",
-    });
-  }
-
-  await callTelegram("sendMessage", {
+  // Booking message first so the Confirm / Decline buttons land
+  // before the receipt. Receipt then arrives as a reply to the
+  // booking message — Telegram renders that as a quoted thread, so
+  // it's clearly the deposit attachment for this booking and not a
+  // free-standing photo.
+  const msgRes = await callTelegram<{ message_id: number }>("sendMessage", {
     chat_id: chatId,
     text: buildText(booking),
     parse_mode: "MarkdownV2",
     reply_markup: { inline_keyboard: buildKeyboard(booking) },
   });
+  const replyToId = msgRes.result?.message_id;
+
+  if (receipt?.url) {
+    const isPhoto = PHOTO_MIMES.has(receipt.mime);
+    const caption = `Deposit receipt · ${escapeMd(bikeNameFor(booking))} · ${escapeMd(booking.customer_name)}`;
+    await callTelegram(isPhoto ? "sendPhoto" : "sendDocument", {
+      chat_id: chatId,
+      [isPhoto ? "photo" : "document"]: receipt.url,
+      caption,
+      parse_mode: "MarkdownV2",
+      ...(replyToId ? { reply_to_message_id: replyToId } : {}),
+    });
+  }
 }
 
 export async function editTelegramMessageForBooking(
@@ -228,7 +249,7 @@ export async function sendOwnerContactMessage(input: {
   }
 
   const lines = [
-    "✉️ *New contact message*",
+    "*New contact message*",
     "",
     `*From:* ${escapeMd(input.name)}`,
     `*Email:* \`${escapeMd(input.email)}\``,
@@ -242,7 +263,7 @@ export async function sendOwnerContactMessage(input: {
   const phoneDigits = input.phone ? input.phone.replace(/[^\d]/g, "") : "";
   const buttons: InlineKeyboardButton[] = [];
   if (phoneDigits) {
-    buttons.push({ text: "💬 WhatsApp", url: `https://wa.me/${phoneDigits}` });
+    buttons.push({ text: "WhatsApp", url: `https://wa.me/${phoneDigits}` });
   }
 
   // No mailto: button — Telegram inline-keyboard URLs must be http(s) only,
@@ -274,7 +295,7 @@ export async function sendOwnerCancellationTelegram(booking: BookingRow): Promis
   const pickup = fmtTimeOfDay(booking.pickup_time);
   const ret = fmtTimeOfDay(booking.return_time);
   const lines = [
-    "🚫 *Customer cancelled*",
+    "*Customer cancelled*",
     "",
     `*Bike:* ${escapeMd(bikeName)}`,
     `*Pickup:* ${escapeMd(fmtDate(booking.date_from))}${pickup ? ` ${escapeMd(pickup)}` : ""}`,
@@ -289,7 +310,7 @@ export async function sendOwnerCancellationTelegram(booking: BookingRow): Promis
   const reply_markup = phoneDigits
     ? {
         inline_keyboard: [
-          [{ text: "💬 WhatsApp Customer", url: `https://wa.me/${phoneDigits}` }],
+          [{ text: "WhatsApp Customer", url: `https://wa.me/${phoneDigits}` }],
         ],
       }
     : undefined;

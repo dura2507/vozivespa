@@ -78,20 +78,18 @@ function contactButtonsHtml(): string {
   const rows = BRAND.contacts
     .filter((c) => c.phoneRaw)
     .map((c) => {
-      const flag = c.languages.join(" ");
       const callHref = `tel:+${c.phoneRaw}`;
       const waHref = `https://wa.me/${c.phoneRaw}`;
       return `<tr>
     <td style="padding:6px 12px 6px 0;font-size:13px;line-height:1.4;color:#1a1a1a;white-space:nowrap;">
-      <span style="font-size:16px;line-height:1;vertical-align:middle;">${flag}</span>
-      &nbsp;<strong>${escape(c.label)}</strong><br/>
+      <strong>${escape(c.label)}</strong><br/>
       <span style="color:#6b6b6b;font-size:12px;">${escape(c.phone)}</span>
     </td>
     <td style="padding:6px 8px 6px 0;">
-      <a href="${callHref}" style="display:inline-block;background:#1a1a1a;color:#ffffff;text-decoration:none;padding:10px 14px;font-weight:700;font-size:11px;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap;">📞 Call</a>
+      <a href="${callHref}" style="display:inline-block;background:#1a1a1a;color:#ffffff;text-decoration:none;padding:10px 14px;font-weight:700;font-size:11px;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap;">Call</a>
     </td>
     <td style="padding:6px 0;">
-      <a href="${waHref}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;padding:10px 14px;font-weight:700;font-size:11px;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap;">💬 WhatsApp</a>
+      <a href="${waHref}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;padding:10px 14px;font-weight:700;font-size:11px;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap;">WhatsApp</a>
     </td>
   </tr>`;
     })
@@ -198,7 +196,7 @@ export async function sendOwnerBookingEmail(
     ${
       receipt?.url
         ? `<p style="margin:18px 0 8px;font-size:13px;color:#6b6b6b;">Deposit screenshot is attached to this email${receipt.url ? ` and viewable here: <a href="${receipt.url}" style="color:#B61F36;">open receipt</a>` : ""}.</p>`
-        : `<p style="margin:18px 0 8px;font-size:13px;color:#B61F36;">⚠️ No deposit screenshot attached.</p>`
+        : `<p style="margin:18px 0 8px;font-size:13px;color:#B61F36;">No deposit screenshot attached.</p>`
     }
     <p style="margin:18px 0 0;font-size:13px;color:#6b6b6b;">Confirm or decline directly in Telegram — the buttons there flip the booking status and notify the customer.</p>
   `;
@@ -222,14 +220,14 @@ Customer: ${booking.customer_name}
 Email: ${booking.customer_email}
 Phone: ${booking.customer_phone}${booking.notes ? `\nNotes: ${booking.notes}` : ""}
 
-${receipt?.url ? `Receipt attached. Direct link: ${receipt.url}` : "⚠ No deposit screenshot attached."}
+${receipt?.url ? `Receipt attached. Direct link: ${receipt.url}` : "No deposit screenshot attached."}
 
 Confirm or decline in Telegram.`;
 
   const options: CreateEmailOptions = {
     from: fromAddress(),
     to: ownerEmail,
-    subject: `🛵 ${booking.customer_name} · ${bikeName} · ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`,
+    subject: `New booking · ${booking.customer_name} · ${bikeName} · ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`,
     html,
     text,
     replyTo: `${booking.customer_name} <${booking.customer_email}>`,
@@ -252,7 +250,7 @@ export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Pro
     ${bookingSummaryHtml(booking)}
     <p style="margin:24px 0 8px;font-size:14px;color:#6b6b6b;line-height:1.6;">In the meantime, anything urgent?</p>
     ${contactButtonsHtml()}
-    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">See you in Zadar 🛵</p>
+    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">See you in Zadar.</p>
   `;
 
   const html = htmlLayout({
@@ -463,7 +461,7 @@ export async function sendCustomerContactReceivedEmail(input: {
     <div style="background:#f6f5f1;padding:18px;font-size:14px;line-height:1.6;border-left:3px solid #B61F36;">${messageHtml}</div>
     <p style="margin:24px 0 8px;font-size:14px;line-height:1.6;">Anything urgent in the meantime?</p>
     ${contactButtonsHtml()}
-    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">See you in Zadar 🛵</p>
+    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">See you in Zadar.</p>
   `;
 
   const html = htmlLayout({

@@ -898,7 +898,7 @@ export default function BikeDetailPage({
                                         }}
                                         className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red transition-colors px-2 py-1 border border-ink/15 hover:border-red"
                                       >
-                                        {copied === p.id ? "✓ Copied" : "📋 Copy"}
+                                        {copied === p.id ? "✓ Copied" : "Copy"}
                                       </button>
                                     </div>
                                     {p.subValue && (

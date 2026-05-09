@@ -162,7 +162,7 @@ export default function ContactPage() {
             <div>
               {sent ? (
                 <div className="bg-sand px-8 py-12 text-center">
-                  <div className="text-5xl mb-5">🛵</div>
+                  <div className="font-barlow font-black text-red text-6xl mb-3 leading-none">✓</div>
                   <h3 className="font-barlow font-black uppercase text-3xl tracking-tight text-ink mb-2">
                     Message Sent!
                   </h3>
