@@ -320,30 +320,15 @@ export default function BikeDetailPage({
           {/* Hero - image + title */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
             <div>
-              <div className="relative">
-                <div className="relative aspect-[4/3] bg-sand overflow-hidden">
-                  <Image
-                    src={activeImage}
-                    alt={bike.model}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority
-                  />
-                </div>
-                <div
-                  className="absolute -bottom-5 -left-5 z-10 pointer-events-none"
-                  title={`Licence required: ${bike.licence}`}
-                >
-                  <Image
-                    src={LICENCE_BADGE[bike.licenceCode]}
-                    alt={`${bike.licenceCode} licence required`}
-                    width={320}
-                    height={320}
-                    quality={100}
-                    className="w-32 h-32 sm:w-36 sm:h-36 drop-shadow-2xl"
-                  />
-                </div>
+              <div className="relative aspect-[4/3] bg-sand overflow-hidden">
+                <Image
+                  src={activeImage}
+                  alt={bike.model}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority
+                />
               </div>
               {bike.gallery.length > 1 && (
                 <div className="grid grid-cols-4 gap-2 mt-2">
@@ -392,16 +377,26 @@ export default function BikeDetailPage({
                   Unlimited km · Basic insurance · {BRAND.deposit} deposit
                 </p>
 
-                <div className="mt-5 pt-5 border-t border-white/10">
-                  <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">
-                    Required licence
-                  </p>
-                  <p className="text-white text-sm font-semibold leading-snug">
-                    {bike.licence}
-                  </p>
-                  <p className="text-white/50 text-xs leading-snug mt-1">
-                    Bring your valid licence to pickup - no licence, no ride.
-                  </p>
+                <div className="mt-5 pt-5 border-t border-white/10 flex items-start gap-4">
+                  <Image
+                    src={LICENCE_BADGE[bike.licenceCode]}
+                    alt={`${bike.licenceCode} licence required`}
+                    width={160}
+                    height={160}
+                    quality={100}
+                    className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 drop-shadow-lg"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">
+                      Required licence
+                    </p>
+                    <p className="text-white text-sm font-semibold leading-snug">
+                      {bike.licence}
+                    </p>
+                    <p className="text-white/50 text-xs leading-snug mt-1">
+                      Bring your valid licence to pickup - no licence, no ride.
+                    </p>
+                  </div>
                 </div>
               </div>
 

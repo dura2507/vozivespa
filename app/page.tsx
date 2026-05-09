@@ -153,37 +153,22 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
             {CATEGORIES.map((cat) => (
               <Link href={`/fleet/${cat.id}`} key={cat.id} className="group flex flex-col bg-sand">
-                <div className="relative">
-                  <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[4/5]">
-                    <Image
-                      src={cat.image}
-                      alt={cat.name}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    />
-                    <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-red text-white px-3 py-1.5 sm:px-4 sm:py-2 shadow-lg">
-                      <p className="font-barlow font-black text-xl sm:text-2xl leading-none">
-                        {cat.priceFrom && (
-                          <span className="text-[10px] font-normal opacity-80 mr-1 align-middle">from</span>
-                        )}
-                        {cat.price}
-                        <span className="text-xs font-normal opacity-80 ml-0.5">{cat.priceUnit}</span>
-                      </p>
-                    </div>
-                  </div>
-                  <div
-                    className="absolute -bottom-4 -left-4 z-10 pointer-events-none"
-                    title={`Licence required: ${cat.licence}`}
-                  >
-                    <Image
-                      src={LICENCE_BADGE[cat.licenceCode]}
-                      alt={`${cat.licenceCode} licence required`}
-                      width={256}
-                      height={256}
-                      quality={100}
-                      className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl"
-                    />
+                <div className="relative overflow-hidden aspect-[16/10] sm:aspect-[4/5]">
+                  <Image
+                    src={cat.image}
+                    alt={cat.name}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  />
+                  <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-red text-white px-3 py-1.5 sm:px-4 sm:py-2 shadow-lg">
+                    <p className="font-barlow font-black text-xl sm:text-2xl leading-none">
+                      {cat.priceFrom && (
+                        <span className="text-[10px] font-normal opacity-80 mr-1 align-middle">from</span>
+                      )}
+                      {cat.price}
+                      <span className="text-xs font-normal opacity-80 ml-0.5">{cat.priceUnit}</span>
+                    </p>
                   </div>
                 </div>
                 <div className="px-5 pt-5 pb-5 sm:px-6 sm:pt-7 sm:pb-7 text-center flex flex-col flex-1">
@@ -191,14 +176,34 @@ export default function HomePage() {
                     {cat.name}
                   </h3>
                   <p className="text-xs sm:text-sm text-muted leading-relaxed mb-4 sm:mb-5">{cat.description}</p>
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <Image
+                      src={LICENCE_BADGE[cat.licenceCode]}
+                      alt={`${cat.licenceCode} licence required`}
+                      width={120}
+                      height={120}
+                      quality={100}
+                      className="w-12 h-12 shrink-0"
+                    />
+                    <div className="text-left leading-tight">
+                      <p className="text-[9px] tracking-[0.2em] uppercase text-ink/40 font-bold">
+                        Licence
+                      </p>
+                      <p className="text-sm font-bold text-ink">{cat.licenceCode}</p>
+                    </div>
+                    <div className="w-px h-8 bg-ink/15" />
+                    <div className="text-left leading-tight">
+                      <p className="text-[9px] tracking-[0.2em] uppercase text-ink/40 font-bold">
+                        Top speed
+                      </p>
+                      <p className="text-sm font-bold text-ink">{cat.maxSpeed}</p>
+                    </div>
+                  </div>
                   {cat.experienceNote && (
-                    <p className="text-[10px] tracking-[0.15em] uppercase text-red font-bold mb-3">
+                    <p className="text-[10px] tracking-[0.15em] uppercase text-red font-bold mb-4">
                       Experience required
                     </p>
                   )}
-                  <p className="text-[10px] tracking-[0.15em] uppercase text-ink/40 font-bold mb-5">
-                    {cat.maxSpeed}
-                  </p>
                   <span className="mt-auto inline-flex items-center justify-center gap-1.5 text-red font-bold text-[11px] sm:text-xs tracking-[0.2em] uppercase pt-3 border-t border-red/20 group-hover:gap-3 transition-all">
                     View Bike
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
