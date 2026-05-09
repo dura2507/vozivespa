@@ -51,7 +51,7 @@ export default async function DeclineBookingPage({
 
   const { data: updated, error: updateError } = await supabase
     .from("bookings")
-    .update({ status: "declined" })
+    .update({ status: "declined", decided_at: new Date().toISOString() })
     .eq("id", booking.id)
     .select("*")
     .maybeSingle<BookingRow>();

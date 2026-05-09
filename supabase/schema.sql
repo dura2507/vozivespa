@@ -49,9 +49,12 @@ create index bookings_status_bike_idx on public.bookings (status, bike_id);
 create index bookings_dates_idx       on public.bookings (date_from, date_to);
 
 -- ---------- blocked_dates -----------------------------------------------------
--- booking_id IS NULL  → manual block (owner reserved the bike for themselves /
---                       maintenance / etc.)
--- booking_id IS NOT NULL → auto-block from a confirmed booking
+-- Manual owner blocks (maintenance, owner using the bike themselves, etc.).
+-- Confirmed customer bookings are NOT mirrored here — the API queries the
+-- bookings table directly so it can do time-aware overlap checks against
+-- pickup_time / return_time. The booking_id column is kept for forward-
+-- compatibility (e.g. if we ever want to express partial-day blocks tied
+-- to a booking) but should always be null in current usage.
 create table public.blocked_dates (
   id uuid primary key default gen_random_uuid(),
   bike_id text not null references public.bikes(id) on delete cascade,
@@ -65,31 +68,9 @@ create table public.blocked_dates (
 create index blocked_dates_bike_idx
   on public.blocked_dates (bike_id, date_from, date_to);
 
--- ---------- trigger: when a booking is confirmed, auto-block its dates -------
-create or replace function public.sync_blocked_dates_for_booking()
-returns trigger
-language plpgsql
-as $$
-begin
-  if new.status = 'confirmed' and (old is null or old.status <> 'confirmed') then
-    insert into public.blocked_dates (bike_id, date_from, date_to, booking_id)
-    values (new.bike_id, new.date_from, new.date_to, new.id);
-    new.decided_at := coalesce(new.decided_at, now());
-  end if;
-
-  if (old is not null and old.status = 'confirmed') and new.status <> 'confirmed' then
-    delete from public.blocked_dates where booking_id = new.id;
-    new.decided_at := coalesce(new.decided_at, now());
-  end if;
-
-  return new;
-end;
-$$;
-
-drop trigger if exists trg_bookings_sync_blocked_dates on public.bookings;
-create trigger trg_bookings_sync_blocked_dates
-  before update of status on public.bookings
-  for each row execute function public.sync_blocked_dates_for_booking();
+-- The confirm/decide flow used to also bump bookings.decided_at via a
+-- trigger; the API now sets it explicitly when flipping status, so no
+-- trigger is needed.
 
 -- ---------- RLS: lock everything down to server-only --------------------------
 -- service_role bypasses RLS, so the Next.js API routes still have full access.

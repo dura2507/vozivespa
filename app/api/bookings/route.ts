@@ -2,7 +2,8 @@ import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail } from "@/lib/email";
-import { isValidSlot, parseTime, TURNAROUND_MINUTES } from "@/lib/pricing";
+import { isValidSlot, parseTime } from "@/lib/pricing";
+import { describeConflict, findOverlap } from "@/lib/availability";
 
 export const dynamic = "force-dynamic";
 
@@ -97,63 +98,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Bike not available" }, { status: 404 });
   }
 
-  // 2. Overlap check.
-  //    - Manual blocks (booking_id null in blocked_dates) are full-day:
-  //      any date overlap rejects.
-  //    - Confirmed bookings overlap by datetime so back-to-back pickups
-  //      on a shared day are allowed when the times don't actually clash
-  //      (e.g. existing returns 15.05 14:00, new picks up 15.05 14:30).
-  const { data: manualBlocks, error: manualErr } = await supabase
-    .from("blocked_dates")
-    .select("id")
-    .eq("bike_id", bikeId)
-    .is("booking_id", null)
-    .lte("date_from", to)
-    .gte("date_to", from)
-    .limit(1);
-  if (manualErr) {
-    console.error("[/api/bookings] manual block lookup error", manualErr);
+  // 2. Overlap check (manual blocks full-day, confirmed bookings
+  //    time-aware with 1h turnaround buffer). Same helper is used at
+  //    confirm-time so a second pending booking can't sneak through
+  //    while the first is still pending.
+  let conflict;
+  try {
+    conflict = await findOverlap(supabase, {
+      bikeId,
+      dateFrom: from,
+      dateTo: to,
+      pickupTime,
+      returnTime,
+    });
+  } catch (err) {
+    console.error("[/api/bookings] overlap lookup error", err);
     return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
   }
-  if (manualBlocks && manualBlocks.length > 0) {
-    return NextResponse.json(
-      { error: "Selected dates are no longer available" },
-      { status: 409 },
-    );
-  }
-
-  const { data: candidates, error: candErr } = await supabase
-    .from("bookings")
-    .select("date_from, date_to, pickup_time, return_time")
-    .eq("bike_id", bikeId)
-    .eq("status", "confirmed")
-    .lte("date_from", to)
-    .gte("date_to", from);
-  if (candErr) {
-    console.error("[/api/bookings] booking overlap lookup error", candErr);
-    return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
-  }
-  const toMs = (date: string, time: string) => {
-    const t = time.length === 5 ? `${time}:00` : time;
-    return new Date(`${date}T${t}`).getTime();
-  };
-  const bufferMs = TURNAROUND_MINUTES * 60_000;
-  const newStart = toMs(from, pickupTime);
-  const newEnd = toMs(to, returnTime);
-  for (const b of candidates ?? []) {
-    const bStart = toMs(b.date_from, b.pickup_time);
-    const bEnd = toMs(b.date_to, b.return_time);
-    // 1-hour turnaround buffer: new pickup must be ≥ existing return +
-    // buffer, new return must be ≤ existing pickup - buffer. Owner uses
-    // that hour to receive, check and prep the bike.
-    if (newStart < bEnd + bufferMs && bStart - bufferMs < newEnd) {
-      return NextResponse.json(
-        {
-          error: `Time conflict with another booking - we need ${TURNAROUND_MINUTES} minutes between bookings to check and prep the bike. Try a later pickup or earlier return time.`,
-        },
-        { status: 409 },
-      );
-    }
+  if (conflict) {
+    const message =
+      conflict.kind === "manual"
+        ? "Selected dates are no longer available"
+        : "Time conflict with another booking - we need 1h between bookings to check the bike. Try a later pickup or earlier return time.";
+    return NextResponse.json({ error: message, detail: describeConflict(conflict) }, { status: 409 });
   }
 
   // 3. Insert

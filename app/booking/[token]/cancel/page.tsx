@@ -52,7 +52,7 @@ export default async function CancelBookingPage({
   // Allow cancelling pending or confirmed bookings.
   const { data: updated, error: updateError } = await supabase
     .from("bookings")
-    .update({ status: "cancelled" })
+    .update({ status: "cancelled", decided_at: new Date().toISOString() })
     .eq("id", booking.id)
     .select("*")
     .maybeSingle<BookingRow>();

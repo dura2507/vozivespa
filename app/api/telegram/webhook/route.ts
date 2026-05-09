@@ -7,6 +7,7 @@ import {
   parseCallbackData,
   NEW_STATUS,
 } from "@/lib/telegram";
+import { findOverlap, describeConflict } from "@/lib/availability";
 
 export const dynamic = "force-dynamic";
 
@@ -83,9 +84,37 @@ export async function POST(request: Request) {
 
   const wasFromPending = booking.status === "pending";
 
+  // Re-check overlap before flipping to confirmed. A second pending
+  // booking could have been created while this one was awaiting
+  // approval, or the owner might have added a manual block in
+  // Supabase Studio meanwhile.
+  if (newStatus === "confirmed") {
+    try {
+      const conflict = await findOverlap(supabase, {
+        bikeId: booking.bike_id,
+        dateFrom: booking.date_from,
+        dateTo: booking.date_to,
+        pickupTime: booking.pickup_time,
+        returnTime: booking.return_time,
+        excludeBookingId: booking.id,
+      });
+      if (conflict) {
+        await answerTelegramCallback(
+          cb.id,
+          `Conflict — ${describeConflict(conflict)}`,
+        );
+        return NextResponse.json({ ok: true });
+      }
+    } catch (err) {
+      console.error("[telegram/webhook] conflict check error", err);
+      await answerTelegramCallback(cb.id, "Database error - try again");
+      return NextResponse.json({ ok: true });
+    }
+  }
+
   const { data: updated, error: updateError } = await supabase
     .from("bookings")
-    .update({ status: newStatus })
+    .update({ status: newStatus, decided_at: new Date().toISOString() })
     .eq("id", booking.id)
     .select("*")
     .maybeSingle<BookingRow>();

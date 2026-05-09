@@ -2,6 +2,7 @@ import { after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendCustomerBookingDecidedEmail } from "@/lib/email";
 import { DecisionView } from "@/app/booking/_components/decision-view";
+import { findOverlap, describeConflict } from "@/lib/availability";
 
 export const dynamic = "force-dynamic";
 
@@ -49,9 +50,38 @@ export default async function ConfirmBookingPage({
     );
   }
 
+  try {
+    const conflict = await findOverlap(supabase, {
+      bikeId: booking.bike_id,
+      dateFrom: booking.date_from,
+      dateTo: booking.date_to,
+      pickupTime: booking.pickup_time,
+      returnTime: booking.return_time,
+      excludeBookingId: booking.id,
+    });
+    if (conflict) {
+      return (
+        <DecisionView
+          tone="error"
+          booking={booking}
+          message={`Cannot confirm - conflict with ${describeConflict(conflict)}. Decline this one or reschedule the other.`}
+        />
+      );
+    }
+  } catch (err) {
+    console.error("[booking/confirm] conflict check error", err);
+    return (
+      <DecisionView
+        tone="error"
+        booking={booking}
+        message="Could not verify availability. Please try again."
+      />
+    );
+  }
+
   const { data: updated, error: updateError } = await supabase
     .from("bookings")
-    .update({ status: "confirmed" })
+    .update({ status: "confirmed", decided_at: new Date().toISOString() })
     .eq("id", booking.id)
     .select("*")
     .maybeSingle<BookingRow>();
