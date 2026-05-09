@@ -6,7 +6,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
-import { format } from "date-fns";
+import { format, addDays, differenceInCalendarDays, isSameDay } from "date-fns";
 import "react-day-picker/style.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -87,6 +87,26 @@ export default function BikeDetailPage({
       cancelled = true;
     };
   }, [bike.id]);
+
+  // Pickup-day (range start) and return-day (range end) get a diagonal
+  // half-fill in the calendar so the customer sees they're transition
+  // days, not fully gone. Strictly-between days stay fully greyed.
+  // Single-day blocks are treated as fully blocked.
+  const bookedStartDays: Date[] = [];
+  const bookedEndDays: Date[] = [];
+  const bookedMiddleRanges: { from: Date; to: Date }[] = [];
+  const bookedFullDays: Date[] = [];
+  for (const r of blocked) {
+    if (isSameDay(r.from, r.to)) {
+      bookedFullDays.push(r.from);
+      continue;
+    }
+    bookedStartDays.push(r.from);
+    bookedEndDays.push(r.to);
+    if (differenceInCalendarDays(r.to, r.from) >= 2) {
+      bookedMiddleRanges.push({ from: addDays(r.from, 1), to: addDays(r.to, -1) });
+    }
+  }
 
   const priceResult =
     range?.from && range?.to
@@ -444,6 +464,10 @@ export default function BikeDetailPage({
                     <div className="w-3 h-3 bg-ink/15" />
                     Booked
                   </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-[linear-gradient(135deg,_transparent_50%,_rgba(26,26,26,0.15)_50%)]" />
+                    Pickup / return day
+                  </div>
                 </div>
 
                 <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
@@ -455,10 +479,18 @@ export default function BikeDetailPage({
                     disabled={[{ before: new Date() }, ...blocked]}
                     excludeDisabled
                     min={1}
-                    modifiers={{ booked: blocked }}
+                    modifiers={{
+                      bookedFull: [...bookedFullDays, ...bookedMiddleRanges],
+                      bookedStart: bookedStartDays,
+                      bookedEnd: bookedEndDays,
+                    }}
                     modifiersClassNames={{
-                      booked:
+                      bookedFull:
                         "[&_button]:!bg-ink/10 [&_button]:!text-ink/40 [&_button]:!line-through",
+                      bookedStart:
+                        "[&_button]:!bg-[linear-gradient(135deg,_transparent_50%,_rgba(26,26,26,0.15)_50%)] [&_button]:!text-ink/40",
+                      bookedEnd:
+                        "[&_button]:!bg-[linear-gradient(135deg,_rgba(26,26,26,0.15)_50%,_transparent_50%)] [&_button]:!text-ink/40",
                     }}
                     classNames={{
                       root: "font-sans",
