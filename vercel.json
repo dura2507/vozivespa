@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/poll-riderly",
+      "schedule": "*/15 * * * *"
+    }
+  ]
+}

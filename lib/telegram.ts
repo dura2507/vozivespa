@@ -336,6 +336,55 @@ export async function sendOwnerCancellationTelegram(booking: BookingRow): Promis
   });
 }
 
+// Forward a Riderly booking-notification email to the owner's
+// Telegram so all bookings (Riderly + native) land in one place.
+// Riderly has no API so we can't auto-confirm — the owner clicks the
+// link button to open the booking on riderly.com and decides there.
+export async function sendOwnerRiderlyTelegram(email: {
+  subject: string;
+  from: string;
+  preview: string;
+  riderlyUrl: string | null;
+  receivedAt: Date | null;
+}): Promise<void> {
+  const chatId = ownerChatId();
+  if (!chatId) {
+    console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping riderly forward");
+    return;
+  }
+  const when = email.receivedAt
+    ? email.receivedAt.toLocaleString("de-DE", {
+        timeZone: "Europe/Zagreb",
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "";
+  const lines = [
+    "*New Riderly booking*",
+    "",
+    `*Subject:* ${escapeMd(email.subject)}`,
+    `*From:* ${escapeMd(email.from)}`,
+    when ? `*Received:* ${escapeMd(when)}` : "",
+    "",
+    escapeMd(email.preview),
+    "",
+    "_Riderly has no API — confirm directly on riderly\\.com\\._",
+  ].filter(Boolean);
+
+  const url = email.riderlyUrl ?? "https://riderly.com";
+  await callTelegram("sendMessage", {
+    chat_id: chatId,
+    text: lines.join("\n"),
+    parse_mode: "MarkdownV2",
+    disable_web_page_preview: true,
+    reply_markup: {
+      inline_keyboard: [[{ text: "Open on Riderly", url }]],
+    },
+  });
+}
+
 export type CallbackAction = "confirm" | "decline";
 
 export function parseCallbackData(
