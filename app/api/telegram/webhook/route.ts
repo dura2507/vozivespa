@@ -7,7 +7,7 @@ import {
   parseCallbackData,
   NEW_STATUS,
 } from "@/lib/telegram";
-import { findOverlap, describeConflict } from "@/lib/availability";
+import { findFreeUnit, describeConflict } from "@/lib/availability";
 
 export const dynamic = "force-dynamic";
 
@@ -84,13 +84,16 @@ export async function POST(request: Request) {
 
   const wasFromPending = booking.status === "pending";
 
-  // Re-check overlap before flipping to confirmed. A second pending
-  // booking could have been created while this one was awaiting
-  // approval, or the owner might have added a manual block in
-  // Supabase Studio meanwhile.
+  // Re-check availability before flipping to confirmed. A second
+  // pending booking could have been created while this one was awaiting
+  // approval, or the owner might have added a manual block in Supabase
+  // Studio. With multi-unit, this also locks in the actual free unit
+  // at confirm-time — the unit assigned at insert may have been taken
+  // by another customer in the meantime.
+  let assignedUnitId: string | null = booking.bike_unit_id;
   if (newStatus === "confirmed") {
     try {
-      const conflict = await findOverlap(supabase, {
+      const availability = await findFreeUnit(supabase, {
         bikeId: booking.bike_id,
         dateFrom: booking.date_from,
         dateTo: booking.date_to,
@@ -98,23 +101,30 @@ export async function POST(request: Request) {
         returnTime: booking.return_time,
         excludeBookingId: booking.id,
       });
-      if (conflict) {
+      if (!availability.unitId) {
         await answerTelegramCallback(
           cb.id,
-          `Conflict — ${describeConflict(conflict)}`,
+          `Conflict — ${availability.conflict ? describeConflict(availability.conflict) : "no free unit"}`,
         );
         return NextResponse.json({ ok: true });
       }
+      assignedUnitId = availability.unitId;
     } catch (err) {
-      console.error("[telegram/webhook] conflict check error", err);
+      console.error("[telegram/webhook] availability check error", err);
       await answerTelegramCallback(cb.id, "Database error - try again");
       return NextResponse.json({ ok: true });
     }
   }
 
+  const patch: Partial<BookingRow> = {
+    status: newStatus,
+    decided_at: new Date().toISOString(),
+  };
+  if (newStatus === "confirmed") patch.bike_unit_id = assignedUnitId;
+
   const { data: updated, error: updateError } = await supabase
     .from("bookings")
-    .update({ status: newStatus, decided_at: new Date().toISOString() })
+    .update(patch)
     .eq("id", booking.id)
     .select("*")
     .maybeSingle<BookingRow>();

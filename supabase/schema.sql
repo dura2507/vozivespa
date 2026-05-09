@@ -10,13 +10,30 @@ drop table if exists public.bookings      cascade;
 drop table if exists public.bikes         cascade;
 
 -- ---------- bikes (mirrors the IDs used in lib/mockData.ts) -------------------
--- Just an ID + active flag. All display data (name, model, image, prices)
--- lives in lib/mockData.ts so we don't double-maintain it.
+-- Bike *models*. All display data (name, model, image, prices) lives in
+-- lib/mockData.ts so we don't double-maintain it.
 create table public.bikes (
   id text primary key,
   active boolean not null default true,
   created_at timestamptz not null default now()
 );
+
+-- ---------- bike_units (physical bikes) ---------------------------------------
+-- One row per actual bike on the lot. Owner has e.g. 4 × Liberty 50, so
+-- the bike-id "scooter-50" gets four rows here. Bookings reference a
+-- single unit so two customers can rent "Liberty 50" on the same dates
+-- as long as we still have a free unit.
+create table public.bike_units (
+  id uuid primary key default gen_random_uuid(),
+  bike_id text not null references public.bikes(id) on delete cascade,
+  label text not null,
+  active boolean not null default true,
+  created_at timestamptz not null default now(),
+  unique (bike_id, label)
+);
+
+create index bike_units_bike_idx
+  on public.bike_units (bike_id) where active;
 
 -- ---------- bookings ----------------------------------------------------------
 create table public.bookings (
@@ -39,6 +56,10 @@ create table public.bookings (
   -- Bucket is private; owner reads via short-lived signed URLs only.
   payment_method text check (payment_method in ('paypal_ff','paypal_company','bank')),
   deposit_screenshot_path text,
+  -- Which physical unit of the bike model got assigned. Set at insert
+  -- time and possibly reassigned at confirm-time if the originally-
+  -- chosen unit is no longer free.
+  bike_unit_id uuid references public.bike_units(id) on delete restrict,
   status text not null default 'pending'
     check (status in ('pending', 'confirmed', 'declined', 'cancelled')),
   -- random opaque token used in owner email links so booking IDs aren't exposed.
@@ -52,6 +73,7 @@ create table public.bookings (
 
 create index bookings_status_bike_idx on public.bookings (status, bike_id);
 create index bookings_dates_idx       on public.bookings (date_from, date_to);
+create index bookings_bike_unit_idx   on public.bookings (bike_unit_id);
 
 -- ---------- blocked_dates -----------------------------------------------------
 -- Manual owner blocks (maintenance, owner using the bike themselves, etc.).
@@ -81,6 +103,7 @@ create index blocked_dates_bike_idx
 -- service_role bypasses RLS, so the Next.js API routes still have full access.
 -- anon role gets nothing without explicit policies.
 alter table public.bikes         enable row level security;
+alter table public.bike_units    enable row level security;
 alter table public.bookings      enable row level security;
 alter table public.blocked_dates enable row level security;
 
@@ -93,3 +116,21 @@ insert into public.bikes (id) values
   ('bike-125-b'),
   ('bike-390')
 on conflict (id) do nothing;
+
+-- ---------- seed bike units (physical fleet per HANDOVER #5) -----------------
+insert into public.bike_units (bike_id, label) values
+  ('scooter-125',         'Liberty125-1'),
+  ('scooter-50',          'Liberty50-1'),
+  ('scooter-50',          'Liberty50-2'),
+  ('scooter-50',          'Liberty50-3'),
+  ('scooter-50',          'Liberty50-4'),
+  ('scooter-50-topcase',  'Liberty50T-1'),
+  ('scooter-50-topcase',  'Liberty50T-2'),
+  ('scooter-50-topcase',  'Liberty50T-3'),
+  ('scooter-50-topcase',  'Liberty50T-4'),
+  ('bike-125-a',          'Beta125-1'),
+  ('bike-125-b',          'Duke125-1'),
+  ('bike-125-b',          'Duke125-2'),
+  ('bike-390',            'Duke390-1'),
+  ('bike-390',            'Duke390-2')
+on conflict (bike_id, label) do nothing;

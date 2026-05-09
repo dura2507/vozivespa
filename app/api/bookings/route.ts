@@ -3,7 +3,7 @@ import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail, sendOwnerBookingEmail } from "@/lib/email";
 import { isValidSlot, parseTime } from "@/lib/pricing";
-import { describeConflict, findOverlap } from "@/lib/availability";
+import { describeConflict, findFreeUnit, getBikeUnitLabel } from "@/lib/availability";
 import {
   isAllowedReceiptMime,
   MAX_RECEIPT_BYTES,
@@ -140,13 +140,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Bike not available" }, { status: 404 });
   }
 
-  // 2. Overlap check (manual blocks full-day, confirmed bookings
-  //    time-aware with 1h turnaround buffer). Same helper is used at
-  //    confirm-time so a second pending booking can't sneak through
-  //    while the first is still pending.
-  let conflict;
+  // 2. Find a free physical unit for this window. Manual blocks shut
+  //    down the whole model; confirmed bookings hold a single unit and
+  //    only block their unit (with 1h turnaround buffer). The same
+  //    helper is used at confirm-time so a second pending booking
+  //    can't sneak through while the first is still pending.
+  let availability;
   try {
-    conflict = await findOverlap(supabase, {
+    availability = await findFreeUnit(supabase, {
       bikeId,
       dateFrom: from,
       dateTo: to,
@@ -154,16 +155,23 @@ export async function POST(request: Request) {
       returnTime,
     });
   } catch (err) {
-    console.error("[/api/bookings] overlap lookup error", err);
+    console.error("[/api/bookings] availability lookup error", err);
     return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
   }
-  if (conflict) {
+  if (availability.conflict || !availability.unitId) {
+    const c = availability.conflict;
     const message =
-      conflict.kind === "manual"
+      c?.kind === "manual"
         ? "Selected dates are no longer available"
-        : "Time conflict with another booking - we need 1h between bookings to check the bike. Try a later pickup or earlier return time.";
-    return NextResponse.json({ error: message, detail: describeConflict(conflict) }, { status: 409 });
+        : c?.kind === "no_units"
+        ? "This bike isn't bookable right now — please contact us"
+        : "Time conflict with another booking on this model — try a later pickup or earlier return time.";
+    return NextResponse.json(
+      { error: message, detail: c ? describeConflict(c) : undefined },
+      { status: 409 },
+    );
   }
+  const assignedUnitId = availability.unitId;
 
   // 3. Insert
   const { data: booking, error: insertError } = await supabase
@@ -180,6 +188,7 @@ export async function POST(request: Request) {
       return_time: returnTime,
       total_price_cents: totalPriceCents,
       payment_method: paymentMethod,
+      bike_unit_id: assignedUnitId,
     })
     .select("*")
     .single();
@@ -225,10 +234,13 @@ export async function POST(request: Request) {
     } catch (err) {
       console.error("[/api/bookings] signed url failed", err);
     }
+    const unitLabel = await getBikeUnitLabel(supabase, finalBooking.bike_unit_id).catch(
+      () => null,
+    );
     const receipt = receiptUrl ? { url: receiptUrl, mime: receiptMime, filename } : undefined;
     await Promise.allSettled([
-      sendOwnerBookingTelegram(finalBooking, receipt),
-      sendOwnerBookingEmail(finalBooking, receipt),
+      sendOwnerBookingTelegram(finalBooking, receipt, unitLabel),
+      sendOwnerBookingEmail(finalBooking, receipt, unitLabel),
       sendCustomerBookingReceivedEmail(finalBooking),
     ]);
   });

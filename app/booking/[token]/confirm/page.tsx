@@ -2,7 +2,7 @@ import { after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendCustomerBookingDecidedEmail } from "@/lib/email";
 import { DecisionView } from "@/app/booking/_components/decision-view";
-import { findOverlap, describeConflict } from "@/lib/availability";
+import { findFreeUnit, describeConflict } from "@/lib/availability";
 
 export const dynamic = "force-dynamic";
 
@@ -50,8 +50,9 @@ export default async function ConfirmBookingPage({
     );
   }
 
+  let assignedUnitId: string | null = booking.bike_unit_id;
   try {
-    const conflict = await findOverlap(supabase, {
+    const availability = await findFreeUnit(supabase, {
       bikeId: booking.bike_id,
       dateFrom: booking.date_from,
       dateTo: booking.date_to,
@@ -59,17 +60,18 @@ export default async function ConfirmBookingPage({
       returnTime: booking.return_time,
       excludeBookingId: booking.id,
     });
-    if (conflict) {
+    if (!availability.unitId) {
       return (
         <DecisionView
           tone="error"
           booking={booking}
-          message={`Cannot confirm - conflict with ${describeConflict(conflict)}. Decline this one or reschedule the other.`}
+          message={`Cannot confirm — ${availability.conflict ? describeConflict(availability.conflict) : "no free unit"}. Decline this one or reschedule the other.`}
         />
       );
     }
+    assignedUnitId = availability.unitId;
   } catch (err) {
-    console.error("[booking/confirm] conflict check error", err);
+    console.error("[booking/confirm] availability check", err);
     return (
       <DecisionView
         tone="error"
@@ -81,7 +83,7 @@ export default async function ConfirmBookingPage({
 
   const { data: updated, error: updateError } = await supabase
     .from("bookings")
-    .update({ status: "confirmed", decided_at: new Date().toISOString() })
+    .update({ status: "confirmed", decided_at: new Date().toISOString(), bike_unit_id: assignedUnitId })
     .eq("id", booking.id)
     .select("*")
     .maybeSingle<BookingRow>();

@@ -175,6 +175,7 @@ function bookingSummaryHtml(booking: BookingRow): string {
 export async function sendOwnerBookingEmail(
   booking: BookingRow,
   receipt?: { url: string; mime: string; filename: string },
+  unitLabel?: string | null,
 ): Promise<void> {
   const ownerEmail = process.env.OWNER_EMAIL?.trim();
   if (!ownerEmail) {
@@ -190,6 +191,7 @@ export async function sendOwnerBookingEmail(
     <p style="margin:0 0 14px;font-size:15px;line-height:1.6;">New booking request from <strong>${escape(booking.customer_name)}</strong>.</p>
     ${bookingSummaryHtml(booking)}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
+      ${unitLabel ? `<tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Unit</td><td style="padding:4px 0;font-weight:600;">${escape(unitLabel)}</td></tr>` : ""}
       <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Deposit via</td><td style="padding:4px 0;font-weight:600;">${escape(paymentLabel(booking.payment_method))}</td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Email</td><td style="padding:4px 0;"><a href="mailto:${escape(booking.customer_email)}" style="color:#1a1a1a;">${escape(booking.customer_email)}</a></td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Phone</td><td style="padding:4px 0;">${escape(booking.customer_phone)}${waLink ? ` &middot; <a href="${waLink}" style="color:#25D366;text-decoration:none;font-weight:600;">WhatsApp →</a>` : ""}</td></tr>
@@ -212,7 +214,7 @@ export async function sendOwnerBookingEmail(
 
   const text = `New booking request
 
-Bike: ${bikeName}
+Bike: ${bikeName}${unitLabel ? ` (${unitLabel})` : ""}
 Pickup: ${fmtDate(booking.date_from)} ${fmtTimeOfDay(booking.pickup_time)}
 Return: ${fmtDate(booking.date_to)} ${fmtTimeOfDay(booking.return_time)}
 Total: ${totalEur(booking)}

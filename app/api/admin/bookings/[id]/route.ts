@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findOverlap, describeConflict } from "@/lib/availability";
+import { findFreeUnit, describeConflict } from "@/lib/availability";
 import { isValidSlot, parseTime } from "@/lib/pricing";
 
 export const runtime = "nodejs";
@@ -67,8 +67,9 @@ export async function PATCH(
     return NextResponse.json({ error: "Booking not found" }, { status: 404 });
   }
 
+  let assignedUnitId: string | null = booking.bike_unit_id;
   try {
-    const conflict = await findOverlap(supabase, {
+    const availability = await findFreeUnit(supabase, {
       bikeId: booking.bike_id,
       dateFrom,
       dateTo,
@@ -76,14 +77,23 @@ export async function PATCH(
       returnTime,
       excludeBookingId: booking.id,
     });
-    if (conflict) {
+    if (!availability.unitId) {
       return NextResponse.json(
-        { error: "Time conflict", detail: describeConflict(conflict) },
+        {
+          error: "Time conflict",
+          detail: availability.conflict
+            ? describeConflict(availability.conflict)
+            : "no free unit",
+        },
         { status: 409 },
       );
     }
+    // For confirmed bookings, lock in the new unit choice. For pending
+    // bookings we still update so the auto-assigned unit reflects the
+    // edited window.
+    assignedUnitId = availability.unitId;
   } catch (err) {
-    console.error("[/api/admin/bookings] overlap", err);
+    console.error("[/api/admin/bookings] availability", err);
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 
@@ -94,6 +104,7 @@ export async function PATCH(
       date_to: dateTo,
       pickup_time: pickupTime,
       return_time: returnTime,
+      bike_unit_id: assignedUnitId,
     })
     .eq("id", id);
   if (updateErr) {

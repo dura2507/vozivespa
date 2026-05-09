@@ -81,6 +81,13 @@ export default async function AdminBookingDetail({
               </Link>
             )}
           </Field>
+          {b.unitLabel && (
+            <Field label="Unit">
+              <span className="font-mono text-sm bg-ink/5 px-2 py-0.5">
+                {b.unitLabel}
+              </span>
+            </Field>
+          )}
           <Field label="Pickup">
             {fmtDate(b.date_from)} · {fmtTimeOfDay(b.pickup_time)}
           </Field>

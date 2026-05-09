@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { bucketBookings, listAllBookings, type EnrichedBooking } from "@/lib/admin-data";
+import {
+  bucketBookings,
+  listAllBookings,
+  listFleetSummary,
+  type EnrichedBooking,
+  type FleetEntry,
+} from "@/lib/admin-data";
 
 export const dynamic = "force-dynamic";
 
@@ -87,7 +93,12 @@ function BookingRow({
         </div>
         <p className="font-bold text-ink shrink-0">{totalEur(booking)}</p>
       </div>
-      <p className="text-xs text-muted truncate">{booking.bikeName}</p>
+      <p className="text-xs text-muted truncate">
+        {booking.bikeName}
+        {booking.unitLabel && (
+          <span className="ml-2 text-ink/60 font-mono">[{booking.unitLabel}]</span>
+        )}
+      </p>
       <div className="text-xs text-ink mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
         <span>
           {fmtDate(booking.date_from)} {fmtTimeOfDay(booking.pickup_time)}
@@ -139,22 +150,92 @@ function Section({
   );
 }
 
-export default async function AdminDashboard() {
-  const all = await listAllBookings();
+function FleetCard({ entry }: { entry: FleetEntry }) {
+  const fullyOut = entry.totalUnits > 0 && entry.outUnits >= entry.totalUnits;
+  return (
+    <Link
+      href={`/admin?bike=${entry.bikeId}`}
+      className={`block p-4 border transition-colors ${
+        fullyOut
+          ? "bg-red/10 border-red"
+          : entry.outUnits > 0
+          ? "bg-yellow-50 border-yellow-300"
+          : "bg-white border-ink/10"
+      } hover:border-red`}
+    >
+      <p className="text-xs font-bold text-ink truncate">{entry.bikeName}</p>
+      <p className="font-barlow font-black text-2xl text-ink mt-1 leading-none">
+        {entry.outUnits}
+        <span className="text-ink/40 text-base"> / {entry.totalUnits}</span>
+      </p>
+      <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mt-1">
+        out
+      </p>
+      {(entry.pendingCount > 0 || entry.upcomingCount > 0) && (
+        <p className="text-xs text-muted mt-2 leading-tight">
+          {entry.pendingCount > 0 && (
+            <span className="text-red font-bold">{entry.pendingCount} pending</span>
+          )}
+          {entry.pendingCount > 0 && entry.upcomingCount > 0 && " · "}
+          {entry.upcomingCount > 0 && <span>{entry.upcomingCount} upcoming</span>}
+        </p>
+      )}
+    </Link>
+  );
+}
+
+export default async function AdminDashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ bike?: string }>;
+}) {
+  const { bike: bikeFilter } = await searchParams;
   const nowMs = Date.now();
+  const [allRaw, fleet] = await Promise.all([
+    listAllBookings(),
+    listFleetSummary(nowMs),
+  ]);
+  const all = bikeFilter ? allRaw.filter((b) => b.bike_id === bikeFilter) : allRaw;
   const buckets = bucketBookings(all, nowMs);
+  const filteredEntry = bikeFilter ? fleet.find((f) => f.bikeId === bikeFilter) : null;
 
   return (
     <div className="max-w-7xl mx-auto px-5 md:px-8 py-8">
-      <div className="flex items-baseline justify-between mb-8 flex-wrap gap-4">
+      <div className="flex items-baseline justify-between mb-6 flex-wrap gap-4">
         <h1 className="font-barlow font-black uppercase text-3xl tracking-tight text-ink">
-          Dashboard
+          {filteredEntry ? filteredEntry.bikeName : "Dashboard"}
         </h1>
         <p className="text-xs text-muted">
-          {all.length} total bookings ·{" "}
+          {all.length} {bikeFilter ? "filtered" : "total"} bookings ·{" "}
           <span className="text-red font-bold">{buckets.pending.length} pending</span>
+          {bikeFilter && (
+            <>
+              {" · "}
+              <Link href="/admin" className="text-red font-bold uppercase tracking-widest">
+                clear filter
+              </Link>
+            </>
+          )}
         </p>
       </div>
+
+      {!bikeFilter && (
+        <section className="mb-10">
+          <div className="flex items-baseline gap-3 mb-3">
+            <h2 className="font-barlow font-black uppercase text-xl tracking-tight text-ink">
+              Fleet status
+            </h2>
+            <span className="text-xs tracking-[0.15em] uppercase text-ink/40 font-bold">
+              {fleet.length} models
+            </span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {fleet.map((entry) => (
+              <FleetCard key={entry.bikeId} entry={entry} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <Section
         title="Currently out"

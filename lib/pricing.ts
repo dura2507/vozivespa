@@ -65,11 +65,14 @@ export function buildSlots(): string[] {
 }
 
 // Confirmed booking on a bike, used to compute time-slot constraints.
+// `unitId` identifies which physical bike unit holds this booking; null
+// for legacy bookings created before the multi-unit migration.
 export type ConfirmedBooking = {
   from: string; // YYYY-MM-DD
   to: string;
   pickupTime: string; // HH:MM
   returnTime: string;
+  unitId: string | null;
 };
 
 function toIsoDate(d: Date): string {
@@ -79,41 +82,88 @@ function toIsoDate(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-// Slots a customer may pick as their pickup time on `pickupDate`. If
-// another booking ends that day, the floor is its return time + 1h
-// turnaround buffer. No upper bound beyond shop close — return-side
-// constraints are enforced separately on the return-time picker.
+// Number of physical units busy at a given moment. A unit is "busy" if
+// any of its bookings overlaps the moment within the 1h turnaround
+// buffer (so we can't reuse it yet).
+function countBusyUnitsAt(
+  date: Date,
+  time: string,
+  bookings: ConfirmedBooking[],
+): number {
+  const slotMs = combineDateTime(date, time).getTime();
+  const bufferMs = TURNAROUND_MINUTES * 60_000;
+  const occupied = new Set<string>();
+  for (const b of bookings) {
+    if (!b.unitId) continue;
+    const bStart = combineDateTime(new Date(`${b.from}T00:00:00`), b.pickupTime).getTime();
+    const bEnd = combineDateTime(new Date(`${b.to}T00:00:00`), b.returnTime).getTime();
+    if (bStart - bufferMs <= slotMs && slotMs < bEnd + bufferMs) {
+      occupied.add(b.unitId);
+    }
+  }
+  return occupied.size;
+}
+
+// Slots a customer may pick as their pickup time on `pickupDate`. A
+// slot is bookable as long as at least one physical unit of the bike
+// model is free at that moment (with the turnaround buffer applied).
+// Multi-unit bikes therefore stay bookable even when one or two of
+// their units are mid-rental.
 export function validPickupSlots(
   pickupDate: Date,
   bookings: ConfirmedBooking[],
+  totalUnits: number,
 ): string[] {
-  const iso = toIsoDate(pickupDate);
-  let floorMin = SHOP_OPEN_HOUR * 60;
-  for (const b of bookings) {
-    if (b.to !== iso) continue;
-    const ret = parseTime(b.returnTime);
-    if (ret === null) continue;
-    floorMin = Math.max(floorMin, ret + TURNAROUND_MINUTES);
-  }
-  return buildSlots().filter((s) => (parseTime(s) ?? 0) >= floorMin);
+  if (totalUnits <= 0) return buildSlots();
+  return buildSlots().filter(
+    (s) => countBusyUnitsAt(pickupDate, s, bookings) < totalUnits,
+  );
 }
 
-// Slots a customer may pick as their return time on `returnDate`. If
-// another booking starts that day, the ceiling is its pickup time -
-// 1h turnaround buffer.
+// Same logic as validPickupSlots — at any candidate time T on the
+// return date, we need at least one unit to be free so the customer
+// can drop off without colliding with another booking that starts on
+// that unit within the turnaround window.
 export function validReturnSlots(
   returnDate: Date,
   bookings: ConfirmedBooking[],
+  totalUnits: number,
 ): string[] {
-  const iso = toIsoDate(returnDate);
-  let ceilingMin = SHOP_CLOSE_HOUR * 60;
+  if (totalUnits <= 0) return buildSlots();
+  return buildSlots().filter(
+    (s) => countBusyUnitsAt(returnDate, s, bookings) < totalUnits,
+  );
+}
+
+// Set of ISO dates that are fully blocked: every active unit has at
+// least one booking covering that date. Used to disable dates in the
+// calendar so customers can't pick a window that has zero chance.
+export function fullyBookedDates(
+  bookings: ConfirmedBooking[],
+  totalUnits: number,
+): string[] {
+  if (totalUnits <= 0) return [];
+  const occupancy = new Map<string, Set<string>>();
   for (const b of bookings) {
-    if (b.from !== iso) continue;
-    const pick = parseTime(b.pickupTime);
-    if (pick === null) continue;
-    ceilingMin = Math.min(ceilingMin, pick - TURNAROUND_MINUTES);
+    if (!b.unitId) continue;
+    let cursor = new Date(`${b.from}T00:00:00`);
+    const end = new Date(`${b.to}T00:00:00`);
+    while (cursor.getTime() <= end.getTime()) {
+      const iso = toIsoDate(cursor);
+      let set = occupancy.get(iso);
+      if (!set) {
+        set = new Set();
+        occupancy.set(iso, set);
+      }
+      set.add(b.unitId);
+      cursor = new Date(cursor.getTime() + 86_400_000);
+    }
   }
-  return buildSlots().filter((s) => (parseTime(s) ?? 0) <= ceilingMin);
+  const out: string[] = [];
+  for (const [iso, units] of occupancy) {
+    if (units.size >= totalUnits) out.push(iso);
+  }
+  return out;
 }
 
 function combineDateTime(date: Date, time: string): Date {

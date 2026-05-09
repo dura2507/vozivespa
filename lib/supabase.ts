@@ -8,6 +8,14 @@ export type BikeRow = {
   created_at: string;
 };
 
+export type BikeUnitRow = {
+  id: string;
+  bike_id: string;
+  label: string;
+  active: boolean;
+  created_at: string;
+};
+
 export type BookingStatus = "pending" | "confirmed" | "declined" | "cancelled";
 
 export type BookingRow = {
@@ -26,6 +34,10 @@ export type BookingRow = {
   // Path inside the `booking-receipts` Storage bucket. Owner sees a
   // signed URL in Telegram + email, never exposed to the public.
   deposit_screenshot_path: string | null;
+  // Which physical unit (row in bike_units) was assigned. Set at insert
+  // time; may be reassigned at confirm-time if the original unit isn't
+  // free anymore.
+  bike_unit_id: string | null;
   status: BookingStatus;
   secret_token: string;
   created_at: string;

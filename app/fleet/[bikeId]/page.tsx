@@ -15,6 +15,7 @@ import type { PaymentMethod } from "@/lib/mockData";
 import {
   buildSlots,
   calculatePrice,
+  fullyBookedDates,
   TIER_LABEL,
   validPickupSlots,
   validReturnSlots,
@@ -83,8 +84,11 @@ export default function BikeDetailPage({
   // Live availability from Supabase via /api/availability — split so
   // confirmed bookings expose pickup/return times (used to filter the
   // time-slot pickers) while owner manual blocks stay full-day.
+  // `totalUnits` lets us be multi-unit aware: a date is only fully
+  // blocked when every active unit has an overlapping booking.
   const [manualBlocks, setManualBlocks] = useState<BlockedRange[]>([]);
   const [bookings, setBookings] = useState<ConfirmedBooking[]>([]);
+  const [totalUnits, setTotalUnits] = useState(1);
   useEffect(() => {
     let cancelled = false;
     fetch(`/api/availability?bikeId=${encodeURIComponent(bike.id)}`)
@@ -93,6 +97,7 @@ export default function BikeDetailPage({
         (json: {
           manualBlocks: { from: string; to: string }[];
           bookings: ConfirmedBooking[];
+          totalUnits: number;
         }) => {
           if (cancelled) return;
           setManualBlocks(
@@ -102,6 +107,7 @@ export default function BikeDetailPage({
             })),
           );
           setBookings(json.bookings);
+          setTotalUnits(json.totalUnits || 1);
         },
       )
       .catch((err) => console.error("Failed to load availability", err));
@@ -110,36 +116,48 @@ export default function BikeDetailPage({
     };
   }, [bike.id]);
 
-  // Pickup-day (range start) and return-day (range end) of a confirmed
-  // booking get a diagonal half-fill in the calendar so the customer
-  // sees they're transition days, not fully gone. Manual blocks stay
-  // fully greyed for every day they cover.
+  // Calendar markers depend on whether the bike model has one physical
+  // unit or several. Single-unit: keep the half-cell visual on edge
+  // days so back-to-back bookings still feel obvious. Multi-unit: the
+  // calendar shows a date as fully blocked only when every unit is
+  // occupied that day; partial booking is invisible to the customer
+  // because some unit is still free.
   const bookedStartDays: Date[] = [];
   const bookedEndDays: Date[] = [];
   const bookedMiddleRanges: { from: Date; to: Date }[] = [];
   const bookedFullDays: Date[] = [];
-  for (const b of bookings) {
-    const from = new Date(`${b.from}T00:00:00`);
-    const to = new Date(`${b.to}T00:00:00`);
-    if (isSameDay(from, to)) {
-      bookedFullDays.push(from);
-      continue;
+  if (totalUnits === 1) {
+    for (const b of bookings) {
+      const from = new Date(`${b.from}T00:00:00`);
+      const to = new Date(`${b.to}T00:00:00`);
+      if (isSameDay(from, to)) {
+        bookedFullDays.push(from);
+        continue;
+      }
+      bookedStartDays.push(from);
+      bookedEndDays.push(to);
+      if (differenceInCalendarDays(to, from) >= 2) {
+        bookedMiddleRanges.push({ from: addDays(from, 1), to: addDays(to, -1) });
+      }
     }
-    bookedStartDays.push(from);
-    bookedEndDays.push(to);
-    if (differenceInCalendarDays(to, from) >= 2) {
-      bookedMiddleRanges.push({ from: addDays(from, 1), to: addDays(to, -1) });
+  } else {
+    for (const iso of fullyBookedDates(bookings, totalUnits)) {
+      bookedFullDays.push(new Date(`${iso}T00:00:00`));
     }
   }
   for (const m of manualBlocks) {
     bookedMiddleRanges.push({ from: m.from, to: m.to });
   }
 
-  // Time-slot pickers respect adjacent confirmed bookings + 1h
-  // turnaround buffer. If pickup-date is the return-day of an existing
-  // booking, only slots ≥ that return + 60min show up (and vice versa).
-  const pickupSlots = range?.from ? validPickupSlots(range.from, bookings) : buildSlots();
-  const returnSlots = range?.to ? validReturnSlots(range.to, bookings) : buildSlots();
+  // Time-slot pickers count busy units at each candidate time and
+  // reject slots only when every unit is busy (or in turnaround) at
+  // that moment.
+  const pickupSlots = range?.from
+    ? validPickupSlots(range.from, bookings, totalUnits)
+    : buildSlots();
+  const returnSlots = range?.to
+    ? validReturnSlots(range.to, bookings, totalUnits)
+    : buildSlots();
 
   // If the active selection got invalidated by a date change, snap to
   // the closest valid slot rather than sending an unbookable request.

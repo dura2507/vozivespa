@@ -1,6 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findOverlap, describeConflict } from "@/lib/availability";
+import { findFreeUnit, describeConflict } from "@/lib/availability";
 import { sendCustomerBookingDecidedEmail } from "@/lib/email";
 import {
   editTelegramMessageForBooking,
@@ -52,9 +52,10 @@ export async function POST(
     return NextResponse.json({ ok: true, unchanged: true });
   }
 
+  let assignedUnitId: string | null = booking.bike_unit_id;
   if (decision === "confirmed") {
     try {
-      const conflict = await findOverlap(supabase, {
+      const availability = await findFreeUnit(supabase, {
         bikeId: booking.bike_id,
         dateFrom: booking.date_from,
         dateTo: booking.date_to,
@@ -62,17 +63,20 @@ export async function POST(
         returnTime: booking.return_time,
         excludeBookingId: booking.id,
       });
-      if (conflict) {
+      if (!availability.unitId) {
         return NextResponse.json(
           {
             error: "Time conflict — can't confirm",
-            detail: describeConflict(conflict),
+            detail: availability.conflict
+              ? describeConflict(availability.conflict)
+              : "no free unit",
           },
           { status: 409 },
         );
       }
+      assignedUnitId = availability.unitId;
     } catch (err) {
-      console.error("[/api/admin/bookings/status] overlap", err);
+      console.error("[/api/admin/bookings/status] availability", err);
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
   }
@@ -80,9 +84,15 @@ export async function POST(
   const wasFromPending = booking.status === "pending";
   const wasConfirmed = booking.status === "confirmed";
 
+  const update: Partial<BookingRow> = {
+    status: decision,
+    decided_at: new Date().toISOString(),
+  };
+  if (decision === "confirmed") update.bike_unit_id = assignedUnitId;
+
   const { data: updated, error: updateErr } = await supabase
     .from("bookings")
-    .update({ status: decision, decided_at: new Date().toISOString() })
+    .update(update)
     .eq("id", id)
     .select("*")
     .maybeSingle<BookingRow>();

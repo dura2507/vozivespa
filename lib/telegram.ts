@@ -147,16 +147,20 @@ function buildKeyboard(booking: BookingRow): InlineKeyboard {
   return rows;
 }
 
-function buildText(booking: BookingRow): string {
+function buildText(booking: BookingRow, unitLabel?: string | null): string {
   const bikeName = bikeNameFor(booking);
   const nights = nightsBetween(booking.date_from, booking.date_to);
   const pickup = fmtTimeOfDay(booking.pickup_time);
   const ret = fmtTimeOfDay(booking.return_time);
 
+  const bikeLine = unitLabel
+    ? `*Bike:* ${escapeMd(bikeName)} \\(${escapeMd(unitLabel)}\\)`
+    : `*Bike:* ${escapeMd(bikeName)}`;
+
   const lines = [
     "*New booking request*",
     "",
-    `*Bike:* ${escapeMd(bikeName)}`,
+    bikeLine,
     `*Pickup:* ${escapeMd(fmtDate(booking.date_from))}${pickup ? ` ${escapeMd(pickup)}` : ""}`,
     `*Return:* ${escapeMd(fmtDate(booking.date_to))}${ret ? ` ${escapeMd(ret)}` : ""} \\(${nights} ${nights === 1 ? "day" : "days"}\\)`,
     `*Total:* ${escapeMd(totalEur(booking))}`,
@@ -177,6 +181,7 @@ function buildText(booking: BookingRow): string {
 export async function sendOwnerBookingTelegram(
   booking: BookingRow,
   receipt?: { url: string; mime: string },
+  unitLabel?: string | null,
 ): Promise<void> {
   const chatId = ownerChatId();
   if (!chatId) {
@@ -191,7 +196,7 @@ export async function sendOwnerBookingTelegram(
   // free-standing photo.
   const msgRes = await callTelegram<{ message_id: number }>("sendMessage", {
     chat_id: chatId,
-    text: buildText(booking),
+    text: buildText(booking, unitLabel),
     parse_mode: "MarkdownV2",
     reply_markup: { inline_keyboard: buildKeyboard(booking) },
   });
