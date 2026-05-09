@@ -142,7 +142,7 @@ export default function HomePage() {
       <main className="pb-20 md:pb-0">
 
         {/* ─── RIDES ─── */}
-        <section id="fleet" className="px-5 md:px-12 pt-20 pb-16 max-w-7xl mx-auto scroll-mt-[6.5rem]">
+        <section id="fleet" className="px-5 md:px-12 pt-20 pb-16 max-w-7xl mx-auto scroll-mt-32">
           <div className="text-center mb-12">
             <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">Choose your ride</p>
             <h2 className="font-barlow font-black uppercase text-[clamp(2.5rem,7vw,5rem)] leading-none tracking-tight text-ink">

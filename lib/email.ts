@@ -63,6 +63,26 @@ function ownerWaLink(): string {
   return `https://wa.me/${BRAND.contacts[0].phoneRaw}`;
 }
 
+/**
+ * Pair of Call + WhatsApp buttons styled to match the site - used in
+ * customer-facing emails so the contact options feel consistent.
+ */
+function contactButtonsHtml(): string {
+  const c = BRAND.contacts[0];
+  const callHref = `tel:+${c.phoneRaw}`;
+  const waHref = `https://wa.me/${c.phoneRaw}`;
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 0;">
+    <tr>
+      <td style="padding-right:8px;">
+        <a href="${callHref}" style="display:inline-block;background:#1a1a1a;color:#ffffff;text-decoration:none;padding:12px 18px;font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;">📞 Call ${escape(c.phone)}</a>
+      </td>
+      <td>
+        <a href="${waHref}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;padding:12px 18px;font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;">💬 WhatsApp</a>
+      </td>
+    </tr>
+  </table>`;
+}
+
 // ---------- Shared HTML layout ----------------------------------------------
 
 function htmlLayout({
@@ -125,7 +145,7 @@ export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Pro
     <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">thanks for your booking request. We&apos;ll review it and confirm by email shortly - usually within a few hours.</p>
     ${bookingSummaryHtml(booking)}
     <p style="margin:24px 0 8px;font-size:14px;color:#6b6b6b;line-height:1.6;">In the meantime, anything urgent?</p>
-    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;"><a href="${ownerWaLink()}" style="color:#25D366;font-weight:600;text-decoration:none;">💬 WhatsApp us at ${escape(BRAND.contacts[0].phone)}</a></p>
+    ${contactButtonsHtml()}
     <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">See you in Zadar 🛵</p>
   `;
 
@@ -188,16 +208,16 @@ export async function sendCustomerBookingDecidedEmail(
         <li>Bike comes with a full tank - please return it full</li>
       </ul>
       <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">Pickup time?</h3>
-      <p style="margin:0 0 18px;font-size:14px;line-height:1.6;">Drop us a quick WhatsApp so we can pin down a time:</p>
-      <p style="margin:0 0 16px;"><a href="${ownerWaLink()}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;padding:14px 24px;font-weight:700;font-size:13px;letter-spacing:.15em;text-transform:uppercase;">💬 WhatsApp ${escape(BRAND.contacts[0].phone)}</a></p>
+      <p style="margin:0 0 8px;font-size:14px;line-height:1.6;">Reach out so we can pin down a pickup time:</p>
+      ${contactButtonsHtml()}
       <p style="margin:32px 0 0;padding-top:18px;border-top:1px solid #e6e4dd;font-size:12px;color:#6b6b6b;line-height:1.6;">Plans changed? <a href="${cancelUrl}" style="color:#B61F36;">Cancel this booking</a> - the dates open up immediately for someone else.</p>
     `
     : `
       <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escape(booking.customer_name)},</p>
       <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">unfortunately we can't accommodate the ${escape(bikeName)} for these dates. Sorry about that.</p>
       ${bookingSummaryHtml(booking)}
-      <p style="margin:24px 0 16px;font-size:14px;line-height:1.6;">Want to try other dates or another bike? Drop us a line - we'll do our best to find something that works.</p>
-      <p style="margin:0 0 16px;"><a href="${ownerWaLink()}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;padding:14px 24px;font-weight:700;font-size:13px;letter-spacing:.15em;text-transform:uppercase;">💬 WhatsApp ${escape(BRAND.contacts[0].phone)}</a></p>
+      <p style="margin:24px 0 8px;font-size:14px;line-height:1.6;">Want to try other dates or another bike? Drop us a line - we'll do our best to find something that works.</p>
+      ${contactButtonsHtml()}
     `;
 
   const html = htmlLayout({
@@ -330,7 +350,7 @@ export async function sendCustomerContactReceivedEmail(input: {
     <p style="margin:0 0 8px;font-size:13px;color:#6b6b6b;">Your message</p>
     <div style="background:#f6f5f1;padding:18px;font-size:14px;line-height:1.6;border-left:3px solid #B61F36;">${messageHtml}</div>
     <p style="margin:24px 0 8px;font-size:14px;line-height:1.6;">Anything urgent in the meantime?</p>
-    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;"><a href="${ownerWaLink()}" style="color:#25D366;font-weight:600;text-decoration:none;">💬 WhatsApp ${escape(BRAND.contacts[0].phone)}</a> or <a href="tel:+${BRAND.contacts[0].phoneRaw}" style="color:#1a1a1a;font-weight:600;text-decoration:none;">📞 Call us</a></p>
+    ${contactButtonsHtml()}
     <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">See you in Zadar 🛵</p>
   `;
 
