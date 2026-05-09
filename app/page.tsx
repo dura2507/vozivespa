@@ -150,16 +150,16 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 max-w-7xl mx-auto">
             {CATEGORIES.map((cat) => (
               <Link href={`/fleet/${cat.id}`} key={cat.id} className="group flex flex-col bg-sand">
-                <div className="relative overflow-hidden aspect-[4/3] bg-sand">
+                <div className="relative overflow-hidden aspect-square bg-sand">
                   <Image
                     src={cat.image}
                     alt={cat.name}
                     fill
                     className="object-cover object-bottom transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   />
                   <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-red text-white px-3 py-1.5 sm:px-4 sm:py-2 shadow-lg">
                     <p className="font-barlow font-black text-xl sm:text-2xl leading-none">
