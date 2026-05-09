@@ -91,7 +91,7 @@ export default function HomePage() {
       {/* ─── HERO ─── */}
       <section className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden pt-32 pb-24 bg-ink">
         <Image
-          src="/bikes/bike-390.jpg"
+          src="/bikes/hero.jpg"
           alt="SickMotos bike rental Zadar"
           fill
           priority
