@@ -2,7 +2,7 @@ import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail } from "@/lib/email";
-import { isValidSlot, parseTime } from "@/lib/pricing";
+import { isValidSlot, parseTime, TURNAROUND_MINUTES } from "@/lib/pricing";
 
 export const dynamic = "force-dynamic";
 
@@ -137,16 +137,19 @@ export async function POST(request: Request) {
     const t = time.length === 5 ? `${time}:00` : time;
     return new Date(`${date}T${t}`).getTime();
   };
+  const bufferMs = TURNAROUND_MINUTES * 60_000;
   const newStart = toMs(from, pickupTime);
   const newEnd = toMs(to, returnTime);
   for (const b of candidates ?? []) {
     const bStart = toMs(b.date_from, b.pickup_time);
     const bEnd = toMs(b.date_to, b.return_time);
-    // Strict overlap. Touching boundaries (newStart === bEnd, etc.) are OK.
-    if (newStart < bEnd && bStart < newEnd) {
+    // 1-hour turnaround buffer: new pickup must be ≥ existing return +
+    // buffer, new return must be ≤ existing pickup - buffer. Owner uses
+    // that hour to receive, check and prep the bike.
+    if (newStart < bEnd + bufferMs && bStart - bufferMs < newEnd) {
       return NextResponse.json(
         {
-          error: "Time conflict with another booking on those dates - try a later pickup or earlier return time",
+          error: `Time conflict with another booking - we need ${TURNAROUND_MINUTES} minutes between bookings to check and prep the bike. Try a later pickup or earlier return time.`,
         },
         { status: 409 },
       );
