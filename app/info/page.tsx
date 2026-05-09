@@ -48,6 +48,7 @@ const REQUIREMENTS = [
       "Payment: PayPal, bank transfer, Revolut, or cash",
       "We don't accept credit cards",
       "20% booking fee secures your reservation",
+      "Send transaction screenshot after paying",
     ],
   },
   {
@@ -55,9 +56,8 @@ const REQUIREMENTS = [
     title: "Pick-Up & Return",
     items: [
       "Pick-up & drop-off at Velebitska Ulica 2, 23000 Zadar",
-      "Open 09:00 - 19:00, Monday to Sunday",
+      "Mon-Sun, 09:00-19:00",
       "15 min grace period - late returns incur extra fees",
-      "Send transaction screenshot after paying",
     ],
   },
   {

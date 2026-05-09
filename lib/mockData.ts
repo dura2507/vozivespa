@@ -428,7 +428,7 @@ export const BRAND = {
   legal: "Joyful d.o.o.",
   oib: "84055846851",
   address: "Velebitska Ulica 2, 23000 Zadar",
-  hours: "09:00 - 19:00, Monday to Sunday",
+  hours: "Mon-Sun, 09:00-19:00",
   phone: "+49 176 34658003",
   phoneRaw: "4917634658003",
   languages: ["🇩🇪", "🇬🇧"],

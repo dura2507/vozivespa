@@ -62,6 +62,7 @@ export default function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
+                scroll={!l.href.includes("#")}
                 className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} ${
                   pathname === l.href ? "opacity-100" : "opacity-80"
                 }`}
@@ -71,6 +72,7 @@ export default function Navbar() {
             ))}
             <Link
               href="/#fleet"
+              scroll={false}
               className="ml-2 bg-red text-white text-xs font-bold tracking-[0.15em] uppercase px-6 py-3 hover:bg-red-dark transition-colors"
             >
               Book Now
@@ -107,6 +109,7 @@ export default function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
+                scroll={!l.href.includes("#")}
                 onClick={() => setOpen(false)}
                 className="py-3 text-sm font-semibold text-ink border-b border-ink/8 tracking-wide hover:text-red transition-colors"
               >
@@ -115,6 +118,7 @@ export default function Navbar() {
             ))}
             <Link
               href="/#fleet"
+              scroll={false}
               onClick={() => setOpen(false)}
               className="mt-4 bg-red text-white text-center text-sm font-bold tracking-widest uppercase py-3"
             >

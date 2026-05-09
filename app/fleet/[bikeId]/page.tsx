@@ -86,8 +86,60 @@ export default function BikeDetailPage({
 
   const nights =
     range?.from && range?.to ? differenceInCalendarDays(range.to, range.from) : 0;
-  const pricePerDay = parseInt(bike.pricing.day, 10) || 0;
-  const totalPrice = nights * pricePerDay;
+
+  // Apply the cheapest applicable rate. We try every plausible combination
+  // (day-only, weekend if Fri-Sun, week-blocks + leftover days, full
+  // months + leftover days) and pick the lowest total.
+  const { totalPrice, appliedTier } = (() => {
+    if (!range?.from || nights <= 0) {
+      return { totalPrice: 0, appliedTier: null as null | string };
+    }
+    const dayP = parseInt(bike.pricing.day, 10) || 0;
+    const weekendP = parseInt(bike.pricing.weekend, 10);
+    const weekP = parseInt(bike.pricing.week, 10);
+    const monthP = parseInt(bike.pricing.month, 10);
+
+    type Candidate = { price: number; tier: string };
+    const candidates: Candidate[] = [{ price: dayP * nights, tier: "day" }];
+
+    // Weekend: Fri pickup, Sun return = 2 nights
+    if (nights === 2 && range.from.getDay() === 5 && weekendP) {
+      candidates.push({ price: weekendP, tier: "weekend" });
+    }
+    // Pure week / weeks + day leftovers
+    if (weekP && nights >= 7) {
+      const weeks = Math.floor(nights / 7);
+      const rem = nights - weeks * 7;
+      candidates.push({
+        price: weeks * weekP + rem * dayP,
+        tier: weeks === 1 && rem === 0 ? "week" : "week-mix",
+      });
+    }
+    // Pure month / months + day leftovers
+    if (monthP && nights >= 30) {
+      const months = Math.floor(nights / 30);
+      const rem = nights - months * 30;
+      candidates.push({
+        price: months * monthP + rem * dayP,
+        tier: months === 1 && rem === 0 ? "month" : "month-mix",
+      });
+    }
+
+    const best = candidates.reduce(
+      (acc, c) => (c.price < acc.price ? c : acc),
+      candidates[0],
+    );
+    return { totalPrice: best.price, appliedTier: best.tier };
+  })();
+
+  const tierLabel: Record<string, string> = {
+    day: "Daily rate",
+    weekend: "Weekend rate (Fri-Sun)",
+    week: "Week rate",
+    "week-mix": "Week + day mix",
+    month: "Month rate",
+    "month-mix": "Month + day mix",
+  };
   const bookingFee = Math.round(totalPrice * 0.2 * 100) / 100;
 
   function scrollToCalendar() {
@@ -493,8 +545,15 @@ export default function BikeDetailPage({
                       )}
                     </div>
                     {nights > 0 && (
-                      <div className="font-barlow font-black text-red text-2xl">
-                        {totalPrice}€
+                      <div className="text-right">
+                        <div className="font-barlow font-black text-red text-2xl leading-none">
+                          {totalPrice}€
+                        </div>
+                        {appliedTier && appliedTier !== "day" && (
+                          <p className="text-[10px] tracking-[0.15em] uppercase text-muted font-bold mt-1">
+                            {tierLabel[appliedTier]}
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
