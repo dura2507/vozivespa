@@ -175,8 +175,8 @@ export default function HomePage() {
                   <h3 className="font-barlow font-black text-ink text-2xl sm:text-3xl uppercase tracking-wide leading-none mb-3 sm:mb-4">
                     {cat.name}
                   </h3>
-                  <p className="text-xs sm:text-sm text-muted leading-relaxed mb-4 sm:mb-5">{cat.description}</p>
-                  <div className="flex flex-col items-center gap-2 mb-4">
+                  <p className="text-xs sm:text-sm text-muted leading-relaxed mb-3">{cat.description}</p>
+                  <div className="flex flex-col items-center gap-1 mb-3">
                     <Image
                       src={LICENCE_BADGE[cat.licenceCode]}
                       alt={`${cat.licenceCode} licence required`}
@@ -193,7 +193,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   {cat.experienceNote && (
-                    <p className="text-[10px] tracking-[0.15em] uppercase text-red font-bold mb-4">
+                    <p className="text-[10px] tracking-[0.15em] uppercase text-red font-bold mb-3">
                       Experience required
                     </p>
                   )}

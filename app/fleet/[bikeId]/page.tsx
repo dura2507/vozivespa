@@ -377,7 +377,7 @@ export default function BikeDetailPage({
                   Unlimited km · Basic insurance · {BRAND.deposit} deposit
                 </p>
 
-                <div className="mt-5 pt-5 border-t border-white/10 flex items-center gap-4">
+                <div className="mt-3 pt-3 border-t border-white/10 flex items-center gap-4">
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">
                       Required licence
