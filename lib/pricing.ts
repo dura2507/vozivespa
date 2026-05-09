@@ -64,6 +64,58 @@ export function buildSlots(): string[] {
   return out;
 }
 
+// Confirmed booking on a bike, used to compute time-slot constraints.
+export type ConfirmedBooking = {
+  from: string; // YYYY-MM-DD
+  to: string;
+  pickupTime: string; // HH:MM
+  returnTime: string;
+};
+
+function toIsoDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+// Slots a customer may pick as their pickup time on `pickupDate`. If
+// another booking ends that day, the floor is its return time + 1h
+// turnaround buffer. No upper bound beyond shop close — return-side
+// constraints are enforced separately on the return-time picker.
+export function validPickupSlots(
+  pickupDate: Date,
+  bookings: ConfirmedBooking[],
+): string[] {
+  const iso = toIsoDate(pickupDate);
+  let floorMin = SHOP_OPEN_HOUR * 60;
+  for (const b of bookings) {
+    if (b.to !== iso) continue;
+    const ret = parseTime(b.returnTime);
+    if (ret === null) continue;
+    floorMin = Math.max(floorMin, ret + TURNAROUND_MINUTES);
+  }
+  return buildSlots().filter((s) => (parseTime(s) ?? 0) >= floorMin);
+}
+
+// Slots a customer may pick as their return time on `returnDate`. If
+// another booking starts that day, the ceiling is its pickup time -
+// 1h turnaround buffer.
+export function validReturnSlots(
+  returnDate: Date,
+  bookings: ConfirmedBooking[],
+): string[] {
+  const iso = toIsoDate(returnDate);
+  let ceilingMin = SHOP_CLOSE_HOUR * 60;
+  for (const b of bookings) {
+    if (b.from !== iso) continue;
+    const pick = parseTime(b.pickupTime);
+    if (pick === null) continue;
+    ceilingMin = Math.min(ceilingMin, pick - TURNAROUND_MINUTES);
+  }
+  return buildSlots().filter((s) => (parseTime(s) ?? 0) <= ceilingMin);
+}
+
 function combineDateTime(date: Date, time: string): Date {
   const mins = parseTime(time) ?? 0;
   const d = new Date(date);

@@ -11,7 +11,14 @@ import "react-day-picker/style.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CATEGORIES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
-import { buildSlots, calculatePrice, TIER_LABEL } from "@/lib/pricing";
+import {
+  buildSlots,
+  calculatePrice,
+  TIER_LABEL,
+  validPickupSlots,
+  validReturnSlots,
+  type ConfirmedBooking,
+} from "@/lib/pricing";
 
 type FormData = {
   name: string;
@@ -54,7 +61,6 @@ export default function BikeDetailPage({
     phone: "",
     notes: "",
   });
-  const slots = buildSlots();
   const formRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -67,46 +73,79 @@ export default function BikeDetailPage({
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Live availability from Supabase via /api/availability
-  const [blocked, setBlocked] = useState<BlockedRange[]>([]);
+  // Live availability from Supabase via /api/availability — split so
+  // confirmed bookings expose pickup/return times (used to filter the
+  // time-slot pickers) while owner manual blocks stay full-day.
+  const [manualBlocks, setManualBlocks] = useState<BlockedRange[]>([]);
+  const [bookings, setBookings] = useState<ConfirmedBooking[]>([]);
   useEffect(() => {
     let cancelled = false;
     fetch(`/api/availability?bikeId=${encodeURIComponent(bike.id)}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(r)))
-      .then((json: { blocked: { from: string; to: string }[] }) => {
-        if (cancelled) return;
-        setBlocked(
-          json.blocked.map((b) => ({
-            from: new Date(`${b.from}T00:00:00`),
-            to: new Date(`${b.to}T00:00:00`),
-          })),
-        );
-      })
+      .then(
+        (json: {
+          manualBlocks: { from: string; to: string }[];
+          bookings: ConfirmedBooking[];
+        }) => {
+          if (cancelled) return;
+          setManualBlocks(
+            json.manualBlocks.map((b) => ({
+              from: new Date(`${b.from}T00:00:00`),
+              to: new Date(`${b.to}T00:00:00`),
+            })),
+          );
+          setBookings(json.bookings);
+        },
+      )
       .catch((err) => console.error("Failed to load availability", err));
     return () => {
       cancelled = true;
     };
   }, [bike.id]);
 
-  // Pickup-day (range start) and return-day (range end) get a diagonal
-  // half-fill in the calendar so the customer sees they're transition
-  // days, not fully gone. Strictly-between days stay fully greyed.
-  // Single-day blocks are treated as fully blocked.
+  // Pickup-day (range start) and return-day (range end) of a confirmed
+  // booking get a diagonal half-fill in the calendar so the customer
+  // sees they're transition days, not fully gone. Manual blocks stay
+  // fully greyed for every day they cover.
   const bookedStartDays: Date[] = [];
   const bookedEndDays: Date[] = [];
   const bookedMiddleRanges: { from: Date; to: Date }[] = [];
   const bookedFullDays: Date[] = [];
-  for (const r of blocked) {
-    if (isSameDay(r.from, r.to)) {
-      bookedFullDays.push(r.from);
+  for (const b of bookings) {
+    const from = new Date(`${b.from}T00:00:00`);
+    const to = new Date(`${b.to}T00:00:00`);
+    if (isSameDay(from, to)) {
+      bookedFullDays.push(from);
       continue;
     }
-    bookedStartDays.push(r.from);
-    bookedEndDays.push(r.to);
-    if (differenceInCalendarDays(r.to, r.from) >= 2) {
-      bookedMiddleRanges.push({ from: addDays(r.from, 1), to: addDays(r.to, -1) });
+    bookedStartDays.push(from);
+    bookedEndDays.push(to);
+    if (differenceInCalendarDays(to, from) >= 2) {
+      bookedMiddleRanges.push({ from: addDays(from, 1), to: addDays(to, -1) });
     }
   }
+  for (const m of manualBlocks) {
+    bookedMiddleRanges.push({ from: m.from, to: m.to });
+  }
+
+  // Time-slot pickers respect adjacent confirmed bookings + 1h
+  // turnaround buffer. If pickup-date is the return-day of an existing
+  // booking, only slots ≥ that return + 60min show up (and vice versa).
+  const pickupSlots = range?.from ? validPickupSlots(range.from, bookings) : buildSlots();
+  const returnSlots = range?.to ? validReturnSlots(range.to, bookings) : buildSlots();
+
+  // If the active selection got invalidated by a date change, snap to
+  // the closest valid slot rather than sending an unbookable request.
+  useEffect(() => {
+    if (pickupSlots.length > 0 && !pickupSlots.includes(pickupTime)) {
+      setPickupTime(pickupSlots[0]);
+    }
+  }, [pickupSlots, pickupTime]);
+  useEffect(() => {
+    if (returnSlots.length > 0 && !returnSlots.includes(returnTime)) {
+      setReturnTime(returnSlots[returnSlots.length - 1]);
+    }
+  }, [returnSlots, returnTime]);
 
   const priceResult =
     range?.from && range?.to
@@ -534,13 +573,17 @@ export default function BikeDetailPage({
                         <select
                           value={pickupTime}
                           onChange={(e) => setPickupTime(e.target.value)}
-                          className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all"
+                          disabled={pickupSlots.length === 0}
+                          className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all disabled:bg-ink/5 disabled:text-ink/40"
                         >
-                          {slots.map((s) => (
+                          {pickupSlots.map((s) => (
                             <option key={s} value={s}>
                               {s}
                             </option>
                           ))}
+                          {pickupSlots.length === 0 && (
+                            <option value="">No slots available</option>
+                          )}
                         </select>
                       </label>
                       <label className="block">
@@ -550,18 +593,26 @@ export default function BikeDetailPage({
                         <select
                           value={returnTime}
                           onChange={(e) => setReturnTime(e.target.value)}
-                          className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all"
+                          disabled={returnSlots.length === 0}
+                          className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all disabled:bg-ink/5 disabled:text-ink/40"
                         >
-                          {slots.map((s) => (
+                          {returnSlots.map((s) => (
                             <option key={s} value={s}>
                               {s}
                             </option>
                           ))}
+                          {returnSlots.length === 0 && (
+                            <option value="">No slots available</option>
+                          )}
                         </select>
                       </label>
                     </div>
                     <p className="text-muted text-xs mt-2">
-                      Shop hours 09:00–19:00. Pickup or return outside this window isn&apos;t possible.
+                      Shop hours 09:00–19:00. Times outside this window
+                      {pickupSlots.length < buildSlots().length || returnSlots.length < buildSlots().length
+                        ? " (or too close to another booking — we need 1h between bookings)"
+                        : ""}
+                      {" "}aren&apos;t possible.
                     </p>
 
                     <div className="mt-4 bg-sand px-5 py-4 flex flex-wrap items-center justify-between gap-4">
