@@ -10,8 +10,12 @@ import { useEffect } from "react";
 export default function AnchorOffsetFix() {
   useEffect(() => {
     function navHeight(): number {
-      const header = document.querySelector("header");
-      if (header) return header.getBoundingClientRect().height;
+      // Only measure the fixed top-bar, NOT the full header — when the
+      // mobile hamburger dropdown is expanded, header.height balloons up to
+      // include the dropdown panel, and scroll lands hundreds of px too low.
+      // The first inner <div> of <header> is the top bar (height: 6.5rem).
+      const topBar = document.querySelector("header > div");
+      if (topBar) return topBar.getBoundingClientRect().height;
       return 104; // 6.5rem fallback
     }
 
@@ -51,16 +55,21 @@ export default function AnchorOffsetFix() {
       // Don't interfere if the page is currently navigating elsewhere.
       if (link.target && link.target !== "_self") return;
 
-      // Capture phase ensures we run BEFORE next/link's own handler.
-      // stopPropagation makes sure Next never sees this click and
-      // doesn't try its own scroll/navigation.
+      // Capture phase + preventDefault: next/link's own onClick checks
+      // e.defaultPrevented and skips its scroll/navigation. We do NOT
+      // stopPropagation so React onClick handlers further down the tree
+      // still fire (e.g. the mobile hamburger's setOpen(false), so the
+      // dropdown actually closes before we measure the navbar height).
       e.preventDefault();
-      e.stopPropagation();
       if (window.location.hash !== hash) {
         history.pushState(null, "", hash);
       }
-      // RAF so the URL bar updates first, then we scroll. Smooth either way.
-      requestAnimationFrame(() => scrollToHash(hash));
+      // Two RAFs: first lets React commit the state update from any
+      // sibling onClick handlers (dropdown closing), second lets the DOM
+      // settle to its new height. Then we measure and scroll.
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => scrollToHash(hash)),
+      );
     }
 
     // On mount, if URL already has a hash, snap to it once layout settles.
