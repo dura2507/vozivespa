@@ -64,22 +64,34 @@ function ownerWaLink(): string {
 }
 
 /**
- * Pair of Call + WhatsApp buttons styled to match the site - used in
- * customer-facing emails so the contact options feel consistent.
+ * Per-contact Call + WhatsApp button row styled to match the site - used in
+ * customer-facing emails. Renders one row per contact in BRAND.contacts so
+ * the renter sees both the German and English options side by side.
  */
 function contactButtonsHtml(): string {
-  const c = BRAND.contacts[0];
-  const callHref = `tel:+${c.phoneRaw}`;
-  const waHref = `https://wa.me/${c.phoneRaw}`;
-  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 0;">
-    <tr>
-      <td style="padding-right:8px;">
-        <a href="${callHref}" style="display:inline-block;background:#1a1a1a;color:#ffffff;text-decoration:none;padding:12px 18px;font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;">📞 Call ${escape(c.phone)}</a>
-      </td>
-      <td>
-        <a href="${waHref}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;padding:12px 18px;font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;">💬 WhatsApp</a>
-      </td>
-    </tr>
+  const rows = BRAND.contacts
+    .filter((c) => c.phoneRaw)
+    .map((c) => {
+      const flag = c.languages.join(" ");
+      const callHref = `tel:+${c.phoneRaw}`;
+      const waHref = `https://wa.me/${c.phoneRaw}`;
+      return `<tr>
+    <td style="padding:6px 12px 6px 0;font-size:13px;line-height:1.4;color:#1a1a1a;white-space:nowrap;">
+      <span style="font-size:16px;line-height:1;vertical-align:middle;">${flag}</span>
+      &nbsp;<strong>${escape(c.label)}</strong><br/>
+      <span style="color:#6b6b6b;font-size:12px;">${escape(c.phone)}</span>
+    </td>
+    <td style="padding:6px 8px 6px 0;">
+      <a href="${callHref}" style="display:inline-block;background:#1a1a1a;color:#ffffff;text-decoration:none;padding:10px 14px;font-weight:700;font-size:11px;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap;">📞 Call</a>
+    </td>
+    <td style="padding:6px 0;">
+      <a href="${waHref}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;padding:10px 14px;font-weight:700;font-size:11px;letter-spacing:.15em;text-transform:uppercase;white-space:nowrap;">💬 WhatsApp</a>
+    </td>
+  </tr>`;
+    })
+    .join("");
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 0;border-collapse:collapse;">
+    ${rows}
   </table>`;
 }
 

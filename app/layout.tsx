@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Barlow_Condensed, Dancing_Script } from "next/font/google";
 import "./globals.css";
+import AnchorOffsetFix from "@/components/AnchorOffsetFix";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -35,7 +36,10 @@ export default function RootLayout({
       lang="en"
       className={`${dmSans.variable} ${barlow.variable} ${dancing.variable}`}
     >
-      <body className={dmSans.className}>{children}</body>
+      <body className={dmSans.className}>
+        <AnchorOffsetFix />
+        {children}
+      </body>
     </html>
   );
 }
