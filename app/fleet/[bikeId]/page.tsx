@@ -377,15 +377,7 @@ export default function BikeDetailPage({
                   Unlimited km · Basic insurance · {BRAND.deposit} deposit
                 </p>
 
-                <div className="mt-5 pt-5 border-t border-white/10 flex items-start gap-4">
-                  <Image
-                    src={LICENCE_BADGE[bike.licenceCode]}
-                    alt={`${bike.licenceCode} licence required`}
-                    width={160}
-                    height={160}
-                    quality={100}
-                    className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 drop-shadow-lg"
-                  />
+                <div className="mt-5 pt-5 border-t border-white/10 flex items-center gap-4">
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">
                       Required licence
@@ -397,6 +389,14 @@ export default function BikeDetailPage({
                       Bring your valid licence to pickup - no licence, no ride.
                     </p>
                   </div>
+                  <Image
+                    src={LICENCE_BADGE[bike.licenceCode]}
+                    alt={`${bike.licenceCode} licence required`}
+                    width={240}
+                    height={240}
+                    quality={100}
+                    className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 drop-shadow-lg"
+                  />
                 </div>
               </div>
 

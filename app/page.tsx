@@ -176,23 +176,16 @@ export default function HomePage() {
                     {cat.name}
                   </h3>
                   <p className="text-xs sm:text-sm text-muted leading-relaxed mb-4 sm:mb-5">{cat.description}</p>
-                  <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="flex flex-col items-center gap-2 mb-4">
                     <Image
                       src={LICENCE_BADGE[cat.licenceCode]}
                       alt={`${cat.licenceCode} licence required`}
-                      width={120}
-                      height={120}
+                      width={160}
+                      height={160}
                       quality={100}
-                      className="w-12 h-12 shrink-0"
+                      className="w-16 h-16"
                     />
-                    <div className="text-left leading-tight">
-                      <p className="text-[9px] tracking-[0.2em] uppercase text-ink/40 font-bold">
-                        Licence
-                      </p>
-                      <p className="text-sm font-bold text-ink">{cat.licenceCode}</p>
-                    </div>
-                    <div className="w-px h-8 bg-ink/15" />
-                    <div className="text-left leading-tight">
+                    <div className="leading-tight">
                       <p className="text-[9px] tracking-[0.2em] uppercase text-ink/40 font-bold">
                         Top speed
                       </p>
