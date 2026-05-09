@@ -143,6 +143,17 @@ function htmlLayout({
 </body></html>`;
 }
 
+function paymentLabel(id: BookingRow["payment_method"]): string {
+  if (!id) return "-";
+  return (
+    {
+      paypal_ff: "PayPal · Friends & Family",
+      paypal_company: "PayPal · Company",
+      bank: "Bank Transfer (SEPA)",
+    } as const
+  )[id];
+}
+
 function bookingSummaryHtml(booking: BookingRow): string {
   const bikeName = bikeNameFor(booking);
   const nights = nightsBetween(booking.date_from, booking.date_to);
@@ -154,6 +165,80 @@ function bookingSummaryHtml(booking: BookingRow): string {
     <tr><td style="padding:4px 0;color:#6b6b6b;">Return</td><td style="padding:4px 0;font-weight:600;">${fmtDate(booking.date_to)}${ret ? ` &middot; ${ret}` : ""} <span style="color:#6b6b6b;font-weight:400;">(${nights} ${nights === 1 ? "day" : "days"})</span></td></tr>
     <tr><td style="padding:4px 0;color:#6b6b6b;">Total</td><td style="padding:4px 0;font-weight:600;color:#B61F36;">${totalEur(booking)}</td></tr>
   </table>`;
+}
+
+// ---------- Owner: new booking request --------------------------------------
+
+// Mirror of the Telegram alert, with the receipt screenshot attached as
+// a real email attachment so the owner has a permanent record outside
+// the Storage bucket. Owner inbox is OWNER_EMAIL.
+export async function sendOwnerBookingEmail(
+  booking: BookingRow,
+  receipt?: { url: string; mime: string; filename: string },
+): Promise<void> {
+  const ownerEmail = process.env.OWNER_EMAIL?.trim();
+  if (!ownerEmail) {
+    console.warn("[email] OWNER_EMAIL not set - skipping owner booking notification");
+    return;
+  }
+
+  const bikeName = bikeNameFor(booking);
+  const phoneDigits = booking.customer_phone.replace(/[^\d]/g, "");
+  const waLink = phoneDigits ? `https://wa.me/${phoneDigits}` : null;
+
+  const bodyHtml = `
+    <p style="margin:0 0 14px;font-size:15px;line-height:1.6;">New booking request from <strong>${escape(booking.customer_name)}</strong>.</p>
+    ${bookingSummaryHtml(booking)}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
+      <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Deposit via</td><td style="padding:4px 0;font-weight:600;">${escape(paymentLabel(booking.payment_method))}</td></tr>
+      <tr><td style="padding:4px 0;color:#6b6b6b;">Email</td><td style="padding:4px 0;"><a href="mailto:${escape(booking.customer_email)}" style="color:#1a1a1a;">${escape(booking.customer_email)}</a></td></tr>
+      <tr><td style="padding:4px 0;color:#6b6b6b;">Phone</td><td style="padding:4px 0;">${escape(booking.customer_phone)}${waLink ? ` &middot; <a href="${waLink}" style="color:#25D366;text-decoration:none;font-weight:600;">WhatsApp →</a>` : ""}</td></tr>
+      ${booking.notes ? `<tr><td style="padding:4px 0;color:#6b6b6b;vertical-align:top;">Notes</td><td style="padding:4px 0;white-space:pre-wrap;">${escape(booking.notes)}</td></tr>` : ""}
+    </table>
+    ${
+      receipt?.url
+        ? `<p style="margin:18px 0 8px;font-size:13px;color:#6b6b6b;">Deposit screenshot is attached to this email${receipt.url ? ` and viewable here: <a href="${receipt.url}" style="color:#B61F36;">open receipt</a>` : ""}.</p>`
+        : `<p style="margin:18px 0 8px;font-size:13px;color:#B61F36;">⚠️ No deposit screenshot attached.</p>`
+    }
+    <p style="margin:18px 0 0;font-size:13px;color:#6b6b6b;">Confirm or decline directly in Telegram — the buttons there flip the booking status and notify the customer.</p>
+  `;
+
+  const html = htmlLayout({
+    preheader: `New booking request: ${bikeName} ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`,
+    headline: "New booking request",
+    accent: "ink",
+    bodyHtml,
+  });
+
+  const text = `New booking request
+
+Bike: ${bikeName}
+Pickup: ${fmtDate(booking.date_from)} ${fmtTimeOfDay(booking.pickup_time)}
+Return: ${fmtDate(booking.date_to)} ${fmtTimeOfDay(booking.return_time)}
+Total: ${totalEur(booking)}
+Deposit via: ${paymentLabel(booking.payment_method)}
+
+Customer: ${booking.customer_name}
+Email: ${booking.customer_email}
+Phone: ${booking.customer_phone}${booking.notes ? `\nNotes: ${booking.notes}` : ""}
+
+${receipt?.url ? `Receipt attached. Direct link: ${receipt.url}` : "⚠ No deposit screenshot attached."}
+
+Confirm or decline in Telegram.`;
+
+  const options: CreateEmailOptions = {
+    from: fromAddress(),
+    to: ownerEmail,
+    subject: `🛵 ${booking.customer_name} · ${bikeName} · ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`,
+    html,
+    text,
+    replyTo: `${booking.customer_name} <${booking.customer_email}>`,
+  };
+  if (receipt?.url) {
+    options.attachments = [{ path: receipt.url, filename: receipt.filename }];
+  }
+
+  await sendWithRetry("ownerBooking", options);
 }
 
 // ---------- Customer: booking received --------------------------------------

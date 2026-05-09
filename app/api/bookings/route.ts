@@ -1,67 +1,94 @@
 import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendOwnerBookingTelegram } from "@/lib/telegram";
-import { sendCustomerBookingReceivedEmail } from "@/lib/email";
+import { sendCustomerBookingReceivedEmail, sendOwnerBookingEmail } from "@/lib/email";
 import { isValidSlot, parseTime } from "@/lib/pricing";
 import { describeConflict, findOverlap } from "@/lib/availability";
+import {
+  isAllowedReceiptMime,
+  MAX_RECEIPT_BYTES,
+  signedReceiptUrl,
+  uploadReceipt,
+} from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
-type BookingPayload = {
-  bikeId?: unknown;
-  name?: unknown;
-  email?: unknown;
-  phone?: unknown;
-  notes?: unknown;
-  from?: unknown; // ISO YYYY-MM-DD
-  to?: unknown; // ISO YYYY-MM-DD
-  pickupTime?: unknown; // HH:MM, 09:00–19:00, 30-min slots
-  returnTime?: unknown;
-  totalPriceCents?: unknown;
-};
-
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+const PAYMENT_METHODS = ["paypal_ff", "paypal_company", "bank"] as const;
+type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
-function asString(v: unknown): string | null {
+function asString(v: FormDataEntryValue | null): string | null {
   return typeof v === "string" && v.trim().length > 0 ? v.trim() : null;
 }
 
-function asIsoDate(v: unknown): string | null {
+function asIsoDate(v: FormDataEntryValue | null): string | null {
   if (typeof v !== "string" || !ISO_DATE.test(v)) return null;
   const d = new Date(`${v}T00:00:00Z`);
   return Number.isNaN(d.getTime()) ? null : v;
 }
 
-function asSlot(v: unknown): string | null {
+function asSlot(v: FormDataEntryValue | null): string | null {
   if (typeof v !== "string") return null;
   return isValidSlot(v) ? v : null;
 }
 
-// POST /api/bookings
+function asPaymentMethod(v: FormDataEntryValue | null): PaymentMethod | null {
+  if (typeof v !== "string") return null;
+  return (PAYMENT_METHODS as readonly string[]).includes(v) ? (v as PaymentMethod) : null;
+}
+
+function extensionFor(mime: string): string {
+  return (
+    {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+      "image/heic": "heic",
+      "image/heif": "heif",
+      "application/pdf": "pdf",
+    } as Record<string, string>
+  )[mime] ?? "bin";
+}
+
+// POST /api/bookings — multipart/form-data
 //
-// Creates a pending booking. The owner notification (email / WhatsApp) is a
-// later step - for now the booking just lands in the DB with status 'pending'.
+// Fields: bikeId, name, email, phone, notes, from, to, pickupTime,
+// returnTime, totalPriceCents, paymentMethod, receipt (File).
+//
+// Flow:
+//   1. Validate input + check overlap.
+//   2. Insert pending booking row (without receipt path).
+//   3. Upload receipt to Supabase Storage under bookings/{id}/receipt.{ext}.
+//   4. Patch the booking with the storage path.
+//   5. Fire owner Telegram + owner email + customer ack email after the
+//      response so the customer's UI feels instant.
+//
+// On any storage failure we delete the just-inserted booking so the DB
+// doesn't end up with a row referencing nothing.
 export async function POST(request: Request) {
-  let body: BookingPayload;
+  let form: FormData;
   try {
-    body = await request.json();
+    form = await request.formData();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
   }
 
-  const bikeId = asString(body.bikeId);
-  const name = asString(body.name);
-  const email = asString(body.email);
-  const phone = asString(body.phone);
-  const notes = asString(body.notes);
-  const from = asIsoDate(body.from);
-  const to = asIsoDate(body.to);
-  const pickupTime = asSlot(body.pickupTime);
-  const returnTime = asSlot(body.returnTime);
+  const bikeId = asString(form.get("bikeId"));
+  const name = asString(form.get("name"));
+  const email = asString(form.get("email"));
+  const phone = asString(form.get("phone"));
+  const notes = asString(form.get("notes"));
+  const from = asIsoDate(form.get("from"));
+  const to = asIsoDate(form.get("to"));
+  const pickupTime = asSlot(form.get("pickupTime"));
+  const returnTime = asSlot(form.get("returnTime"));
+  const paymentMethod = asPaymentMethod(form.get("paymentMethod"));
+  const totalPriceRaw = form.get("totalPriceCents");
   const totalPriceCents =
-    typeof body.totalPriceCents === "number" && Number.isFinite(body.totalPriceCents)
-      ? Math.round(body.totalPriceCents)
+    typeof totalPriceRaw === "string" && /^\d+$/.test(totalPriceRaw)
+      ? parseInt(totalPriceRaw, 10)
       : null;
+  const receipt = form.get("receipt");
 
   if (!bikeId) return NextResponse.json({ error: "bikeId is required" }, { status: 400 });
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -80,6 +107,21 @@ export async function POST(request: Request) {
       { error: "Return time must be later than pickup time on a same-day booking" },
       { status: 400 },
     );
+  }
+  if (!paymentMethod) {
+    return NextResponse.json({ error: "Pick a payment method for the deposit" }, { status: 400 });
+  }
+  if (!(receipt instanceof File) || receipt.size === 0) {
+    return NextResponse.json({ error: "Upload a receipt screenshot" }, { status: 400 });
+  }
+  if (!isAllowedReceiptMime(receipt.type)) {
+    return NextResponse.json(
+      { error: "Receipt must be a JPG, PNG, HEIC or PDF" },
+      { status: 400 },
+    );
+  }
+  if (receipt.size > MAX_RECEIPT_BYTES) {
+    return NextResponse.json({ error: "Receipt is too large (max 4 MB)" }, { status: 400 });
   }
 
   const supabase = getServiceClient();
@@ -137,6 +179,7 @@ export async function POST(request: Request) {
       pickup_time: pickupTime,
       return_time: returnTime,
       total_price_cents: totalPriceCents,
+      payment_method: paymentMethod,
     })
     .select("*")
     .single();
@@ -145,13 +188,47 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not save booking" }, { status: 500 });
   }
 
-  // 4. Notifications - run AFTER the response so the customer gets a snappy
-  //    'Request sent' UI but the function stays alive long enough to actually
-  //    fire telegram + email (Vercel kills detached Promises otherwise).
-  const finalBooking = booking as BookingRow;
+  // 4. Upload receipt + patch booking
+  let receiptPath: string;
+  try {
+    const bytes = new Uint8Array(await receipt.arrayBuffer());
+    receiptPath = await uploadReceipt(booking.id, { mime: receipt.type, bytes });
+  } catch (err) {
+    console.error("[/api/bookings] receipt upload failed", err);
+    await supabase.from("bookings").delete().eq("id", booking.id);
+    return NextResponse.json(
+      { error: "Could not save your receipt — please try again" },
+      { status: 500 },
+    );
+  }
+
+  const { data: patched, error: patchError } = await supabase
+    .from("bookings")
+    .update({ deposit_screenshot_path: receiptPath })
+    .eq("id", booking.id)
+    .select("*")
+    .single();
+  if (patchError || !patched) {
+    console.error("[/api/bookings] patch error", patchError);
+    await supabase.from("bookings").delete().eq("id", booking.id);
+    return NextResponse.json({ error: "Could not save booking" }, { status: 500 });
+  }
+
+  // 5. Notifications fan-out after the response.
+  const finalBooking = patched as BookingRow;
+  const receiptMime = receipt.type;
+  const filename = `receipt-${booking.id.slice(0, 8)}.${extensionFor(receiptMime)}`;
   after(async () => {
+    let receiptUrl: string | null = null;
+    try {
+      receiptUrl = await signedReceiptUrl(receiptPath);
+    } catch (err) {
+      console.error("[/api/bookings] signed url failed", err);
+    }
+    const receipt = receiptUrl ? { url: receiptUrl, mime: receiptMime, filename } : undefined;
     await Promise.allSettled([
-      sendOwnerBookingTelegram(finalBooking),
+      sendOwnerBookingTelegram(finalBooking, receipt),
+      sendOwnerBookingEmail(finalBooking, receipt),
       sendCustomerBookingReceivedEmail(finalBooking),
     ]);
   });

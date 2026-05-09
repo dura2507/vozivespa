@@ -422,6 +422,19 @@ export type Contact = {
   placeholder?: boolean;
 };
 
+export type PaymentMethod = {
+  id: "paypal_ff" | "paypal_company" | "bank";
+  label: string;
+  // Headline value the customer copies (email or IBAN).
+  value: string;
+  // Optional second line (account holder name, etc.).
+  subValue?: string;
+  // Short note shown beneath the option (fees, instructions, etc.).
+  note?: string;
+  // Recommended option appears first and is highlighted.
+  recommended?: boolean;
+};
+
 export const BRAND = {
   name: "SickMotos",
   tagline: "Rent a Moto",
@@ -438,6 +451,28 @@ export const BRAND = {
   reviewsUrl: "https://maps.app.goo.gl/XCr6kKfFqrfR1PXR6?g_st=ic",
   deposit: "250€",
   noPhoneHolder: true,
+  payment: [
+    {
+      id: "paypal_ff",
+      label: "PayPal · Friends & Family",
+      value: "priscilla_sebastiani@yahoo.com.br",
+      note: "No fee. Use Friends & Family option.",
+      recommended: true,
+    },
+    {
+      id: "paypal_company",
+      label: "PayPal · Company",
+      value: "Ktoms_braap284@freenet.de",
+      note: "Standard PayPal — small fee applies.",
+    },
+    {
+      id: "bank",
+      label: "Bank Transfer (SEPA)",
+      value: "DE71 7205 0000 0240 7231 30",
+      subValue: "Thomas Krawietz",
+      note: "Use instant transfer. Currency conversion may add a fee.",
+    },
+  ] satisfies PaymentMethod[] as PaymentMethod[],
   contacts: [
     {
       label: "Deutsch",

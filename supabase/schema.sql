@@ -34,6 +34,11 @@ create table public.bookings (
   pickup_time time not null default '09:00',
   return_time time not null default '19:00',
   total_price_cents integer,
+  -- Customer's chosen deposit payment method + a path inside the
+  -- `booking-receipts` Storage bucket pointing at the receipt screenshot.
+  -- Bucket is private; owner reads via short-lived signed URLs only.
+  payment_method text check (payment_method in ('paypal_ff','paypal_company','bank')),
+  deposit_screenshot_path text,
   status text not null default 'pending'
     check (status in ('pending', 'confirmed', 'declined', 'cancelled')),
   -- random opaque token used in owner email links so booking IDs aren't exposed.

@@ -70,6 +70,21 @@ function totalEur(booking: BookingRow): string {
     : "-";
 }
 
+function paymentLabel(id: BookingRow["payment_method"]): string {
+  if (!id) return "-";
+  return (
+    {
+      paypal_ff: "PayPal · Friends & Family",
+      paypal_company: "PayPal · Company",
+      bank: "Bank Transfer (SEPA)",
+    } as const
+  )[id];
+}
+
+// Telegram sendPhoto only handles JPEG/PNG/WebP reliably. Anything else
+// (HEIC, PDF) goes via sendDocument so the file at least lands.
+const PHOTO_MIMES = new Set(["image/jpeg", "image/png", "image/webp"]);
+
 // ----- Inline keyboard builder ---------------------------------------------
 
 type InlineKeyboardButton =
@@ -128,6 +143,7 @@ function buildText(booking: BookingRow): string {
     `*Pickup:* ${escapeMd(fmtDate(booking.date_from))}${pickup ? ` ${escapeMd(pickup)}` : ""}`,
     `*Return:* ${escapeMd(fmtDate(booking.date_to))}${ret ? ` ${escapeMd(ret)}` : ""} \\(${nights} ${nights === 1 ? "day" : "days"}\\)`,
     `*Total:* ${escapeMd(totalEur(booking))}`,
+    `*Deposit via:* ${escapeMd(paymentLabel(booking.payment_method))}`,
     "",
     `*Name:* ${escapeMd(booking.customer_name)}`,
     `*Phone:* ${escapeMd(booking.customer_phone)}`,
@@ -141,12 +157,30 @@ function buildText(booking: BookingRow): string {
 
 // ----- Public API: send / edit / answer ------------------------------------
 
-export async function sendOwnerBookingTelegram(booking: BookingRow): Promise<void> {
+export async function sendOwnerBookingTelegram(
+  booking: BookingRow,
+  receipt?: { url: string; mime: string },
+): Promise<void> {
   const chatId = ownerChatId();
   if (!chatId) {
     console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping owner notification");
     return;
   }
+
+  // Send the receipt first so the actionable booking message lands
+  // last in the chat with its Confirm / Decline buttons within thumb's
+  // reach. Photo for common image formats, document for PDFs / HEIC.
+  if (receipt?.url) {
+    const isPhoto = PHOTO_MIMES.has(receipt.mime);
+    const caption = `📎 Deposit receipt · ${escapeMd(bikeNameFor(booking))} · ${escapeMd(booking.customer_name)}`;
+    await callTelegram(isPhoto ? "sendPhoto" : "sendDocument", {
+      chat_id: chatId,
+      [isPhoto ? "photo" : "document"]: receipt.url,
+      caption,
+      parse_mode: "MarkdownV2",
+    });
+  }
+
   await callTelegram("sendMessage", {
     chat_id: chatId,
     text: buildText(booking),

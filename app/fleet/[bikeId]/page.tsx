@@ -11,6 +11,7 @@ import "react-day-picker/style.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CATEGORIES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
+import type { PaymentMethod } from "@/lib/mockData";
 import {
   buildSlots,
   calculatePrice,
@@ -20,12 +21,14 @@ import {
   type ConfirmedBooking,
 } from "@/lib/pricing";
 
-type FormData = {
+type CustomerForm = {
   name: string;
   email: string;
   phone: string;
   notes: string;
 };
+
+type PaymentMethodId = "paypal_ff" | "paypal_company" | "bank";
 
 type BookingStep = "dates" | "form" | "submitting" | "done";
 
@@ -55,12 +58,16 @@ export default function BikeDetailPage({
   const [returnTime, setReturnTime] = useState("19:00");
   const [bookingStep, setBookingStep] = useState<BookingStep>("dates");
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [form, setForm] = useState<FormData>({
+  const [form, setForm] = useState<CustomerForm>({
     name: "",
     email: "",
     phone: "",
     notes: "",
   });
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId>("paypal_ff");
+  const [receipt, setReceipt] = useState<File | null>(null);
+  const [receiptError, setReceiptError] = useState<string | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -169,26 +176,32 @@ export default function BikeDetailPage({
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!range?.from || !range?.to) return;
+    if (!receipt) {
+      setReceiptError("Upload a screenshot of your deposit transaction.");
+      return;
+    }
 
     setSubmitError(null);
     setBookingStep("submitting");
 
     try {
+      const fd = new FormData();
+      fd.set("bikeId", bike.id);
+      fd.set("name", form.name);
+      fd.set("email", form.email);
+      fd.set("phone", form.phone);
+      if (form.notes) fd.set("notes", form.notes);
+      fd.set("from", toIsoDate(range.from));
+      fd.set("to", toIsoDate(range.to));
+      fd.set("pickupTime", pickupTime);
+      fd.set("returnTime", returnTime);
+      fd.set("paymentMethod", paymentMethod);
+      fd.set("totalPriceCents", String(totalPrice * 100));
+      fd.set("receipt", receipt);
+
       const res = await fetch("/api/bookings", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          bikeId: bike.id,
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          notes: form.notes || null,
-          from: toIsoDate(range.from),
-          to: toIsoDate(range.to),
-          pickupTime,
-          returnTime,
-          totalPriceCents: totalPrice * 100,
-        }),
+        body: fd,
       });
 
       if (!res.ok) {
@@ -219,8 +232,54 @@ export default function BikeDetailPage({
     setPickupTime("09:00");
     setReturnTime("19:00");
     setForm({ name: "", email: "", phone: "", notes: "" });
+    setPaymentMethod("paypal_ff");
+    setReceipt(null);
+    setReceiptError(null);
     setSubmitError(null);
   }
+
+  async function copyValue(text: string, key: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(key);
+      setTimeout(() => setCopied((c) => (c === key ? null : c)), 1500);
+    } catch (err) {
+      console.error("clipboard write failed", err);
+    }
+  }
+
+  function handleReceiptChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    setReceiptError(null);
+    if (!file) {
+      setReceipt(null);
+      return;
+    }
+    const allowed = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/heic",
+      "image/heif",
+      "application/pdf",
+    ];
+    if (!allowed.includes(file.type)) {
+      setReceiptError("File must be JPG, PNG, HEIC or PDF.");
+      e.target.value = "";
+      setReceipt(null);
+      return;
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      setReceiptError("File is too large — max 4 MB.");
+      e.target.value = "";
+      setReceipt(null);
+      return;
+    }
+    setReceipt(file);
+  }
+
+  const bookingFee = Math.round(totalPrice * 0.2 * 100) / 100;
+  const canSubmit = bookingStep === "form" && !!receipt && !receiptError;
 
   const specs: { label: string; value: string }[] = [
     { label: "Engine", value: bike.displacement },
@@ -776,20 +835,133 @@ export default function BikeDetailPage({
                     />
                   </label>
 
+                  {/* Deposit / payment section */}
+                  <div className="border-t border-ink/10 pt-7 mt-2">
+                    <div className="flex items-baseline justify-between mb-1">
+                      <h3 className="font-barlow font-bold uppercase text-lg tracking-tight text-ink">
+                        Deposit
+                      </h3>
+                      <p className="text-muted text-xs">
+                        20% of {totalPrice}€ to lock the booking
+                      </p>
+                    </div>
+                    <p className="text-ink text-sm leading-relaxed mb-1">
+                      Pay <span className="font-bold text-red">{bookingFee}€</span> via one of the methods below, then upload a screenshot of the transaction. The remaining {Math.round((totalPrice - bookingFee) * 100) / 100}€ is paid in cash on pickup.
+                    </p>
+                    <p className="text-muted text-xs mb-5">
+                      We don&apos;t accept credit cards. No deposit, no reservation.
+                    </p>
+
+                    <div className="space-y-2.5 mb-5">
+                      {(BRAND.payment as PaymentMethod[]).map((p) => {
+                        const selected = paymentMethod === p.id;
+                        return (
+                          <label
+                            key={p.id}
+                            className={`block border ${
+                              selected
+                                ? "border-red bg-red/5"
+                                : "border-ink/15 bg-white hover:border-ink/30"
+                            } px-4 py-3 cursor-pointer transition-colors`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <input
+                                type="radio"
+                                name="paymentMethod"
+                                value={p.id}
+                                checked={selected}
+                                onChange={() => setPaymentMethod(p.id)}
+                                className="mt-1 accent-red"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-baseline gap-2 flex-wrap">
+                                  <span className="font-semibold text-ink text-sm">
+                                    {p.label}
+                                  </span>
+                                  {p.recommended && (
+                                    <span className="text-[9px] font-bold tracking-widest uppercase text-red bg-red/10 px-1.5 py-0.5">
+                                      Recommended
+                                    </span>
+                                  )}
+                                </div>
+                                {selected && (
+                                  <div className="mt-2">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <code className="text-ink text-sm font-mono break-all">
+                                        {p.value}
+                                      </code>
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          copyValue(p.value, p.id);
+                                        }}
+                                        className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red transition-colors px-2 py-1 border border-ink/15 hover:border-red"
+                                      >
+                                        {copied === p.id ? "✓ Copied" : "📋 Copy"}
+                                      </button>
+                                    </div>
+                                    {p.subValue && (
+                                      <p className="text-muted text-xs mt-1.5">
+                                        Account holder: <span className="text-ink font-semibold">{p.subValue}</span>
+                                      </p>
+                                    )}
+                                  </div>
+                                )}
+                                {p.note && (
+                                  <p className="text-muted text-xs mt-1.5">{p.note}</p>
+                                )}
+                              </div>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+
+                    <label className="block">
+                      <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
+                        Receipt screenshot *
+                      </span>
+                      <div className="mt-1.5 flex items-center gap-3">
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf"
+                          onChange={handleReceiptChange}
+                          required
+                          className="block w-full text-sm text-ink file:mr-3 file:py-2.5 file:px-4 file:border-0 file:text-[10px] file:font-bold file:tracking-widest file:uppercase file:bg-ink file:text-white file:cursor-pointer hover:file:bg-red transition-colors"
+                        />
+                      </div>
+                      {receipt && (
+                        <p className="text-ink text-xs mt-2">
+                          <span className="font-semibold">{receipt.name}</span>
+                          <span className="text-muted ml-2">
+                            ({(receipt.size / 1024).toFixed(0)} KB)
+                          </span>
+                        </p>
+                      )}
+                      {receiptError && (
+                        <p className="text-red text-xs mt-2 font-semibold">{receiptError}</p>
+                      )}
+                      <p className="text-muted text-xs mt-2">
+                        JPG, PNG, HEIC or PDF · max 4 MB
+                      </p>
+                    </label>
+                  </div>
+
                   {submitError && (
                     <p className="text-red text-sm text-center font-semibold">{submitError}</p>
                   )}
 
                   <button
                     type="submit"
-                    disabled={bookingStep === "submitting"}
+                    disabled={bookingStep === "submitting" || !canSubmit}
                     className="w-full py-4 bg-red text-white font-bold text-xs tracking-widest uppercase hover:bg-red-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {bookingStep === "submitting" ? "Sending…" : "Send Request →"}
                   </button>
 
                   <p className="text-center text-muted text-xs">
-                    We&apos;ll confirm availability by email and send payment details for the 20% booking fee.
+                    We&apos;ll review your deposit screenshot and confirm by email — usually within a few hours.
                   </p>
                 </form>
               </div>
