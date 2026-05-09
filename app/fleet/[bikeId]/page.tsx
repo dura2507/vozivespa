@@ -492,9 +492,9 @@ export default function BikeDetailPage({
                       bookedFull:
                         "[&_button]:!bg-ink/10 [&_button]:!text-ink/40 [&_button]:!line-through",
                       bookedStart:
-                        "[&_button]:!bg-[linear-gradient(135deg,_transparent_50%,_rgba(26,26,26,0.15)_50%)] [&_button]:!text-ink/40",
+                        "[&_button]:!bg-[linear-gradient(135deg,_transparent_50%,_rgba(26,26,26,0.15)_50%)]",
                       bookedEnd:
-                        "[&_button]:!bg-[linear-gradient(135deg,_rgba(26,26,26,0.15)_50%,_transparent_50%)] [&_button]:!text-ink/40",
+                        "[&_button]:!bg-[linear-gradient(135deg,_rgba(26,26,26,0.15)_50%,_transparent_50%)]",
                     }}
                     classNames={{
                       root: "font-sans",
