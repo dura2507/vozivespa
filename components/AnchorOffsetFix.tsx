@@ -28,7 +28,7 @@ export default function AnchorOffsetFix() {
 
     function onClick(e: MouseEvent) {
       // Ignore modifier-clicks so users can still cmd-click etc.
-      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
         return;
       }
       const target = e.target as HTMLElement | null;
@@ -48,12 +48,16 @@ export default function AnchorOffsetFix() {
       // Don't interfere if the page is currently navigating elsewhere.
       if (link.target && link.target !== "_self") return;
 
-      if (scrollToHash(hash)) {
-        e.preventDefault();
-        if (window.location.hash !== hash) {
-          history.pushState(null, "", hash);
-        }
+      // Capture phase ensures we run BEFORE next/link's own handler.
+      // stopPropagation makes sure Next never sees this click and
+      // doesn't try its own scroll/navigation.
+      e.preventDefault();
+      e.stopPropagation();
+      if (window.location.hash !== hash) {
+        history.pushState(null, "", hash);
       }
+      // RAF so the URL bar updates first, then we scroll. Smooth either way.
+      requestAnimationFrame(() => scrollToHash(hash));
     }
 
     // On mount, if URL already has a hash, snap to it once layout settles.
@@ -63,10 +67,11 @@ export default function AnchorOffsetFix() {
       });
     }
 
-    document.addEventListener("click", onClick);
+    // Capture phase, on document, so we beat next/link.
+    document.addEventListener("click", onClick, true);
     window.addEventListener("hashchange", () => scrollToHash(window.location.hash));
     return () => {
-      document.removeEventListener("click", onClick);
+      document.removeEventListener("click", onClick, true);
     };
   }, []);
 
