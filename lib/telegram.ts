@@ -336,52 +336,129 @@ export async function sendOwnerCancellationTelegram(booking: BookingRow): Promis
   });
 }
 
-// Forward a Riderly booking-notification email to the owner's
-// Telegram so all bookings (Riderly + native) land in one place.
-// Riderly has no API so we can't auto-confirm — the owner clicks the
-// link button to open the booking on riderly.com and decides there.
-export async function sendOwnerRiderlyTelegram(email: {
-  subject: string;
-  from: string;
-  preview: string;
-  riderlyUrl: string | null;
-  receivedAt: Date | null;
-}): Promise<void> {
+type RiderlyBookingForward = {
+  bookingId: string;
+  bikeName: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  days: number | null;
+  totalEur: string | null;
+  onlinePaidEur: string | null;
+  remainingEur: string | null;
+  licenceCountry: string | null;
+  licenceCategory: string | null;
+  age: number | null;
+  acceptUrl: string | null;
+  rejectUrl: string | null;
+  alternativeUrl: string | null;
+  inboxUrl: string | null;
+};
+
+type RiderlyForward =
+  | { kind: "booking"; receivedAt: Date | null; booking: RiderlyBookingForward }
+  | {
+      kind: "other";
+      receivedAt: Date | null;
+      subject: string;
+      from: string;
+      preview: string;
+      riderlyUrl: string | null;
+    };
+
+function formatReceived(d: Date | null): string {
+  if (!d) return "";
+  return d.toLocaleString("de-DE", {
+    timeZone: "Europe/Zagreb",
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+// Forward a Riderly notification email to the owner's Telegram so all
+// bookings (native + Riderly) land in one place. Riderly emails for
+// new rental bookings carry magic accept/reject URLs we can attach as
+// inline buttons — owner taps Accept directly, Riderly's API processes
+// the response, no portal switch.
+export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<void> {
   const chatId = ownerChatId();
   if (!chatId) {
     console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping riderly forward");
     return;
   }
-  const when = email.receivedAt
-    ? email.receivedAt.toLocaleString("de-DE", {
-        timeZone: "Europe/Zagreb",
-        day: "2-digit",
-        month: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : "";
+
+  if (email.kind === "booking") {
+    const b = email.booking;
+    const when = formatReceived(email.receivedAt);
+    const lines = [
+      "*New Riderly booking*",
+      "",
+      `*Booking:* \`${escapeMd(b.bookingId)}\``,
+      b.bikeName ? `*Bike:* ${escapeMd(b.bikeName)}` : null,
+      b.startDate ? `*Pickup:* ${escapeMd(b.startDate)}` : null,
+      b.endDate
+        ? `*Return:* ${escapeMd(b.endDate)}${b.days ? ` \\(${b.days} ${b.days === 1 ? "day" : "days"}\\)` : ""}`
+        : null,
+      b.totalEur ? `*Total:* €${escapeMd(b.totalEur)}` : null,
+      b.onlinePaidEur || b.remainingEur
+        ? `*Payment:* ${b.onlinePaidEur ? `€${escapeMd(b.onlinePaidEur)} paid online` : ""}${b.onlinePaidEur && b.remainingEur ? " · " : ""}${b.remainingEur ? `€${escapeMd(b.remainingEur)} on pickup` : ""}`
+        : null,
+      "",
+      b.licenceCategory || b.licenceCountry || b.age
+        ? `*Customer:* ${[
+            b.licenceCategory ? `${escapeMd(b.licenceCategory)} licence` : null,
+            b.licenceCountry ? escapeMd(b.licenceCountry) : null,
+            b.age ? `age ${b.age}` : null,
+          ]
+            .filter(Boolean)
+            .join(" · ")}`
+        : null,
+      when ? `_Received ${escapeMd(when)}_` : null,
+    ].filter(Boolean) as string[];
+
+    // Inline keyboard: Accept + Reject side by side, then "Propose
+    // alternative" / "Open inbox" as fallbacks. Riderly handles the
+    // tokenised URLs server-side without login.
+    const row1: { text: string; url: string }[] = [];
+    if (b.acceptUrl) row1.push({ text: "✓ Accept", url: b.acceptUrl });
+    if (b.rejectUrl) row1.push({ text: "✗ Reject", url: b.rejectUrl });
+    const row2: { text: string; url: string }[] = [];
+    if (b.alternativeUrl) row2.push({ text: "Propose alternative", url: b.alternativeUrl });
+    if (b.inboxUrl) row2.push({ text: "Riderly inbox", url: b.inboxUrl });
+    const keyboard: { text: string; url: string }[][] = [];
+    if (row1.length) keyboard.push(row1);
+    if (row2.length) keyboard.push(row2);
+
+    await callTelegram("sendMessage", {
+      chat_id: chatId,
+      text: lines.join("\n"),
+      parse_mode: "MarkdownV2",
+      disable_web_page_preview: true,
+      ...(keyboard.length > 0 ? { reply_markup: { inline_keyboard: keyboard } } : {}),
+    });
+    return;
+  }
+
+  // Fallback for non-booking Riderly emails (Upcoming Reservations,
+  // marketing pings, etc.) — keep the generic preview format.
+  const when = formatReceived(email.receivedAt);
   const lines = [
-    "*New Riderly booking*",
+    "*Riderly notification*",
     "",
     `*Subject:* ${escapeMd(email.subject)}`,
     `*From:* ${escapeMd(email.from)}`,
     when ? `*Received:* ${escapeMd(when)}` : "",
     "",
     escapeMd(email.preview),
-    "",
-    "_Riderly has no API — confirm directly on riderly\\.com\\._",
   ].filter(Boolean);
-
   const url = email.riderlyUrl ?? "https://riderly.com";
   await callTelegram("sendMessage", {
     chat_id: chatId,
     text: lines.join("\n"),
     parse_mode: "MarkdownV2",
     disable_web_page_preview: true,
-    reply_markup: {
-      inline_keyboard: [[{ text: "Open on Riderly", url }]],
-    },
+    reply_markup: { inline_keyboard: [[{ text: "Open on Riderly", url }]] },
   });
 }
 
