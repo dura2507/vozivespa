@@ -20,7 +20,7 @@ export default function Footer() {
           <img
             src="/sickmotos.svg"
             alt="SickMotos"
-            className="h-16 w-auto"
+            className="h-28 sm:h-32 w-auto"
           />
         </Link>
         <p className="text-[10px] tracking-[0.3em] uppercase text-white/40 mb-6">
