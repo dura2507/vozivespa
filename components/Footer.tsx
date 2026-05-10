@@ -103,6 +103,27 @@ export default function Footer() {
           </span>
         </div>
 
+        {/* Trusted Rental Partner badge */}
+        <div className="flex flex-col items-center gap-3 mt-2 mb-2">
+          <p className="text-[10px] tracking-[0.25em] uppercase text-white/40 font-bold">
+            Trusted Rental Partner
+          </p>
+          <a
+            href="https://riderly.com/rental-locations/croatia/zadar/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Trusted Rental Partner"
+            className="opacity-80 hover:opacity-100 transition-opacity"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://cdn.riderly.com/storage/badges/partner-R4.png"
+              alt="Riderly"
+              className="h-20 w-auto"
+            />
+          </a>
+        </div>
+
         <div className="mt-12 pt-8 border-t border-white/10 w-full text-xs text-white/30 space-y-1">
           <p>{BRAND.legal} · OIB: {BRAND.oib} · Open {BRAND.hours}</p>
           <p>© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</p>
