@@ -249,6 +249,15 @@ export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
   console.log(`[riderly] connect host=${host} port=${port} user=${user.slice(0, 6)}…`);
   await client.connect();
   console.log(`[riderly] connected in ${Date.now() - t0}ms`);
+
+  // Two-phase: drain the fetch iterator into a local array while the
+  // lock is held, then mark every UID as read in a single batch after
+  // the lock is released. Mixing messageFlagsAdd into an active fetch
+  // iterator deadlocks imapflow, which manifests on Vercel as a
+  // FUNCTION_INVOCATION_TIMEOUT at maxDuration. The earlier inline
+  // version of this loop hit that bug.
+  const buffered: { uid: number; email: RiderlyEmail }[] = [];
+  const seenUids: number[] = [];
   try {
     const lock = await client.getMailboxLock(mailbox);
     console.log(`[riderly] mailbox lock acquired (${mailbox}) at ${Date.now() - t0}ms`);
@@ -257,27 +266,35 @@ export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
         { seen: false },
         { source: true, envelope: true, uid: true },
       )) {
-        if (!msg.source) continue;
+        if (!msg.source || !msg.uid) continue;
         const parsed = await simpleParser(msg.source);
         const fromAddr = (parsed.from?.value?.[0]?.address ?? "").toLowerCase();
         const isAllowed = ALLOWED_FROM.some((s) => fromAddr.includes(s));
         if (!isAllowed) {
           console.log(`[riderly] skipping uid=${msg.uid} from=${fromAddr} (not in allowlist)`);
-          if (msg.uid) {
-            await client.messageFlagsAdd(msg.uid, ["\\Seen"], { uid: true });
-          }
+          seenUids.push(msg.uid);
           continue;
         }
         console.log(`[riderly] forwarding uid=${msg.uid} from=${fromAddr}`);
-        out.push(classifyRiderly(parsed));
-        if (msg.uid) {
-          await client.messageFlagsAdd(msg.uid, ["\\Seen"], { uid: true });
-        }
+        buffered.push({ uid: msg.uid, email: classifyRiderly(parsed) });
+        seenUids.push(msg.uid);
       }
     } finally {
       lock.release();
     }
-    console.log(`[riderly] done . ${out.length} message(s) in ${Date.now() - t0}ms total`);
+
+    if (seenUids.length > 0) {
+      const lock = await client.getMailboxLock(mailbox);
+      try {
+        await client.messageFlagsAdd(seenUids, ["\\Seen"], { uid: true });
+        console.log(`[riderly] marked ${seenUids.length} message(s) as read`);
+      } finally {
+        lock.release();
+      }
+    }
+
+    for (const b of buffered) out.push(b.email);
+    console.log(`[riderly] done. ${out.length} forwarded, ${seenUids.length - buffered.length} skipped, in ${Date.now() - t0}ms total`);
   } finally {
     await client.logout().catch(() => {});
   }
