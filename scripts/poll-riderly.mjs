@@ -265,6 +265,17 @@ async function sendRiderlyTelegram(email) {
 
 // ---------- IMAP poll -------------------------------------------------------
 
+// Hardcoded sender allowlist — only mails whose From address
+// contains one of these substrings get forwarded to Telegram.
+// Everything else (kristian sending tests, Google welcome, Facebook
+// notifications, random spam) gets silently marked-as-read.
+//
+// Switch to production-only: delete the leon line.
+const ALLOWED_FROM = [
+  "leon.huschka@duraska.com", // TEST — remove for production
+  "@riderly.com",             // PRODUCTION — keep
+];
+
 // Telegram throttles to ~1 message per second per chat. Pace our
 // sends slightly slower than that to avoid hitting rate limit and
 // timing out on subsequent fetches.
@@ -312,21 +323,15 @@ async function main() {
         }
         const parsed = await simpleParser(msg.source);
 
-        // Only accept mails that were auto-forwarded by a Gmail filter.
-        // Auto-forwarding adds X-Forwarded-For (and friends); direct
-        // sends to rentamotobooking@gmail.com don't carry those
-        // headers. This way only mails that came through the owner's
-        // Gmail forward filter reach Telegram — random spam or test
-        // mails sent straight to rentamotobooking get marked-as-read
-        // silently.
-        const xff =
-          parsed.headers?.get("x-forwarded-for") ||
-          parsed.headers?.get("x-forwarded-to") ||
-          parsed.headers?.get("x-forwarded-by") ||
-          parsed.headerLines?.find((h) => /^x-forwarded/i.test(h.key))?.line ||
-          "";
-        if (!xff) {
-          console.log(`[riderly] skipping uid=${msg.uid} (no forward headers — sent directly, not via filter)`);
+        // Hard sender allowlist. Gmail filter-forwards preserve the
+        // original From header, so the mail in rentamotobooking still
+        // says From:<leon> or From:<riderly>. We only forward to
+        // Telegram if the sender matches one of these substrings.
+        // To switch to production-only: remove the leon line, push.
+        const fromAddr = (parsed.from?.value?.[0]?.address ?? "").toLowerCase();
+        const isAllowed = ALLOWED_FROM.some((s) => fromAddr.includes(s));
+        if (!isAllowed) {
+          console.log(`[riderly] skipping uid=${msg.uid} from=${fromAddr} (not in allowlist)`);
           skipUids.push(msg.uid);
           continue;
         }
