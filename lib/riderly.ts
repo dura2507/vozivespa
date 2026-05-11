@@ -234,9 +234,13 @@ export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
   });
 
   const out: RiderlyEmail[] = [];
+  const t0 = Date.now();
+  console.log(`[riderly] connect host=${host} port=${port} user=${user.slice(0, 6)}…`);
   await client.connect();
+  console.log(`[riderly] connected in ${Date.now() - t0}ms`);
   try {
     const lock = await client.getMailboxLock(mailbox);
+    console.log(`[riderly] mailbox lock acquired (${mailbox}) at ${Date.now() - t0}ms`);
     try {
       for await (const msg of client.fetch(
         { seen: false },
@@ -252,6 +256,7 @@ export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
     } finally {
       lock.release();
     }
+    console.log(`[riderly] done — ${out.length} message(s) in ${Date.now() - t0}ms total`);
   } finally {
     await client.logout().catch(() => {});
   }
