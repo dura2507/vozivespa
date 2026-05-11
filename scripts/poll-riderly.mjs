@@ -311,6 +311,26 @@ async function main() {
           break;
         }
         const parsed = await simpleParser(msg.source);
+
+        // Only accept mails that were auto-forwarded by a Gmail filter.
+        // Auto-forwarding adds X-Forwarded-For (and friends); direct
+        // sends to rentamotobooking@gmail.com don't carry those
+        // headers. This way only mails that came through the owner's
+        // Gmail forward filter reach Telegram — random spam or test
+        // mails sent straight to rentamotobooking get marked-as-read
+        // silently.
+        const xff =
+          parsed.headers?.get("x-forwarded-for") ||
+          parsed.headers?.get("x-forwarded-to") ||
+          parsed.headers?.get("x-forwarded-by") ||
+          parsed.headerLines?.find((h) => /^x-forwarded/i.test(h.key))?.line ||
+          "";
+        if (!xff) {
+          console.log(`[riderly] skipping uid=${msg.uid} (no forward headers — sent directly, not via filter)`);
+          skipUids.push(msg.uid);
+          continue;
+        }
+
         buffered.push({ uid: msg.uid, email: classify(parsed) });
       }
     } finally {
