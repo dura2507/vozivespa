@@ -26,14 +26,6 @@ const IMAP_PORT = parseInt(env("RIDERLY_IMAP_PORT", "993"), 10);
 const LABEL = env("RIDERLY_LABEL", "INBOX");
 const TG_TOKEN = env("TELEGRAM_BOT_TOKEN");
 const TG_CHAT = env("TELEGRAM_OWNER_CHAT_ID");
-// Comma-separated list of sender substrings that count as a Riderly
-// notification. Everything else gets marked-as-read silently so the
-// inbox doesn't bloat with Google welcome / verification / spam
-// mails forwarded into Telegram as "Riderly notification".
-const FROM_FILTERS = env("RIDERLY_FROM_FILTERS", "@riderly.com")
-  .split(",")
-  .map((s) => s.trim().toLowerCase())
-  .filter(Boolean);
 
 if (!IMAP_USER || !IMAP_PASS) {
   console.error("RIDERLY_IMAP_USER / RIDERLY_IMAP_PASSWORD env vars not set");
@@ -304,16 +296,10 @@ async function main() {
   // batch at the end. This avoids mixing IMAP commands with an
   // active fetch iterator, which imapflow can't handle and was
   // deadlocking the previous version.
-  //
-  // Messages whose sender doesn't match any of FROM_FILTERS get
-  // marked-as-read silently — no Telegram forward. Keeps the inbox
-  // from filling Telegram with welcome / verification / spam mails
-  // routed through rentamotobooking@gmail.com.
   const buffered = [];
-  const skipUids = [];
   {
     const lock = await client.getMailboxLock(LABEL);
-    console.log(`[riderly] lock acquired on ${LABEL} — filtering on ${FROM_FILTERS.join("|")}`);
+    console.log(`[riderly] lock acquired on ${LABEL}`);
     try {
       for await (const msg of client.fetch(
         { seen: false },
@@ -325,20 +311,13 @@ async function main() {
           break;
         }
         const parsed = await simpleParser(msg.source);
-        const fromAddr = (parsed.from?.value?.[0]?.address ?? "").toLowerCase();
-        const isRiderly = FROM_FILTERS.some((sub) => fromAddr.includes(sub));
-        if (!isRiderly) {
-          console.log(`[riderly] skipping uid=${msg.uid} from=${fromAddr} (not Riderly)`);
-          skipUids.push(msg.uid);
-          continue;
-        }
         buffered.push({ uid: msg.uid, email: classify(parsed) });
       }
     } finally {
       lock.release();
     }
   }
-  console.log(`[riderly] buffered ${buffered.length}, skipped ${skipUids.length}, in ${Date.now() - t0}ms`);
+  console.log(`[riderly] buffered ${buffered.length} message(s) in ${Date.now() - t0}ms`);
 
   let processed = 0;
   const sentUids = [];
@@ -357,13 +336,12 @@ async function main() {
     sentUids.push(uid);
   }
 
-  const allToMark = [...sentUids, ...skipUids];
-  if (allToMark.length > 0) {
+  if (sentUids.length > 0) {
     try {
       const lock = await client.getMailboxLock(LABEL);
       try {
-        await client.messageFlagsAdd(allToMark, ["\\Seen"], { uid: true });
-        console.log(`[riderly] marked ${allToMark.length} message(s) as read (${sentUids.length} forwarded, ${skipUids.length} skipped)`);
+        await client.messageFlagsAdd(sentUids, ["\\Seen"], { uid: true });
+        console.log(`[riderly] marked ${sentUids.length} message(s) as read`);
       } finally {
         lock.release();
       }
