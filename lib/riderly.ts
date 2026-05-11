@@ -1,6 +1,17 @@
 import { ImapFlow } from "imapflow";
 import { simpleParser, type ParsedMail } from "mailparser";
 
+// Hardcoded sender allowlist. Only mails whose From address contains
+// one of these substrings get forwarded to Telegram. Everything else
+// (Kristian sending tests, Google welcome, Facebook notifications,
+// random spam) gets silently marked as read.
+//
+// To switch to production-only: delete the leon line and push.
+const ALLOWED_FROM = [
+  "leon.huschka@duraska.com", // TEST, remove for production
+  "@riderly.com",             // PRODUCTION, keep
+];
+
 // Riderly is a separate booking platform that doesn't expose an API.
 // Their notification emails do contain magic accept/reject URLs the
 // owner can click without login though, so we mirror those into the
@@ -248,6 +259,16 @@ export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
       )) {
         if (!msg.source) continue;
         const parsed = await simpleParser(msg.source);
+        const fromAddr = (parsed.from?.value?.[0]?.address ?? "").toLowerCase();
+        const isAllowed = ALLOWED_FROM.some((s) => fromAddr.includes(s));
+        if (!isAllowed) {
+          console.log(`[riderly] skipping uid=${msg.uid} from=${fromAddr} (not in allowlist)`);
+          if (msg.uid) {
+            await client.messageFlagsAdd(msg.uid, ["\\Seen"], { uid: true });
+          }
+          continue;
+        }
+        console.log(`[riderly] forwarding uid=${msg.uid} from=${fromAddr}`);
         out.push(classifyRiderly(parsed));
         if (msg.uid) {
           await client.messageFlagsAdd(msg.uid, ["\\Seen"], { uid: true });
