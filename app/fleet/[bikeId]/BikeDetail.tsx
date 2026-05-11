@@ -562,7 +562,7 @@ export default function BikeDetail({ bike }: { bike: Category }) {
               </svg>
               <div>
                 <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">Deposit</p>
-                <p className="text-ink text-sm leading-snug">{BRAND.deposit} per bike, refunded after drop-off if no damage.</p>
+                <p className="text-ink text-sm leading-snug">{BRAND.deposit} per bike, refunded after drop-off if no damage. At pickup: cash (no fees), PayPal, Revolut or Wise (transaction fees may apply). No credit or debit cards.</p>
               </div>
             </div>
             <div className="bg-off-white px-5 py-5 flex items-start gap-3">
@@ -946,10 +946,10 @@ export default function BikeDetail({ bike }: { bike: Category }) {
                       </p>
                     </div>
                     <p className="text-ink text-sm leading-relaxed mb-1">
-                      Pay <span className="font-bold text-red">{bookingFee}€</span> via one of the methods below, then upload a screenshot of the transaction. The remaining {Math.round((totalPrice - bookingFee) * 100) / 100}€ is paid in cash on pickup.
+                      Pay <span className="font-bold text-red">{bookingFee}€</span> via one of the methods below, then upload a screenshot of the transaction. The remaining {Math.round((totalPrice - bookingFee) * 100) / 100}€ is paid at pickup via cash (no fees), Revolut, PayPal, or debit/credit card (transaction fees may apply).
                     </p>
                     <p className="text-muted text-xs mb-5">
-                      We don&apos;t accept credit cards. No reservation fee, no booking.
+                      No reservation fee, no booking.
                     </p>
 
                     <div className="space-y-2.5 mb-5">
