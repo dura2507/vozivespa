@@ -11,7 +11,7 @@ export default async function AdminPricingPage() {
         Pricing
       </h1>
       <p className="text-sm text-muted mb-8 max-w-prose">
-        Day rates for short rentals. Edit a number and click Save — the new
+        Day rates for short rentals. Edit a number, click Save, and the new
         price goes live on the next page load (home, info, fleet detail).
         Weekend, week and month rates are not editable here.
       </p>

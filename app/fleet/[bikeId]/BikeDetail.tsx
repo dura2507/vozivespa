@@ -35,7 +35,7 @@ const LICENCE_OPTIONS = [
   { value: "A1", label: "A1 (up to 125cc)" },
   { value: "A2", label: "A2 (up to 35 kW)" },
   { value: "A", label: "A (unrestricted)" },
-  { value: "B", label: "B (car licence — covers AM/50cc)" },
+  { value: "B", label: "B (car licence, covers AM/50cc)" },
 ] as const;
 type Licence = (typeof LICENCE_OPTIONS)[number]["value"];
 
@@ -85,7 +85,7 @@ export default function BikeDetail({ bike }: { bike: Category }) {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Single-seat bikes can only be ridden solo — pre-fill so the
+  // Single-seat bikes can only be ridden solo. Pre-fill so the
   // customer doesn't have to think about it.
   useEffect(() => {
     if (isSinglePassenger && ridingStyle !== "solo") {
@@ -93,7 +93,7 @@ export default function BikeDetail({ bike }: { bike: Category }) {
     }
   }, [isSinglePassenger, ridingStyle]);
 
-  // Live availability from Supabase via /api/availability — split so
+  // Live availability from Supabase via /api/availability. Split so
   // confirmed bookings expose pickup/return times (used to filter the
   // time-slot pickers) while owner manual blocks stay full-day.
   // `totalUnits` lets us be multi-unit aware: a date is only fully
@@ -304,7 +304,7 @@ export default function BikeDetail({ bike }: { bike: Category }) {
       return;
     }
     if (file.size > 4 * 1024 * 1024) {
-      setReceiptError("File is too large — max 4 MB.");
+      setReceiptError("File is too large. Max 4 MB.");
       e.target.value = "";
       setReceipt(null);
       return;
@@ -333,7 +333,7 @@ export default function BikeDetail({ bike }: { bike: Category }) {
 
   const tiers: { label: string; sub: string; price: string }[] = [
     { label: "Daily", sub: "1 day", price: bike.pricing.day },
-    { label: "Weekend", sub: "Fri – Sun", price: bike.pricing.weekend },
+    { label: "Weekend", sub: "Fri to Sun", price: bike.pricing.weekend },
     { label: "Week", sub: "7 days", price: bike.pricing.week },
     { label: "Month", sub: "30 days", price: bike.pricing.month },
   ];
@@ -553,7 +553,7 @@ export default function BikeDetail({ bike }: { bike: Category }) {
               </svg>
               <div>
                 <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">No phone holders</p>
-                <p className="text-ink text-sm leading-snug">We don&apos;t offer or fit phone holders — and you can&apos;t bring your own.</p>
+                <p className="text-ink text-sm leading-snug">We don&apos;t offer or fit phone holders, and you can&apos;t bring your own.</p>
               </div>
             </div>
             <div className="bg-off-white px-5 py-5 flex items-start gap-3">
@@ -716,9 +716,9 @@ export default function BikeDetail({ bike }: { bike: Category }) {
                       </label>
                     </div>
                     <p className="text-muted text-xs mt-2">
-                      Shop hours 09:00–19:00. Times outside this window
+                      Shop hours 09:00 to 19:00. Times outside this window
                       {pickupSlots.length < buildSlots().length || returnSlots.length < buildSlots().length
-                        ? " (or too close to another booking — we need 1h between bookings)"
+                        ? " (or too close to another booking, we need 1h between bookings)"
                         : ""}
                       {" "}aren&apos;t possible.
                     </p>
@@ -916,7 +916,7 @@ export default function BikeDetail({ bike }: { bike: Category }) {
                       </select>
                       <p className="text-muted text-xs mt-1.5">
                         {isSinglePassenger
-                          ? "This bike is a single-seater — solo only."
+                          ? "This bike is a single-seater. Solo only."
                           : `Up to ${bike.seats} riders allowed.`}
                       </p>
                     </label>
@@ -1112,7 +1112,7 @@ export default function BikeDetail({ bike }: { bike: Category }) {
                   </button>
 
                   <p className="text-center text-muted text-xs">
-                    We&apos;ll review your reservation screenshot and confirm by email — usually within a few hours.
+                    We&apos;ll review your reservation screenshot and confirm by email, usually within a few hours.
                     By sending you agree to our{" "}
                     <Link href="/terms" target="_blank" className="text-red font-semibold underline">
                       terms

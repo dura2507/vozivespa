@@ -10,8 +10,8 @@ type Props = {
 };
 
 export default function WhatsAppMockup({ category, range, name, phone, notes }: Props) {
-  const from = range.from ? format(range.from, "d. MMMM yyyy") : "–";
-  const to = range.to ? format(range.to, "d. MMMM yyyy") : "–";
+  const from = range.from ? format(range.from, "d. MMMM yyyy") : "-";
+  const to = range.to ? format(range.to, "d. MMMM yyyy") : "-";
 
   return (
     <div className="flex justify-center">
@@ -52,7 +52,7 @@ export default function WhatsAppMockup({ category, range, name, phone, notes }: 
                   <strong>Bike:</strong> {category}
                 </p>
                 <p>
-                  {from} – {to}
+                  {from} - {to}
                 </p>
                 <p>
                   {name || "-"}

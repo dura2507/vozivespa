@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 // DELETE /api/admin/blocks/[id]
 // Refuses to delete blocks that came from a booking (booking_id set)
-// — those should be cleared by changing the booking's status.
+// . those should be cleared by changing the booking's status.
 export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -27,7 +27,7 @@ export async function DELETE(
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (row.booking_id) {
     return NextResponse.json(
-      { error: "This block belongs to a booking — change the booking status instead" },
+      { error: "This block belongs to a booking . change the booking status instead" },
       { status: 400 },
     );
   }

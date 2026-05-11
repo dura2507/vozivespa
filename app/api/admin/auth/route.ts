@@ -8,7 +8,7 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// POST /api/admin/auth — { password } → sets the session cookie.
+// POST /api/admin/auth . { password } → sets the session cookie.
 export async function POST(request: Request) {
   let body: { password?: unknown };
   try {
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   return res;
 }
 
-// DELETE /api/admin/auth — log out.
+// DELETE /api/admin/auth . log out.
 export async function DELETE() {
   const res = NextResponse.json({ ok: true });
   res.cookies.set(SESSION_COOKIE_NAME, "", {

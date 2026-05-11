@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 const ALLOWED = ["confirmed", "declined", "cancelled"] as const;
 type Decision = (typeof ALLOWED)[number];
 
-// POST /api/admin/bookings/[id]/status — { status }
+// POST /api/admin/bookings/[id]/status . { status }
 //
 // Owner-side status flip with the same overlap re-check as the public
 // confirm paths so the admin can't accidentally double-book.
@@ -66,7 +66,7 @@ export async function POST(
       if (!availability.unitId) {
         return NextResponse.json(
           {
-            error: "Time conflict — can't confirm",
+            error: "Time conflict . can't confirm",
             detail: availability.conflict
               ? describeConflict(availability.conflict)
               : "no free unit",

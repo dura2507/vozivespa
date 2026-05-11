@@ -5,7 +5,7 @@ import { setDayPriceOverride } from "@/lib/bike-pricing";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// POST /api/admin/pricing — { bikeId, dayPrice }
+// POST /api/admin/pricing . { bikeId, dayPrice }
 // Owner-only (gated by middleware). Upserts the day-price override
 // for one bike. dayPrice is the bare euro number, no currency suffix.
 export async function POST(request: Request) {
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unknown bike" }, { status: 400 });
   }
   if (!Number.isInteger(dayPrice) || dayPrice <= 0 || dayPrice > 9999) {
-    return NextResponse.json({ error: "Day price must be 1–9999" }, { status: 400 });
+    return NextResponse.json({ error: "Day price must be 1-9999" }, { status: 400 });
   }
 
   try {

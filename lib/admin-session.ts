@@ -1,6 +1,6 @@
 // Lightweight HMAC-signed session cookie for the owner admin panel.
 //
-// We don't use Supabase Auth here on purpose — there's exactly one
+// We don't use Supabase Auth here on purpose . there's exactly one
 // owner, who logs in by typing the ADMIN_PASSWORD env var. The cookie
 // just proves they typed the right password recently. HMAC over the
 // expiry timestamp prevents a stolen pre-expiry cookie from being

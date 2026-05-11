@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminBlocksPage() {
   const blocks = await listManualBlocks();
-  const bikes = CATEGORIES.map((c) => ({ id: c.id, name: c.model }));
+  const bikes = CATEGORIES.map((c) => ({ id: c.id, name: c.shortName ?? c.model }));
   return (
     <div className="max-w-5xl mx-auto px-5 md:px-8 py-8">
       <h1 className="font-barlow font-black uppercase text-3xl tracking-tight text-ink mb-2">

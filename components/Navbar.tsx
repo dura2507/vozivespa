@@ -94,7 +94,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile dropdown — border only renders when open so the
+        {/* Mobile dropdown . border only renders when open so the
             collapsed (max-h-0) state doesn't leave a 1px white seam
             against the transparent header on the homepage hero. */}
         <div
@@ -133,7 +133,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile sticky bottom bar — hidden on bike-detail pages. */}
+      {/* Mobile sticky bottom bar . hidden on bike-detail pages. */}
       {!hideMobileCta && (
         <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-ink text-white flex items-center justify-between px-5 py-3 border-t border-white/10">
           <div>

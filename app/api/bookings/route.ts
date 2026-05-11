@@ -66,7 +66,7 @@ function extensionFor(mime: string): string {
   )[mime] ?? "bin";
 }
 
-// POST /api/bookings — multipart/form-data
+// POST /api/bookings . multipart/form-data
 //
 // Fields: bikeId, name, email, phone, notes, from, to, pickupTime,
 // returnTime, totalPriceCents, paymentMethod, receipt (File).
@@ -116,7 +116,7 @@ export async function POST(request: Request) {
   if (from > to) return NextResponse.json({ error: "from must be on or before to" }, { status: 400 });
   if (!pickupTime || !returnTime) {
     return NextResponse.json(
-      { error: "Pickup and return times must be 09:00–19:00 in 30-minute slots" },
+      { error: "Pickup and return times must be 09:00-19:00 in 30-minute slots" },
       { status: 400 },
     );
   }
@@ -188,8 +188,8 @@ export async function POST(request: Request) {
       c?.kind === "manual"
         ? "Selected dates are no longer available"
         : c?.kind === "no_units"
-        ? "This bike isn't bookable right now — please contact us"
-        : "Time conflict with another booking on this model — try a later pickup or earlier return time.";
+        ? "This bike isn't bookable right now . please contact us"
+        : "Time conflict with another booking on this model . try a later pickup or earlier return time.";
     return NextResponse.json(
       { error: message, detail: c ? describeConflict(c) : undefined },
       { status: 409 },
@@ -232,7 +232,7 @@ export async function POST(request: Request) {
     console.error("[/api/bookings] receipt upload failed", err);
     await supabase.from("bookings").delete().eq("id", booking.id);
     return NextResponse.json(
-      { error: "Could not save your receipt — please try again" },
+      { error: "Could not save your receipt . please try again" },
       { status: 500 },
     );
   }

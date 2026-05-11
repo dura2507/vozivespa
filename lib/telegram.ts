@@ -44,7 +44,7 @@ function fmtDate(iso: string): string {
 
 // Render a timestamptz in the owner's local timezone (Zadar, Croatia).
 // Vercel functions run in UTC otherwise, which would show times shifted
-// by 1–2 hours depending on DST.
+// by 1-2 hours depending on DST.
 function fmtDateTime(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
@@ -58,7 +58,7 @@ function fmtDateTime(iso: string): string {
   });
 }
 
-// Postgres `time` comes back as 'HH:MM:SS' — drop seconds for display.
+// Postgres `time` comes back as 'HH:MM:SS' . drop seconds for display.
 function fmtTimeOfDay(t: string | null | undefined): string {
   if (!t) return "";
   return t.slice(0, 5);
@@ -199,7 +199,7 @@ export async function sendOwnerBookingTelegram(
 
   // Booking message first so the Confirm / Decline buttons land
   // before the receipt. Receipt then arrives as a reply to the
-  // booking message — Telegram renders that as a quoted thread, so
+  // booking message . Telegram renders that as a quoted thread, so
   // it's clearly the deposit attachment for this booking and not a
   // free-standing photo.
   const msgRes = await callTelegram<{ message_id: number }>("sendMessage", {
@@ -279,7 +279,7 @@ export async function sendOwnerContactMessage(input: {
     buttons.push({ text: "WhatsApp", url: `https://wa.me/${phoneDigits}` });
   }
 
-  // No mailto: button — Telegram inline-keyboard URLs must be http(s) only,
+  // No mailto: button . Telegram inline-keyboard URLs must be http(s) only,
   // so we put the email inside a code-span (tap to copy) and tell the owner
   // to reply to the parallel email.
   await callTelegram("sendMessage", {
@@ -379,7 +379,7 @@ function formatReceived(d: Date | null): string {
 // Forward a Riderly notification email to the owner's Telegram so all
 // bookings (native + Riderly) land in one place. Riderly emails for
 // new rental bookings carry magic accept/reject URLs we can attach as
-// inline buttons — owner taps Accept directly, Riderly's API processes
+// inline buttons . owner taps Accept directly, Riderly's API processes
 // the response, no portal switch.
 export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<void> {
   const chatId = ownerChatId();
@@ -441,7 +441,7 @@ export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<v
   }
 
   // Fallback for non-booking Riderly emails (Upcoming Reservations,
-  // marketing pings, etc.) — keep the generic preview format.
+  // marketing pings, etc.) . keep the generic preview format.
   const when = formatReceived(email.receivedAt);
   const lines = [
     "*Riderly notification*",

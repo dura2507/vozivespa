@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { LogoutButton } from "./logout-button";
+import { SESSION_COOKIE_NAME, isValidSession } from "@/lib/admin-session";
 
 export const metadata = { title: "Admin · SickMotos" };
 
@@ -9,7 +11,15 @@ const NAV = [
   { label: "Pricing", href: "/admin/pricing" },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  // No chrome before login. Middleware redirects every unauthed admin
+  // request to /admin/login, so when the session check fails here we
+  // are rendering the login page and want it fullscreen.
+  const cookieStore = await cookies();
+  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  const password = process.env.ADMIN_PASSWORD ?? "";
+  const authed = await isValidSession(sessionCookie, password);
+  if (!authed) return <>{children}</>;
   return (
     <div className="min-h-screen bg-off-white">
       <header className="bg-ink text-white">

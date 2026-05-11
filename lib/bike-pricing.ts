@@ -14,7 +14,7 @@ async function loadOverrides(): Promise<Map<string, string>> {
     .from("bike_price_overrides")
     .select("bike_id, day_price");
   if (error) {
-    // Don't take the whole site down for a pricing read — fall back to
+    // Don't take the whole site down for a pricing read . fall back to
     // mockData and log so it surfaces in Vercel logs.
     console.error("[bike-pricing] loadOverrides", error);
     return new Map();
@@ -72,7 +72,7 @@ export async function listPricingRows(): Promise<PricingRow[]> {
     const override = overrides.get(cat.id);
     return {
       bikeId: cat.id,
-      bikeName: cat.model,
+      bikeName: cat.shortName ?? cat.model,
       dayPrice: parseEuro(override ?? cat.pricing.day),
       hasOverride: !!override,
     };

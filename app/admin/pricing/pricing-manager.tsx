@@ -60,11 +60,12 @@ export function PricingManager({ initial }: { initial: PricingRow[] }) {
           >
             <div className="min-w-0">
               <p className="font-semibold text-ink truncate">{r.bikeName}</p>
-              <p className="text-[10px] tracking-[0.15em] uppercase text-ink/40 font-bold mt-0.5">
-                {r.hasOverride ? "Custom price" : "Default"}
-                {r.error && <span className="text-red ml-2">{r.error}</span>}
-                {r.saved && <span className="text-green-600 ml-2">Saved</span>}
-              </p>
+              {(r.error || r.saved) && (
+                <p className="text-[10px] tracking-[0.15em] uppercase font-bold mt-0.5">
+                  {r.error && <span className="text-red">{r.error}</span>}
+                  {r.saved && <span className="text-green-600">Saved</span>}
+                </p>
+              )}
             </div>
             <label className="flex items-center gap-1">
               <input

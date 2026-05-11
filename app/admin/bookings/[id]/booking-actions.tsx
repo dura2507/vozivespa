@@ -54,7 +54,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
 
   async function saveEdit() {
     if (!isValidSlot(pickupTime) || !isValidSlot(returnTime)) {
-      setError("Pickup/return time must be 09:00–19:00 in 30-minute slots");
+      setError("Pickup/return time must be 09:00-19:00 in 30-minute slots");
       return;
     }
     if (dateFrom > dateTo) {
@@ -247,7 +247,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
               </button>
             </div>
             <p className="text-xs text-muted">
-              Edits run the same overlap check as new bookings — you&apos;ll see
+              Edits run the same overlap check as new bookings. You&apos;ll see
               an error if the new times collide with another booking on the
               same bike.
             </p>

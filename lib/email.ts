@@ -33,7 +33,7 @@ function fmtDate(iso: string): string {
   return `${d}.${m}.${y}`;
 }
 
-// Postgres `time` returns 'HH:MM:SS' — keep just HH:MM for display.
+// Postgres `time` returns 'HH:MM:SS'. Keep just HH:MM for display.
 function fmtTimeOfDay(t: string | null | undefined): string {
   if (!t) return "";
   return t.slice(0, 5);
@@ -210,7 +210,7 @@ export async function sendOwnerBookingEmail(
         ? `<p style="margin:18px 0 8px;font-size:13px;color:#6b6b6b;">Deposit screenshot is attached to this email${receipt.url ? ` and viewable here: <a href="${receipt.url}" style="color:#B61F36;">open receipt</a>` : ""}.</p>`
         : `<p style="margin:18px 0 8px;font-size:13px;color:#B61F36;">No deposit screenshot attached.</p>`
     }
-    <p style="margin:18px 0 0;font-size:13px;color:#6b6b6b;">Confirm or decline directly in Telegram — the buttons there flip the booking status and notify the customer.</p>
+    <p style="margin:18px 0 0;font-size:13px;color:#6b6b6b;">Confirm or decline directly in Telegram . the buttons there flip the booking status and notify the customer.</p>
   `;
 
   const html = htmlLayout({

@@ -65,7 +65,7 @@ export default async function ConfirmBookingPage({
         <DecisionView
           tone="error"
           booking={booking}
-          message={`Cannot confirm — ${availability.conflict ? describeConflict(availability.conflict) : "no free unit"}. Decline this one or reschedule the other.`}
+          message={`Cannot confirm. ${availability.conflict ? describeConflict(availability.conflict) : "No free unit."} Decline this one or reschedule the other.`}
         />
       );
     }

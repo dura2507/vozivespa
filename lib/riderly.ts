@@ -101,7 +101,7 @@ function parseNewBooking(parsed: ParsedMail): RiderlyBooking {
   const text = htmlToText(html);
 
   const idMatch =
-    /New Rental Booking\s*[-–]\s*([A-Z0-9]+)/i.exec(subject) ??
+    /New Rental Booking\s*[--]\s*([A-Z0-9]+)/i.exec(subject) ??
     /Booking\s*#\s*\n\s*([A-Z0-9]+)/m.exec(text);
   const bookingId = idMatch?.[1] ?? "(unknown)";
 
@@ -195,7 +195,7 @@ function parseOther(parsed: ParsedMail): {
   return { subject, from, preview, riderlyUrl };
 }
 
-// Public for testing — turn a parsed mail object into our typed
+// Public for testing . turn a parsed mail object into our typed
 // RiderlyEmail union, dispatching on email kind.
 export function classifyRiderly(parsed: ParsedMail): RiderlyEmail {
   const subject = parsed.subject ?? "";
@@ -256,7 +256,7 @@ export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
     } finally {
       lock.release();
     }
-    console.log(`[riderly] done — ${out.length} message(s) in ${Date.now() - t0}ms total`);
+    console.log(`[riderly] done . ${out.length} message(s) in ${Date.now() - t0}ms total`);
   } finally {
     await client.logout().catch(() => {});
   }

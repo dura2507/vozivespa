@@ -88,7 +88,7 @@ export async function POST(request: Request) {
   // pending booking could have been created while this one was awaiting
   // approval, or the owner might have added a manual block in Supabase
   // Studio. With multi-unit, this also locks in the actual free unit
-  // at confirm-time — the unit assigned at insert may have been taken
+  // at confirm-time . the unit assigned at insert may have been taken
   // by another customer in the meantime.
   let assignedUnitId: string | null = booking.bike_unit_id;
   if (newStatus === "confirmed") {
@@ -104,7 +104,7 @@ export async function POST(request: Request) {
       if (!availability.unitId) {
         await answerTelegramCallback(
           cb.id,
-          `Conflict — ${availability.conflict ? describeConflict(availability.conflict) : "no free unit"}`,
+          `Conflict . ${availability.conflict ? describeConflict(availability.conflict) : "no free unit"}`,
         );
         return NextResponse.json({ ok: true });
       }

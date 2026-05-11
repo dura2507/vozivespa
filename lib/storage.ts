@@ -1,7 +1,7 @@
 import { getServiceClient } from "@/lib/supabase";
 
 export const RECEIPTS_BUCKET = "booking-receipts";
-// 4 MB — keeps full request well under Vercel's 4.5 MB body cap so
+// 4 MB . keeps full request well under Vercel's 4.5 MB body cap so
 // the form never gets a 413. Bucket itself is configured at 5 MB
 // (created once via Storage API) which gives us a tiny safety net.
 export const MAX_RECEIPT_BYTES = 4 * 1024 * 1024;
@@ -56,7 +56,7 @@ export async function uploadReceipt(
 }
 
 // Short-lived signed URL the owner uses to view the receipt from
-// Telegram or email. Default 7 days — long enough to act on a booking,
+// Telegram or email. Default 7 days . long enough to act on a booking,
 // short enough that the link doesn't outlive the customer relationship.
 export async function signedReceiptUrl(
   path: string,

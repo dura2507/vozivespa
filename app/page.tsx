@@ -252,7 +252,7 @@ export default async function HomePage() {
               <p className="text-xs text-muted leading-relaxed">We don&apos;t offer or fit phone holders, and you can&apos;t bring your own. None of our bikes have one.</p>
             </div>
             <div className="bg-off-white px-6 py-7 flex flex-col items-start gap-3">
-              <span className="font-barlow font-black text-3xl text-red leading-none">Apr–Oct</span>
+              <span className="font-barlow font-black text-3xl text-red leading-none">Apr-Oct</span>
               <p className="font-bold text-ink text-sm">Riding season</p>
               <p className="text-xs text-muted leading-relaxed">We rent April through October. Full tank in, full tank out.</p>
             </div>

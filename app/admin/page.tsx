@@ -248,7 +248,7 @@ export default async function AdminDashboard({
       </Section>
 
       <Section
-        title="Pending — needs decision"
+        title="Pending, needs decision"
         count={buckets.pending.length}
         empty="No pending requests."
       >

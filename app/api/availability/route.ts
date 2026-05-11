@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 // Shape:
 //   manualBlocks: full-day owner blocks (any matches → date is blocked)
 //   bookings:     each confirmed booking with its unit id and times
-//   totalUnits:   how many active units this model has — frontend uses
+//   totalUnits:   how many active units this model has . frontend uses
 //                 this as the "all booked" threshold
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

@@ -34,8 +34,12 @@ function toMs(date: string, time: string | null | undefined): number {
   return new Date(`${date}T${t}`).getTime();
 }
 
+// Admin uses the compact label so fleet cards and booking lists fit
+// without truncation; falls back to the full model when no short name
+// is defined.
 function bikeName(id: string): string {
-  return CATEGORIES.find((c) => c.id === id)?.model ?? id;
+  const cat = CATEGORIES.find((c) => c.id === id);
+  return cat?.shortName ?? cat?.model ?? id;
 }
 
 async function listUnitLabelMap(): Promise<Map<string, string>> {
@@ -154,7 +158,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     const entry = out.get(cat.id);
     return {
       bikeId: cat.id,
-      bikeName: cat.model,
+      bikeName: cat.shortName ?? cat.model,
       totalUnits: unitsByBike.get(cat.id) ?? 0,
       outUnits: entry?.outUnits.size ?? 0,
       pendingCount: entry?.pending ?? 0,

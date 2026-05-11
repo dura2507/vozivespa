@@ -11,7 +11,7 @@ import { usePathname } from "next/navigation";
 // clicked from `/info`) navigate normally and then re-snap once the
 // destination route has rendered.
 function navHeight(): number {
-  // Only measure the fixed top-bar, NOT the full header — when the
+  // Only measure the fixed top-bar, NOT the full header . when the
   // mobile hamburger dropdown is expanded, header.height balloons up to
   // include the dropdown panel, and scroll lands hundreds of px too low.
   // The first inner <div> of <header> is the top bar (height: 6.5rem).
@@ -26,7 +26,7 @@ function scrollToHash(hash: string, behavior: ScrollBehavior = "smooth"): boolea
   const el = document.getElementById(id);
   if (!el) return false;
   const rect = el.getBoundingClientRect();
-  // Land exactly under the navbar — overshoot by 1px so the previous
+  // Land exactly under the navbar . overshoot by 1px so the previous
   // section's bottom edge stays hidden behind the bar even with browser
   // sub-pixel rounding.
   const top = window.scrollY + rect.top - navHeight() + 1;

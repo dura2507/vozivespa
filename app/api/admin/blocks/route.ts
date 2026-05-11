@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
-// POST /api/admin/blocks — { bikeId, dateFrom, dateTo }
+// POST /api/admin/blocks . { bikeId, dateFrom, dateTo }
 // Manual full-day owner block. booking_id stays null so the public
 // availability endpoint treats it as a hard full-day block.
 export async function POST(request: Request) {

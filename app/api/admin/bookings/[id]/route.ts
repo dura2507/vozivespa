@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 // PATCH /api/admin/bookings/[id]
-// { dateFrom, dateTo, pickupTime, returnTime } — owner-side edit of
+// { dateFrom, dateTo, pickupTime, returnTime } . owner-side edit of
 // the booked window. Re-runs the overlap check so the admin can't
 // shift a booking into someone else's window.
 export async function PATCH(

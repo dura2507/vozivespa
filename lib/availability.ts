@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { TURNAROUND_MINUTES } from "@/lib/pricing";
 
-// A booking's time window — used to find a free physical unit on the
+// A booking's time window . used to find a free physical unit on the
 // requested bike model.
 export type BookingWindow = {
   bikeId: string;
@@ -73,7 +73,7 @@ export async function findFreeUnit(
     .order("label", { ascending: true });
   if (unitErr) throw new Error(`unit lookup: ${unitErr.message}`);
   if (!units || units.length === 0) {
-    // No physical fleet defined yet — refuse rather than guessing.
+    // No physical fleet defined yet . refuse rather than guessing.
     return { unitId: null, conflict: { kind: "no_units" } };
   }
 
@@ -133,7 +133,7 @@ export async function findFreeUnit(
       },
     };
   }
-  // No conflict info but still no free unit — shouldn't happen unless
+  // No conflict info but still no free unit . shouldn't happen unless
   // every unit was deactivated mid-flight. Treat as no_units.
   return { unitId: null, conflict: { kind: "no_units" } };
 }
@@ -146,7 +146,7 @@ export function describeConflict(c: Conflict): string {
 }
 
 // Look up the human-friendly label for a unit ID (e.g. "Liberty50-2").
-// Returns null if the unit can't be resolved — caller decides how to
+// Returns null if the unit can't be resolved . caller decides how to
 // surface that.
 export async function getBikeUnitLabel(
   supabase: SupabaseClient,

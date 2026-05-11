@@ -120,7 +120,7 @@ export function validPickupSlots(
   );
 }
 
-// Same logic as validPickupSlots — at any candidate time T on the
+// Same logic as validPickupSlots . at any candidate time T on the
 // return date, we need at least one unit to be free so the customer
 // can drop off without colliding with another booking that starts on
 // that unit within the turnaround window.
