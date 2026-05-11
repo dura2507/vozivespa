@@ -435,7 +435,7 @@ export default function BikeDetailPage({
                       1 day = 24 hours
                     </p>
                     <p className="text-white text-sm leading-snug">
-                      Pickup 09:00 → return next day 09:00 counts as 1 day. Not the usual calendar-day billing.
+                      Pickup-to-pickup, not calendar day. E.g. 11:00 today → 11:00 tomorrow = 1 day.
                     </p>
                   </div>
                 </div>
