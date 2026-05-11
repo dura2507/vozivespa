@@ -411,7 +411,7 @@ export const BRAND = {
   phone: "+49 176 34658003",
   phoneRaw: "4917634658003",
   languages: ["🇩🇪", "🇬🇧"],
-  email: "info@sickmotos.com",
+  email: "rentamotobooking@gmail.com",
   instagram: "sickmotos_bike_rental_zadar",
   instagramUrl: "https://instagram.com/sickmotos_bike_rental_zadar",
   reviewsUrl: "https://maps.app.goo.gl/XCr6kKfFqrfR1PXR6?g_st=ic",
