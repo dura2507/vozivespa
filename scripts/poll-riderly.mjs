@@ -265,6 +265,17 @@ async function sendRiderlyTelegram(email) {
 
 // ---------- IMAP poll -------------------------------------------------------
 
+// Telegram throttles to ~1 message per second per chat. Pace our
+// sends slightly slower than that to avoid hitting rate limit and
+// timing out on subsequent fetches.
+const TELEGRAM_DELAY_MS = 1200;
+// Stop processing more messages once we hit this many in a single
+// run, so a flooded inbox doesn't blow past the workflow timeout.
+// Subsequent ticks pick up the rest.
+const MAX_MESSAGES_PER_RUN = 15;
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 async function main() {
   const client = new ImapFlow({
     host: IMAP_HOST,
@@ -280,6 +291,7 @@ async function main() {
   console.log(`[riderly] connected in ${Date.now() - t0}ms`);
 
   let processed = 0;
+  let seen = 0;
   try {
     const lock = await client.getMailboxLock(LABEL);
     console.log(`[riderly] lock acquired on ${LABEL}`);
@@ -289,6 +301,13 @@ async function main() {
         { source: true, envelope: true, uid: true },
       )) {
         if (!msg.source) continue;
+        if (seen >= MAX_MESSAGES_PER_RUN) {
+          console.warn(`[riderly] per-run limit ${MAX_MESSAGES_PER_RUN} reached — leaving rest for next tick`);
+          break;
+        }
+        seen++;
+        if (seen > 1) await sleep(TELEGRAM_DELAY_MS);
+
         const parsed = await simpleParser(msg.source);
         const email = classify(parsed);
         console.log(`[riderly] forwarding ${email.kind} message uid=${msg.uid}`);
@@ -302,8 +321,6 @@ async function main() {
         }
         // Mark as read EVEN if Telegram failed — otherwise a single
         // bad message blocks every subsequent tick in an endless loop.
-        // We log the failure above so the message can be re-sent
-        // manually if needed.
         if (msg.uid) {
           try {
             await client.messageFlagsAdd(msg.uid, ["\\Seen"], { uid: true });
@@ -322,7 +339,7 @@ async function main() {
     await client.logout().catch(() => {});
   }
 
-  console.log(`[riderly] done — forwarded ${processed} message(s) in ${Date.now() - t0}ms`);
+  console.log(`[riderly] done — forwarded ${processed}/${seen} message(s) in ${Date.now() - t0}ms`);
 }
 
 main().catch((err) => {
