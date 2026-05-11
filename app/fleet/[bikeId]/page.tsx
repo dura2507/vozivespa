@@ -217,7 +217,7 @@ export default function BikeDetailPage({
     e.preventDefault();
     if (!range?.from || !range?.to) return;
     if (!receipt) {
-      setReceiptError("Upload a screenshot of your deposit transaction.");
+      setReceiptError("Upload a screenshot of your reservation payment.");
       return;
     }
 
@@ -425,6 +425,20 @@ export default function BikeDetailPage({
                 <p className="text-white/60 text-xs tracking-wider uppercase">
                   Unlimited km · Basic insurance · {BRAND.deposit} deposit
                 </p>
+
+                <div className="mt-3 pt-3 border-t border-white/10 flex items-start gap-3">
+                  <div className="bg-red text-white font-barlow font-black text-lg leading-none px-2.5 py-1.5 shrink-0">
+                    24h
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">
+                      1 day = 24 hours
+                    </p>
+                    <p className="text-white text-sm leading-snug">
+                      Pickup 09:00 → return next day 09:00 counts as 1 day. Not the usual calendar-day billing.
+                    </p>
+                  </div>
+                </div>
 
                 <div className="mt-3 pt-3 border-t border-white/10 flex items-center gap-4">
                   <div className="flex-1 min-w-0">
@@ -931,11 +945,11 @@ export default function BikeDetailPage({
                     />
                   </label>
 
-                  {/* Deposit / payment section */}
+                  {/* Reservation / payment section */}
                   <div className="border-t border-ink/10 pt-7 mt-2">
                     <div className="flex items-baseline justify-between mb-1">
                       <h3 className="font-barlow font-bold uppercase text-lg tracking-tight text-ink">
-                        Deposit
+                        Reservation
                       </h3>
                       <p className="text-muted text-xs">
                         20% of {totalPrice}€ to lock the booking
@@ -945,7 +959,7 @@ export default function BikeDetailPage({
                       Pay <span className="font-bold text-red">{bookingFee}€</span> via one of the methods below, then upload a screenshot of the transaction. The remaining {Math.round((totalPrice - bookingFee) * 100) / 100}€ is paid in cash on pickup.
                     </p>
                     <p className="text-muted text-xs mb-5">
-                      We don&apos;t accept credit cards. No deposit, no reservation.
+                      We don&apos;t accept credit cards. No reservation fee, no booking.
                     </p>
 
                     <div className="space-y-2.5 mb-5">
@@ -1108,7 +1122,7 @@ export default function BikeDetailPage({
                   </button>
 
                   <p className="text-center text-muted text-xs">
-                    We&apos;ll review your deposit screenshot and confirm by email — usually within a few hours.
+                    We&apos;ll review your reservation screenshot and confirm by email — usually within a few hours.
                     By sending you agree to our{" "}
                     <Link href="/terms" target="_blank" className="text-red font-semibold underline">
                       terms
