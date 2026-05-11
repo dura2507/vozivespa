@@ -84,7 +84,7 @@ export const CATEGORIES: Category[] = [
       "Very fuel-efficient, easy to handle and perfect for relaxed cruising through Zadar and along the coast.",
     tagline: "Fuel-friendly. Previous riding experience required.",
     image: "/bikes/scooter-50.jpg",
-    gallery: ["/bikes/scooter-50.jpg", "/bikes/scooter-50-b.jpg", "/bikes/scooter-50-c.jpg"],
+    gallery: ["/bikes/scooter-50.jpg"],
     licence: "AM or B category",
     licenceCode: "AM/B",
     maxSpeed: "45 km/h",
