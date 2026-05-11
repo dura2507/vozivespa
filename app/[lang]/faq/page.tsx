@@ -1,90 +1,58 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { FAQ_ITEMS, BRAND } from "@/lib/mockData";
+import { BRAND } from "@/lib/mockData";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { isLocale, type Locale } from "@/lib/i18n/config";
+import Accordion from "./Accordion";
 
-function Accordion({ question, answer }: { question: string; answer: string }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="border-b border-ink/8 last:border-0">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="w-full text-left py-5 flex items-start gap-4 group"
-      >
-        <span
-          className={`mt-0.5 w-5 h-5 flex items-center justify-center shrink-0 transition-all duration-200 ${
-            open ? "bg-red text-white" : "border border-ink/20 text-ink/40 group-hover:border-red group-hover:text-red"
-          }`}
-        >
-          <svg
-            className={`w-2.5 h-2.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={3}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </span>
-        <span className={`font-semibold text-sm transition-colors ${open ? "text-red" : "text-ink group-hover:text-red"}`}>
-          {question}
-        </span>
-      </button>
-
-      <div
-        className={`overflow-hidden transition-all duration-300 ${
-          open ? "max-h-[32rem] pb-5" : "max-h-0"
-        }`}
-      >
-        <p className="text-muted text-sm leading-relaxed pl-9">{answer}</p>
-      </div>
-    </div>
-  );
-}
-
-export default function FaqPage() {
+export default async function FaqPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+  const dict = await getDictionary(lang as Locale);
+  const t = dict.faq;
+  const items = dict.faqItems;
   return (
     <>
-      <Navbar />
+      <Navbar lang={lang as Locale} t={dict.nav} />
       <main className="pt-32 pb-24 md:pb-16 px-5 md:px-12 min-h-screen">
         <div className="max-w-3xl mx-auto">
 
-          {/* Header */}
           <div className="mb-12">
             <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">
-              Got questions?
+              {t.eyebrow}
             </p>
             <h1 className="font-barlow font-black uppercase text-[clamp(3rem,10vw,7rem)] leading-none tracking-tight text-ink">
-              FAQ
+              {t.title}
             </h1>
           </div>
 
-          {/* Accordion */}
           <div className="bg-white border border-ink/8 px-6 mb-10">
-            {FAQ_ITEMS.map((item) => (
+            {items.map((item) => (
               <Accordion key={item.question} {...item} />
             ))}
           </div>
 
-          {/* Still have questions? */}
           <div className="bg-sand px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div>
               <h2 className="font-barlow font-bold uppercase text-xl tracking-tight text-ink mb-1">
-                Still have a question?
+                {dict.contact.eyebrow}
               </h2>
               <p className="text-muted text-sm">
-                Message us via WhatsApp or the contact form - we reply fast.
+                {dict.contact.intro}
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 shrink-0">
               <Link
-                href="/contact"
+                href={`/${lang}/contact`}
                 className="border border-ink/20 text-ink font-bold text-xs tracking-widest uppercase px-6 py-3 hover:border-red hover:text-red transition-colors text-center"
               >
-                Contact
+                {dict.nav.contact}
               </Link>
               <a
                 href={`https://wa.me/${BRAND.phoneRaw}`}
@@ -101,7 +69,7 @@ export default function FaqPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer lang={lang as Locale} t={dict.footer} nav={dict.nav} />
     </>
   );
 }

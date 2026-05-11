@@ -11,6 +11,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { BRAND, LICENCE_BADGE, type Category } from "@/lib/mockData";
 import type { PaymentMethod } from "@/lib/mockData";
+import type { Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import {
   buildSlots,
   calculatePrice,
@@ -53,7 +55,15 @@ function toIsoDate(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-export default function BikeDetail({ bike }: { bike: Category }) {
+export default function BikeDetail({
+  bike,
+  lang,
+  dict,
+}: {
+  bike: Category;
+  lang: Locale;
+  dict: Dictionary;
+}) {
   const [activeImage, setActiveImage] = useState(bike.image);
   const [range, setRange] = useState<DateRange | undefined>();
   const [pickupTime, setPickupTime] = useState("09:00");
@@ -343,7 +353,7 @@ export default function BikeDetail({ bike }: { bike: Category }) {
 
   return (
     <>
-      <Navbar />
+      <Navbar lang={lang} t={dict.nav} />
 
       <main className="pt-32 pb-20 md:pb-16 px-5 md:px-12 min-h-screen bg-off-white">
         <div className="max-w-6xl mx-auto">
@@ -1208,7 +1218,7 @@ export default function BikeDetail({ bike }: { bike: Category }) {
         </div>
       </main>
 
-      <Footer />
+      <Footer lang={lang} t={dict.footer} nav={dict.nav} />
     </>
   );
 }

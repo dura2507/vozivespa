@@ -1,6 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { BRAND } from "@/lib/mockData";
+import { notFound } from "next/navigation";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { isLocale, type Locale } from "@/lib/i18n/config";
 
 export const metadata = {
   title: "Terms & Conditions · SickMotos",
@@ -82,21 +85,27 @@ const SECTIONS: Section[] = [
   },
 ];
 
-export default function TermsPage() {
+export default async function TermsPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+  const dict = await getDictionary(lang as Locale);
   return (
     <>
-      <Navbar />
+      <Navbar lang={lang as Locale} t={dict.nav} />
       <main className="pt-32 pb-24 md:pb-16 px-5 md:px-12 min-h-screen bg-off-white">
         <div className="max-w-3xl mx-auto">
           <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-3">
-            {BRAND.name} · Zadar
+            {dict.terms.eyebrow}
           </p>
           <h1 className="font-barlow font-black uppercase text-[clamp(2.5rem,7vw,4.5rem)] leading-[0.9] tracking-tight text-ink mb-4">
-            Terms & Conditions
+            {dict.terms.title}
           </h1>
           <p className="text-muted text-base leading-relaxed mb-12">
-            Reservation terms for scooter and motorbike rentals.
-            By booking with {BRAND.legal} you agree to the rules below.
+            {dict.terms.intro.replace("{legal}", BRAND.legal)}
           </p>
 
           <div className="space-y-12">
@@ -139,7 +148,7 @@ export default function TermsPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer lang={lang as Locale} t={dict.footer} nav={dict.nav} />
     </>
   );
 }

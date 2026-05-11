@@ -3,6 +3,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CATEGORIES, BRAND } from "@/lib/mockData";
 import type { BookingRow, BookingStatus } from "@/lib/supabase";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { DEFAULT_LOCALE } from "@/lib/i18n/config";
 
 type Tone = "confirmed" | "declined" | "error";
 
@@ -32,7 +34,7 @@ function fmtDate(iso: string): string {
   return `${d}.${m}.${y}`;
 }
 
-export function DecisionView({
+export async function DecisionView({
   tone,
   booking,
   message,
@@ -50,10 +52,11 @@ export function DecisionView({
   const waLink = booking
     ? `https://wa.me/${booking.customer_phone.replace(/[^\d]/g, "")}`
     : null;
+  const dict = await getDictionary(DEFAULT_LOCALE);
 
   return (
     <>
-      <Navbar />
+      <Navbar lang={DEFAULT_LOCALE} t={dict.nav} />
       <main className="pt-32 pb-24 px-5 md:px-12 min-h-screen bg-off-white">
         <div className="max-w-2xl mx-auto">
           <div className="mb-10">
@@ -141,7 +144,7 @@ export function DecisionView({
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer lang={DEFAULT_LOCALE} t={dict.footer} nav={dict.nav} />
     </>
   );
 }

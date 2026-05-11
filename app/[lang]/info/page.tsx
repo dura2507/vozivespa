@@ -1,8 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getCategoriesWithPricing } from "@/lib/bike-pricing";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { isLocale, type Locale } from "@/lib/i18n/config";
 
 export const dynamic = "force-dynamic";
 
@@ -31,64 +34,50 @@ const InsuranceIcon = () => (
   </svg>
 );
 
-const REQUIREMENTS = [
-  {
-    Icon: LicenceIcon,
-    title: "Licence Requirements",
-    items: [
-      "Scooter 50cc: B or AM category licence + scooter experience",
-      "Scooter 125cc / Motobike 125cc: A1 category licence",
-      "Motobike 390cc: A2 category licence",
-      "We verify your licence at pick-up",
-    ],
-  },
-  {
-    Icon: PaymentIcon,
-    title: "Deposit & Payment",
-    items: [
-      "Security deposit: 250€ for every bike",
-      "Payment: PayPal, bank transfer, Revolut, or cash",
-      "We don't accept credit cards",
-      "20% booking fee secures your reservation",
-      "Send transaction screenshot after paying",
-    ],
-  },
-  {
-    Icon: PickupIcon,
-    title: "Pick-Up & Return",
-    items: [
-      "Pick-up & drop-off at Velebitska Ulica 2, 23000 Zadar",
-      "Mon-Sun, 09:00-19:00",
-      "15 min grace period - late returns incur extra fees",
-    ],
-  },
-  {
-    Icon: InsuranceIcon,
-    title: "Insurance & Safety",
-    items: [
-      "Basic insurance covers theft + engine damage",
-      "Accidents, scratches, flat tires are renter's responsibility",
-      "Helmets always provided",
-      "Roadside help: free up to 20 km, 50€ over that, more for islands",
-    ],
-  },
-];
-
-export default async function InfoPage() {
+export default async function InfoPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+  const dict = await getDictionary(lang as Locale);
+  const t = dict.info;
   const CATEGORIES = await getCategoriesWithPricing();
+  const REQUIREMENTS = [
+    {
+      Icon: LicenceIcon,
+      title: t.licenceRequirements.title,
+      items: [
+        t.licenceRequirements.scooter50,
+        t.licenceRequirements.scooter125,
+        t.licenceRequirements.motorbike390,
+        t.licenceRequirements.verify,
+      ],
+    },
+    {
+      Icon: PaymentIcon,
+      title: t.depositPayment.title,
+      items: [
+        t.depositPayment.deposit.replace("{deposit}", "250€"),
+        t.depositPayment.bookingFee,
+        t.depositPayment.noCards,
+      ],
+    },
+  ];
   return (
     <>
-      <Navbar />
+      <Navbar lang={lang as Locale} t={dict.nav} />
       <main className="pt-32 pb-24 md:pb-16 px-5 md:px-12 min-h-screen">
         <div className="max-w-5xl mx-auto">
 
           {/* Header */}
           <div className="mb-12">
             <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">
-              Everything you need to know
+              {t.eyebrow}
             </p>
             <h1 className="font-barlow font-black uppercase text-[clamp(3rem,10vw,7rem)] leading-none tracking-tight text-ink">
-              Info
+              {t.title}
             </h1>
           </div>
 
@@ -115,7 +104,7 @@ export default async function InfoPage() {
           {/* Pricing */}
           <div className="mb-14">
             <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3.5rem)] tracking-tight text-ink mb-6">
-              Pricing
+              {t.fleetSection.title}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
               {CATEGORIES.map((cat) => (
@@ -141,7 +130,7 @@ export default async function InfoPage() {
                     </div>
                   </div>
                   <div className="bg-sand px-4 py-3 flex items-center justify-between">
-                    <p className="text-xs text-muted">Per day</p>
+                    <p className="text-xs text-muted">{dict.fleet.pricing.daily}</p>
                     <p className="font-barlow font-black text-ink text-2xl">
                       {cat.price}<span className="text-sm text-muted font-normal">{cat.priceUnit}</span>
                     </p>
@@ -150,28 +139,28 @@ export default async function InfoPage() {
               ))}
             </div>
             <p className="text-muted text-xs mt-4">
-              All prices per day (up to 24h) and include helmets, unlimited km and basic insurance. Security deposit 250€ per bike.
+              {dict.fleet.pricing.unlimitedKm}.
             </p>
           </div>
 
           {/* CTA */}
           <div className="bg-red px-8 py-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div>
-              <p className="text-white/60 text-xs tracking-widest uppercase mb-1">Ready?</p>
+              <p className="text-white/60 text-xs tracking-widest uppercase mb-1">{dict.home.cta.eyebrow}</p>
               <h2 className="font-barlow font-black uppercase text-[clamp(2rem,6vw,3.5rem)] leading-none tracking-tight text-white">
-                Check Availability
+                {dict.home.hero.checkAvailability}
               </h2>
             </div>
             <Link
-              href="/#fleet"
+              href={`/${lang}/#fleet`}
               className="shrink-0 bg-white text-red font-bold text-xs tracking-widest uppercase px-8 py-4 hover:bg-off-white transition-colors"
             >
-              Book Now →
+              {dict.nav.bookNow} →
             </Link>
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer lang={lang as Locale} t={dict.footer} nav={dict.nav} />
     </>
   );
 }

@@ -1,0 +1,346 @@
+{
+  "nav": {
+    "home": "Start",
+    "fleet": "Fuhrpark",
+    "gallery": "Galerie",
+    "info": "Info",
+    "faq": "FAQ",
+    "contact": "Kontakt",
+    "terms": "AGB",
+    "bookNow": "Jetzt buchen",
+    "menuAria": "Menü",
+    "languageSwitcher": "Sprache"
+  },
+  "footer": {
+    "intro": "Roller und Motorradverleih in Zadar. Entdecke die dalmatinische Küste auf zwei Rädern.",
+    "locationLabel": "Zadar, Kroatien",
+    "call": "Anrufen",
+    "whatsapp": "WhatsApp",
+    "trusted": "Geprüfter Verleihpartner",
+    "openHoursPrefix": "Geöffnet",
+    "rights": "Alle Rechte vorbehalten."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Zadar, Kroatien",
+      "headline1": "Fahr",
+      "headline2": "die Küste",
+      "sub": "Roller und Motorradverleih in Zadar, 50ccm bis 390ccm. Helme und Basisversicherung inklusive. Küstenstraßen, Inseln, Freiheit.",
+      "checkAvailability": "Verfügbarkeit prüfen",
+      "fromPrice": "Ab {price}/Tag",
+      "statBikes": "Bikes und Roller",
+      "statReviews": "5-Sterne-Bewertungen",
+      "statKm": "Kilometer inklusive"
+    },
+    "fleet": {
+      "eyebrow": "Wähle dein Fahrzeug",
+      "title": "Unser Fuhrpark",
+      "fromPrefix": "ab",
+      "topSpeed": "Höchstgeschwindigkeit",
+      "experienceRequired": "Fahrerfahrung erforderlich",
+      "bookNow": "Jetzt buchen"
+    },
+    "included": {
+      "eyebrow": "Bei jedem Verleih",
+      "title": "Inklusive",
+      "items": {
+        "insurance": { "label": "Basisversicherung", "sub": "Diebstahl und Motorschaden" },
+        "helmets": { "label": "Helme", "sub": "Immer dabei" },
+        "unlimitedKm": { "label": "Unbegrenzte Kilometer", "sub": "Keine Streckenlimits" },
+        "roadside": { "label": "Pannenhilfe", "sub": "Bis 20km kostenlos, danach 50€ und mehr" },
+        "transparent": { "label": "Transparente Preise", "sub": "Was du siehst, zahlst du" },
+        "warranty": { "label": "Motorgarantie", "sub": "Motorschäden gehen auf uns" }
+      }
+    },
+    "goodToKnow": {
+      "eyebrow": "Gut zu wissen",
+      "title": "Wichtige Hinweise",
+      "deposit": { "label": "Kaution", "sub": "Pro Bike, wird nach unbeschadeter Rückgabe zurückerstattet." },
+      "phoneHolders": { "value": "Nein", "label": "Handyhalter", "sub": "Wir bieten keine Handyhalter an und du darfst auch keinen eigenen mitbringen. Keines unserer Bikes hat einen." },
+      "season": { "value": "Apr-Okt", "label": "Saison", "sub": "Wir vermieten von April bis Oktober. Mit vollem Tank raus, mit vollem Tank zurück." },
+      "languages": { "label": "Sprachen", "sub": "Wir sprechen Deutsch und Englisch. Schreib uns auf WhatsApp." }
+    },
+    "howItWorks": {
+      "eyebrow": "Einfacher Ablauf",
+      "title": "So funktionierts",
+      "step1": { "title": "Wähle dein Bike", "text": "Such dir deinen Roller oder dein Motorrad aus, vom 50ccm Stadtflitzer bis zur 390ccm Maschine für die Landstraße." },
+      "step2": { "title": "Termin anfragen", "text": "Schau im Kalender nach freien Tagen und schick uns eine kurze Anfrage. Abholung in unserem Shop in Zadar." },
+      "step3": { "title": "Wir bestätigen, du fährst los", "text": "Du bekommst innerhalb weniger Stunden eine Bestätigung per Email. Zahl die 20% Anzahlung, hol dein Bike ab und los gehts." },
+      "cta": "Bike buchen"
+    },
+    "reviews": {
+      "eyebrow": "Was unsere Kunden sagen",
+      "title": "Bewertungen",
+      "leaveReview": "Bewertung auf Google abgeben"
+    },
+    "gallerySection": {
+      "eyebrow": "Unterwegs",
+      "title": "Galerie",
+      "seeAll": "Alle Fotos ansehen"
+    },
+    "cta": {
+      "eyebrow": "Bereit für die Tour?",
+      "headline1": "Buche dein",
+      "headline2": "Bike noch heute",
+      "ctaBtn": "Verfügbarkeit prüfen"
+    }
+  },
+  "info": {
+    "eyebrow": "Alles was du wissen musst",
+    "title": "Info",
+    "licenceRequirements": {
+      "title": "Führerschein-Anforderungen",
+      "scooter50": "Roller 50ccm: Führerschein der Klasse B oder AM plus Rollererfahrung",
+      "scooter125": "Roller 125ccm und Motorrad 125ccm: Führerschein Klasse A1",
+      "motorbike390": "Motorrad 390ccm: Führerschein Klasse A2",
+      "verify": "Wir prüfen den Führerschein bei der Abholung"
+    },
+    "depositPayment": {
+      "title": "Kaution und Zahlung",
+      "deposit": "{deposit} Kaution pro Bike, wird bei unbeschadeter Rückgabe zurückerstattet.",
+      "bookingFee": "20% Anzahlung sichert deine Termine.",
+      "noCards": "Für die Anzahlung akzeptieren wir keine Kartenzahlungen."
+    },
+    "fleetSection": {
+      "title": "Unser Fuhrpark im Überblick"
+    }
+  },
+  "faq": {
+    "eyebrow": "Fragen?",
+    "title": "FAQ"
+  },
+  "terms": {
+    "eyebrow": "Buchungsbedingungen",
+    "title": "AGB",
+    "intro": "Bedingungen für Roller- und Motorradverleih. Mit deiner Buchung bei {legal} erkennst du die folgenden Regeln an."
+  },
+  "contact": {
+    "eyebrow": "Schreib uns",
+    "title": "Kontakt",
+    "intro": "Am schnellsten erreichst du uns per WhatsApp. Du kannst uns aber auch eine Nachricht schicken, wir melden uns innerhalb weniger Stunden zurück.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Nachricht",
+      "messagePlaceholder": "Deine Frage, Pläne, was auch immer...",
+      "send": "Nachricht senden",
+      "sending": "Senden...",
+      "sent": "Nachricht gesendet. Wir antworten in Kürze.",
+      "error": "Konnte nicht gesendet werden. Probier WhatsApp oder Anruf."
+    },
+    "openHours": "Öffnungszeiten",
+    "address": "Adresse"
+  },
+  "gallery": {
+    "eyebrow": "Unterwegs",
+    "title": "Galerie",
+    "intro": "Schnappschüsse von echten Touren entlang der Küste und auf den Inseln."
+  },
+  "fleet": {
+    "back": "Alle Bikes",
+    "specs": {
+      "title": "Technische Daten",
+      "eyebrow": "Das Bike",
+      "engine": "Motor",
+      "power": "Leistung",
+      "topSpeed": "Vmax",
+      "tank": "Tank",
+      "consumption": "Verbrauch",
+      "range": "Reichweite",
+      "seats": "Sitze",
+      "year": "Baujahr"
+    },
+    "pricing": {
+      "title": "Preise",
+      "eyebrow": "Flexible Tarife",
+      "daily": "Tag",
+      "dailySub": "1 Tag",
+      "weekend": "Wochenende",
+      "weekendSub": "Fr bis So",
+      "week": "Woche",
+      "weekSub": "7 Tage",
+      "month": "Monat",
+      "monthSub": "30 Tage",
+      "unlimitedKm": "Unbegrenzte Kilometer, alle Preise inklusive BASIS-Versicherung",
+      "depositLine": "Kaution: {deposit} · Saison: {season}",
+      "perDay": "/ Tag",
+      "fromPrefix": "ab"
+    },
+    "priceBox": {
+      "perDay": "/ Tag",
+      "unlimitedLine": "Unbegrenzte Kilometer · Basisversicherung · {deposit} Kaution",
+      "licenceEyebrow": "Benötigter Führerschein",
+      "bringLicence": "Bring deinen gültigen Führerschein zur Abholung mit. Kein Führerschein, keine Fahrt.",
+      "dayBadge": "24h",
+      "dayLabel": "1 Tag = 24 Stunden",
+      "dayCopy": "Abholung zu Abholung, nicht Kalendertag. Z.B. heute 11:00 bis morgen 11:00 = 1 Tag."
+    },
+    "headsUp": "Wichtig",
+    "checkAvailability": "Verfügbarkeit prüfen",
+    "specsSection": {
+      "depositLabel": "Kaution",
+      "depositText": "{deposit} pro Bike, wird bei unbeschadeter Rückgabe zurückerstattet. Bei Abholung: Bargeld (keine Gebühren), PayPal, Revolut oder Wise (Transaktionsgebühren können anfallen). Keine Kredit- oder Debitkarten.",
+      "noPhoneHoldersLabel": "Keine Handyhalter",
+      "noPhoneHoldersText": "Wir bieten keine Handyhalter an und du darfst auch keinen eigenen mitbringen.",
+      "seasonLabel": "Saison",
+      "seasonText": "{season}. Wir vermieten nur in diesem Zeitraum.",
+      "fuelLabel": "Tank",
+      "fuelText": "Übergabe mit vollem Tank. Bitte auch mit vollem Tank zurückgeben."
+    },
+    "calendar": {
+      "title": "Dieses Bike buchen",
+      "eyebrow": "Termine wählen",
+      "pickupDate": "Abholdatum",
+      "returnDate": "Rückgabedatum",
+      "pickupTime": "Abholzeit",
+      "returnTime": "Rückgabezeit",
+      "shopHours": "Öffnungszeiten 09:00 bis 19:00 Uhr. Zeiten außerhalb sind nicht buchbar",
+      "tooClose": " (oder zu dicht an einer anderen Buchung, wir brauchen 1h Pause zwischen Buchungen)",
+      "totalDays": "{n} Tage",
+      "totalDay": "1 Tag",
+      "appliedTier": "Anwendbarer Tarif",
+      "total": "Gesamt",
+      "continue": "Weiter zum Buchungsformular",
+      "selectDates": "Erst Abhol- und Rückgabedatum wählen"
+    },
+    "form": {
+      "title": "Deine Daten",
+      "name": "Vollständiger Name",
+      "email": "Email",
+      "phone": "Telefon (mit Ländervorwahl, z.B. +49...)",
+      "notes": "Anmerkungen (optional)",
+      "notesPlaceholder": "Z.B. 2 Helme nötig, spezielle Abholzeit, alles weitere...",
+      "licence": "Führerschein",
+      "licencePlaceholder": "Klasse wählen",
+      "ridingStyle": "Fahrstil",
+      "ridingStyleSolo": "Alleine",
+      "ridingStyleWithPassenger": "Mit Sozius",
+      "ridingStylePlaceholder": "Stil wählen",
+      "soloOnly": "Dieses Bike ist ein Einsitzer. Nur alleine fahren.",
+      "maxRiders": "Bis zu {n} Personen erlaubt.",
+      "experienceWarning": "Fahrerfahrung wird vorausgesetzt. Bitte sei ehrlich bezüglich deiner Fahrerfahrung bei der Buchung.",
+      "submit": "Anfrage senden",
+      "submitting": "Senden...",
+      "reviewLine": "Wir prüfen deinen Screenshot der Anzahlung und bestätigen per Email, normalerweise innerhalb weniger Stunden. Mit dem Absenden akzeptierst du unsere",
+      "termsLink": "AGB"
+    },
+    "reservation": {
+      "title": "Anzahlung",
+      "lockBooking": "20% von {total}€ um die Buchung zu sichern",
+      "instructions": "Zahle {fee}€ über eine der folgenden Methoden und lade dann einen Screenshot der Transaktion hoch. Die restlichen {rest}€ werden bei Abholung in bar (keine Gebühren), per Revolut, PayPal oder Debit/Kreditkarte (Transaktionsgebühren können anfallen) gezahlt.",
+      "noBooking": "Keine Anzahlung, keine Buchung.",
+      "uploadScreenshot": "Screenshot der Zahlung hochladen",
+      "uploadPicked": "Ausgewählt",
+      "uploadHint": "Nur Bilder, max. 4 MB",
+      "uploadError": "Lade einen Screenshot deiner Anzahlung hoch.",
+      "fileTooLarge": "Datei zu groß. Maximal 4 MB.",
+      "copy": "Kopieren",
+      "copied": "Kopiert!",
+      "recommended": "Empfohlen"
+    },
+    "success": {
+      "title": "Anfrage erhalten",
+      "intro": "Wir prüfen deine Buchung und bestätigen in Kürze per Email. Deine Referenz: {ref}.",
+      "summaryBike": "Bike",
+      "summaryFrom": "Abholung",
+      "summaryTo": "Rückgabe",
+      "summaryTotal": "Gesamt",
+      "summaryPaid": "Anzahlung gezahlt",
+      "summaryRemaining": "Fällig bei Abholung",
+      "back": "Zurück zur Startseite"
+    }
+  },
+  "bikes": {
+    "scooter-50": {
+      "description": "Sparsam im Verbrauch, leicht zu fahren, perfekt für die Stadt.",
+      "longDescription": "Sehr sparsam im Verbrauch, einfach zu handhaben und ideal für entspanntes Cruisen durch Zadar und entlang der Küste.",
+      "tagline": "Sparsam. Vorerfahrung erforderlich.",
+      "experienceNote": "Vorerfahrung erforderlich. Keine Anfänger."
+    },
+    "scooter-50-topcase": {
+      "description": "Piaggio Liberty 50 mit Topcase, mehr Stauraum.",
+      "longDescription": "Gleicher Liberty 50 wie das Standardmodell, ausgestattet mit Topcase für mehr Stauraum bei längeren Touren.",
+      "tagline": "Topcase inklusive, mehr Stauraum.",
+      "experienceNote": "Vorerfahrung erforderlich. Keine Anfänger."
+    },
+    "scooter-125": {
+      "description": "Perfekter Allrounder für Stadt und Küste.",
+      "longDescription": "Gleiche einfache Handhabung wie der 50er, mit mehr Leistung für Tagesausflüge entlang der Küste.",
+      "tagline": "Allrounder für Stadt und Küste."
+    },
+    "bike-125-a": {
+      "description": "Sportlich und wendig, gemacht für aktive Fahrer.",
+      "longDescription": "Supermoto-Feeling mit 125ccm. Leicht, wendig und ideal für temperamentvolle Fahrer die Kurven und Küstenstraßen lieben.",
+      "tagline": "Sportlich. Höherer Spritverbrauch durch Fahrstil."
+    },
+    "bike-125-b": {
+      "description": "Naked-Bike-Feeling mit großer Reichweite und sportlichem Charakter.",
+      "longDescription": "Echtes Naked-Bike-Feeling mit 125ccm. Hervorragende Reichweite, perfekt für längere Touren entlang der Küste und auf die Inseln.",
+      "tagline": "Große Reichweite, perfekt für längere Touren."
+    },
+    "bike-390": {
+      "description": "A2-konforme Power für die Küste. Leicht, wendig, gemacht für Stadt, Land und Kurven.",
+      "longDescription": "Premium A2-konformes Bike. Leicht, wendig und perfekt für Stadt, Land und Kurven, egal ob für einen Tag oder den ganzen Monat.",
+      "tagline": "Stark und premium. Top-Wahl für erfahrene Fahrer."
+    }
+  },
+  "faqItems": [
+    {
+      "question": "Was beinhaltet die Pannenhilfe?",
+      "answer": "Bis 20 km: kostenlos (Zusatzkosten bei Unfällen oder verlorenen Schlüsseln). Über 20 km: 50€. Inseln: Preko 150€, Dugi Otok 500€. Verlorener Schlüssel: 50€. Pannenhilfe greift wenn du wegen Unfall oder verlorenem Schlüssel nicht zurück zu unserer Adresse kommst. Bei Motorschaden übernehmen wir alle Kosten."
+    },
+    {
+      "question": "In welchem Zustand wird das Bike übergeben?",
+      "answer": "Alle Bikes und Roller werden in einwandfreiem Zustand übergeben. Wir bitten Mieter das Bike zu inspizieren, klare Fotos und Videos bei Abholung zu machen die alle bestehenden Kratzer und Schäden dokumentieren, und es im gleichen Zustand zurückzugeben. Diese Aufnahmen sind im Streitfall offizielle Beweismittel."
+    },
+    {
+      "question": "Welche Versicherung ist enthalten?",
+      "answer": "Die Basisversicherung deckt Diebstahl des Bikes und Motorschäden ab. Unfälle, Kratzer, Schäden und platte Reifen liegen in der Verantwortung des Mieters. Verursacht ein Dritter einen Unfall, musst du die Polizei rufen und einen offiziellen Bericht einholen. Der Verursacher haftet."
+    },
+    {
+      "question": "Wie lautet eure Stornierungsbedingungen?",
+      "answer": "Alle Buchungen sind nicht erstattungsfähig. Die 20% Anzahlung sichert deine Termine und wird im Falle einer Stornierung nicht zurückerstattet. Wird ein Bike durch einen Unfall oder Schaden eines anderen Kunden nicht verfügbar, stornieren wir und erstatten den vollen Betrag."
+    },
+    {
+      "question": "Wann und wo gebe ich das Bike zurück?",
+      "answer": "Zur vereinbarten Zeit am vereinbarten Ort. Wir gewähren 15 Minuten Karenzzeit. Verspätungen darüber hinaus kosten extra. Rückgabe an unserer Adresse: Velebitska Ulica 2, 23000 Zadar."
+    },
+    {
+      "question": "Wer haftet bei Unfällen oder Verletzungen?",
+      "answer": "Der Mieter trägt die volle Verantwortung für alle Unfälle, Schäden oder Verletzungen die während der Mietzeit auftreten."
+    },
+    {
+      "question": "Was passiert wenn das Bike beschädigt wird?",
+      "answer": "Die Kaution deckt die ersten Reparaturkosten. Wir bringen das Bike zu einer lokalen Werkstatt zur Begutachtung und Reparatur, der Mieter zahlt die vollen Reparaturkosten laut Werkstattrechnung. Übersteigen die Reparaturen die Kaution, zahlt der Mieter die Differenz. Eine Kopie der Rechnung wird immer zur Verfügung gestellt."
+    },
+    {
+      "question": "Was wenn ich den Schlüssel verliere?",
+      "answer": "Ein Ersatzschlüssel wird für 50€ geliefert, plus eventuell anfallende Pannenhilfegebühr je nach Standort."
+    },
+    {
+      "question": "Wie buche ich?",
+      "answer": "Bestätige immer zuerst die Verfügbarkeit mit uns. Sie kann sich schnell ändern. Eine 20% Anzahlung sichert deine Termine. Zahlung per PayPal, Banküberweisung, Revolut oder bar bei Ankunft. Nach der Zahlung schick uns einen Screenshot der Transaktion. Kommst du mehr als 1 Stunde zu spät ohne Bescheid, wird die Reservierung automatisch storniert. Wir akzeptieren keine Kreditkarten."
+    },
+    {
+      "question": "Bietet ihr Handyhalter an?",
+      "answer": "Nein. Wir bieten keine Handyhalter an und du darfst auch keinen eigenen mitbringen. Keines unserer Bikes hat einen. Plane deine Route bevor du losfährst."
+    },
+    {
+      "question": "Wie funktioniert das mit dem Tank, voll oder leer?",
+      "answer": "Jedes Bike wird mit vollem Tank übergeben. Bitte auch mit vollem Tank zurückgeben. Gibst du das Bike nicht vollgetankt zurück, berechnen wir den fehlenden Sprit plus eine Tankgebühr."
+    },
+    {
+      "question": "Wie navigiere ich ohne Handyhalter?",
+      "answer": "Zwei praktische Optionen: Fahr mit Sozius der die Navigation übernimmt, oder nutze ein Bluetooth-In-Ear-Set für Sprachnavigation ohne den Blick von der Straße zu nehmen. So oder so, plane deine Route vor der Abholung."
+    },
+    {
+      "question": "Was wenn ihr entscheidet ich habe nicht genug Erfahrung?",
+      "answer": "Fahren erfordert Vorerfahrung. Stellen wir bei der Abholung fest dass du nicht genug Erfahrung hast das Bike sicher zu fahren, behalten wir uns das Recht vor die Vermietung abzulehnen. In dem Fall ist die Anzahlung nicht erstattungsfähig, sei also ehrlich was deine Erfahrung bei der Buchung angeht."
+    }
+  ],
+  "common": {
+    "loading": "Lade...",
+    "tryAgain": "Erneut versuchen",
+    "language": "Sprache"
+  }
+}

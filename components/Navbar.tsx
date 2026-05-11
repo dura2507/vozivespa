@@ -3,20 +3,46 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  LOCALES,
+  LOCALE_LABELS,
+  type Locale,
+  isLocale,
+} from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 
-const LINKS = [
-  { label: "Fleet", href: "/#fleet" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Info", href: "/info" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Contact", href: "/contact" },
-];
+type NavStrings = Dictionary["nav"];
 
-export default function Navbar() {
+function localePath(lang: Locale, path: string): string {
+  if (path.startsWith("/#")) return `/${lang}${path.slice(1)}`;
+  if (path === "/") return `/${lang}`;
+  return `/${lang}${path}`;
+}
+
+// Strip the current /xx prefix from a path so we can re-prefix with a
+// different locale when the user switches language.
+function pathWithoutLocale(pathname: string): string {
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length === 0) return "/";
+  if (isLocale(segments[0])) {
+    const rest = segments.slice(1).join("/");
+    return rest ? `/${rest}` : "/";
+  }
+  return pathname;
+}
+
+export default function Navbar({
+  lang,
+  t,
+}: {
+  lang: Locale;
+  t: NavStrings;
+}) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const isHome = pathname === "/";
+  const [langOpen, setLangOpen] = useState(false);
+  const isHome = pathname === `/${lang}` || pathname === "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -27,6 +53,16 @@ export default function Navbar() {
   const transparent = isHome && !scrolled && !open;
   const textColor = transparent ? "text-white" : "text-ink";
   const hoverColor = transparent ? "hover:text-white/70" : "hover:text-red";
+
+  const LINKS = [
+    { label: t.fleet, href: "/#fleet" },
+    { label: t.gallery, href: "/gallery" },
+    { label: t.info, href: "/info" },
+    { label: t.faq, href: "/faq" },
+    { label: t.contact, href: "/contact" },
+  ];
+
+  const bareHere = pathWithoutLocale(pathname);
 
   return (
     <>
@@ -39,7 +75,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-5 md:px-8 flex items-center justify-between" style={{ height: "6.5rem" }}>
           {/* Logo */}
-          <Link href="/" className="flex items-center shrink-0">
+          <Link href={`/${lang}`} className="flex items-center shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/sickmotos.svg"
@@ -61,21 +97,51 @@ export default function Navbar() {
             {LINKS.map((l) => (
               <Link
                 key={l.href}
-                href={l.href}
+                href={localePath(lang, l.href)}
                 scroll={!l.href.includes("#")}
-                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} ${
-                  pathname === l.href ? "opacity-100" : "opacity-80"
-                }`}
+                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} opacity-80 hover:opacity-100`}
               >
                 {l.label}
               </Link>
             ))}
+
+            {/* Language switcher */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setLangOpen((o) => !o)}
+                onBlur={() => setTimeout(() => setLangOpen(false), 150)}
+                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1.5`}
+                aria-label={t.languageSwitcher}
+              >
+                <span className="text-base leading-none">{LOCALE_LABELS[lang].flag}</span>
+                <span className="text-[10px] opacity-70">{lang.toUpperCase()}</span>
+              </button>
+              {langOpen && (
+                <div className="absolute right-0 top-full mt-2 bg-off-white border border-ink/10 shadow-lg min-w-[160px] py-1">
+                  {LOCALES.map((l) => (
+                    <Link
+                      key={l}
+                      href={`/${l}${bareHere === "/" ? "" : bareHere}`}
+                      className={`flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase text-ink hover:bg-ink/5 transition-colors ${
+                        l === lang ? "opacity-50" : ""
+                      }`}
+                      onClick={() => setLangOpen(false)}
+                    >
+                      <span className="text-base leading-none">{LOCALE_LABELS[l].flag}</span>
+                      <span>{LOCALE_LABELS[l].name}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <Link
-              href="/#fleet"
+              href={localePath(lang, "/#fleet")}
               scroll={false}
               className="ml-2 bg-red text-white text-xs font-bold tracking-[0.15em] uppercase px-6 py-3 hover:bg-red-dark transition-colors"
             >
-              Book Now
+              {t.bookNow}
             </Link>
           </nav>
 
@@ -83,7 +149,7 @@ export default function Navbar() {
           <button
             className={`md:hidden w-9 h-9 flex flex-col items-center justify-center gap-[5px] ${textColor}`}
             onClick={() => setOpen((o) => !o)}
-            aria-label="Menu"
+            aria-label={t.menuAria}
           >
             <span className={`block w-5 h-[1.5px] bg-current transition-all duration-200 origin-center ${open ? "rotate-45 translate-y-[6.5px]" : ""}`} />
             <span className={`block w-5 h-[1.5px] bg-current transition-opacity duration-200 ${open ? "opacity-0" : ""}`} />
@@ -91,26 +157,24 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile dropdown . border only renders when open so the
-            collapsed (max-h-0) state doesn't leave a 1px white seam
-            against the transparent header on the homepage hero. */}
+        {/* Mobile dropdown */}
         <div
           className={`md:hidden bg-off-white overflow-hidden transition-all duration-300 ${
-            open ? "max-h-[32rem] pb-6 border-t border-ink/8" : "max-h-0"
+            open ? "max-h-[40rem] pb-6 border-t border-ink/8" : "max-h-0"
           }`}
         >
           <nav className="flex flex-col px-5 pt-3">
             <Link
-              href="/"
+              href={`/${lang}`}
               onClick={() => setOpen(false)}
               className="py-3 text-sm font-semibold text-ink border-b border-ink/8 tracking-wide"
             >
-              Home
+              {t.home}
             </Link>
             {LINKS.map((l) => (
               <Link
                 key={l.href}
-                href={l.href}
+                href={localePath(lang, l.href)}
                 scroll={!l.href.includes("#")}
                 onClick={() => setOpen(false)}
                 className="py-3 text-sm font-semibold text-ink border-b border-ink/8 tracking-wide hover:text-red transition-colors"
@@ -118,13 +182,33 @@ export default function Navbar() {
                 {l.label}
               </Link>
             ))}
+            <div className="py-3 border-b border-ink/8">
+              <p className="text-[10px] tracking-[0.2em] uppercase text-ink/50 font-bold mb-2">{t.languageSwitcher}</p>
+              <div className="flex flex-wrap gap-2">
+                {LOCALES.map((l) => (
+                  <Link
+                    key={l}
+                    href={`/${l}${bareHere === "/" ? "" : bareHere}`}
+                    onClick={() => setOpen(false)}
+                    className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-wide border ${
+                      l === lang
+                        ? "border-red text-red"
+                        : "border-ink/15 text-ink hover:border-ink/30"
+                    } transition-colors`}
+                  >
+                    <span className="text-base leading-none">{LOCALE_LABELS[l].flag}</span>
+                    <span>{LOCALE_LABELS[l].name}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
             <Link
-              href="/#fleet"
+              href={localePath(lang, "/#fleet")}
               scroll={false}
               onClick={() => setOpen(false)}
               className="mt-4 bg-red text-white text-center text-sm font-bold tracking-widest uppercase py-3"
             >
-              Book Now
+              {t.bookNow}
             </Link>
           </nav>
         </div>

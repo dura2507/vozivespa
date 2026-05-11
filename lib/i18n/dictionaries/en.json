@@ -1,0 +1,346 @@
+{
+  "nav": {
+    "home": "Home",
+    "fleet": "Fleet",
+    "gallery": "Gallery",
+    "info": "Info",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "terms": "Terms",
+    "bookNow": "Book Now",
+    "menuAria": "Menu",
+    "languageSwitcher": "Language"
+  },
+  "footer": {
+    "intro": "Scooter and bike rental in Zadar. Explore the Dalmatian coast on two wheels.",
+    "locationLabel": "Zadar, Croatia",
+    "call": "Call",
+    "whatsapp": "WhatsApp",
+    "trusted": "Trusted Rental Partner",
+    "openHoursPrefix": "Open",
+    "rights": "All rights reserved."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Zadar, Croatia",
+      "headline1": "Ride",
+      "headline2": "the Coast",
+      "sub": "Scooter and bike rental in Zadar, 50cc to 390cc. Helmets and basic insurance included. Coastal roads, islands, freedom.",
+      "checkAvailability": "Check Availability",
+      "fromPrice": "From {price}/day",
+      "statBikes": "Bikes & scooters",
+      "statReviews": "5-star reviews",
+      "statKm": "Km included"
+    },
+    "fleet": {
+      "eyebrow": "Choose your ride",
+      "title": "Our Fleet",
+      "fromPrefix": "from",
+      "topSpeed": "Top speed",
+      "experienceRequired": "Experience required",
+      "bookNow": "Book Now"
+    },
+    "included": {
+      "eyebrow": "Every rental",
+      "title": "What's Included",
+      "items": {
+        "insurance": { "label": "Basic insurance", "sub": "Theft + engine cover" },
+        "helmets": { "label": "Helmets", "sub": "Always provided" },
+        "unlimitedKm": { "label": "Unlimited km", "sub": "No driving limits" },
+        "roadside": { "label": "Roadside help", "sub": "Free up to 20km, then 50€ plus" },
+        "transparent": { "label": "Transparent pricing", "sub": "What you see, you pay" },
+        "warranty": { "label": "Engine warranty", "sub": "We cover engine failure" }
+      }
+    },
+    "goodToKnow": {
+      "eyebrow": "Heads up",
+      "title": "Good to Know",
+      "deposit": { "label": "Deposit", "sub": "Per bike, refunded after drop-off if no damage." },
+      "phoneHolders": { "value": "No", "label": "Phone holders", "sub": "We don't offer or fit phone holders, and you can't bring your own. None of our bikes have one." },
+      "season": { "value": "Apr-Oct", "label": "Riding season", "sub": "We rent April through October. Full tank in, full tank out." },
+      "languages": { "label": "Languages", "sub": "We speak German and English. Chat with us on WhatsApp." }
+    },
+    "howItWorks": {
+      "eyebrow": "Simple process",
+      "title": "How It Works",
+      "step1": { "title": "Pick your ride", "text": "Choose your scooter or motorbike, from the 50cc city cruiser up to the 390cc highway machine." },
+      "step2": { "title": "Request your dates", "text": "Check availability on the calendar and send a quick request. Pickup at our shop in Zadar." },
+      "step3": { "title": "We confirm and you ride", "text": "We email confirmation within a few hours. Pay the 20% booking fee, pick up your bike, and go." },
+      "cta": "Book a Bike"
+    },
+    "reviews": {
+      "eyebrow": "What riders say",
+      "title": "Reviews",
+      "leaveReview": "Leave a Google review"
+    },
+    "gallerySection": {
+      "eyebrow": "In motion",
+      "title": "Gallery",
+      "seeAll": "See all photos"
+    },
+    "cta": {
+      "eyebrow": "Ready to ride?",
+      "headline1": "Book Your",
+      "headline2": "Bike Today",
+      "ctaBtn": "Check Availability"
+    }
+  },
+  "info": {
+    "eyebrow": "Everything you need to know",
+    "title": "Info",
+    "licenceRequirements": {
+      "title": "Licence requirements",
+      "scooter50": "Scooter 50cc: B or AM category licence plus scooter experience",
+      "scooter125": "Scooter 125cc and motorbike 125cc: A1 category licence",
+      "motorbike390": "Motorbike 390cc: A2 category licence",
+      "verify": "We verify your licence at pickup"
+    },
+    "depositPayment": {
+      "title": "Deposit & Payment",
+      "deposit": "{deposit} security deposit per bike, refunded after drop-off if no damage.",
+      "bookingFee": "20% booking fee secures your dates.",
+      "noCards": "Card payments not accepted for the booking fee."
+    },
+    "fleetSection": {
+      "title": "Our fleet at a glance"
+    }
+  },
+  "faq": {
+    "eyebrow": "Questions?",
+    "title": "FAQ"
+  },
+  "terms": {
+    "eyebrow": "Reservation terms",
+    "title": "Terms & Conditions",
+    "intro": "Reservation terms for scooter and motorbike rentals. By booking with {legal} you agree to the rules below."
+  },
+  "contact": {
+    "eyebrow": "Get in touch",
+    "title": "Contact",
+    "intro": "Reach us on WhatsApp for the fastest response, or send a message and we will get back to you within a few hours.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "messagePlaceholder": "Your question, plans, anything else...",
+      "send": "Send message",
+      "sending": "Sending...",
+      "sent": "Message sent. We will reply shortly.",
+      "error": "Could not send. Try WhatsApp or call instead."
+    },
+    "openHours": "Open hours",
+    "address": "Address"
+  },
+  "gallery": {
+    "eyebrow": "In motion",
+    "title": "Gallery",
+    "intro": "Snapshots from real rides on the coast and the islands."
+  },
+  "fleet": {
+    "back": "All bikes",
+    "specs": {
+      "title": "Specs",
+      "eyebrow": "The Bike",
+      "engine": "Engine",
+      "power": "Power",
+      "topSpeed": "Top Speed",
+      "tank": "Tank",
+      "consumption": "Consumption",
+      "range": "Range",
+      "seats": "Seats",
+      "year": "Year"
+    },
+    "pricing": {
+      "title": "Pricing",
+      "eyebrow": "Flexible terms",
+      "daily": "Daily",
+      "dailySub": "1 day",
+      "weekend": "Weekend",
+      "weekendSub": "Fri to Sun",
+      "week": "Week",
+      "weekSub": "7 days",
+      "month": "Month",
+      "monthSub": "30 days",
+      "unlimitedKm": "Unlimited km, all prices include BASIC insurance",
+      "depositLine": "Deposit: {deposit} · Season: {season}",
+      "perDay": "/ day",
+      "fromPrefix": "from"
+    },
+    "priceBox": {
+      "perDay": "/ day",
+      "unlimitedLine": "Unlimited km · Basic insurance · {deposit} deposit",
+      "licenceEyebrow": "Required licence",
+      "bringLicence": "Bring your valid licence to pickup. No licence, no ride.",
+      "dayBadge": "24h",
+      "dayLabel": "1 day = 24 hours",
+      "dayCopy": "Pickup-to-pickup, not calendar day. E.g. 11:00 today to 11:00 tomorrow = 1 day."
+    },
+    "headsUp": "Heads up",
+    "checkAvailability": "Check Availability",
+    "specsSection": {
+      "depositLabel": "Deposit",
+      "depositText": "{deposit} per bike, refunded after drop-off if no damage. At pickup: cash (no fees), PayPal, Revolut or Wise (transaction fees may apply). No credit or debit cards.",
+      "noPhoneHoldersLabel": "No phone holders",
+      "noPhoneHoldersText": "We don't offer or fit phone holders, and you can't bring your own.",
+      "seasonLabel": "Season",
+      "seasonText": "{season}. We rent only in this window.",
+      "fuelLabel": "Fuel",
+      "fuelText": "Handed over with a full tank. Return it with a full tank too."
+    },
+    "calendar": {
+      "title": "Book this bike",
+      "eyebrow": "Pick your dates",
+      "pickupDate": "Pickup date",
+      "returnDate": "Return date",
+      "pickupTime": "Pickup time",
+      "returnTime": "Return time",
+      "shopHours": "Shop hours 09:00 to 19:00. Times outside this window are not available",
+      "tooClose": " (or too close to another booking, we need 1h between bookings)",
+      "totalDays": "{n} days",
+      "totalDay": "1 day",
+      "appliedTier": "Applied rate",
+      "total": "Total",
+      "continue": "Continue to booking form",
+      "selectDates": "Select pickup and return dates first"
+    },
+    "form": {
+      "title": "Your details",
+      "name": "Full name",
+      "email": "Email",
+      "phone": "Phone (with country code, e.g. +49...)",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "E.g. need 2 helmets, special pickup time, anything else...",
+      "licence": "Driver's licence",
+      "licencePlaceholder": "Pick a category",
+      "ridingStyle": "Riding style",
+      "ridingStyleSolo": "Solo",
+      "ridingStyleWithPassenger": "With passenger",
+      "ridingStylePlaceholder": "Pick a style",
+      "soloOnly": "This bike is a single-seater. Solo only.",
+      "maxRiders": "Up to {n} riders allowed.",
+      "experienceWarning": "Riding experience required. Please be honest about your riding history when booking.",
+      "submit": "Send Request",
+      "submitting": "Sending...",
+      "reviewLine": "We'll review your reservation screenshot and confirm by email, usually within a few hours. By sending you agree to our",
+      "termsLink": "terms"
+    },
+    "reservation": {
+      "title": "Reservation",
+      "lockBooking": "20% of {total}€ to lock the booking",
+      "instructions": "Pay {fee}€ via one of the methods below, then upload a screenshot of the transaction. The remaining {rest}€ is paid at pickup via cash (no fees), Revolut, PayPal, or debit/credit card (transaction fees may apply).",
+      "noBooking": "No reservation fee, no booking.",
+      "uploadScreenshot": "Upload screenshot of the payment",
+      "uploadPicked": "Selected",
+      "uploadHint": "Image only, max 4 MB",
+      "uploadError": "Upload a screenshot of your reservation payment.",
+      "fileTooLarge": "File is too large. Max 4 MB.",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "recommended": "Recommended"
+    },
+    "success": {
+      "title": "Request received",
+      "intro": "We will review your booking and confirm by email shortly. Your reference is {ref}.",
+      "summaryBike": "Bike",
+      "summaryFrom": "Pickup",
+      "summaryTo": "Return",
+      "summaryTotal": "Total",
+      "summaryPaid": "Booking fee paid",
+      "summaryRemaining": "Due at pickup",
+      "back": "Back to home"
+    }
+  },
+  "bikes": {
+    "scooter-50": {
+      "description": "Light on fuel, easy to handle, perfect for the city.",
+      "longDescription": "Very fuel-efficient, easy to handle and perfect for relaxed cruising through Zadar and along the coast.",
+      "tagline": "Fuel-friendly. Previous riding experience required.",
+      "experienceNote": "Previous riding experience required. No first-time riders."
+    },
+    "scooter-50-topcase": {
+      "description": "Piaggio Liberty 50 with topcase, extra storage.",
+      "longDescription": "Same Liberty 50 as the standard, fitted with a topcase for extra storage on longer rides.",
+      "tagline": "Topcase included, extra storage.",
+      "experienceNote": "Previous riding experience required. No first-time riders."
+    },
+    "scooter-125": {
+      "description": "Perfect all-rounder for city and coastal rides.",
+      "longDescription": "Same easy handling as the 50, with more power for day trips along the coast.",
+      "tagline": "All-rounder for city and coast."
+    },
+    "bike-125-a": {
+      "description": "Sporty and agile, made for active riders.",
+      "longDescription": "Supermoto feel with 125cc. Light, agile and ideal for spirited riders who love curves and coastal roads.",
+      "tagline": "Sporty. Higher fuel use due to riding style."
+    },
+    "bike-125-b": {
+      "description": "Naked-bike feel with great range and sporty character.",
+      "longDescription": "Real naked-bike character at 125cc. Excellent range, perfect for longer tours along the coast and to the islands.",
+      "tagline": "Great range, perfect for longer trips."
+    },
+    "bike-390": {
+      "description": "A2-ready power for the coast. Light, agile, built for city, country and curves.",
+      "longDescription": "Premium A2-compliant bike. Light, agile and perfect for city, country and curves, whether you want it for a day or the full month.",
+      "tagline": "Strong and premium. Top pick for confident riders."
+    }
+  },
+  "faqItems": [
+    {
+      "question": "What does the breakdown service include?",
+      "answer": "Up to 20 km: free (extra costs apply for accidents or lost keys). Over 20 km: 50€. Islands: Preko 150€, Dugi Otok 500€. Lost key: 50€. Breakdown service applies if you can't return to our address due to an accident or lost key. In case of engine failure we cover all costs."
+    },
+    {
+      "question": "In what condition is the bike delivered?",
+      "answer": "All bikes and scooters are handed over in perfect working condition. We ask renters to inspect the bike, take clear photos and videos at pickup documenting any existing scratches or damage, and return it in the same condition. These recordings are official proof in case of any dispute."
+    },
+    {
+      "question": "What insurance is included?",
+      "answer": "Basic insurance covers theft of the bike and engine damage. Accidents, scratches, damage and flat tires are the renter's responsibility. If a third party causes an accident, you must call the police and obtain an official report. The responsible party is liable."
+    },
+    {
+      "question": "What is your cancellation policy?",
+      "answer": "All bookings are non-refundable. The 20% reservation fee secures your dates and is not returned in case of cancellation. If a bike becomes unavailable due to an accident or damage caused by another client, we'll cancel and refund in full."
+    },
+    {
+      "question": "When and where do I return the bike?",
+      "answer": "At the agreed time and location. We give a 15-minute grace period. Late returns beyond that incur extra fees. Drop-off at our address: Velebitska Ulica 2, 23000 Zadar."
+    },
+    {
+      "question": "Who is responsible for accidents or injuries?",
+      "answer": "The renter assumes full responsibility for all accidents, damages or injuries that occur during the rental period."
+    },
+    {
+      "question": "What happens if the bike is damaged?",
+      "answer": "The deposit covers initial repair costs. We take the bike to a local mechanic for assessment and repair, and the renter pays the full repair costs per the mechanic's invoice. If repairs exceed the deposit, the renter pays the difference. A copy of the invoice is always provided for transparency."
+    },
+    {
+      "question": "What if I lose the key?",
+      "answer": "A replacement key will be delivered for 50€ plus any applicable breakdown service fee depending on your location."
+    },
+    {
+      "question": "How do I make a reservation?",
+      "answer": "Always confirm availability with us first. It can change quickly. A 20% booking fee secures your dates. Pay via PayPal, bank transfer, Revolut or cash on arrival. After paying, send us a screenshot of the transaction. If you arrive more than 1 hour late without notice, the reservation is automatically cancelled. We don't accept credit cards."
+    },
+    {
+      "question": "Do you offer phone holders?",
+      "answer": "No. We don't offer or fit phone holders, and you can't bring your own either. None of our bikes come with one. Please plan your route before you head out."
+    },
+    {
+      "question": "How does the fuel work, full tank or empty tank?",
+      "answer": "Every bike is handed over with a full tank. Please return it with a full tank as well. If you return the bike not fully fuelled, we charge the missing fuel plus a refuelling fee."
+    },
+    {
+      "question": "How do I navigate without a phone holder?",
+      "answer": "Two practical options: ride with a passenger who handles directions, or use a Bluetooth in-ear navigation set for turn-by-turn audio without taking your eyes off the road. Either way, plan your route before pickup."
+    },
+    {
+      "question": "What if you decide I'm not experienced enough?",
+      "answer": "Riding requires prior experience. If at pickup we determine you don't have enough experience to safely handle the bike, we reserve the right to decline the rental. In that case the booking fee is non-refundable, so please be honest about your experience when booking."
+    }
+  ],
+  "common": {
+    "loading": "Loading...",
+    "tryAgain": "Try again",
+    "language": "Language"
+  }
+}

@@ -1,0 +1,346 @@
+{
+  "nav": {
+    "home": "Home",
+    "fleet": "Mezzi",
+    "gallery": "Galleria",
+    "info": "Info",
+    "faq": "FAQ",
+    "contact": "Contatti",
+    "terms": "Termini",
+    "bookNow": "Prenota ora",
+    "menuAria": "Menu",
+    "languageSwitcher": "Lingua"
+  },
+  "footer": {
+    "intro": "Noleggio scooter e moto a Zara. Esplora la costa dalmata su due ruote.",
+    "locationLabel": "Zara, Croazia",
+    "call": "Chiama",
+    "whatsapp": "WhatsApp",
+    "trusted": "Partner di noleggio verificato",
+    "openHoursPrefix": "Aperto",
+    "rights": "Tutti i diritti riservati."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Zara, Croazia",
+      "headline1": "Vivi",
+      "headline2": "la costa",
+      "sub": "Noleggio scooter e moto a Zara, da 50cc a 390cc. Caschi e assicurazione base inclusi. Strade costiere, isole, libertà.",
+      "checkAvailability": "Verifica disponibilità",
+      "fromPrice": "Da {price}/giorno",
+      "statBikes": "Moto e scooter",
+      "statReviews": "Recensioni a 5 stelle",
+      "statKm": "Km inclusi"
+    },
+    "fleet": {
+      "eyebrow": "Scegli il tuo mezzo",
+      "title": "La nostra flotta",
+      "fromPrefix": "da",
+      "topSpeed": "Velocità max",
+      "experienceRequired": "Richiesta esperienza",
+      "bookNow": "Prenota"
+    },
+    "included": {
+      "eyebrow": "Ogni noleggio",
+      "title": "Cosa è incluso",
+      "items": {
+        "insurance": { "label": "Assicurazione base", "sub": "Furto e danni al motore" },
+        "helmets": { "label": "Caschi", "sub": "Sempre forniti" },
+        "unlimitedKm": { "label": "Km illimitati", "sub": "Nessun limite di percorrenza" },
+        "roadside": { "label": "Soccorso stradale", "sub": "Gratis fino a 20km, poi 50€ e oltre" },
+        "transparent": { "label": "Prezzi trasparenti", "sub": "Quello che vedi è quello che paghi" },
+        "warranty": { "label": "Garanzia motore", "sub": "Copriamo i guasti al motore" }
+      }
+    },
+    "goodToKnow": {
+      "eyebrow": "Da sapere",
+      "title": "Buono a sapersi",
+      "deposit": { "label": "Cauzione", "sub": "Per moto, restituita dopo la riconsegna se non ci sono danni." },
+      "phoneHolders": { "value": "No", "label": "Supporti per telefono", "sub": "Non offriamo né installiamo supporti per telefono e non puoi nemmeno portare il tuo. Nessuna delle nostre moto ne ha uno." },
+      "season": { "value": "Apr-Ott", "label": "Stagione", "sub": "Noleggiamo da aprile a ottobre. Pieno alla partenza, pieno al ritorno." },
+      "languages": { "label": "Lingue", "sub": "Parliamo tedesco e inglese. Scrivici su WhatsApp." }
+    },
+    "howItWorks": {
+      "eyebrow": "Processo semplice",
+      "title": "Come funziona",
+      "step1": { "title": "Scegli il mezzo", "text": "Scegli il tuo scooter o la tua moto, dal 50cc cittadino fino alla 390cc da strada." },
+      "step2": { "title": "Richiedi le date", "text": "Controlla la disponibilità sul calendario e invia una richiesta rapida. Ritiro nel nostro negozio a Zara." },
+      "step3": { "title": "Confermiamo e parti", "text": "Confermiamo via email entro poche ore. Paga il 20% di caparra, ritira la moto e parti." },
+      "cta": "Prenota una moto"
+    },
+    "reviews": {
+      "eyebrow": "Cosa dicono i clienti",
+      "title": "Recensioni",
+      "leaveReview": "Lascia una recensione su Google"
+    },
+    "gallerySection": {
+      "eyebrow": "In movimento",
+      "title": "Galleria",
+      "seeAll": "Vedi tutte le foto"
+    },
+    "cta": {
+      "eyebrow": "Pronto a partire?",
+      "headline1": "Prenota la tua",
+      "headline2": "moto oggi",
+      "ctaBtn": "Verifica disponibilità"
+    }
+  },
+  "info": {
+    "eyebrow": "Tutto quello che devi sapere",
+    "title": "Info",
+    "licenceRequirements": {
+      "title": "Requisiti patente",
+      "scooter50": "Scooter 50cc: patente B o AM più esperienza con scooter",
+      "scooter125": "Scooter 125cc e moto 125cc: patente A1",
+      "motorbike390": "Moto 390cc: patente A2",
+      "verify": "Verifichiamo la patente al ritiro"
+    },
+    "depositPayment": {
+      "title": "Cauzione e pagamento",
+      "deposit": "{deposit} di cauzione per moto, restituita dopo la riconsegna se non ci sono danni.",
+      "bookingFee": "Il 20% di caparra blocca le tue date.",
+      "noCards": "Non accettiamo carte per la caparra."
+    },
+    "fleetSection": {
+      "title": "La nostra flotta in sintesi"
+    }
+  },
+  "faq": {
+    "eyebrow": "Domande?",
+    "title": "FAQ"
+  },
+  "terms": {
+    "eyebrow": "Termini di prenotazione",
+    "title": "Termini e condizioni",
+    "intro": "Termini per il noleggio di scooter e moto. Prenotando con {legal} accetti le regole qui sotto."
+  },
+  "contact": {
+    "eyebrow": "Scrivici",
+    "title": "Contatti",
+    "intro": "Per una risposta veloce contattaci su WhatsApp. Puoi anche inviarci un messaggio, ti rispondiamo entro poche ore.",
+    "form": {
+      "name": "Nome",
+      "email": "Email",
+      "message": "Messaggio",
+      "messagePlaceholder": "La tua domanda, i tuoi piani, qualsiasi cosa...",
+      "send": "Invia messaggio",
+      "sending": "Invio in corso...",
+      "sent": "Messaggio inviato. Ti risponderemo a breve.",
+      "error": "Invio fallito. Prova con WhatsApp o telefono."
+    },
+    "openHours": "Orari",
+    "address": "Indirizzo"
+  },
+  "gallery": {
+    "eyebrow": "In movimento",
+    "title": "Galleria",
+    "intro": "Scatti da tour reali lungo la costa e sulle isole."
+  },
+  "fleet": {
+    "back": "Tutte le moto",
+    "specs": {
+      "title": "Scheda tecnica",
+      "eyebrow": "La moto",
+      "engine": "Motore",
+      "power": "Potenza",
+      "topSpeed": "Vel. max",
+      "tank": "Serbatoio",
+      "consumption": "Consumo",
+      "range": "Autonomia",
+      "seats": "Posti",
+      "year": "Anno"
+    },
+    "pricing": {
+      "title": "Tariffe",
+      "eyebrow": "Tariffe flessibili",
+      "daily": "Giornaliero",
+      "dailySub": "1 giorno",
+      "weekend": "Weekend",
+      "weekendSub": "Ven a Dom",
+      "week": "Settimana",
+      "weekSub": "7 giorni",
+      "month": "Mese",
+      "monthSub": "30 giorni",
+      "unlimitedKm": "Km illimitati, tutti i prezzi includono l'assicurazione BASE",
+      "depositLine": "Cauzione: {deposit} · Stagione: {season}",
+      "perDay": "/ giorno",
+      "fromPrefix": "da"
+    },
+    "priceBox": {
+      "perDay": "/ giorno",
+      "unlimitedLine": "Km illimitati · Assicurazione base · Cauzione {deposit}",
+      "licenceEyebrow": "Patente richiesta",
+      "bringLicence": "Porta la tua patente valida al ritiro. Niente patente, niente moto.",
+      "dayBadge": "24h",
+      "dayLabel": "1 giorno = 24 ore",
+      "dayCopy": "Da ritiro a ritiro, non giorno solare. Es. oggi 11:00 fino a domani 11:00 = 1 giorno."
+    },
+    "headsUp": "Importante",
+    "checkAvailability": "Verifica disponibilità",
+    "specsSection": {
+      "depositLabel": "Cauzione",
+      "depositText": "{deposit} per moto, restituita dopo la riconsegna se non ci sono danni. Al ritiro: contanti (senza commissioni), PayPal, Revolut o Wise (possono applicarsi commissioni). Niente carte di debito o credito.",
+      "noPhoneHoldersLabel": "Niente supporti per telefono",
+      "noPhoneHoldersText": "Non offriamo né installiamo supporti per telefono e non puoi nemmeno portare il tuo.",
+      "seasonLabel": "Stagione",
+      "seasonText": "{season}. Noleggiamo solo in questo periodo.",
+      "fuelLabel": "Carburante",
+      "fuelText": "Consegnata con il pieno. Restituiscila con il pieno."
+    },
+    "calendar": {
+      "title": "Prenota questa moto",
+      "eyebrow": "Scegli le date",
+      "pickupDate": "Data ritiro",
+      "returnDate": "Data riconsegna",
+      "pickupTime": "Ora ritiro",
+      "returnTime": "Ora riconsegna",
+      "shopHours": "Orari 09:00 alle 19:00. Fuori questo orario non disponibile",
+      "tooClose": " (o troppo vicino a un'altra prenotazione, ci serve 1h tra le prenotazioni)",
+      "totalDays": "{n} giorni",
+      "totalDay": "1 giorno",
+      "appliedTier": "Tariffa applicata",
+      "total": "Totale",
+      "continue": "Continua al modulo",
+      "selectDates": "Scegli prima data ritiro e riconsegna"
+    },
+    "form": {
+      "title": "I tuoi dati",
+      "name": "Nome completo",
+      "email": "Email",
+      "phone": "Telefono (con prefisso paese, es. +49...)",
+      "notes": "Note (opzionale)",
+      "notesPlaceholder": "Es. mi servono 2 caschi, ora di ritiro speciale, qualsiasi cosa...",
+      "licence": "Patente di guida",
+      "licencePlaceholder": "Scegli una categoria",
+      "ridingStyle": "Tipo di viaggio",
+      "ridingStyleSolo": "Da solo",
+      "ridingStyleWithPassenger": "Con passeggero",
+      "ridingStylePlaceholder": "Scegli un'opzione",
+      "soloOnly": "Questa moto è monoposto. Solo conducente.",
+      "maxRiders": "Fino a {n} persone consentite.",
+      "experienceWarning": "Esperienza richiesta. Sii onesto sulla tua esperienza al momento della prenotazione.",
+      "submit": "Invia richiesta",
+      "submitting": "Invio in corso...",
+      "reviewLine": "Esamineremo il tuo screenshot di pagamento e confermeremo via email, di solito entro poche ore. Inviando accetti i nostri",
+      "termsLink": "termini"
+    },
+    "reservation": {
+      "title": "Prenotazione",
+      "lockBooking": "20% di {total}€ per bloccare la prenotazione",
+      "instructions": "Paga {fee}€ con uno dei metodi qui sotto e carica uno screenshot della transazione. I restanti {rest}€ si pagano al ritiro: contanti (senza commissioni), Revolut, PayPal o carta di debito/credito (possono applicarsi commissioni).",
+      "noBooking": "Niente caparra, niente prenotazione.",
+      "uploadScreenshot": "Carica lo screenshot del pagamento",
+      "uploadPicked": "Selezionato",
+      "uploadHint": "Solo immagini, max 4 MB",
+      "uploadError": "Carica uno screenshot del tuo pagamento.",
+      "fileTooLarge": "File troppo grande. Max 4 MB.",
+      "copy": "Copia",
+      "copied": "Copiato!",
+      "recommended": "Consigliato"
+    },
+    "success": {
+      "title": "Richiesta ricevuta",
+      "intro": "Esamineremo la tua prenotazione e confermeremo via email a breve. Il tuo riferimento: {ref}.",
+      "summaryBike": "Moto",
+      "summaryFrom": "Ritiro",
+      "summaryTo": "Riconsegna",
+      "summaryTotal": "Totale",
+      "summaryPaid": "Caparra pagata",
+      "summaryRemaining": "Da pagare al ritiro",
+      "back": "Torna alla home"
+    }
+  },
+  "bikes": {
+    "scooter-50": {
+      "description": "Consumi bassi, facile da guidare, perfetto per la città.",
+      "longDescription": "Molto economico nei consumi, facile da gestire e perfetto per girare con calma a Zara e lungo la costa.",
+      "tagline": "Consumi bassi. Esperienza richiesta.",
+      "experienceNote": "Esperienza richiesta. Niente principianti."
+    },
+    "scooter-50-topcase": {
+      "description": "Piaggio Liberty 50 con bauletto, più spazio.",
+      "longDescription": "Stesso Liberty 50 dello standard, dotato di bauletto per più spazio nelle gite più lunghe.",
+      "tagline": "Bauletto incluso, più spazio.",
+      "experienceNote": "Esperienza richiesta. Niente principianti."
+    },
+    "scooter-125": {
+      "description": "Perfetto tuttofare per città e costa.",
+      "longDescription": "Stessa facilità di guida del 50, con più potenza per gite di un giorno lungo la costa.",
+      "tagline": "Tuttofare per città e costa."
+    },
+    "bike-125-a": {
+      "description": "Sportiva e agile, fatta per chi vuole pedalare attivo.",
+      "longDescription": "Feeling supermoto con 125cc. Leggera, agile e ideale per chi ama le curve e le strade costiere.",
+      "tagline": "Sportiva. Consumi più alti per stile di guida."
+    },
+    "bike-125-b": {
+      "description": "Sensazione di naked con grande autonomia e carattere sportivo.",
+      "longDescription": "Vero carattere naked con 125cc. Autonomia eccellente, perfetta per tour lunghi lungo la costa e verso le isole.",
+      "tagline": "Grande autonomia, perfetta per tour lunghi."
+    },
+    "bike-390": {
+      "description": "Potenza A2 per la costa. Leggera, agile, fatta per città, campagna e curve.",
+      "longDescription": "Moto premium omologata A2. Leggera, agile e perfetta per città, campagna e curve, sia che la voglia per un giorno o per un mese intero.",
+      "tagline": "Potente e premium. Scelta top per riders esperti."
+    }
+  },
+  "faqItems": [
+    {
+      "question": "Cosa include il servizio di soccorso?",
+      "answer": "Fino a 20 km: gratis (costi extra per incidenti o chiavi perse). Oltre 20 km: 50€. Isole: Preko 150€, Dugi Otok 500€. Chiave persa: 50€. Il soccorso si applica se non puoi tornare al nostro indirizzo per incidente o chiave persa. In caso di guasto al motore copriamo tutti i costi."
+    },
+    {
+      "question": "In che condizioni viene consegnata la moto?",
+      "answer": "Tutte le moto e gli scooter vengono consegnati in perfette condizioni di funzionamento. Chiediamo al cliente di ispezionare la moto, fare foto e video chiari al ritiro documentando graffi o danni esistenti, e restituirla nelle stesse condizioni. Queste registrazioni sono prova ufficiale in caso di contestazione."
+    },
+    {
+      "question": "Che assicurazione è inclusa?",
+      "answer": "L'assicurazione base copre furto della moto e danni al motore. Incidenti, graffi, danni e forature sono a carico del cliente. Se un terzo causa un incidente, devi chiamare la polizia e ottenere un rapporto ufficiale. Il responsabile paga."
+    },
+    {
+      "question": "Qual è la politica di cancellazione?",
+      "answer": "Tutte le prenotazioni non sono rimborsabili. Il 20% di caparra blocca le tue date e non viene restituito in caso di cancellazione. Se una moto non è disponibile per incidente o danno causato da un altro cliente, annulliamo e rimborsiamo l'intero importo."
+    },
+    {
+      "question": "Quando e dove riconsegno la moto?",
+      "answer": "All'orario e luogo concordati. Diamo 15 minuti di tolleranza. Ritardi oltre questa soglia comportano costi extra. Riconsegna al nostro indirizzo: Velebitska Ulica 2, 23000 Zadar."
+    },
+    {
+      "question": "Chi è responsabile per incidenti o lesioni?",
+      "answer": "Il cliente si assume la piena responsabilità per tutti gli incidenti, danni o lesioni che si verificano durante il periodo di noleggio."
+    },
+    {
+      "question": "Cosa succede se la moto si danneggia?",
+      "answer": "La cauzione copre i primi costi di riparazione. Portiamo la moto da un meccanico locale per valutazione e riparazione, il cliente paga il costo completo secondo la fattura del meccanico. Se le riparazioni superano la cauzione, il cliente paga la differenza. Una copia della fattura è sempre fornita per trasparenza."
+    },
+    {
+      "question": "Cosa succede se perdo la chiave?",
+      "answer": "Una chiave di ricambio viene consegnata per 50€ più la tariffa di soccorso applicabile in base alla tua posizione."
+    },
+    {
+      "question": "Come faccio una prenotazione?",
+      "answer": "Conferma sempre la disponibilità con noi prima. Può cambiare in fretta. Una caparra del 20% blocca le tue date. Paga via PayPal, bonifico, Revolut o contanti all'arrivo. Dopo il pagamento inviaci uno screenshot della transazione. Se arrivi più di 1 ora in ritardo senza preavviso, la prenotazione viene annullata automaticamente. Non accettiamo carte di credito."
+    },
+    {
+      "question": "Offrite supporti per telefono?",
+      "answer": "No. Non offriamo né installiamo supporti per telefono e non puoi nemmeno portare il tuo. Nessuna delle nostre moto ne ha uno. Pianifica il tuo percorso prima di partire."
+    },
+    {
+      "question": "Come funziona il carburante, pieno o vuoto?",
+      "answer": "Ogni moto viene consegnata con il pieno. Restituiscila anche con il pieno. Se la riporti senza pieno, ti addebitiamo il carburante mancante più una tariffa di rifornimento."
+    },
+    {
+      "question": "Come navigo senza supporto per telefono?",
+      "answer": "Due opzioni pratiche: viaggia con un passeggero che gestisce le indicazioni, oppure usa un kit di navigazione bluetooth in-ear per indicazioni vocali senza distogliere lo sguardo dalla strada. In ogni caso, pianifica il percorso prima del ritiro."
+    },
+    {
+      "question": "E se decidete che non ho abbastanza esperienza?",
+      "answer": "Guidare richiede esperienza precedente. Se al ritiro stabiliamo che non hai abbastanza esperienza per gestire la moto in sicurezza, ci riserviamo il diritto di rifiutare il noleggio. In quel caso la caparra non è rimborsabile, sii onesto sulla tua esperienza al momento della prenotazione."
+    }
+  ],
+  "common": {
+    "loading": "Caricamento...",
+    "tryAgain": "Riprova",
+    "language": "Lingua"
+  }
+}
