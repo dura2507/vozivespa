@@ -359,7 +359,7 @@ export const FAQ_ITEMS = [
   {
     question: "Do you offer phone holders?",
     answer:
-      "No. We don't offer or fit phone holders. None of our bikes come with one - please plan your route before you head out.",
+      "No. We don't offer or fit phone holders, and you can't bring your own either. None of our bikes come with one - please plan your route before you head out.",
   },
   {
     question: "How does the fuel work - full tank, empty tank?",

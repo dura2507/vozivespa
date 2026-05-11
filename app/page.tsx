@@ -3,7 +3,10 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ReviewCarousel from "@/components/ReviewCarousel";
-import { CATEGORIES, REVIEWS, GALLERY_IMAGES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
+import { REVIEWS, GALLERY_IMAGES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
+import { getCategoriesWithPricing } from "@/lib/bike-pricing";
+
+export const dynamic = "force-dynamic";
 
 const INCLUDED = [
   {
@@ -83,7 +86,8 @@ const HOW_IT_WORKS = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const CATEGORIES = await getCategoriesWithPricing();
   return (
     <>
       <Navbar />
@@ -245,7 +249,7 @@ export default function HomePage() {
             <div className="bg-off-white px-6 py-7 flex flex-col items-start gap-3">
               <span className="font-barlow font-black text-3xl text-red leading-none">No</span>
               <p className="font-bold text-ink text-sm">Phone holders</p>
-              <p className="text-xs text-muted leading-relaxed">We don&apos;t offer or fit phone holders. None of our bikes have one.</p>
+              <p className="text-xs text-muted leading-relaxed">We don&apos;t offer or fit phone holders, and you can&apos;t bring your own. None of our bikes have one.</p>
             </div>
             <div className="bg-off-white px-6 py-7 flex flex-col items-start gap-3">
               <span className="font-barlow font-black text-3xl text-red leading-none">Apr–Oct</span>

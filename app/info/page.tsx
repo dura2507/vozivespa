@@ -2,7 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { CATEGORIES } from "@/lib/mockData";
+import { getCategoriesWithPricing } from "@/lib/bike-pricing";
+
+export const dynamic = "force-dynamic";
 
 const LicenceIcon = () => (
   <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -72,7 +74,8 @@ const REQUIREMENTS = [
   },
 ];
 
-export default function InfoPage() {
+export default async function InfoPage() {
+  const CATEGORIES = await getCategoriesWithPricing();
   return (
     <>
       <Navbar />
