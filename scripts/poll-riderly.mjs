@@ -171,15 +171,26 @@ function formatReceived(d) {
 }
 
 async function tg(method, body) {
-  const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/${method}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    throw new Error(`Telegram ${method} ${res.status}: ${await res.text()}`);
+  // Hard 15s timeout — fetch() in Node has no default deadline, and a
+  // hung connection to api.telegram.org would otherwise pin the
+  // whole GitHub Actions job until the workflow's own timeout kicks
+  // in.
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 15_000);
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/${method}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: ctrl.signal,
+    });
+    if (!res.ok) {
+      throw new Error(`Telegram ${method} ${res.status}: ${await res.text()}`);
+    }
+    return res.json();
+  } finally {
+    clearTimeout(timer);
   }
-  return res.json();
 }
 
 async function sendRiderlyTelegram(email) {
@@ -281,14 +292,27 @@ async function main() {
         const parsed = await simpleParser(msg.source);
         const email = classify(parsed);
         console.log(`[riderly] forwarding ${email.kind} message uid=${msg.uid}`);
+        let telegramOk = false;
         try {
           await sendRiderlyTelegram(email);
-          if (msg.uid) {
-            await client.messageFlagsAdd(msg.uid, ["\\Seen"], { uid: true });
-          }
+          telegramOk = true;
           processed++;
         } catch (err) {
-          console.error(`[riderly] failed message uid=${msg.uid}:`, err.message);
+          console.error(`[riderly] telegram failed uid=${msg.uid}:`, err.message);
+        }
+        // Mark as read EVEN if Telegram failed — otherwise a single
+        // bad message blocks every subsequent tick in an endless loop.
+        // We log the failure above so the message can be re-sent
+        // manually if needed.
+        if (msg.uid) {
+          try {
+            await client.messageFlagsAdd(msg.uid, ["\\Seen"], { uid: true });
+            if (!telegramOk) {
+              console.warn(`[riderly] uid=${msg.uid} marked read despite telegram failure`);
+            }
+          } catch (err) {
+            console.error(`[riderly] mark-read failed uid=${msg.uid}:`, err.message);
+          }
         }
       }
     } finally {
