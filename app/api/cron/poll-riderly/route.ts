@@ -4,6 +4,10 @@ import { sendOwnerRiderlyTelegram } from "@/lib/telegram";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// IMAP login over TLS to imap.gmail.com can spike past Hobby's 10s
+// default during cold starts. Bump to the Hobby ceiling so we get
+// real errors instead of opaque 504 timeouts.
+export const maxDuration = 60;
 
 // GET /api/cron/poll-riderly
 //
