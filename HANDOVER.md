@@ -29,8 +29,9 @@ Riderly inbox is `tkrawietz284@gmail.com` (filter-forwards to
   `bookings@rentamotozadar.com`.
 * Telegram bot `@SickMotosRentamoto_Bot`, owner chat
   `1063783447`.
-* GitHub Actions for the Riderly poller (Vercel cron is Hobby-tier
-  locked to daily, so we run it as a workflow).
+* cron-job.org hits the Vercel API route `/api/cron/poll-riderly`
+  every minute (Vercel-internal cron on Hobby is daily-only, but
+  external triggers have no frequency cap).
 
 ## Worktree
 
@@ -104,56 +105,49 @@ Pipeline:
 
 1. Owner's real Gmail `tkrawietz284@gmail.com` has a filter
    `from:reservations@riderly.com` → forward to
-   `rentamotobooking@gmail.com`. (Owner still needs to set up
-   this filter on his side.)
-2. GitHub Actions workflow `.github/workflows/poll-riderly.yml`
-   runs `*/15 * * * *` and invokes `scripts/poll-riderly.mjs`.
-3. The script IMAPs `rentamotobooking@gmail.com`, fetches unseen
-   messages, **buffers them all** (avoids the imapflow deadlock —
-   you cannot `messageFlagsAdd` while still iterating `fetch()`),
-   releases the lock, then classifies via `lib/riderly.ts` →
-   sends Telegram (`sendOwnerRiderlyTelegram`) with 1.2 s gaps to
-   stay under Telegram's 1-msg/sec/chat → marks each UID as
-   `\Seen` in a batch.
-4. 15 s `AbortController` timeout on Telegram fetches; mark-as-read
-   happens **even if Telegram fails** so we don't loop forever on
-   a bad message. `MAX_MESSAGES_PER_RUN = 15`.
+   `rentamotobooking@gmail.com`. Will become obsolete once the
+   owner changes Riderly's notification email via their support
+   to point straight at `rentamotobooking@gmail.com`.
+2. cron-job.org cronjob (id 7588251) hits
+   `GET https://rentamotozadar.com/api/cron/poll-riderly` every
+   minute with header `Authorization: Bearer ${CRON_SECRET}`.
+3. The route runs `pollRiderlyInbox()` from `lib/riderly.ts`. It
+   IMAPs `rentamotobooking@gmail.com`, fetches unseen messages,
+   **buffers them all** (avoids the imapflow deadlock, you cannot
+   `messageFlagsAdd` while still iterating `fetch()`), releases the
+   lock, then marks every UID as `\Seen` in one batch under a fresh
+   lock. Allowed messages go to `sendOwnerRiderlyTelegram`.
+4. `export const maxDuration = 60` on the route so a cold-start
+   IMAP connect has room to breathe under the Hobby plan ceiling.
 
-**Production-switch trigger** lives in `scripts/poll-riderly.mjs`:
+**Production-switch trigger** lives in `lib/riderly.ts`:
 
-```js
+```ts
 const ALLOWED_FROM = [
-  "leon.huschka@duraska.com", // TEST — remove for production
-  "@riderly.com",             // PRODUCTION — keep
+  "leon.huschka@duraska.com", // TEST, remove for production
+  "@riderly.com",             // PRODUCTION, keep
 ];
 ```
 
 Anything not matching is logged + marked-read silently. Once user
 confirms test phase is done, **delete the Leon line** and push.
 
-Old `app/api/cron/poll-riderly/route.ts` + `lib/riderly.ts` are
-still in the repo. They're harmless: the route requires
-`CRON_SECRET` and nobody calls it. Vercel cron config is gone.
-The GitHub Actions workflow is the live path.
-
 ## Gotchas already paid for (don't relearn)
 
 * **Vercel Hobby cron caps at once-daily.** Putting
   `*/15 * * * *` in `vercel.json` made Vercel silently reject
   *every* deploy. The file is gone now; keep it gone unless we
-  upgrade to Pro.
-* **Vercel serverless can't reliably do IMAP** even with
-  `maxDuration = 60`. Use GitHub Actions for IMAP.
+  upgrade to Pro. External cron via cron-job.org has no such cap.
 * **imapflow deadlocks** if you call `messageFlagsAdd` mid-`fetch`.
-  Buffer first, then act.
+  Buffer first, then mark seen in a single batch under a fresh
+  mailbox lock. The earlier inline version of this loop was hitting
+  the Vercel 60s `maxDuration` ceiling because of this deadlock.
 * **Google App Passwords require 2FA fully on.** The settings page
   only appears once 2FA is active.
 * **Telegram has no default fetch timeout in Node.** Always pass
   an `AbortController`.
 * **Telegram chat rate limit is 1 msg/sec/chat.** 1.2 s sleeps
   + a hard cap per run.
-* **PATs can't push `.github/workflows/`.** Edit on the GitHub
-  web UI.
 * **Mark-as-read must run even on Telegram error**, or one bad
   email blocks every future run.
 * **Token format must be hex** (not base64) — `+` and `/` break
@@ -194,36 +188,39 @@ ADMIN_PASSWORD=…
 ADMIN_SESSION_SECRET=…
 ```
 
-### GitHub Actions secrets (for the Riderly poller)
+### Vercel env vars added for the Riderly poller
 
 ```
+CRON_SECRET=…                     (Bearer token cron-job.org sends)
 RIDERLY_IMAP_USER=rentamotobooking@gmail.com
 RIDERLY_IMAP_PASSWORD=<gmail app password, no spaces>
 RIDERLY_IMAP_HOST=imap.gmail.com   (optional, default)
 RIDERLY_IMAP_PORT=993               (optional, default)
 RIDERLY_LABEL=INBOX                 (optional, default)
-TELEGRAM_BOT_TOKEN=…
-TELEGRAM_OWNER_CHAT_ID=1063783447
 ```
 
 Note: a Gmail App Password was pasted in a screenshot during
-this session — **rotate it before production rollout**.
+an earlier session, **rotate it before production rollout**.
 
 ## Open items
 
-* **Confirm Riderly test phase passes** (user is actively sending
-  test mails from non-Leon senders to verify they're skipped).
-  When confirmed: delete the `"leon.huschka@duraska.com"` line
-  from `ALLOWED_FROM`, push.
-* **Owner sets up Gmail filter** on `tkrawietz284@gmail.com`:
-  `from:reservations@riderly.com` → forward to
-  `rentamotobooking@gmail.com`.
-* **Optional**: `cache: 'npm'` on `setup-node@v4` in
-  `.github/workflows/poll-riderly.yml` to speed up cold runs.
-  (Edit via GitHub web UI — PAT can't push workflow files.)
-* **Rotate the leaked Gmail App Password.**
-* **Google reviews sync** still deferred — manual paste of 4-6
-  real reviews, or Google Places API.
+* **First real Riderly booking is the production test.** Confirm
+  the Telegram message has bike, dates, total, licence, age, plus
+  Accept / Reject inline buttons. If a field comes back empty, the
+  Riderly HTML layout drifted, fix the regex in
+  `parseNewBooking` in `lib/riderly.ts`.
+* **Switch allowlist to production-only** once the above is green:
+  remove `"leon.huschka@duraska.com"` from `ALLOWED_FROM` in
+  `lib/riderly.ts`, push.
+* **Owner changes Riderly's notification email** via Riderly
+  support to send straight to `rentamotobooking@gmail.com`. After
+  that, the `tkrawietz284@gmail.com` Gmail filter-forward can be
+  retired.
+* **Rotate the leaked Gmail App Password** (pasted in a screenshot
+  during an earlier session).
+* **Google reviews sync** still manual. Auto-sync via Google
+  Places API was attempted, the owner's Mastercard kept failing
+  Google's card-verification step, so it's parked.
 * Phone country-code dropdown deliberately skipped (owner OK
   with manual `+49` style).
 
@@ -244,16 +241,13 @@ this session — **rotate it before production rollout**.
 These are walls a fresh session will hit. Don't waste turns trying;
 write the step out and have the user click it.
 
-* **Edit `.github/workflows/*.yml`** — GitHub blocks workflow
-  pushes from PATs without the `workflow` scope. Tell the user
-  exactly what line to change and have them edit on
-  github.com via the pencil icon → Commit changes.
-* **GitHub Secrets** (Settings → Secrets and variables → Actions).
-  Adding / rotating any of `RIDERLY_IMAP_*`, `TELEGRAM_*` etc. is
-  web-UI only.
 * **Vercel env vars + redeploy.** Adding/changing prod env vars
   is web-UI only; after a change the user has to trigger a
-  redeploy from the Deployments tab.
+  redeploy from the Deployments tab. (Sensitive vars are write-
+  only, the only way to know the value is to Rotate and capture
+  the new one immediately.)
+* **cron-job.org cronjob settings** — schedule, headers, enable/
+  disable toggle. Login is the owner's account.
 * **Supabase Studio** — running ad-hoc SQL, checking RLS, or
   creating buckets (`booking-receipts` was created by hand).
   Migrations live in `supabase/migrations/` but applying them
@@ -272,43 +266,6 @@ write the step out and have the user click it.
 * **Browser automation MCP is unreliable here** — the user
   cannot see the tab Claude opens. Don't depend on it. Walk
   the user through screenshots instead.
-
-## Current workflow file (for reference)
-
-`.github/workflows/poll-riderly.yml`:
-
-```yaml
-name: Poll Riderly inbox
-on:
-  schedule:
-    - cron: '*/15 * * * *'
-  workflow_dispatch: {}
-permissions: {}
-concurrency:
-  group: poll-riderly
-  cancel-in-progress: false
-jobs:
-  poll:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci --ignore-scripts
-      - run: node scripts/poll-riderly.mjs
-        env:
-          RIDERLY_IMAP_USER: ${{ secrets.RIDERLY_IMAP_USER }}
-          RIDERLY_IMAP_PASSWORD: ${{ secrets.RIDERLY_IMAP_PASSWORD }}
-          RIDERLY_LABEL: ${{ secrets.RIDERLY_LABEL }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_OWNER_CHAT_ID: ${{ secrets.TELEGRAM_OWNER_CHAT_ID }}
-```
-
-`concurrency.group` prevents two ticks from overlapping if a run
-exceeds 15 min; `cancel-in-progress: false` lets the older one
-finish (we never want to interrupt mid-IMAP).
 
 ## How to continue in a fresh session
 

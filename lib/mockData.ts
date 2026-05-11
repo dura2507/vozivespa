@@ -50,22 +50,10 @@ export type Review = {
   text: string;
 };
 
-export type BlockedRange = {
-  from: Date;
-  to: Date;
-};
-
 export const LICENCE_BADGE: Record<string, string> = {
   "A1": "/badges/licence-a1.png",
   "A2": "/badges/licence-a2.png",
   "AM/B": "/badges/licence-am-b.png",
-};
-
-const PLACEHOLDER_PRICING: PricingTiers = {
-  day: "-",
-  weekend: "-",
-  week: "-",
-  month: "-",
 };
 
 export const CATEGORIES: Category[] = [
@@ -254,9 +242,6 @@ export const CATEGORIES: Category[] = [
   },
 ];
 
-// Used for any bike not yet specified
-export { PLACEHOLDER_PRICING };
-
 export const REVIEWS: Review[] = [
   {
     id: "1",
@@ -386,41 +371,6 @@ export const FAQ_ITEMS = [
       "Riding requires prior experience. If at pickup we determine you don't have enough experience to safely handle the bike, we reserve the right to decline the rental. In that case the booking fee is non-refundable, so please be honest about your experience when booking.",
   },
 ];
-
-// Mock blocked date ranges for the booking calendar
-// Simulates already-booked periods per category
-export const BLOCKED_DATES_SCOOTER_50: BlockedRange[] = [
-  { from: new Date(2026, 4, 5), to: new Date(2026, 4, 8) },
-  { from: new Date(2026, 4, 18), to: new Date(2026, 4, 22) },
-  { from: new Date(2026, 5, 1), to: new Date(2026, 5, 4) },
-];
-
-export const BLOCKED_DATES_SCOOTER_125: BlockedRange[] = [
-  { from: new Date(2026, 4, 10), to: new Date(2026, 4, 14) },
-  { from: new Date(2026, 5, 5), to: new Date(2026, 5, 9) },
-  { from: new Date(2026, 5, 25), to: new Date(2026, 5, 29) },
-];
-
-export const BLOCKED_DATES_BIKE_125: BlockedRange[] = [
-  { from: new Date(2026, 4, 12), to: new Date(2026, 4, 16) },
-  { from: new Date(2026, 5, 10), to: new Date(2026, 5, 14) },
-  { from: new Date(2026, 6, 3), to: new Date(2026, 6, 8) },
-];
-
-export const BLOCKED_DATES_BIKE_390: BlockedRange[] = [
-  { from: new Date(2026, 4, 20), to: new Date(2026, 4, 25) },
-  { from: new Date(2026, 5, 15), to: new Date(2026, 5, 20) },
-  { from: new Date(2026, 6, 10), to: new Date(2026, 6, 15) },
-];
-
-export const BLOCKED_BY_ID: Record<string, BlockedRange[]> = {
-  "scooter-50": BLOCKED_DATES_SCOOTER_50,
-  "scooter-50-topcase": BLOCKED_DATES_SCOOTER_50,
-  "scooter-125": BLOCKED_DATES_SCOOTER_125,
-  "bike-125-a": BLOCKED_DATES_BIKE_125,
-  "bike-125-b": BLOCKED_DATES_BIKE_125,
-  "bike-390": BLOCKED_DATES_BIKE_390,
-};
 
 // Brand info
 export type Contact = {
