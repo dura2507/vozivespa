@@ -1,16 +1,20 @@
-import { ImapFlow } from "imapflow";
 import { simpleParser, type ParsedMail } from "mailparser";
 
 // Riderly is a separate booking platform that doesn't expose an API.
-// Their notification emails do contain magic accept/reject URLs the
-// owner can click without login though, so we mirror those into the
-// Telegram alert as inline buttons. One tap → booking confirmed on
-// Riderly. No portal switch needed.
+// Their notification emails carry magic accept/reject URLs the owner
+// can click without login though, so we mirror those into the Telegram
+// alert as inline buttons. One tap → booking confirmed on Riderly.
+//
+// We poll the owner's Gmail via the Gmail API (OAuth2 refresh-token
+// flow). IMAP would have worked too but Google has deprecated App
+// Passwords across many accounts, and Gmail API + OAuth is the
+// Google-blessed modern way + works on every account regardless of
+// 2FA setup.
 
 export type RiderlyBooking = {
   bookingId: string;
   bikeName: string | null;
-  startDate: string | null; // "(Wed) 06 May 2026, 10:00"
+  startDate: string | null;
   endDate: string | null;
   days: number | null;
   totalEur: string | null;
@@ -26,11 +30,7 @@ export type RiderlyBooking = {
 };
 
 export type RiderlyEmail =
-  | {
-      kind: "booking";
-      receivedAt: Date | null;
-      booking: RiderlyBooking;
-    }
+  | { kind: "booking"; receivedAt: Date | null; booking: RiderlyBooking }
   | {
       kind: "other";
       receivedAt: Date | null;
@@ -45,9 +45,6 @@ function clip(text: string, max: number): string {
   return text.slice(0, max).trimEnd() + "…";
 }
 
-// Reduce a Riderly HTML email into readable plain text. Riderly emails
-// don't include a text/plain alternative, so we have to derive one
-// from the HTML.
 function htmlToText(html: string): string {
   return html
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
@@ -76,9 +73,6 @@ function findHrefMatching(html: string, pattern: RegExp): string | null {
 }
 
 function extractAfterLabel(text: string, label: string): string | null {
-  // Field labels in Riderly's HTML render as their own paragraph
-  // followed by the value on the next non-empty line. Walk the lines
-  // explicitly so a regex search position can't trip us up.
   const lines = text.split("\n").map((l) => l.trim());
   for (let i = 0; i < lines.length; i++) {
     if (lines[i] !== label) continue;
@@ -120,15 +114,6 @@ function parseNewBooking(parsed: ParsedMail): RiderlyBooking {
   const daysMatch = /for\s+(\d+)\s+days?/i.exec(text);
   const days = daysMatch ? parseInt(daysMatch[1], 10) : null;
 
-  // The price summary is a 2-column "Item / Price" block. After
-  // collapsing HTML to text the prices stack as their own lines:
-  //   € 100.00          (Motorbike Rental)
-  //   € 0.00            (Optional Extras)
-  //   - € 0.00          (Discount)
-  //   - € 15.00         (Online Payment 15%)
-  //   € 85.00           (Remaining Payment, after a "Remaining" header)
-  // Pull them in order so we don't have to reason about exact line
-  // positions.
   const totalEur =
     /(?:^|\n)\s*Price\s*\n+\s*€\s*\n?\s*([0-9]+(?:\.[0-9]+)?)/m.exec(text)?.[1] ?? null;
   const negativePrices = [
@@ -195,8 +180,6 @@ function parseOther(parsed: ParsedMail): {
   return { subject, from, preview, riderlyUrl };
 }
 
-// Public for testing — turn a parsed mail object into our typed
-// RiderlyEmail union, dispatching on email kind.
 export function classifyRiderly(parsed: ParsedMail): RiderlyEmail {
   const subject = parsed.subject ?? "";
   const html = typeof parsed.html === "string" ? parsed.html : "";
@@ -210,50 +193,94 @@ export function classifyRiderly(parsed: ParsedMail): RiderlyEmail {
   return { kind: "other", receivedAt: parsed.date ?? null, ...parseOther(parsed) };
 }
 
-// Connects to the configured mailbox, fetches every unseen message
-// from the configured label, classifies each into a RiderlyEmail and
-// marks them as read so the next cron tick only sees fresh
-// notifications. Throws on connection / auth issues so the cron
-// handler can log + 500.
-export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
-  const user = process.env.RIDERLY_IMAP_USER?.trim();
-  const pass = process.env.RIDERLY_IMAP_PASSWORD?.trim();
-  if (!user || !pass) {
-    throw new Error("RIDERLY_IMAP_USER / RIDERLY_IMAP_PASSWORD env vars not set");
+// --- Gmail API client (OAuth2 refresh-token flow) ---------------------------
+
+async function getAccessToken(): Promise<string> {
+  const clientId = process.env.GMAIL_CLIENT_ID?.trim();
+  const clientSecret = process.env.GMAIL_CLIENT_SECRET?.trim();
+  const refreshToken = process.env.GMAIL_REFRESH_TOKEN?.trim();
+  if (!clientId || !clientSecret || !refreshToken) {
+    throw new Error(
+      "GMAIL_CLIENT_ID / GMAIL_CLIENT_SECRET / GMAIL_REFRESH_TOKEN env vars not set",
+    );
   }
-  const host = process.env.RIDERLY_IMAP_HOST?.trim() || "imap.gmail.com";
-  const port = parseInt(process.env.RIDERLY_IMAP_PORT ?? "993", 10);
-  const mailbox = process.env.RIDERLY_LABEL?.trim() || "INBOX";
-
-  const client = new ImapFlow({
-    host,
-    port,
-    secure: true,
-    auth: { user, pass },
-    logger: false,
+  const res = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      refresh_token: refreshToken,
+      grant_type: "refresh_token",
+    }),
   });
+  if (!res.ok) {
+    throw new Error(`Gmail token refresh failed: ${res.status} ${await res.text()}`);
+  }
+  const data = (await res.json()) as { access_token: string };
+  return data.access_token;
+}
 
+async function listUnreadIds(accessToken: string, query: string): Promise<string[]> {
+  const url = new URL("https://gmail.googleapis.com/gmail/v1/users/me/messages");
+  url.searchParams.set("q", `is:unread ${query}`.trim());
+  url.searchParams.set("maxResults", "25");
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!res.ok) throw new Error(`Gmail list failed: ${res.status} ${await res.text()}`);
+  const data = (await res.json()) as { messages?: { id: string }[] };
+  return (data.messages ?? []).map((m) => m.id);
+}
+
+async function fetchRawMessage(accessToken: string, id: string): Promise<Buffer> {
+  const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}?format=raw`;
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!res.ok) throw new Error(`Gmail fetch failed: ${res.status} ${await res.text()}`);
+  const data = (await res.json()) as { raw: string };
+  // Gmail returns RFC822 in base64url. Convert to standard base64 + decode.
+  const base64 = data.raw.replace(/-/g, "+").replace(/_/g, "/");
+  return Buffer.from(base64, "base64");
+}
+
+async function markAsRead(accessToken: string, id: string): Promise<void> {
+  const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}/modify`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ removeLabelIds: ["UNREAD"] }),
+  });
+  if (!res.ok) {
+    throw new Error(`Gmail mark-read failed: ${res.status} ${await res.text()}`);
+  }
+}
+
+// Poll the configured Gmail inbox for unread Riderly notifications.
+// Each message is fetched, parsed and classified, then marked as read
+// so the next cron tick only sees fresh notifications. The Gmail query
+// (default `from:reservations@riderly.com`) can be overridden via the
+// RIDERLY_GMAIL_QUERY env var if owner uses labels or a different
+// sender.
+export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
+  const query =
+    process.env.RIDERLY_GMAIL_QUERY?.trim() || "from:reservations@riderly.com";
+  const accessToken = await getAccessToken();
+  const ids = await listUnreadIds(accessToken, query);
   const out: RiderlyEmail[] = [];
-  await client.connect();
-  try {
-    const lock = await client.getMailboxLock(mailbox);
+  for (const id of ids) {
     try {
-      for await (const msg of client.fetch(
-        { seen: false },
-        { source: true, envelope: true, uid: true },
-      )) {
-        if (!msg.source) continue;
-        const parsed = await simpleParser(msg.source);
-        out.push(classifyRiderly(parsed));
-        if (msg.uid) {
-          await client.messageFlagsAdd(msg.uid, ["\\Seen"], { uid: true });
-        }
-      }
-    } finally {
-      lock.release();
+      const raw = await fetchRawMessage(accessToken, id);
+      const parsed = await simpleParser(raw);
+      out.push(classifyRiderly(parsed));
+      await markAsRead(accessToken, id);
+    } catch (err) {
+      console.error(`[riderly] failed processing message ${id}`, err);
     }
-  } finally {
-    await client.logout().catch(() => {});
   }
   return out;
 }
