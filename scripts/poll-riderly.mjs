@@ -290,9 +290,14 @@ async function main() {
   await client.connect();
   console.log(`[riderly] connected in ${Date.now() - t0}ms`);
 
-  let processed = 0;
-  let seen = 0;
-  try {
+  // Two-phase processing: first drain the fetch iterator into a
+  // local array while holding the lock. Then release, send Telegram
+  // pings with pacing, and mark everything as read in a single
+  // batch at the end. This avoids mixing IMAP commands with an
+  // active fetch iterator, which imapflow can't handle and was
+  // deadlocking the previous version.
+  const buffered = [];
+  {
     const lock = await client.getMailboxLock(LABEL);
     console.log(`[riderly] lock acquired on ${LABEL}`);
     try {
@@ -300,46 +305,53 @@ async function main() {
         { seen: false },
         { source: true, envelope: true, uid: true },
       )) {
-        if (!msg.source) continue;
-        if (seen >= MAX_MESSAGES_PER_RUN) {
-          console.warn(`[riderly] per-run limit ${MAX_MESSAGES_PER_RUN} reached — leaving rest for next tick`);
+        if (!msg.source || !msg.uid) continue;
+        if (buffered.length >= MAX_MESSAGES_PER_RUN) {
+          console.warn(`[riderly] per-run cap ${MAX_MESSAGES_PER_RUN} hit — leaving rest for next tick`);
           break;
         }
-        seen++;
-        if (seen > 1) await sleep(TELEGRAM_DELAY_MS);
-
         const parsed = await simpleParser(msg.source);
-        const email = classify(parsed);
-        console.log(`[riderly] forwarding ${email.kind} message uid=${msg.uid}`);
-        let telegramOk = false;
-        try {
-          await sendRiderlyTelegram(email);
-          telegramOk = true;
-          processed++;
-        } catch (err) {
-          console.error(`[riderly] telegram failed uid=${msg.uid}:`, err.message);
-        }
-        // Mark as read EVEN if Telegram failed — otherwise a single
-        // bad message blocks every subsequent tick in an endless loop.
-        if (msg.uid) {
-          try {
-            await client.messageFlagsAdd(msg.uid, ["\\Seen"], { uid: true });
-            if (!telegramOk) {
-              console.warn(`[riderly] uid=${msg.uid} marked read despite telegram failure`);
-            }
-          } catch (err) {
-            console.error(`[riderly] mark-read failed uid=${msg.uid}:`, err.message);
-          }
-        }
+        buffered.push({ uid: msg.uid, email: classify(parsed) });
       }
     } finally {
       lock.release();
     }
-  } finally {
-    await client.logout().catch(() => {});
+  }
+  console.log(`[riderly] buffered ${buffered.length} message(s) in ${Date.now() - t0}ms`);
+
+  let processed = 0;
+  const sentUids = [];
+  for (let i = 0; i < buffered.length; i++) {
+    const { uid, email } = buffered[i];
+    if (i > 0) await sleep(TELEGRAM_DELAY_MS);
+    console.log(`[riderly] forwarding ${email.kind} message uid=${uid}`);
+    try {
+      await sendRiderlyTelegram(email);
+      processed++;
+    } catch (err) {
+      console.error(`[riderly] telegram failed uid=${uid}:`, err.message);
+    }
+    // Always queue for mark-read, even on telegram failure, so a bad
+    // message can't loop forever.
+    sentUids.push(uid);
   }
 
-  console.log(`[riderly] done — forwarded ${processed}/${seen} message(s) in ${Date.now() - t0}ms`);
+  if (sentUids.length > 0) {
+    try {
+      const lock = await client.getMailboxLock(LABEL);
+      try {
+        await client.messageFlagsAdd(sentUids, ["\\Seen"], { uid: true });
+        console.log(`[riderly] marked ${sentUids.length} message(s) as read`);
+      } finally {
+        lock.release();
+      }
+    } catch (err) {
+      console.error(`[riderly] batch mark-read failed:`, err.message);
+    }
+  }
+
+  await client.logout().catch(() => {});
+  console.log(`[riderly] done — forwarded ${processed}/${buffered.length} in ${Date.now() - t0}ms`);
 }
 
 main().catch((err) => {
