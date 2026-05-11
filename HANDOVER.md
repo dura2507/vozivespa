@@ -239,6 +239,77 @@ this session — **rotate it before production rollout**.
 * Never push migrations and dependent code in the same shot —
   always migrate first, wait for confirmation, then push code.
 
+## Things the agent CANNOT do directly — always ask the user
+
+These are walls a fresh session will hit. Don't waste turns trying;
+write the step out and have the user click it.
+
+* **Edit `.github/workflows/*.yml`** — GitHub blocks workflow
+  pushes from PATs without the `workflow` scope. Tell the user
+  exactly what line to change and have them edit on
+  github.com via the pencil icon → Commit changes.
+* **GitHub Secrets** (Settings → Secrets and variables → Actions).
+  Adding / rotating any of `RIDERLY_IMAP_*`, `TELEGRAM_*` etc. is
+  web-UI only.
+* **Vercel env vars + redeploy.** Adding/changing prod env vars
+  is web-UI only; after a change the user has to trigger a
+  redeploy from the Deployments tab.
+* **Supabase Studio** — running ad-hoc SQL, checking RLS, or
+  creating buckets (`booking-receipts` was created by hand).
+  Migrations live in `supabase/migrations/` but applying them
+  to prod happens via Studio SQL editor.
+* **Gmail filter on the owner's real inbox** — only the owner
+  himself can configure forwarding from `tkrawietz284@gmail.com`
+  to `rentamotobooking@gmail.com`. The poller is useless until
+  he does this.
+* **Gmail App Password creation** — requires 2FA fully on for
+  that account; only the account holder can generate one at
+  `myaccount.google.com/apppasswords`.
+* **Telegram `setWebhook`** — one-shot `curl` the user runs
+  themselves (or we paste the command and they execute it).
+  Bot token is not in our shell.
+* **Domain / DNS on Vercel** — owner-managed.
+* **Browser automation MCP is unreliable here** — the user
+  cannot see the tab Claude opens. Don't depend on it. Walk
+  the user through screenshots instead.
+
+## Current workflow file (for reference)
+
+`.github/workflows/poll-riderly.yml`:
+
+```yaml
+name: Poll Riderly inbox
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch: {}
+permissions: {}
+concurrency:
+  group: poll-riderly
+  cancel-in-progress: false
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci --ignore-scripts
+      - run: node scripts/poll-riderly.mjs
+        env:
+          RIDERLY_IMAP_USER: ${{ secrets.RIDERLY_IMAP_USER }}
+          RIDERLY_IMAP_PASSWORD: ${{ secrets.RIDERLY_IMAP_PASSWORD }}
+          RIDERLY_LABEL: ${{ secrets.RIDERLY_LABEL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_OWNER_CHAT_ID: ${{ secrets.TELEGRAM_OWNER_CHAT_ID }}
+```
+
+`concurrency.group` prevents two ticks from overlapping if a run
+exceeds 15 min; `cancel-in-progress: false` lets the older one
+finish (we never want to interrupt mid-IMAP).
+
 ## How to continue in a fresh session
 
 1. `cd /Users/kristian.durasin/Desktop/vozivespa/.claude/worktrees/dazzling-joliot-82649c`
