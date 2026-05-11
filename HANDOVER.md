@@ -1,305 +1,183 @@
-# SickMotos / Rent a Moto — Project Handover
+# SickMotos / Rent a Moto — Handover
 
-Last updated: end of current session, 2026-05-09 onwards.
+Last refreshed end of session 2026-05-11. Earlier handover sections
+on anchor scroll, pricing tiers, calendar UX etc. are unchanged —
+this file rewrites only the parts that drifted.
 
 ## What this is
 
-Marketing + booking site for **SickMotos / Rent a Moto** — a Vespa /
-scooter / motorbike rental in Zadar, Croatia. Custom domain
-**rentamotozadar.com** on Vercel, repo at
-`github.com/dura2507/vozivespa`.
+Booking site for **SickMotos / Rent a Moto** (Zadar, Croatia).
+Live on **rentamotozadar.com**, repo `github.com/dura2507/vozivespa`,
+deployed via Vercel (auto-deploy on push to `main`).
 
-Memory shows the project was originally built as a static Next.js
-prototype, then we layered on a real booking backend (Supabase),
-owner notifications via Telegram, customer emails via Resend, and a
-self-cancel flow.
+Owner = Thomas. Calls go to `+49 176 34658003` (DE) and
+`+385 95 8195 453` (EN). Owner Gmail for booking notifications:
+`duraskastudios@gmail.com` is the dev/test inbox; the real owner's
+Riderly inbox is `tkrawietz284@gmail.com` (filter-forwards to
+`rentamotobooking@gmail.com`, see Riderly section).
 
-## Tech stack
+## Stack
 
-* **Next.js 16** (Turbopack) + **React 19** + **TypeScript**, App
-  Router. ⚠️ "This is NOT the Next.js you know" — see `AGENTS.md`.
-  Read `node_modules/next/dist/docs/01-app/...` before assuming v15
-  patterns.
-* **Tailwind v4** with `@theme { … }` in `app/globals.css`.
-* **Supabase** for DB (free tier project
-  `odbmkiwxydexutyqsyts`).
-* **Resend** for transactional email, sender domain
-  `bookings@rentamotozadar.com` (verified).
-* **Telegram** (bot `@SickMotosRentamoto_Bot`) for owner
-  notifications.
-* **Vercel** for hosting + DNS.
-
-## Repos / accounts referenced in code
-
-* GitHub: `github.com/dura2507/vozivespa`
-* Vercel project: `vozivespa`, custom domain `rentamotozadar.com`
-* Supabase project URL:
-  `https://odbmkiwxydexutyqsyts.supabase.co`
-* Owner email (notifications): `duraskastudios@gmail.com`
-* DE contact: `+49 176 34658003`
-* EN contact: `+385 95 8195 453`
-* Telegram chat id (owner): `1063783447`
-
-Memory file: see
-`/Users/kristian.durasin/.claude/projects/-Users-kristian-durasin-Desktop-vozivespa/memory/`
-for `project_vozivespa.md` and `feedback_auto_push.md`. The latter
-says: **after each chunk of changes, auto-commit + push to main —
-Vercel auto-deploys, owner shares the live URL with the client and
-expects every change to land on the live site without a round-trip**.
+* Next.js 16 (Turbopack) + React 19 + TS, App Router.
+  **AGENTS.md: this is NOT the Next.js you know** — check
+  `node_modules/next/dist/docs/...` before guessing v15 patterns.
+* Tailwind v4 with `@theme {}` in `app/globals.css`.
+* Supabase (DB + Storage), free tier, project
+  `odbmkiwxydexutyqsyts`. Server-only via `SUPABASE_SERVICE_ROLE_KEY`,
+  RLS is on with no public policies.
+* Resend for transactional email, sender
+  `bookings@rentamotozadar.com`.
+* Telegram bot `@SickMotosRentamoto_Bot`, owner chat
+  `1063783447`.
+* GitHub Actions for the Riderly poller (Vercel cron is Hobby-tier
+  locked to daily, so we run it as a workflow).
 
 ## Worktree
 
-We work in
-`/Users/kristian.durasin/Desktop/vozivespa/.claude/worktrees/modest-dijkstra-cbe016/`,
-which pushes its branch `claude/modest-dijkstra-cbe016` straight to
-remote `main`.
+Current branch: `claude/dazzling-joliot-82649c` (the worktree dir
+name matches). Pushes go straight to `main`.
 
-## Pages and routes
+## Major features in the codebase right now
 
-* `/` — homepage (hero, fleet grid, included, good-to-know,
-  how-it-works, reviews, gallery strip, CTA)
-* `/fleet/[bikeId]` — single bike: hero + specs + pricing tiers
-  + policy strip + interactive booking calendar + form + success
-  state. The whole booking flow is on this page.
-* `/bookings` — redirects to `/#fleet` (legacy)
-* `/contact` — contact info tiles (DE / EN with Call + WhatsApp
-  buttons each) and a contact form
-* `/info`, `/faq`, `/gallery`
-* `/booking/[token]/confirm` — owner-clickable from email (legacy
-  fallback; main path is now Telegram inline buttons)
-* `/booking/[token]/decline`
-* `/booking/[token]/cancel` — customer self-cancel from
-  confirmation email
+### Customer booking flow (`/fleet/[bikeId]`)
 
-API route handlers:
+* `react-day-picker` v9 calendar with `weekStartsOn={1}` (Mon-Sun).
+* **Half-cell rendering** for pickup/return day (only the half of
+  the cell that's actually blocked is shaded).
+* **30-min pickup/return slots between 09:00 and 19:00**, generated
+  by `buildSlots()` in `lib/pricing.ts`.
+* **Time-aware overlap** with 60-min `TURNAROUND_MINUTES` buffer
+  between back-to-back bookings.
+* **Weekend tier** detected as Fri pickup + Sun return; calculator
+  picks the cheapest of day / weekend / week / month combinations.
+* Form fields: name, email, phone, notes, **Drivers Licence**
+  (`AM` / `A1` / `A2` / `A` / `B`), **Riding Style** (`Solo` /
+  `With passenger`; auto-locked to Solo on 1-seat Beta).
+* **Deposit screenshot upload** — multipart/form-data POST with
+  4 MB cap (Vercel body limit is 4.5 MB). Payment options: PayPal
+  F&F, PayPal Company, SEPA. IBAN displays with spaces, copies
+  without.
+* On success: `/api/bookings` validates, runs `findFreeUnit`,
+  inserts the booking, uploads receipt to `booking-receipts`
+  bucket, patches `deposit_screenshot_path`, fires owner Telegram +
+  owner email + customer ack email via `after()`.
 
-* `POST /api/bookings` — validates, creates booking with status
-  `pending`, fires Telegram + customer email via `after()`
-* `GET  /api/availability?bikeId=…` — blocked_dates for the
-  calendar
-* `POST /api/contact` — contact form: emails owner + Telegram +
-  customer ack
-* `POST /api/telegram/webhook` — Telegram callback handler. Set
-  via setWebhook with header
-  `X-Telegram-Bot-Api-Secret-Token`.
+### Multi-unit availability
 
-## Database schema
+Owner has a real fleet (1× Liberty 125, 4× Liberty 50 no top-case,
+4× Liberty 50 top-case, 2× Duke 390, 2× Duke 125, 1× Beta 125).
+A bike-model date is only fully blocked when **every** unit is
+booked.
 
-See `supabase/schema.sql`. Three tables, RLS enabled with no
-policies (server-side only via service-role key):
+* `bike_units` table, `bookings.bike_unit_id` FK.
+* `lib/availability.ts` exports a single `findFreeUnit(bikeId, …)`
+  that returns either `{ unitId }` or `{ conflict }`. All callers
+  use it: `POST /api/bookings`, admin status PATCH, admin booking
+  PATCH, Telegram webhook, owner confirm route.
+* `lib/pricing.ts` `fullyBookedDates()` is multi-unit aware.
 
-* `bikes` — `id` (matches `lib/mockData.ts` ids) + `active` +
-  `created_at`. Display data lives in `lib/mockData.ts`, NOT the
-  DB, so we don't double-maintain.
-* `bookings` — id, bike_id, customer_name/email/phone, notes,
-  date_from/to, total_price_cents, status (`pending` |
-  `confirmed` | `declined` | `cancelled`), `secret_token`
-  (URL-safe hex), created_at, decided_at.
-* `blocked_dates` — bike_id, date_from/to, booking_id (null →
-  manual block, set → auto from booking).
+### Admin panel (`/admin`)
 
-**Trigger** `sync_blocked_dates_for_booking` fires on
-`UPDATE OF status` on bookings: when status flips into
-`confirmed` we insert a blocked_dates row; when it flips out of
-`confirmed` we delete it. So owner toggle in Telegram, customer
-self-cancel, all "just work" — calendar updates automatically.
+* HMAC-signed cookie session (`lib/admin-session.ts`), Web Crypto
+  based so it's Edge-compatible. `middleware.ts` gates
+  `/admin/:path*` and `/api/admin/:path*`.
+* Pages: dashboard with Fleet status cards + booking buckets
+  (out / pending / upcoming / past); `/admin/bookings/[id]` with
+  status-aware action buttons; `/admin/blocks` manual blocks;
+  `/admin/login`.
+* `lib/admin-data.ts` is the server-side data layer.
 
-Token format is **hex** (24 random bytes via `gen_random_bytes`)
-because base64 produced `+` and `/` which break URL routing.
+### T&Cs page (`/terms`)
 
-## Booking flow
+Verbatim from the owner's PDF screenshots, 7 sections (Reservations,
+Deposit & Payment, Pick-up & Return, Insurance & Safety,
+Damage/Repair/Breakdown, Fuel, Driver requirements).
 
-1. Customer on `/fleet/[bikeId]`, picks dates in the calendar
-   (`react-day-picker` v9), fills name/email/phone/notes,
-   clicks **Send Request**.
-2. `POST /api/bookings` validates, refuses overlap with any
-   existing blocked_dates (returns 409), inserts row with status
-   `pending`. Returns id+status to client.
-3. Server `after()` (so Vercel function lifecycle stays alive)
-   fires:
-   * **Telegram message** to owner with bike/dates/customer +
-     inline `✓ Confirm` / `✗ Decline` callback buttons +
-     `💬 WhatsApp Customer` URL button.
-   * **Customer email** "Got your request" via Resend, with
-     DE+EN Call/WhatsApp button pairs in the body.
-4. Owner taps Confirm or Decline in Telegram →
-   `/api/telegram/webhook` (validated via secret_token header)
-   flips DB status. Trigger fires, blocked_dates updates
-   automatically, Telegram message edits in place to show
-   `✅ Confirmed at HH:MM` / `❌ Declined at HH:MM`, and the
-   button row now reads `↻ Release dates` (or `✓ Confirm
-   anyway` if reverse). Customer email "✓ Confirmed —
-   pickup info" or "Update on your booking — declined".
-5. Confirmation email contains a `Cancel this booking` link
-   (`/booking/[token]/cancel`). Customer self-cancel → status
-   `cancelled` → trigger releases dates → owner gets a Telegram
-   "🚫 Customer cancelled — dates released" alert.
+### Riderly inbox polling
 
-Customer email transitions are sent **only on the first
-out-of-pending move** so toggles don't spam.
+The owner runs a separate booking site (`riderly.com`) with no API.
+Their notification mails contain magic accept/reject URLs the
+owner can hit without login, so we mirror those into Telegram as
+inline buttons.
 
-All Telegram and email calls go through `lib/retry.ts` —
-exponential backoff (500ms/1s/2s/4s) on network/5xx blips so we
-don't lose a notification to a transient failure.
+Pipeline:
 
-## Pricing tiers
+1. Owner's real Gmail `tkrawietz284@gmail.com` has a filter
+   `from:reservations@riderly.com` → forward to
+   `rentamotobooking@gmail.com`. (Owner still needs to set up
+   this filter on his side.)
+2. GitHub Actions workflow `.github/workflows/poll-riderly.yml`
+   runs `*/15 * * * *` and invokes `scripts/poll-riderly.mjs`.
+3. The script IMAPs `rentamotobooking@gmail.com`, fetches unseen
+   messages, **buffers them all** (avoids the imapflow deadlock —
+   you cannot `messageFlagsAdd` while still iterating `fetch()`),
+   releases the lock, then classifies via `lib/riderly.ts` →
+   sends Telegram (`sendOwnerRiderlyTelegram`) with 1.2 s gaps to
+   stay under Telegram's 1-msg/sec/chat → marks each UID as
+   `\Seen` in a batch.
+4. 15 s `AbortController` timeout on Telegram fetches; mark-as-read
+   happens **even if Telegram fails** so we don't loop forever on
+   a bad message. `MAX_MESSAGES_PER_RUN = 15`.
 
-`lib/mockData.ts` `Category.pricing` has `day / weekend / week /
-month` strings. The bike-detail page calculator picks the
-**cheapest** valid combination on the selected range:
+**Production-switch trigger** lives in `scripts/poll-riderly.mjs`:
 
-* Day-only: `day × nights`
-* Weekend: only if `nights === 2` and `from.getDay() === 5` (Fri)
-* Week: `weeks × week + leftover × day` for `nights >= 7`
-* Month: `months × month + leftover × day` for `nights >= 30`
+```js
+const ALLOWED_FROM = [
+  "leon.huschka@duraska.com", // TEST — remove for production
+  "@riderly.com",             // PRODUCTION — keep
+];
+```
 
-Renders a small caption under the total like "Weekend rate
-(Fri-Sun)" / "Week rate" / "Week + day mix" when the applied tier
-beats plain daily.
+Anything not matching is logged + marked-read silently. Once user
+confirms test phase is done, **delete the Leon line** and push.
 
-## Calendar UX
+Old `app/api/cron/poll-riderly/route.ts` + `lib/riderly.ts` are
+still in the repo. They're harmless: the route requires
+`CRON_SECRET` and nobody calls it. Vercel cron config is gone.
+The GitHub Actions workflow is the live path.
 
-* `mode="range"`, `excludeDisabled`, `min={1}` — can't pick a
-  range that crosses booked dates, must be at least 1 night.
-* `disabled={[{ before: today }, ...blocked]}` — past + booked.
-* Past days: dimmed `text-ink/20` (just visually muted).
-* Booked days: `bg-ink/10 text-ink/40 line-through` via
-  `modifiersClassNames` so they read clearly different from past.
-* `availability` is fetched live from `/api/availability` on
-  mount of the detail page.
+## Gotchas already paid for (don't relearn)
 
-## Notifications
+* **Vercel Hobby cron caps at once-daily.** Putting
+  `*/15 * * * *` in `vercel.json` made Vercel silently reject
+  *every* deploy. The file is gone now; keep it gone unless we
+  upgrade to Pro.
+* **Vercel serverless can't reliably do IMAP** even with
+  `maxDuration = 60`. Use GitHub Actions for IMAP.
+* **imapflow deadlocks** if you call `messageFlagsAdd` mid-`fetch`.
+  Buffer first, then act.
+* **Google App Passwords require 2FA fully on.** The settings page
+  only appears once 2FA is active.
+* **Telegram has no default fetch timeout in Node.** Always pass
+  an `AbortController`.
+* **Telegram chat rate limit is 1 msg/sec/chat.** 1.2 s sleeps
+  + a hard cap per run.
+* **PATs can't push `.github/workflows/`.** Edit on the GitHub
+  web UI.
+* **Mark-as-read must run even on Telegram error**, or one bad
+  email blocks every future run.
+* **Token format must be hex** (not base64) — `+` and `/` break
+  URL routing.
 
-* Owner notifications go to **Telegram only** (no email for
-  owner). Email helper still exists in `lib/email.ts` for the
-  customer flow + `sendOwnerContactEmail` helper for contact
-  form.
-* Resend env: `RESEND_API_KEY`, `RESEND_FROM` =
-  `SickMotos Bookings <bookings@rentamotozadar.com>`.
-* Telegram env: `TELEGRAM_BOT_TOKEN`,
-  `TELEGRAM_OWNER_CHAT_ID`, `TELEGRAM_WEBHOOK_SECRET`.
-* Webhook URL set via:
-  ```
-  curl -X POST "https://api.telegram.org/bot{TOKEN}/setWebhook" \
-    -H "Content-Type: application/json" \
-    -d '{"url":"https://rentamotozadar.com/api/telegram/webhook","secret_token":"…"}'
-  ```
+## DB schema notes added this session
 
-## Anchor scroll
+Migrations are additive + idempotent (live in
+`supabase/migrations/`). Don't repeat-run a non-idempotent migration
+on prod. Columns added since the original handover:
 
-Big saga. Final solution is `components/AnchorOffsetFix.tsx`
-mounted in the root layout — JS-based.
+* `bookings.pickup_time`, `bookings.return_time` (text, "HH:MM")
+* `bookings.payment_method` (enum-ish text:
+  `paypal_ff | paypal_company | sepa`)
+* `bookings.deposit_screenshot_path` (Supabase Storage key)
+* `bookings.drivers_licence`, `bookings.riding_style`
+* `bookings.bike_unit_id` (FK → `bike_units.id`, nullable)
+* `bike_units` (id, bike_id, label, active)
 
-* **Capture-phase** click listener on document so it beats
-  next/link's onClick.
-* **`preventDefault()` only**, no `stopPropagation()` — that
-  way mobile dropdown links can still run their `setOpen(false)`
-  React onClick handler. Stop-prop'ing was the cause of "second
-  click does nothing": it kept the dropdown open, and on the
-  next click my `header.getBoundingClientRect()` measured the
-  full open dropdown (~500px) and scrolled hundreds of px past
-  the section.
-* Measures **only the inner top-bar** (`header > div` first
-  child, the one with inline `height: 6.5rem`), NOT the whole
-  header. Fixes mobile-dropdown-open height blowups.
-* Two `requestAnimationFrame`s before the actual scroll, so
-  React commits state changes (dropdown closing) and DOM
-  reflows before we measure.
-* Scrolls to `target.top - navHeight + 1` — 1px overshoot into
-  the navbar to absorb sub-pixel rounding so the previous
-  section's edge stays hidden.
-* Updates `window.location.hash` with `history.pushState` so
-  the URL bar follows.
-* Cmd/Ctrl/Shift/Alt clicks pass through (open-in-new-tab
-  still works).
+`sync_blocked_dates_for_booking` trigger is unchanged.
 
-Plus all navbar Links pointing at hash routes have
-`scroll={false}` so next/link doesn't try its own scroll on top
-of mine.
+## Env vars
 
-## Bike data
-
-Source of truth: `lib/mockData.ts` → `CATEGORIES`. Each entry
-has id, name, model, pricing tiers, maxSpeed, displacement,
-seats, tank, range, year, image, gallery (multi-photo
-thumbnails on detail page), licenceCode (`AM/B` / `A1` / `A2`)
-and `experienceNote` (rendered as red "Heads up" callout —
-50cc Liberty variants currently flag "Previous riding
-experience required - no first-time riders").
-
-Licence badges are real PNGs in `public/badges/licence-{a1,a2,am-b}.png`,
-mapped via `LICENCE_BADGE`.
-
-## Brand contacts
-
-`BRAND.contacts` is a typed array. `[0]` = DE 🇩🇪 +49 number,
-`[1]` = EN 🇬🇧 +385 number. Footer + Contact page render Call
-+ WhatsApp button per contact. Customer emails render the same
-DE+EN button pair via `contactButtonsHtml()` in `lib/email.ts`.
-
-## Outstanding TODOs from the owner
-
-In rough priority order:
-
-1. **Pickup/return time slots, restricted to 09:00–19:00.** No
-   bookings outside opening hours, so the booking form needs
-   pickup-time + return-time pickers limited to that window.
-   This will also affect the "weekend Fri-Sun" pricing logic —
-   we'll likely want to treat Friday morning → Sunday evening
-   as the weekend tier, or whatever the owner clarifies.
-
-2. **Form fields.** Add Riding Style (Solo / With passenger),
-   Drivers Licence dropdown (A1 / A2 / A / B / AM), Licence
-   Country. Drop Age — owner explicitly said no.
-
-3. **Phone field with country-code dropdown.** Owner OK to keep
-   the manual `+49` style for now; revisit if confusing.
-   `react-phone-number-input` is the recommended library
-   (~16kB gzipped, all flags/codes built in).
-
-4. **Screenshot upload for the deposit receipt.** 20% booking
-   fee is paid externally; customer should attach a screenshot
-   on the booking form and the owner sees it in the Telegram
-   notification + email. Probably uses Supabase Storage.
-
-5. **Multi-bike inventory.** Owner has multiple physical bikes
-   per model: `1× Liberty 125, 4× Liberty 50 ohne Topcase, 4×
-   Liberty 50 mit Topcase, 2× Duke 390, 2× Duke 125, 1× Beta
-   125`. Currently the app treats each `bike-id` as a single
-   unit. Need a `bike_units` capacity-aware availability check:
-   a date is fully blocked only when ALL units of that model
-   are taken. Bigger DB-schema change.
-
-6. **Mini admin page** (`/admin/bookings`?). Owner-protected
-   list of all bookings with manual edit (date_to shorten),
-   manual block, set status to `cancelled` instead of
-   `declined` for after-the-fact toggles, etc. The owner
-   currently uses Supabase Studio for these edits.
-
-7. **Reservations T&Cs page update** — owner has a written
-   sheet ("Scooter and Motorbike Reservation Terms &
-   Conditions") that should be on the site verbatim or close
-   to it. Most points are in `lib/mockData.ts` `FAQ_ITEMS`
-   already; the missing or differently-worded ones still need
-   merging.
-
-8. **Layout polish** — owner sometimes sends "this needs to
-   move" notes; treat as small drive-by edits.
-
-## Conventions / style
-
-* All new strings are in **English**. Owner switched the site
-  to English; full-translation pass is "ganz zum Schluss".
-* No AI em-dashes (—); use plain hyphens or proper en-dashes
-  consistently. The owner has been clear about this — there
-  was a request to nuke them across the project.
-* Auto-commit + push after each logical chunk per memory
-  feedback. Skip commit only if change is broken/incomplete or
-  only touches local-only config.
-* Co-author each commit with `Co-Authored-By: Claude Sonnet
-  4.6 <noreply@anthropic.com>`.
-
-## Env vars (set on Vercel + `.env.local`)
+### Vercel (production)
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://odbmkiwxydexutyqsyts.supabase.co
@@ -312,32 +190,73 @@ NEXT_PUBLIC_SITE_URL=https://rentamotozadar.com
 TELEGRAM_BOT_TOKEN=…
 TELEGRAM_OWNER_CHAT_ID=1063783447
 TELEGRAM_WEBHOOK_SECRET=…
+ADMIN_PASSWORD=…
+ADMIN_SESSION_SECRET=…
 ```
 
-Actual secret values live only in `.env.local` (gitignored)
-and Vercel's env-vars panel — don't paste them into the repo.
+### GitHub Actions secrets (for the Riderly poller)
 
-## Recent commit log (chronological top of branch)
+```
+RIDERLY_IMAP_USER=rentamotobooking@gmail.com
+RIDERLY_IMAP_PASSWORD=<gmail app password, no spaces>
+RIDERLY_IMAP_HOST=imap.gmail.com   (optional, default)
+RIDERLY_IMAP_PORT=993               (optional, default)
+RIDERLY_LABEL=INBOX                 (optional, default)
+TELEGRAM_BOT_TOKEN=…
+TELEGRAM_OWNER_CHAT_ID=1063783447
+```
 
-* `Pricing tiers in calendar, info-page reshuffle, scroll={false}`
+Note: a Gmail App Password was pasted in a screenshot during
+this session — **rotate it before production rollout**.
+
+## Open items
+
+* **Confirm Riderly test phase passes** (user is actively sending
+  test mails from non-Leon senders to verify they're skipped).
+  When confirmed: delete the `"leon.huschka@duraska.com"` line
+  from `ALLOWED_FROM`, push.
+* **Owner sets up Gmail filter** on `tkrawietz284@gmail.com`:
+  `from:reservations@riderly.com` → forward to
+  `rentamotobooking@gmail.com`.
+* **Optional**: `cache: 'npm'` on `setup-node@v4` in
+  `.github/workflows/poll-riderly.yml` to speed up cold runs.
+  (Edit via GitHub web UI — PAT can't push workflow files.)
+* **Rotate the leaked Gmail App Password.**
+* **Google reviews sync** still deferred — manual paste of 4-6
+  real reviews, or Google Places API.
+* Phone country-code dropdown deliberately skipped (owner OK
+  with manual `+49` style).
+
+## Conventions
+
+* All new strings English. **No emojis** anywhere in UI or
+  notifications — user is very firm on this. Flags + `✓ ✗ →`
+  symbols are fine.
+* No AI em-dashes (`—`) gratuitously; plain hyphens.
+* Auto-commit + push after each logical chunk (see memory
+  `feedback_auto_push.md`). Vercel auto-deploys.
+* Co-author commits with the current Claude model.
+* Never push migrations and dependent code in the same shot —
+  always migrate first, wait for confirmation, then push code.
+
+## How to continue in a fresh session
+
+1. `cd /Users/kristian.durasin/Desktop/vozivespa/.claude/worktrees/dazzling-joliot-82649c`
+2. `git status`, `git log --oneline -20` to orient.
+3. `npm run dev` for local; `npx next build` to verify.
+4. Read this file + `AGENTS.md` + memory dir before touching
+   Next.js APIs.
+5. Push to `main`:
+   `git push origin claude/dazzling-joliot-82649c:main`.
+
+## Recent commits (top of branch)
+
+* `Add HANDOVER.md so a fresh agent can pick this up cold`
+* `Pricing tiers in calendar, info-page reshuffle, scroll={false}
+  on hash links`
 * `Anchor fix: measure top-bar only, let React onClick siblings run`
 * `Tighten anchor offset — eat the last sliver of hero edge`
 * `Anchor handler runs in capture phase so it beats next/link`
-* `JS-based anchor offset (CSS scroll-padding wasn't reliable) +
-  DE/EN contacts in emails`
-* `Anchor scrolls past hero edge; Call+WhatsApp buttons in
-  customer emails`
-* `Customer self-cancel from email + cleaner success screen`
-* `Owner notification: Telegram instead of email`
-* `Wire up Supabase: client helpers + schema for bookings`
-* … older marketing/site polish below.
-
-## How to keep moving
-
-1. `cd /Users/kristian.durasin/Desktop/vozivespa/.claude/worktrees/modest-dijkstra-cbe016`
-2. `npm run dev` for local tweaks; `npx next build` to verify.
-3. Commit + `git push origin
-   claude/modest-dijkstra-cbe016:main` after each logical
-   chunk. Vercel auto-deploys.
-4. Read `node_modules/next/dist/docs/01-app/...` before
-   guessing at any Next.js API.
+* Riderly poller series: env-based FROM filter → reverted →
+  X-Forwarded-For → hardcoded `ALLOWED_FROM` allowlist
+  (final: `ae75758`).
