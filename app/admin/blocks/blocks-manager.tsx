@@ -99,6 +99,14 @@ export function BlocksManager({
           : [];
 
       if (hasCustomerInfo) {
+        // Walk-ins need a phone — if something goes wrong with the
+        // rental the owner has to be able to reach the customer.
+        // Email stays optional (lots of walk-ins skip it).
+        if (customerPhone.trim().length === 0) {
+          setError("Phone is required for walk-in bookings.");
+          setBusy(false);
+          return;
+        }
         const payload: Record<string, unknown> = {
           bikeId,
           dateFrom,
@@ -106,7 +114,7 @@ export function BlocksManager({
           pickupTime,
           returnTime,
           customerName: customerName.trim(),
-          customerPhone: customerPhone.trim() || undefined,
+          customerPhone: customerPhone.trim(),
           customerEmail: customerEmail.trim() || undefined,
           notes: notes.trim() || undefined,
         };
@@ -391,13 +399,13 @@ export function BlocksManager({
             Walk-in booking (optional)
           </p>
           <p className="text-xs text-muted mb-4 max-w-prose">
-            Fill in the customer name to record this as a real booking
+            Fill in name + phone to record this as a real booking
             (shows up in the dashboard). Leave empty for a service block.
           </p>
           <div className="grid sm:grid-cols-3 gap-3">
             <label className="block">
               <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                Customer name
+                Customer name {hasCustomerInfo && <span className="text-red">*</span>}
               </span>
               <input
                 type="text"
@@ -409,14 +417,18 @@ export function BlocksManager({
             </label>
             <label className="block">
               <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                Phone
+                Phone {hasCustomerInfo && <span className="text-red">*</span>}
               </span>
               <input
                 type="tel"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
-                placeholder="—"
-                className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
+                placeholder={hasCustomerInfo ? "+385 …" : "—"}
+                className={`mt-1 w-full border px-3 py-2 text-sm ${
+                  hasCustomerInfo && customerPhone.trim().length === 0
+                    ? "border-red/40"
+                    : "border-ink/15"
+                }`}
               />
             </label>
             <label className="block">

@@ -97,6 +97,14 @@ export async function POST(request: Request) {
   if (!customerName) {
     return NextResponse.json({ error: "Customer name is required" }, { status: 400 });
   }
+  if (!customerPhone) {
+    // Owner must be able to reach the customer if anything goes
+    // wrong with the rental. Email stays optional.
+    return NextResponse.json(
+      { error: "Phone is required for walk-in bookings" },
+      { status: 400 },
+    );
+  }
 
   const supabase = getServiceClient();
 
