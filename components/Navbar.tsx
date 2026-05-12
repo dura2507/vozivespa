@@ -111,25 +111,27 @@ export default function Navbar({
                 type="button"
                 onClick={() => setLangOpen((o) => !o)}
                 onBlur={() => setTimeout(() => setLangOpen(false), 150)}
-                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1.5`}
+                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1`}
                 aria-label={t.languageSwitcher}
               >
-                <span className="text-base leading-none">{LOCALE_LABELS[lang].flag}</span>
-                <span className="text-[10px] opacity-70">{lang.toUpperCase()}</span>
+                <span>{LOCALE_LABELS[lang].short}</span>
+                <svg className={`w-3 h-3 transition-transform ${langOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
               {langOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-off-white border border-ink/10 shadow-lg min-w-[160px] py-1">
+                <div className="absolute right-0 top-full mt-2 bg-off-white border border-ink/10 shadow-lg min-w-[140px] py-1">
                   {LOCALES.map((l) => (
                     <Link
                       key={l}
                       href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                      className={`flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase text-ink hover:bg-ink/5 transition-colors ${
+                      className={`flex items-center justify-between gap-3 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase text-ink hover:bg-ink/5 transition-colors ${
                         l === lang ? "opacity-50" : ""
                       }`}
                       onClick={() => setLangOpen(false)}
                     >
-                      <span className="text-base leading-none">{LOCALE_LABELS[l].flag}</span>
                       <span>{LOCALE_LABELS[l].name}</span>
+                      <span className="text-ink/40">{LOCALE_LABELS[l].short}</span>
                     </Link>
                   ))}
                 </div>
@@ -145,9 +147,41 @@ export default function Navbar({
             </Link>
           </nav>
 
-          {/* Mobile hamburger */}
+          {/* Mobile lang switcher + hamburger */}
+          <div className="md:hidden flex items-center gap-2">
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setLangOpen((o) => !o)}
+                onBlur={() => setTimeout(() => setLangOpen(false), 150)}
+                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1 px-2 py-1.5 border ${transparent ? "border-white/40" : "border-ink/20"}`}
+                aria-label={t.languageSwitcher}
+              >
+                <span>{LOCALE_LABELS[lang].short}</span>
+                <svg className={`w-3 h-3 transition-transform ${langOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {langOpen && (
+                <div className="absolute right-0 top-full mt-2 bg-off-white border border-ink/10 shadow-lg min-w-[140px] py-1 z-50">
+                  {LOCALES.map((l) => (
+                    <Link
+                      key={l}
+                      href={`/${l}${bareHere === "/" ? "" : bareHere}`}
+                      className={`flex items-center justify-between gap-3 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase text-ink hover:bg-ink/5 transition-colors ${
+                        l === lang ? "opacity-50" : ""
+                      }`}
+                      onClick={() => setLangOpen(false)}
+                    >
+                      <span>{LOCALE_LABELS[l].name}</span>
+                      <span className="text-ink/40">{LOCALE_LABELS[l].short}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           <button
-            className={`md:hidden w-9 h-9 flex flex-col items-center justify-center gap-[5px] ${textColor}`}
+            className={`w-9 h-9 flex flex-col items-center justify-center gap-[5px] ${textColor}`}
             onClick={() => setOpen((o) => !o)}
             aria-label={t.menuAria}
           >
@@ -155,6 +189,7 @@ export default function Navbar({
             <span className={`block w-5 h-[1.5px] bg-current transition-opacity duration-200 ${open ? "opacity-0" : ""}`} />
             <span className={`block w-5 h-[1.5px] bg-current transition-all duration-200 origin-center ${open ? "-rotate-45 -translate-y-[6.5px]" : ""}`} />
           </button>
+          </div>
         </div>
 
         {/* Mobile dropdown */}
@@ -182,26 +217,6 @@ export default function Navbar({
                 {l.label}
               </Link>
             ))}
-            <div className="py-3 border-b border-ink/8">
-              <p className="text-[10px] tracking-[0.2em] uppercase text-ink/50 font-bold mb-2">{t.languageSwitcher}</p>
-              <div className="flex flex-wrap gap-2">
-                {LOCALES.map((l) => (
-                  <Link
-                    key={l}
-                    href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                    onClick={() => setOpen(false)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-wide border ${
-                      l === lang
-                        ? "border-red text-red"
-                        : "border-ink/15 text-ink hover:border-ink/30"
-                    } transition-colors`}
-                  >
-                    <span className="text-base leading-none">{LOCALE_LABELS[l].flag}</span>
-                    <span>{LOCALE_LABELS[l].name}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
             <Link
               href={localePath(lang, "/#fleet")}
               scroll={false}

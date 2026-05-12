@@ -6,11 +6,11 @@ export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = "en";
 
-export const LOCALE_LABELS: Record<Locale, { flag: string; name: string }> = {
-  en: { flag: "🇬🇧", name: "English" },
-  de: { flag: "🇩🇪", name: "Deutsch" },
-  es: { flag: "🇪🇸", name: "Español" },
-  it: { flag: "🇮🇹", name: "Italiano" },
+export const LOCALE_LABELS: Record<Locale, { short: string; name: string }> = {
+  en: { short: "EN", name: "English" },
+  de: { short: "DE", name: "Deutsch" },
+  es: { short: "ES", name: "Español" },
+  it: { short: "IT", name: "Italiano" },
 };
 
 export function isLocale(value: string): value is Locale {

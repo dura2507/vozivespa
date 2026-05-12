@@ -64,6 +64,8 @@ export default function BikeDetail({
   lang: Locale;
   dict: Dictionary;
 }) {
+  const tF = dict.fleet;
+  const tBike = dict.bikes[bike.id as keyof typeof dict.bikes];
   const [activeImage, setActiveImage] = useState(bike.image);
   const [range, setRange] = useState<DateRange | undefined>();
   const [pickupTime, setPickupTime] = useState("09:00");
@@ -217,7 +219,7 @@ export default function BikeDetail({
     e.preventDefault();
     if (!range?.from || !range?.to) return;
     if (!receipt) {
-      setReceiptError("Upload a screenshot of your reservation payment.");
+      setReceiptError(tF.reservation.uploadError);
       return;
     }
 
@@ -251,7 +253,7 @@ export default function BikeDetail({
         const message =
           typeof body?.error === "string"
             ? body.error
-            : "Something went wrong - please try again.";
+            : tF.reservation.uploadError;
         setSubmitError(message);
         setBookingStep("form");
         return;
@@ -263,7 +265,7 @@ export default function BikeDetail({
       }, 50);
     } catch (err) {
       console.error("booking submit failed", err);
-      setSubmitError("Network error - please try again.");
+      setSubmitError(tF.reservation.uploadError);
       setBookingStep("form");
     }
   }
@@ -308,13 +310,13 @@ export default function BikeDetail({
       "application/pdf",
     ];
     if (!allowed.includes(file.type)) {
-      setReceiptError("File must be JPG, PNG, HEIC or PDF.");
+      setReceiptError(tF.reservation.uploadHint);
       e.target.value = "";
       setReceipt(null);
       return;
     }
     if (file.size > 4 * 1024 * 1024) {
-      setReceiptError("File is too large. Max 4 MB.");
+      setReceiptError(tF.reservation.fileTooLarge);
       e.target.value = "";
       setReceipt(null);
       return;
@@ -331,21 +333,21 @@ export default function BikeDetail({
     !!ridingStyle;
 
   const specs: { label: string; value: string }[] = [
-    { label: "Engine", value: bike.displacement },
-    { label: "Power", value: bike.power },
-    { label: "Top Speed", value: bike.maxSpeed },
-    { label: "Tank", value: bike.tank },
-    { label: "Consumption", value: bike.consumption },
-    { label: "Range", value: bike.range },
-    { label: "Seats", value: String(bike.seats) },
-    { label: "Year", value: bike.year },
+    { label: tF.specs.engine, value: bike.displacement },
+    { label: tF.specs.power, value: bike.power },
+    { label: tF.specs.topSpeed, value: bike.maxSpeed },
+    { label: tF.specs.tank, value: bike.tank },
+    { label: tF.specs.consumption, value: bike.consumption },
+    { label: tF.specs.range, value: bike.range },
+    { label: tF.specs.seats, value: String(bike.seats) },
+    { label: tF.specs.year, value: bike.year },
   ];
 
   const tiers: { label: string; sub: string; price: string }[] = [
-    { label: "Daily", sub: "1 day", price: bike.pricing.day },
-    { label: "Weekend", sub: "Fri to Sun", price: bike.pricing.weekend },
-    { label: "Week", sub: "7 days", price: bike.pricing.week },
-    { label: "Month", sub: "30 days", price: bike.pricing.month },
+    { label: tF.pricing.daily, sub: tF.pricing.dailySub, price: bike.pricing.day },
+    { label: tF.pricing.weekend, sub: tF.pricing.weekendSub, price: bike.pricing.weekend },
+    { label: tF.pricing.week, sub: tF.pricing.weekSub, price: bike.pricing.week },
+    { label: tF.pricing.month, sub: tF.pricing.monthSub, price: bike.pricing.month },
   ];
 
   const inputClass =
@@ -359,9 +361,9 @@ export default function BikeDetail({
         <div className="max-w-6xl mx-auto">
           {/* Breadcrumb */}
           <div className="mb-6 flex items-center gap-2 text-xs tracking-[0.15em] uppercase text-muted">
-            <Link href="/" className="hover:text-red transition-colors">Home</Link>
+            <Link href={`/${lang}`} className="hover:text-red transition-colors">{dict.nav.home}</Link>
             <span>/</span>
-            <Link href="/#fleet" className="hover:text-red transition-colors">Fleet</Link>
+            <Link href={`/${lang}/#fleet`} className="hover:text-red transition-colors">{dict.nav.fleet}</Link>
             <span>/</span>
             <span className="text-ink">{bike.model}</span>
           </div>
@@ -401,12 +403,12 @@ export default function BikeDetail({
                 {bike.model}
               </h1>
               <p className="text-muted text-base leading-relaxed mb-5">
-                {bike.longDescription}
+                {tBike?.longDescription ?? bike.longDescription}
               </p>
 
               <div className="border-l-2 border-red pl-4 py-1 mb-7">
                 <p className="text-ink text-sm font-semibold italic">
-                  {bike.tagline}
+                  {tBike?.tagline ?? bike.tagline}
                 </p>
               </div>
 
@@ -414,28 +416,28 @@ export default function BikeDetail({
                 <div className="flex items-baseline gap-2 mb-1">
                   {bike.priceFrom && (
                     <span className="text-white/50 text-xs tracking-widest uppercase mr-1">
-                      from
+                      {tF.priceBox.perDay.includes("from") ? "" : tF.pricing.fromPrefix}
                     </span>
                   )}
                   <span className="font-barlow font-black text-5xl text-red">
                     {bike.pricing.day}
                   </span>
-                  <span className="text-white/50 text-sm">/ day</span>
+                  <span className="text-white/50 text-sm">{tF.priceBox.perDay}</span>
                 </div>
                 <p className="text-white/60 text-xs tracking-wider uppercase">
-                  Unlimited km · Basic insurance · {BRAND.deposit} deposit
+                  {tF.priceBox.unlimitedLine.replace("{deposit}", BRAND.deposit)}
                 </p>
 
                 <div className="mt-3 pt-3 border-t border-white/10 flex items-start gap-3">
                   <div className="bg-red text-white font-barlow font-black text-lg leading-none px-2.5 py-1.5 shrink-0">
-                    24h
+                    {tF.priceBox.dayBadge}
                   </div>
                   <div className="min-w-0">
                     <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">
-                      1 day = 24 hours
+                      {tF.priceBox.dayLabel}
                     </p>
                     <p className="text-white text-sm leading-snug">
-                      Pickup-to-pickup, not calendar day. E.g. 11:00 today → 11:00 tomorrow = 1 day.
+                      {tF.priceBox.dayCopy}
                     </p>
                   </div>
                 </div>
@@ -443,13 +445,13 @@ export default function BikeDetail({
                 <div className="mt-3 pt-3 border-t border-white/10 flex items-center gap-4">
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] tracking-[0.2em] uppercase text-red font-bold mb-1">
-                      Required licence
+                      {tF.priceBox.licenceEyebrow}
                     </p>
                     <p className="text-white text-sm font-semibold leading-snug">
                       {bike.licence}
                     </p>
                     <p className="text-white/50 text-xs leading-snug mt-1">
-                      Bring your valid licence to pickup - no licence, no ride.
+                      {tF.priceBox.bringLicence}
                     </p>
                   </div>
                   <Image
@@ -466,8 +468,8 @@ export default function BikeDetail({
               {bike.experienceNote && (
                 <div className="bg-sand px-4 py-3 mb-6 border-l-2 border-red text-xs">
                   <p className="text-ink leading-relaxed">
-                    <span className="font-bold uppercase tracking-wider text-[10px] mr-2">Heads up</span>
-                    {bike.experienceNote}
+                    <span className="font-bold uppercase tracking-wider text-[10px] mr-2">{tF.headsUp}</span>
+                    {tBike && "experienceNote" in tBike ? tBike.experienceNote : bike.experienceNote}
                   </p>
                 </div>
               )}
@@ -476,7 +478,7 @@ export default function BikeDetail({
                 onClick={scrollToCalendar}
                 className="inline-flex items-center justify-center gap-2 bg-red text-white font-bold text-sm tracking-widest uppercase px-8 py-5 hover:bg-red-dark transition-colors"
               >
-                Check Availability
+                {tF.checkAvailability}
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
@@ -488,10 +490,10 @@ export default function BikeDetail({
           <section className="mb-16">
             <div className="text-center mb-8">
               <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">
-                The Bike
+                {tF.specs.eyebrow}
               </p>
               <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3.5rem)] tracking-tight text-ink">
-                Specs
+                {tF.specs.title}
               </h2>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-ink/10">
@@ -510,10 +512,10 @@ export default function BikeDetail({
           <section className="mb-16 bg-ink text-white p-8 md:p-12">
             <div className="text-center mb-8">
               <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-white/40 mb-2">
-                Flexible terms
+                {tF.pricing.eyebrow}
               </p>
               <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3.5rem)] tracking-tight text-white">
-                Rental Options
+                {tF.pricing.title}
               </h2>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 border border-white/10">
@@ -547,10 +549,11 @@ export default function BikeDetail({
                 <svg className="w-5 h-5 text-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                 </svg>
-                Unlimited km · all prices include BASIC insurance
+                {tF.pricing.unlimitedKm}
               </div>
               <p className="text-white/50 text-xs">
-                Deposit: <span className="text-white">{BRAND.deposit}</span> · Season: <span className="text-white">{bike.season}</span>
+                {tF.pricing.depositLine.replace("{deposit}", "").replace("{season}", "").replace("· ·", "·")}
+                <span className="text-white">{BRAND.deposit}</span> · <span className="text-white">{bike.season}</span>
               </p>
             </div>
           </section>
@@ -562,8 +565,8 @@ export default function BikeDetail({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
               <div>
-                <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">No phone holders</p>
-                <p className="text-ink text-sm leading-snug">We don&apos;t offer or fit phone holders, and you can&apos;t bring your own.</p>
+                <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">{tF.specsSection.noPhoneHoldersLabel}</p>
+                <p className="text-ink text-sm leading-snug">{tF.specsSection.noPhoneHoldersText}</p>
               </div>
             </div>
             <div className="bg-off-white px-5 py-5 flex items-start gap-3">
@@ -571,8 +574,8 @@ export default function BikeDetail({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
               </svg>
               <div>
-                <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">Deposit</p>
-                <p className="text-ink text-sm leading-snug">{BRAND.deposit} per bike, refunded after drop-off if no damage. At pickup: cash (no fees), PayPal, Revolut or Wise (transaction fees may apply). No credit or debit cards.</p>
+                <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">{tF.specsSection.depositLabel}</p>
+                <p className="text-ink text-sm leading-snug">{tF.specsSection.depositText.replace("{deposit}", BRAND.deposit)}</p>
               </div>
             </div>
             <div className="bg-off-white px-5 py-5 flex items-start gap-3">
@@ -580,8 +583,8 @@ export default function BikeDetail({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
               </svg>
               <div>
-                <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">Season</p>
-                <p className="text-ink text-sm leading-snug">{bike.season}. We rent only in this window.</p>
+                <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">{tF.specsSection.seasonLabel}</p>
+                <p className="text-ink text-sm leading-snug">{tF.specsSection.seasonText.replace("{season}", bike.season)}</p>
               </div>
             </div>
             <div className="bg-off-white px-5 py-5 flex items-start gap-3">
@@ -589,8 +592,8 @@ export default function BikeDetail({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
               </svg>
               <div>
-                <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">Full tank policy</p>
-                <p className="text-ink text-sm leading-snug">Bike is delivered with a full tank. Return it full.</p>
+                <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">{tF.specsSection.fuelLabel}</p>
+                <p className="text-ink text-sm leading-snug">{tF.specsSection.fuelText}</p>
               </div>
             </div>
           </section>
@@ -601,29 +604,11 @@ export default function BikeDetail({
               <>
                 <div className="text-center mb-8">
                   <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">
-                    Book your ride
+                    {tF.calendar.eyebrow}
                   </p>
                   <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3.5rem)] tracking-tight text-ink">
-                    Pick Your Dates
+                    {tF.calendar.title}
                   </h2>
-                  <p className="text-muted text-sm mt-3 max-w-md mx-auto">
-                    Select your pick-up and drop-off dates. Greyed-out dates are already booked.
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap justify-center gap-5 text-xs text-muted mb-5">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-red" />
-                    Selected
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-ink/15" />
-                    Booked
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-[linear-gradient(135deg,_transparent_50%,_rgba(26,26,26,0.15)_50%)]" />
-                    Half day · still bookable
-                  </div>
                 </div>
 
                 <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
@@ -686,7 +671,7 @@ export default function BikeDetail({
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <label className="block">
                         <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                          Pickup time · {format(range.from, "EEE dd MMM")}
+                          {tF.calendar.pickupTime} · {format(range.from, "EEE dd MMM")}
                         </span>
                         <select
                           value={pickupTime}
@@ -700,13 +685,13 @@ export default function BikeDetail({
                             </option>
                           ))}
                           {pickupSlots.length === 0 && (
-                            <option value="">No slots available</option>
+                            <option value="">-</option>
                           )}
                         </select>
                       </label>
                       <label className="block">
                         <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                          Return time · {format(range.to, "EEE dd MMM")}
+                          {tF.calendar.returnTime} · {format(range.to, "EEE dd MMM")}
                         </span>
                         <select
                           value={returnTime}
@@ -720,17 +705,13 @@ export default function BikeDetail({
                             </option>
                           ))}
                           {returnSlots.length === 0 && (
-                            <option value="">No slots available</option>
+                            <option value="">-</option>
                           )}
                         </select>
                       </label>
                     </div>
                     <p className="text-muted text-xs mt-2">
-                      Shop hours 09:00 to 19:00. Times outside this window
-                      {pickupSlots.length < buildSlots().length || returnSlots.length < buildSlots().length
-                        ? " (or too close to another booking, we need 1h between bookings)"
-                        : ""}
-                      {" "}aren&apos;t possible.
+                      {tF.calendar.shopHours}{pickupSlots.length < buildSlots().length || returnSlots.length < buildSlots().length ? tF.calendar.tooClose : ""}.
                     </p>
 
                     <div className="mt-4 bg-sand px-5 py-4 flex flex-wrap items-center justify-between gap-4">
@@ -744,7 +725,7 @@ export default function BikeDetail({
                         </span>
                         {billableDays > 0 && (
                           <span className="text-muted ml-2">
-                            ({billableDays} {billableDays === 1 ? "day" : "days"})
+                            ({billableDays === 1 ? tF.calendar.totalDay : tF.calendar.totalDays.replace("{n}", String(billableDays))})
                           </span>
                         )}
                       </div>
@@ -771,7 +752,7 @@ export default function BikeDetail({
                       onClick={handleContinueToForm}
                       className="bg-red text-white font-bold text-xs tracking-widest uppercase px-8 py-4 hover:bg-red-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
-                      Continue →
+                      {tF.calendar.continue} →
                     </button>
                   </div>
                 )}
@@ -791,29 +772,29 @@ export default function BikeDetail({
                     </svg>
                   </button>
                   <h2 className="font-barlow font-bold uppercase text-2xl tracking-tight text-ink">
-                    Your Details
+                    {tF.form.title}
                   </h2>
                 </div>
 
                 <div className="bg-ink text-white px-5 py-4 mb-7 flex flex-wrap gap-6 text-sm">
                   <div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">Bike</p>
+                    <p className="text-white/40 text-[10px] uppercase tracking-wider">{tF.success.summaryBike}</p>
                     <p className="font-semibold mt-0.5">{bike.model}</p>
                   </div>
                   <div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">Pickup</p>
+                    <p className="text-white/40 text-[10px] uppercase tracking-wider">{tF.success.summaryFrom}</p>
                     <p className="font-semibold mt-0.5">
                       {range?.from ? `${format(range.from, "dd MMM yyyy")} · ${pickupTime}` : "-"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">Return</p>
+                    <p className="text-white/40 text-[10px] uppercase tracking-wider">{tF.success.summaryTo}</p>
                     <p className="font-semibold mt-0.5">
                       {range?.to ? `${format(range.to, "dd MMM yyyy")} · ${returnTime}` : "-"}
                     </p>
                   </div>
                   <div className="ml-auto">
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">Total</p>
+                    <p className="text-white/40 text-[10px] uppercase tracking-wider">{tF.success.summaryTotal}</p>
                     <p className="font-barlow font-black text-red text-2xl leading-none mt-0.5">
                       {totalPrice}€
                     </p>
@@ -824,7 +805,7 @@ export default function BikeDetail({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <label className="block">
                       <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                        Full Name *
+                        {tF.form.name} *
                       </span>
                       <input
                         type="text"
@@ -838,7 +819,7 @@ export default function BikeDetail({
 
                     <label className="block">
                       <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                        Email *
+                        {tF.form.email} *
                       </span>
                       <input
                         type="email"
@@ -853,7 +834,7 @@ export default function BikeDetail({
 
                   <label className="block">
                     <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                      Phone (with country code) *
+                      {tF.form.phone} *
                     </span>
                     <input
                       type="tel"
@@ -883,7 +864,7 @@ export default function BikeDetail({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <label className="block">
                       <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                        Driver&apos;s licence *
+                        {tF.form.licence} *
                       </span>
                       <select
                         required
@@ -892,7 +873,7 @@ export default function BikeDetail({
                         className={inputClass}
                       >
                         <option value="" disabled>
-                          Pick your licence
+                          {tF.form.licencePlaceholder}
                         </option>
                         {LICENCE_OPTIONS.map((o) => (
                           <option key={o.value} value={o.value}>
@@ -901,13 +882,12 @@ export default function BikeDetail({
                         ))}
                       </select>
                       <p className="text-muted text-xs mt-1.5">
-                        Bike requires{" "}
-                        <span className="font-semibold text-ink">{bike.licence}</span>.
+                        <span className="font-semibold text-ink">{bike.licence}</span>
                       </p>
                     </label>
                     <label className="block">
                       <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                        Riding style *
+                        {tF.form.ridingStyle} *
                       </span>
                       <select
                         required
@@ -917,29 +897,29 @@ export default function BikeDetail({
                         className={inputClass}
                       >
                         <option value="" disabled>
-                          Pick a style
+                          {tF.form.ridingStylePlaceholder}
                         </option>
-                        <option value="solo">Solo</option>
+                        <option value="solo">{tF.form.ridingStyleSolo}</option>
                         {!isSinglePassenger && (
-                          <option value="with_passenger">With passenger</option>
+                          <option value="with_passenger">{tF.form.ridingStyleWithPassenger}</option>
                         )}
                       </select>
                       <p className="text-muted text-xs mt-1.5">
                         {isSinglePassenger
-                          ? "This bike is a single-seater. Solo only."
-                          : `Up to ${bike.seats} riders allowed.`}
+                          ? tF.form.soloOnly
+                          : tF.form.maxRiders.replace("{n}", String(bike.seats))}
                       </p>
                     </label>
                   </div>
 
                   <label className="block">
                     <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                      Notes (optional)
+                      {tF.form.notes}
                     </span>
                     <textarea
                       value={form.notes}
                       onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                      placeholder="E.g. need 2 helmets, special pickup time, anything else..."
+                      placeholder={tF.form.notesPlaceholder}
                       rows={3}
                       className={`${inputClass} resize-none`}
                     />
@@ -949,17 +929,19 @@ export default function BikeDetail({
                   <div className="border-t border-ink/10 pt-7 mt-2">
                     <div className="flex items-baseline justify-between mb-1">
                       <h3 className="font-barlow font-bold uppercase text-lg tracking-tight text-ink">
-                        Reservation
+                        {tF.reservation.title}
                       </h3>
                       <p className="text-muted text-xs">
-                        20% of {totalPrice}€ to lock the booking
+                        {tF.reservation.lockBooking.replace("{total}", String(totalPrice))}
                       </p>
                     </div>
                     <p className="text-ink text-sm leading-relaxed mb-1">
-                      Pay <span className="font-bold text-red">{bookingFee}€</span> via one of the methods below, then upload a screenshot of the transaction. The remaining {Math.round((totalPrice - bookingFee) * 100) / 100}€ is paid at pickup via cash (no fees), Revolut, PayPal, or debit/credit card (transaction fees may apply).
+                      {tF.reservation.instructions
+                        .replace("{fee}", String(bookingFee))
+                        .replace("{rest}", String(Math.round((totalPrice - bookingFee) * 100) / 100))}
                     </p>
                     <p className="text-muted text-xs mb-5">
-                      No reservation fee, no booking.
+                      {tF.reservation.noBooking}
                     </p>
 
                     <div className="space-y-2.5 mb-5">
@@ -990,7 +972,7 @@ export default function BikeDetail({
                                   </span>
                                   {p.recommended && (
                                     <span className="text-[9px] font-bold tracking-widest uppercase text-red bg-red/10 px-1.5 py-0.5">
-                                      Recommended
+                                      {tF.reservation.recommended}
                                     </span>
                                   )}
                                 </div>
@@ -1014,7 +996,7 @@ export default function BikeDetail({
                                           }}
                                           className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red transition-colors px-2 py-1 border border-ink/15 hover:border-red"
                                         >
-                                          {copied === `${p.id}-value` ? "✓ Copied" : "Copy"}
+                                          {copied === `${p.id}-value` ? `✓ ${tF.reservation.copied}` : tF.reservation.copy}
                                         </button>
                                       </div>
                                     </div>
@@ -1056,7 +1038,7 @@ export default function BikeDetail({
 
                     <div>
                       <p className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em] mb-1.5">
-                        Receipt screenshot *
+                        {tF.reservation.uploadScreenshot} *
                       </p>
                       <input
                         id="receipt-file"
@@ -1071,7 +1053,7 @@ export default function BikeDetail({
                           htmlFor="receipt-file"
                           className="inline-flex items-center cursor-pointer bg-ink text-white font-bold text-[10px] tracking-widest uppercase px-4 py-2.5 hover:bg-red transition-colors"
                         >
-                          {receipt ? "Change file" : "Choose file"}
+                          {tF.reservation.uploadPicked}
                         </label>
                         <span className="text-sm text-ink min-w-0 break-all">
                           {receipt ? (
@@ -1082,7 +1064,7 @@ export default function BikeDetail({
                               </span>
                             </>
                           ) : (
-                            <span className="text-muted">No file chosen</span>
+                            <span className="text-muted">-</span>
                           )}
                         </span>
                         {receipt && (
@@ -1104,7 +1086,7 @@ export default function BikeDetail({
                         <p className="text-red text-xs mt-2 font-semibold">{receiptError}</p>
                       )}
                       <p className="text-muted text-xs mt-2">
-                        JPG, PNG, HEIC or PDF · max 4 MB
+                        {tF.reservation.uploadHint}
                       </p>
                     </div>
                   </div>
@@ -1118,14 +1100,13 @@ export default function BikeDetail({
                     disabled={bookingStep === "submitting" || !canSubmit}
                     className="w-full py-4 bg-red text-white font-bold text-xs tracking-widest uppercase hover:bg-red-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    {bookingStep === "submitting" ? "Sending…" : "Send Request →"}
+                    {bookingStep === "submitting" ? tF.form.submitting : `${tF.form.submit} →`}
                   </button>
 
                   <p className="text-center text-muted text-xs">
-                    We&apos;ll review your reservation screenshot and confirm by email, usually within a few hours.
-                    By sending you agree to our{" "}
-                    <Link href="/terms" target="_blank" className="text-red font-semibold underline">
-                      terms
+                    {tF.form.reviewLine}{" "}
+                    <Link href={`/${lang}/terms`} target="_blank" className="text-red font-semibold underline">
+                      {tF.form.termsLink}
                     </Link>
                     .
                   </p>
@@ -1142,47 +1123,37 @@ export default function BikeDetail({
                   </svg>
                 </div>
                 <h2 className="font-barlow font-black uppercase text-[clamp(2.5rem,8vw,5rem)] leading-none tracking-tight text-ink mb-4">
-                  Request Sent!
+                  {tF.success.title}
                 </h2>
                 <p className="text-ink text-base leading-relaxed mb-2">
-                  Thanks {form.name} - we&apos;ll review and get back to you shortly.
-                </p>
-                <p className="text-muted text-sm leading-relaxed mb-8">
-                  A confirmation email is on its way to <span className="font-semibold text-ink">{form.email}</span>. The final booking confirmation comes by email once the owner reviews - usually within a few hours.
+                  {form.name && `${form.name}. `}{tF.success.intro.replace("{ref}", "")}
                 </p>
 
                 <div className="bg-sand px-5 py-4 mb-10 text-left text-sm">
-                  <p className="text-[10px] tracking-[0.2em] uppercase text-muted mb-2 font-bold">What you booked</p>
-                  <p className="text-ink"><span className="text-muted">Bike: </span>{bike.model}</p>
+                  <p className="text-ink"><span className="text-muted">{tF.success.summaryBike}: </span>{bike.model}</p>
                   {range?.from && range?.to && (
                     <>
                       <p className="text-ink">
-                        <span className="text-muted">Pickup: </span>
+                        <span className="text-muted">{tF.success.summaryFrom}: </span>
                         {format(range.from, "dd MMM yyyy")} · {pickupTime}
                       </p>
                       <p className="text-ink">
-                        <span className="text-muted">Return: </span>
+                        <span className="text-muted">{tF.success.summaryTo}: </span>
                         {format(range.to, "dd MMM yyyy")} · {returnTime}
                       </p>
                     </>
                   )}
                   {totalPrice > 0 && (
-                    <p className="text-ink"><span className="text-muted">Total: </span>{totalPrice}€</p>
+                    <p className="text-ink"><span className="text-muted">{tF.success.summaryTotal}: </span>{totalPrice}€</p>
                   )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <button
-                    onClick={resetBooking}
-                    className="border border-ink/20 text-ink font-bold text-xs tracking-widest uppercase px-7 py-3 hover:border-red hover:text-red transition-colors"
-                  >
-                    New Booking
-                  </button>
                   <Link
-                    href="/#fleet"
+                    href={`/${lang}/#fleet`}
                     className="bg-ink text-white font-bold text-xs tracking-widest uppercase px-7 py-3 hover:bg-red transition-colors"
                   >
-                    Back to Fleet
+                    {tF.success.back}
                   </Link>
                 </div>
               </div>
@@ -1194,13 +1165,13 @@ export default function BikeDetail({
             <section className="bg-red text-white px-8 md:px-12 py-12 md:py-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
               <div>
                 <p className="text-white/60 text-xs tracking-widest uppercase mb-3">
-                  Got questions?
+                  {dict.faq.eyebrow}
                 </p>
                 <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] tracking-tight">
-                  Ask on WhatsApp
+                  WhatsApp
                 </h2>
                 <p className="text-white/70 text-xs mt-2">
-                  We speak <span className="text-base align-middle">{BRAND.languages.join(" ")}</span>
+                  {BRAND.languages.join(" · ")}
                 </p>
               </div>
               <a

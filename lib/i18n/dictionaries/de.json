@@ -23,8 +23,8 @@
   "home": {
     "hero": {
       "eyebrow": "Zadar, Kroatien",
-      "headline1": "Fahr",
-      "headline2": "die Küste",
+      "headline1": "Ride",
+      "headline2": "the Coast",
       "sub": "Roller und Motorradverleih in Zadar, 50ccm bis 390ccm. Helme und Basisversicherung inklusive. Küstenstraßen, Inseln, Freiheit.",
       "checkAvailability": "Verfügbarkeit prüfen",
       "fromPrice": "Ab {price}/Tag",
@@ -112,7 +112,77 @@
   "terms": {
     "eyebrow": "Buchungsbedingungen",
     "title": "AGB",
-    "intro": "Bedingungen für Roller- und Motorradverleih. Mit deiner Buchung bei {legal} erkennst du die folgenden Regeln an."
+    "intro": "Bedingungen für Roller- und Motorradverleih. Mit deiner Buchung bei {legal} erkennst du die folgenden Regeln an.",
+    "questionsLine": "Fragen? Erreich uns unter",
+    "questionsTail": "oder über WhatsApp auf der Kontaktseite.",
+    "sections": [
+      {
+        "heading": "Buchungen",
+        "bullets": [
+          "Bestätige die Verfügbarkeit direkt vor der Zahlung mit uns. Die Verfügbarkeit kann sich schnell ändern, eine frühere Bestätigung garantiert nicht dass der Roller oder das Motorrad noch verfügbar ist.",
+          "Bei der Buchung bitte Abhol- und Rückgabedatum sowie -uhrzeit angeben.",
+          "Eine Anzahlung von 20% des Gesamtbetrags ist erforderlich um deine Buchung zu sichern.",
+          "Zahlungsarten: PayPal, Banküberweisung, Revolut oder Bargeld vor Ort (wenn du schon in Zadar bist). Wir akzeptieren keine Kreditkarten.",
+          "Nach der Zahlung schick uns bitte einen Screenshot der Transaktion als Beleg. Bei Barzahlung nicht nötig.",
+          "Kommst du mehr als 1 Stunde zu spät ohne Bescheid, wird deine Buchung automatisch storniert und die Anzahlung verfällt.",
+          "Wird ein Roller oder Motorrad durch einen Unfall oder Schaden eines anderen Kunden nicht verfügbar, können wir deine Buchung stornieren und die Anzahlung in voller Höhe erstatten.",
+          "Roller- oder Motorradfahren erfordert Vorerfahrung. Stellen wir fest dass du nicht über genügend Erfahrung verfügst um sicher zu fahren, behalten wir uns das Recht vor die Buchung ohne Rückerstattung abzulehnen."
+        ]
+      },
+      {
+        "heading": "Kaution und Zahlung",
+        "bullets": [
+          "Kaution: 250€ pro Bike, wird nach unbeschadeter Rückgabe zurückerstattet.",
+          "Anzahlung: 20% des Gesamtbetrags. Sichert deine Termine, nicht erstattungsfähig bei Stornierung.",
+          "Zahlungsarten: PayPal (Friends & Family bevorzugt, keine Gebühr), Banküberweisung, Revolut oder Bargeld bei Anreise.",
+          "Wir akzeptieren keine Kreditkarten."
+        ]
+      },
+      {
+        "heading": "Abholung und Rückgabe",
+        "bullets": [
+          "Abholung und Rückgabe bei Velebitska Ulica 2, 23000 Zadar.",
+          "Geöffnet Mo bis So, 09:00 bis 19:00 Uhr.",
+          "Abhol- und Rückgabezeitfenster sind 30-Minuten-Intervalle zwischen 09:00 und 19:00 Uhr.",
+          "15 Minuten Karenzzeit bei der Rückgabe. Spätere Rückgaben kosten extra.",
+          "Schick uns den Screenshot der Anzahlung nach der Zahlung damit wir prüfen und bestätigen können."
+        ]
+      },
+      {
+        "heading": "Versicherung und Sicherheit",
+        "bullets": [
+          "Die Basisversicherung ist bei jedem Verleih enthalten und deckt Diebstahl des Bikes sowie Motorschäden ab.",
+          "Unfälle, Kratzer, Schäden und platte Reifen liegen in der Verantwortung des Mieters.",
+          "Verursacht ein Dritter einen Unfall, musst du die Polizei rufen und einen offiziellen Bericht einholen. Der Verursacher haftet.",
+          "Helme werden immer zur Verfügung gestellt.",
+          "Alle Bikes werden in einwandfreiem Zustand übergeben. Wir bitten Mieter das Bike zu inspizieren, Fotos und Videos bei der Abholung zu machen und es im gleichen Zustand zurückzugeben."
+        ]
+      },
+      {
+        "heading": "Schäden, Reparatur und Pannenhilfe",
+        "bullets": [
+          "Die Kaution deckt die ersten Reparaturkosten. Wir bringen das Bike zu einer lokalen Werkstatt zur Begutachtung. Der Mieter zahlt die vollen Reparaturkosten gemäß Werkstattrechnung (eine Kopie wird immer zur Verfügung gestellt).",
+          "Pannenhilfe: bis 20 km kostenlos. Über 20 km: 50€. Inseln: Preko 150€, Dugi Otok 500€.",
+          "Schlüsselverlust: 50€ Ersatzgebühr plus eventuell anfallende Pannenhilfegebühr je nach Standort.",
+          "Bei Motorschäden ohne Verschulden des Mieters übernehmen wir alle Kosten."
+        ]
+      },
+      {
+        "heading": "Tank",
+        "bullets": [
+          "Jedes Bike wird mit vollem Tank übergeben. Bitte auch mit vollem Tank zurückgeben.",
+          "Gibst du das Bike nicht vollgetankt zurück, berechnen wir den fehlenden Sprit plus eine Tankgebühr."
+        ]
+      },
+      {
+        "heading": "Anforderungen an Fahrer",
+        "bullets": [
+          "Bring deinen gültigen Führerschein zur Abholung mit. Kein Führerschein, keine Fahrt. Wir prüfen dass die Führerscheinklasse zur Bike-Klasse passt.",
+          "Fahren erfordert Vorerfahrung. Stellen wir bei der Abholung fest dass deine Erfahrung nicht ausreicht das Bike sicher zu fahren, behalten wir uns das Recht vor die Vermietung abzulehnen. Die Anzahlung ist in dem Fall nicht erstattungsfähig, sei also ehrlich was deine Erfahrung bei der Buchung angeht.",
+          "Der Mieter trägt die volle Verantwortung für alle Unfälle, Schäden und Verletzungen während der Mietzeit."
+        ]
+      }
+    ]
   },
   "contact": {
     "eyebrow": "Schreib uns",

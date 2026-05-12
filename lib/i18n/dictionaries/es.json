@@ -23,8 +23,8 @@
   "home": {
     "hero": {
       "eyebrow": "Zadar, Croacia",
-      "headline1": "Recorre",
-      "headline2": "la costa",
+      "headline1": "Ride",
+      "headline2": "the Coast",
       "sub": "Alquiler de scooters y motos en Zadar, de 50cc a 390cc. Casco y seguro básico incluidos. Carreteras costeras, islas, libertad.",
       "checkAvailability": "Ver disponibilidad",
       "fromPrice": "Desde {price}/día",
@@ -112,7 +112,77 @@
   "terms": {
     "eyebrow": "Términos de reserva",
     "title": "Términos y condiciones",
-    "intro": "Términos para el alquiler de scooters y motos. Al reservar con {legal} aceptas las siguientes reglas."
+    "intro": "Términos para el alquiler de scooters y motos. Al reservar con {legal} aceptas las siguientes reglas.",
+    "questionsLine": "Dudas? Escríbenos a",
+    "questionsTail": "o por WhatsApp desde la página de contacto.",
+    "sections": [
+      {
+        "heading": "Reservas",
+        "bullets": [
+          "Confirma siempre la disponibilidad con nosotros justo antes de pagar. La disponibilidad puede cambiar rápido y una confirmación previa no garantiza que el scooter o la moto siga disponible.",
+          "Al reservar indica las fechas y horas de recogida y devolución.",
+          "Se requiere un 20% del total como reserva para asegurar las fechas.",
+          "Métodos de pago: PayPal, transferencia bancaria, Revolut o efectivo en persona (si ya estás en Zadar). No aceptamos tarjetas de crédito.",
+          "Tras el pago envíanos un screenshot de la transacción como justificante. No hace falta si pagas en efectivo.",
+          "Si llegas más de 1 hora tarde sin avisar, la reserva se cancela automáticamente y la caparra no se reembolsa.",
+          "Si un scooter o moto queda no disponible por accidente o daño causado por otro cliente, podemos cancelar tu reserva y reembolsar la caparra al completo.",
+          "Conducir un scooter o moto requiere experiencia. Si vemos que no tienes suficiente experiencia para conducir con seguridad, nos reservamos el derecho a rechazar la reserva sin reembolso."
+        ]
+      },
+      {
+        "heading": "Caparra y pago",
+        "bullets": [
+          "Depósito de seguridad: 250€ por moto, se devuelve tras la entrega si no hay daños.",
+          "Caparra: 20% del total. Asegura las fechas, no es reembolsable en caso de cancelación.",
+          "Métodos de pago: PayPal (preferido Friends & Family, sin comisión), transferencia bancaria, Revolut o efectivo a la llegada.",
+          "No aceptamos tarjetas de crédito."
+        ]
+      },
+      {
+        "heading": "Recogida y devolución",
+        "bullets": [
+          "Recogida y devolución en Velebitska Ulica 2, 23000 Zadar.",
+          "Abierto de lunes a domingo, 09:00 a 19:00.",
+          "Horarios de recogida y devolución en intervalos de 30 minutos entre 09:00 y 19:00.",
+          "15 minutos de cortesía en la devolución. Retrasos mayores conllevan costes extra.",
+          "Envíanos el screenshot del pago de la caparra para que podamos verificar y confirmar."
+        ]
+      },
+      {
+        "heading": "Seguro y seguridad",
+        "bullets": [
+          "El seguro básico está incluido en cada alquiler y cubre robo de la moto y daños al motor.",
+          "Accidentes, arañazos, daños y pinchazos son responsabilidad del cliente.",
+          "Si un tercero causa un accidente, debes llamar a la policía y obtener un parte oficial. El responsable paga.",
+          "Los cascos están siempre incluidos.",
+          "Todas las motos se entregan en perfecto estado de funcionamiento. Pedimos a los clientes inspeccionar la moto, hacer fotos y vídeos en la recogida y devolverla en el mismo estado."
+        ]
+      },
+      {
+        "heading": "Daños, reparación y asistencia",
+        "bullets": [
+          "La caparra cubre los primeros costes de reparación. Llevamos la moto a un taller local para evaluación. El cliente paga el coste completo según la factura del taller (siempre se proporciona copia).",
+          "Asistencia en carretera: gratis hasta 20 km. Más de 20 km: 50€. Islas: Preko 150€, Dugi Otok 500€.",
+          "Pérdida de llave: 50€ de coste de repuesto más asistencia según la ubicación.",
+          "En caso de avería del motor no causada por el cliente, cubrimos todos los costes."
+        ]
+      },
+      {
+        "heading": "Combustible",
+        "bullets": [
+          "Cada moto se entrega con el depósito lleno. Devuélvela también con el depósito lleno.",
+          "Si la devuelves sin llenar, cobramos el combustible que falta más una tasa de repostaje."
+        ]
+      },
+      {
+        "heading": "Requisitos del conductor",
+        "bullets": [
+          "Trae tu carnet válido a la recogida. Sin carnet, no hay ruta. Verificamos que la categoría del carnet coincide con la clase de la moto.",
+          "Conducir requiere experiencia previa. Si en la recogida vemos que tu experiencia no es suficiente para conducir con seguridad, nos reservamos el derecho a rechazar. La caparra no es reembolsable en ese caso, sé honesto sobre tu experiencia al reservar.",
+          "El cliente asume la responsabilidad total por todos los accidentes, daños y lesiones durante el alquiler."
+        ]
+      }
+    ]
   },
   "contact": {
     "eyebrow": "Escríbenos",

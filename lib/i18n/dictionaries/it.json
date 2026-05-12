@@ -23,8 +23,8 @@
   "home": {
     "hero": {
       "eyebrow": "Zara, Croazia",
-      "headline1": "Vivi",
-      "headline2": "la costa",
+      "headline1": "Ride",
+      "headline2": "the Coast",
       "sub": "Noleggio scooter e moto a Zara, da 50cc a 390cc. Caschi e assicurazione base inclusi. Strade costiere, isole, libertà.",
       "checkAvailability": "Verifica disponibilità",
       "fromPrice": "Da {price}/giorno",
@@ -112,7 +112,77 @@
   "terms": {
     "eyebrow": "Termini di prenotazione",
     "title": "Termini e condizioni",
-    "intro": "Termini per il noleggio di scooter e moto. Prenotando con {legal} accetti le regole qui sotto."
+    "intro": "Termini per il noleggio di scooter e moto. Prenotando con {legal} accetti le regole qui sotto.",
+    "questionsLine": "Domande? Scrivici a",
+    "questionsTail": "oppure via WhatsApp dalla pagina contatti.",
+    "sections": [
+      {
+        "heading": "Prenotazioni",
+        "bullets": [
+          "Conferma sempre la disponibilità con noi prima di effettuare il pagamento. La disponibilità può cambiare velocemente, una conferma precedente non garantisce che lo scooter o la moto sia ancora disponibile.",
+          "Al momento della prenotazione indica le date e gli orari di ritiro e riconsegna.",
+          "Una caparra del 20% del totale è richiesta per bloccare la prenotazione.",
+          "Metodi di pagamento: PayPal, bonifico bancario, Revolut o contanti in persona (se sei già a Zara). Non accettiamo carte di credito.",
+          "Dopo il pagamento inviaci uno screenshot della transazione come prova. Non serve se paghi in contanti.",
+          "Se arrivi più di 1 ora in ritardo senza preavviso, la prenotazione viene annullata automaticamente e la caparra non è rimborsabile.",
+          "Se uno scooter o una moto non è più disponibile per incidente o danno causato da un altro cliente, possiamo annullare la prenotazione e rimborsare per intero la caparra.",
+          "Guidare uno scooter o una moto richiede esperienza. Se notiamo che non hai esperienza sufficiente per guidare in sicurezza, ci riserviamo il diritto di rifiutare la prenotazione senza rimborso."
+        ]
+      },
+      {
+        "heading": "Cauzione e pagamento",
+        "bullets": [
+          "Cauzione di sicurezza: 250€ per moto, restituita dopo la riconsegna se non ci sono danni.",
+          "Caparra: 20% del totale. Blocca le date, non rimborsabile in caso di cancellazione.",
+          "Metodi di pagamento: PayPal (preferito Friends & Family, senza commissioni), bonifico, Revolut o contanti all'arrivo.",
+          "Non accettiamo carte di credito."
+        ]
+      },
+      {
+        "heading": "Ritiro e riconsegna",
+        "bullets": [
+          "Ritiro e riconsegna a Velebitska Ulica 2, 23000 Zadar.",
+          "Aperto lunedì a domenica, dalle 09:00 alle 19:00.",
+          "Fasce orarie di ritiro e riconsegna a intervalli di 30 minuti tra le 09:00 e le 19:00.",
+          "15 minuti di tolleranza alla riconsegna. Ritardi oltre comportano costi extra.",
+          "Inviaci lo screenshot della caparra dopo il pagamento per poter verificare e confermare."
+        ]
+      },
+      {
+        "heading": "Assicurazione e sicurezza",
+        "bullets": [
+          "L'assicurazione base è inclusa in ogni noleggio e copre furto della moto e danni al motore.",
+          "Incidenti, graffi, danni e forature sono a carico del cliente.",
+          "Se un terzo causa un incidente, devi chiamare la polizia e ottenere un rapporto ufficiale. Il responsabile paga.",
+          "I caschi sono sempre forniti.",
+          "Tutte le moto vengono consegnate in perfette condizioni di funzionamento. Chiediamo al cliente di ispezionare la moto, fare foto e video al ritiro e restituirla nelle stesse condizioni."
+        ]
+      },
+      {
+        "heading": "Danni, riparazione e soccorso",
+        "bullets": [
+          "La cauzione copre i primi costi di riparazione. Portiamo la moto da un meccanico locale per la valutazione. Il cliente paga il costo completo secondo la fattura del meccanico (una copia è sempre fornita).",
+          "Soccorso stradale: gratis fino a 20 km. Oltre 20 km: 50€. Isole: Preko 150€, Dugi Otok 500€.",
+          "Chiave persa: 50€ di costo per la sostituzione più soccorso applicabile in base alla posizione.",
+          "In caso di guasto al motore non causato dal cliente, copriamo tutti i costi."
+        ]
+      },
+      {
+        "heading": "Carburante",
+        "bullets": [
+          "Ogni moto viene consegnata con il pieno. Restituiscila anche con il pieno.",
+          "Se la restituisci senza pieno, addebitiamo il carburante mancante più una tariffa di rifornimento."
+        ]
+      },
+      {
+        "heading": "Requisiti del conducente",
+        "bullets": [
+          "Porta la tua patente valida al ritiro. Niente patente, niente moto. Verifichiamo che la categoria della patente corrisponda alla classe della moto.",
+          "Guidare richiede esperienza precedente. Se al ritiro stabiliamo che la tua esperienza non è sufficiente per gestire la moto in sicurezza, ci riserviamo il diritto di rifiutare. La caparra non è rimborsabile in quel caso, sii onesto sulla tua esperienza al momento della prenotazione.",
+          "Il cliente si assume la piena responsabilità per tutti gli incidenti, danni e lesioni durante il periodo di noleggio."
+        ]
+      }
+    ]
   },
   "contact": {
     "eyebrow": "Scrivici",
