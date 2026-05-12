@@ -143,7 +143,7 @@ export default async function HomePage({
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 max-w-7xl mx-auto">
             {CATEGORIES.map((cat) => {
               const bikeDict = dict.bikes[cat.id as keyof typeof dict.bikes];
               return (
