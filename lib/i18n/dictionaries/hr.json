@@ -1,0 +1,493 @@
+{
+  "nav": {
+    "home": "Početna",
+    "fleet": "Vozni park",
+    "gallery": "Galerija",
+    "info": "Info",
+    "faq": "Pitanja",
+    "contact": "Kontakt",
+    "terms": "Uvjeti",
+    "bookNow": "Rezerviraj",
+    "menuAria": "Izbornik",
+    "languageSwitcher": "Jezik"
+  },
+  "footer": {
+    "intro": "Najam skutera i motocikala u Zadru. Istraži dalmatinsku obalu na dva kotača.",
+    "locationLabel": "Zadar, Hrvatska",
+    "call": "Nazovi",
+    "whatsapp": "WhatsApp",
+    "trusted": "Pouzdan partner za najam",
+    "openHoursPrefix": "Otvoreno",
+    "rights": "Sva prava pridržana."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Zadar, Hrvatska",
+      "headline1": "Ride",
+      "headline2": "the Coast",
+      "sub": "Najam skutera i motocikala u Zadru, od 50ccm do 390ccm. Kacige i osnovno osiguranje uključeni. Obalne ceste, otoci, sloboda.",
+      "checkAvailability": "Provjeri dostupnost",
+      "fromPrice": "Od {price}/dan",
+      "statBikes": "Skuteri i motocikli",
+      "statReviews": "Recenzije s 5 zvjezdica",
+      "statKm": "Km uključeno"
+    },
+    "fleet": {
+      "eyebrow": "Odaberi vozilo",
+      "title": "Naš vozni park",
+      "fromPrefix": "od",
+      "topSpeed": "Maks. brzina",
+      "experienceRequired": "Potrebno iskustvo",
+      "bookNow": "Rezerviraj"
+    },
+    "included": {
+      "eyebrow": "Uz svaki najam",
+      "title": "Što je uključeno",
+      "items": {
+        "insurance": { "label": "Osnovno osiguranje", "sub": "Krađa i šteta na motoru" },
+        "helmets": { "label": "Kacige", "sub": "Uvijek uključene" },
+        "unlimitedKm": { "label": "Neograničeni km", "sub": "Bez ograničenja vožnje" },
+        "roadside": { "label": "Cestovna pomoć", "sub": "Besplatno do 20km, dalje 50€ i više" },
+        "transparent": { "label": "Transparentne cijene", "sub": "Što vidiš, to plaćaš" },
+        "warranty": { "label": "Jamstvo motora", "sub": "Pokrivamo kvarove motora" }
+      }
+    },
+    "goodToKnow": {
+      "eyebrow": "Važno",
+      "title": "Dobro je znati",
+      "deposit": { "label": "Polog", "sub": "Po motoru, vraća se nakon povrata ako nema oštećenja." },
+      "phoneHolders": { "value": "Ne", "label": "Držači za mobitel", "sub": "Ne nudimo niti ugrađujemo držače za mobitel, a ne možeš donijeti ni svoj. Nijedan naš motor nema držač." },
+      "season": { "value": "Tra-Lis", "label": "Sezona", "sub": "Iznajmljujemo od travnja do listopada. Pun spremnik na izlasku, pun spremnik na povratu." },
+      "languages": { "label": "Jezici", "sub": "Govorimo njemački i engleski. Piši nam na WhatsApp." }
+    },
+    "howItWorks": {
+      "eyebrow": "Jednostavan proces",
+      "title": "Kako funkcionira",
+      "step1": { "title": "Odaberi vozilo", "text": "Odaberi skuter ili motocikl, od 50ccm gradskog skutera do 390ccm motocikla za ceste." },
+      "step2": { "title": "Traži termine", "text": "Provjeri dostupnost u kalendaru i pošalji kratku upitnicu. Preuzimanje u našem dućanu u Zadru." },
+      "step3": { "title": "Potvrđujemo i kreni", "text": "Šaljemo potvrdu mailom u roku nekoliko sati. Plati 20% predujma, preuzmi motor i kreni." },
+      "cta": "Rezerviraj motor"
+    },
+    "reviews": {
+      "eyebrow": "Što kažu klijenti",
+      "title": "Recenzije",
+      "leaveReview": "Ostavi Google recenziju"
+    },
+    "gallerySection": {
+      "eyebrow": "U pokretu",
+      "title": "Galerija",
+      "seeAll": "Pogledaj sve fotografije"
+    },
+    "cta": {
+      "eyebrow": "Spreman za vožnju?",
+      "headline1": "Rezerviraj",
+      "headline2": "motor danas",
+      "ctaBtn": "Provjeri dostupnost"
+    }
+  },
+  "info": {
+    "eyebrow": "Sve što trebaš znati",
+    "title": "Info",
+    "licenceRequirements": {
+      "title": "Uvjeti za vozačku",
+      "scooter50": "Skuter 50ccm: B ili AM kategorija plus iskustvo sa skuterom",
+      "scooter125": "Skuter 125ccm i motocikl 125ccm: A1 kategorija",
+      "motorbike390": "Motocikl 390ccm: A2 kategorija",
+      "verify": "Vozačku provjeravamo pri preuzimanju"
+    },
+    "depositPayment": {
+      "title": "Polog i plaćanje",
+      "deposit": "{deposit} polog po motoru, vraća se nakon povrata ako nema oštećenja.",
+      "bookingFee": "20% predujma osigurava tvoje termine.",
+      "noCards": "Ne primamo kartice za predujam."
+    },
+    "fleetSection": {
+      "title": "Naš vozni park ukratko"
+    }
+  },
+  "faq": {
+    "eyebrow": "Pitanja?",
+    "title": "Česta pitanja"
+  },
+  "terms": {
+    "eyebrow": "Uvjeti rezervacije",
+    "title": "Uvjeti i odredbe",
+    "intro": "Uvjeti najma skutera i motocikala. Rezervacijom kod {legal} prihvaćaš pravila u nastavku.",
+    "questionsLine": "Pitanja? Piši nam na",
+    "questionsTail": "ili na WhatsApp s kontakt stranice.",
+    "sections": [
+      {
+        "heading": "Rezervacije",
+        "bullets": [
+          "Uvijek potvrdi dostupnost s nama prije plaćanja. Dostupnost se može brzo promijeniti, ranija potvrda ne jamči da je skuter ili motocikl još dostupan.",
+          "Pri rezervaciji navedi datume i vrijeme preuzimanja i povrata.",
+          "Predujam od 20% iznosa potreban je za osiguranje rezervacije.",
+          "Načini plaćanja: PayPal, bankovna uplata, Revolut ili gotovina na licu mjesta (ako si već u Zadru). Ne primamo kreditne kartice.",
+          "Nakon plaćanja pošalji nam snimku transakcije kao dokaz. Nije potrebno za plaćanje gotovinom.",
+          "Ako kasniš više od 1 sata bez najave, rezervacija se automatski otkazuje i predujam se ne vraća.",
+          "Ako skuter ili motocikl postane nedostupan zbog nesreće ili oštećenja drugog klijenta, možemo otkazati rezervaciju i vratiti puni iznos predujma.",
+          "Za vožnju skutera ili motocikla potrebno je iskustvo. Ako uočimo da nemaš dovoljno iskustva za sigurnu vožnju, zadržavamo pravo odbiti rezervaciju bez povrata."
+        ]
+      },
+      {
+        "heading": "Polog i plaćanje",
+        "bullets": [
+          "Sigurnosni polog: 250€ po motoru, vraća se nakon povrata ako nema oštećenja.",
+          "Predujam: 20% ukupnog iznosa. Osigurava tvoje termine, ne vraća se pri otkazu.",
+          "Načini plaćanja: PayPal (Friends & Family preporučeno, bez naknade), bankovna uplata, Revolut ili gotovina pri dolasku.",
+          "Ne primamo kreditne kartice."
+        ]
+      },
+      {
+        "heading": "Preuzimanje i povrat",
+        "bullets": [
+          "Preuzimanje i povrat na adresi Velebitska Ulica 2, 23000 Zadar.",
+          "Otvoreno pon do ned, 09:00 do 19:00.",
+          "Termini preuzimanja i povrata u intervalima od 30 minuta između 09:00 i 19:00.",
+          "15 minuta tolerancije pri povratu. Kasniji povrat se dodatno naplaćuje.",
+          "Pošalji nam snimku uplate nakon plaćanja kako bismo mogli provjeriti i potvrditi."
+        ]
+      },
+      {
+        "heading": "Osiguranje i sigurnost",
+        "bullets": [
+          "Osnovno osiguranje uključeno je u svaki najam i pokriva krađu motora i štetu na motoru.",
+          "Nesreće, ogrebotine, štete i ispuhane gume su odgovornost najmoprimca.",
+          "Ako treća strana uzrokuje nesreću, moraš pozvati policiju i dobiti službeni izvještaj. Odgovorna strana plaća.",
+          "Kacige se uvijek osiguravaju.",
+          "Svi motori predaju se u savršenom stanju. Tražimo od najmoprimaca da pregledaju motor, snime fotografije i videozapise pri preuzimanju i vrate ga u istom stanju."
+        ]
+      },
+      {
+        "heading": "Šteta, popravak i pomoć",
+        "bullets": [
+          "Polog pokriva početne troškove popravka. Vodimo motor lokalnom mehaničaru na procjenu. Najmoprimac plaća puni trošak prema računu mehaničara (kopija se uvijek dostavlja).",
+          "Cestovna pomoć: besplatno do 20 km. Preko 20 km: 50€. Otoci: Preko 150€, Dugi Otok 500€.",
+          "Izgubljeni ključ: 50€ zamjenska naknada plus moguća cestovna pomoć ovisno o lokaciji.",
+          "U slučaju kvara motora koji nije uzrokovan ponašanjem najmoprimca, pokrivamo sve troškove."
+        ]
+      },
+      {
+        "heading": "Gorivo",
+        "bullets": [
+          "Svaki motor predaje se s punim spremnikom. Vrati ga također s punim spremnikom.",
+          "Ako ga vratiš bez punog spremnika, naplaćujemo nedostajuće gorivo plus naknadu za točenje."
+        ]
+      },
+      {
+        "heading": "Uvjeti za vozača",
+        "bullets": [
+          "Donesi važeću vozačku pri preuzimanju. Nema vozačke, nema vožnje. Provjeravamo da kategorija vozačke odgovara klasi motora.",
+          "Za vožnju je potrebno iskustvo. Ako pri preuzimanju utvrdimo da iskustvo nije dovoljno za sigurnu vožnju, zadržavamo pravo odbiti. Predujam se ne vraća u tom slučaju, budi iskren oko svog iskustva pri rezervaciji.",
+          "Najmoprimac preuzima punu odgovornost za sve nesreće, štete i ozljede tijekom najma."
+        ]
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Piši nam",
+    "title": "Kontakt",
+    "intro": "Za najbrži odgovor piši nam na WhatsApp. Možeš nam i poslati poruku, javljamo se u roku nekoliko sati.",
+    "form": {
+      "name": "Ime",
+      "email": "Email",
+      "message": "Poruka",
+      "messagePlaceholder": "Tvoje pitanje, planovi, bilo što...",
+      "send": "Pošalji poruku",
+      "sending": "Šaljem...",
+      "sent": "Poruka poslana. Javljamo se uskoro.",
+      "error": "Slanje nije uspjelo. Probaj WhatsApp ili nazovi."
+    },
+    "openHours": "Radno vrijeme",
+    "address": "Adresa"
+  },
+  "gallery": {
+    "eyebrow": "U pokretu",
+    "title": "Galerija",
+    "intro": "Slike s pravih vožnji uz obalu i na otocima."
+  },
+  "fleet": {
+    "back": "Svi motori",
+    "licenceByCode": {
+      "AM/B": "Vozačka AM ili B",
+      "A1": "Vozačka A1",
+      "A2": "Vozačka A2"
+    },
+    "specs": {
+      "title": "Specifikacije",
+      "eyebrow": "Motor",
+      "engine": "Motor",
+      "power": "Snaga",
+      "topSpeed": "Maks. brzina",
+      "tank": "Spremnik",
+      "consumption": "Potrošnja",
+      "range": "Domet",
+      "seats": "Sjedala",
+      "year": "Godina"
+    },
+    "pricing": {
+      "title": "Cijene",
+      "eyebrow": "Fleksibilne cijene",
+      "daily": "Dnevno",
+      "dailySub": "1 dan",
+      "weekend": "Vikend",
+      "weekendSub": "Pet do Ned",
+      "week": "Tjedno",
+      "weekSub": "7 dana",
+      "month": "Mjesečno",
+      "monthSub": "30 dana",
+      "unlimitedKm": "Neograničeni km, sve cijene uključuju OSNOVNO osiguranje",
+      "depositLine": "Polog: {deposit} · Sezona: {season}",
+      "perDay": "/ dan",
+      "fromPrefix": "od"
+    },
+    "tierLabel": {
+      "day": "Dnevna cijena",
+      "weekend": "Vikend cijena (Pet-Ned)",
+      "weekend-mix": "Vikend plus dani",
+      "week": "Tjedna cijena",
+      "week-mix": "Tjedan plus dani",
+      "month": "Mjesečna cijena",
+      "month-mix": "Mjesec plus dani"
+    },
+    "priceBox": {
+      "perDay": "/ dan",
+      "unlimitedLine": "Neograničeni km · Osnovno osiguranje · {deposit} polog",
+      "licenceEyebrow": "Potrebna vozačka",
+      "bringLicence": "Donesi važeću vozačku pri preuzimanju. Nema vozačke, nema vožnje.",
+      "dayBadge": "24h",
+      "dayLabel": "1 dan = 24 sata",
+      "dayCopy": "Od preuzimanja do preuzimanja, ne kalendarski dan. Npr. danas u 11:00 do sutra u 11:00 = 1 dan."
+    },
+    "headsUp": "Važno",
+    "checkAvailability": "Provjeri dostupnost",
+    "specsSection": {
+      "depositLabel": "Polog",
+      "depositText": "{deposit} po motoru, vraća se nakon povrata ako nema oštećenja. Pri preuzimanju: gotovina (bez naknada), PayPal, Revolut ili Wise (mogu se primijeniti naknade). Bez kreditnih ili debitnih kartica.",
+      "noPhoneHoldersLabel": "Bez držača za mobitel",
+      "noPhoneHoldersText": "Ne nudimo niti ugrađujemo držače za mobitel, a ne možeš donijeti ni svoj.",
+      "seasonLabel": "Sezona",
+      "seasonText": "{season}. Iznajmljujemo samo u ovom razdoblju.",
+      "fuelLabel": "Gorivo",
+      "fuelText": "Predaje se s punim spremnikom. Vrati ga također s punim spremnikom."
+    },
+    "calendar": {
+      "title": "Rezerviraj ovaj motor",
+      "eyebrow": "Odaberi termine",
+      "pickupDate": "Datum preuzimanja",
+      "returnDate": "Datum povrata",
+      "pickupTime": "Vrijeme preuzimanja",
+      "returnTime": "Vrijeme povrata",
+      "shopHours": "Radno vrijeme 09:00 do 19:00. Vrijeme izvan ovog razdoblja nije dostupno",
+      "tooClose": " (ili preblizu drugoj rezervaciji, treba nam 1h između rezervacija)",
+      "totalDays": "{n} dana",
+      "totalDay": "1 dan",
+      "appliedTier": "Primijenjena cijena",
+      "total": "Ukupno",
+      "continue": "Nastavi na obrazac",
+      "selectDates": "Prvo odaberi datum preuzimanja i povrata"
+    },
+    "form": {
+      "title": "Tvoji podaci",
+      "name": "Puno ime",
+      "email": "Email",
+      "phone": "Telefon (s pozivnim brojem, npr. +49...)",
+      "notes": "Napomene (opcionalno)",
+      "notesPlaceholder": "Npr. trebam 2 kacige, posebno vrijeme preuzimanja, bilo što drugo...",
+      "licence": "Vozačka",
+      "licencePlaceholder": "Odaberi kategoriju",
+      "licenceCountry": "Država izdavanja",
+      "licenceCountryPlaceholder": "npr. Hrvatska, Njemačka, Italija...",
+      "licenceOptions": {
+        "AM": "AM (moped / 50cc)",
+        "A1": "A1 (do 125cc)",
+        "A2": "A2 (do 35 kW)",
+        "A": "A (bez ograničenja)",
+        "B": "B (vozačka za auto, pokriva AM/50cc)"
+      },
+      "ridingStyle": "Način vožnje",
+      "ridingStyleSolo": "Sam",
+      "ridingStyleWithPassenger": "S putnikom",
+      "ridingStylePlaceholder": "Odaberi opciju",
+      "soloOnly": "Ovaj motor je jednosjed. Samo vožnja bez putnika.",
+      "maxRiders": "Dopušteno do {n} osoba.",
+      "experienceWarning": "Potrebno je iskustvo. Budi iskren oko svog iskustva pri rezervaciji.",
+      "submit": "Pošalji zahtjev",
+      "submitting": "Šaljem...",
+      "reviewLine": "Pregledat ćemo tvoju snimku predujma i potvrditi mailom, obično u roku nekoliko sati. Slanjem prihvaćaš naše",
+      "termsLink": "uvjete"
+    },
+    "reservation": {
+      "title": "Rezervacija",
+      "lockBooking": "20% od {total}€ za osiguranje rezervacije",
+      "instructions": "Plati {fee}€ jednim od načina ispod i prenesi snimku transakcije. Preostalih {rest}€ plaća se pri preuzimanju u gotovini (bez naknada), Revolutom, PayPalom ili debitnom/kreditnom karticom (mogu se primijeniti naknade).",
+      "noBooking": "Bez predujma, bez rezervacije.",
+      "uploadScreenshot": "Prenesi snimku uplate",
+      "uploadPicked": "Odabrano",
+      "uploadHint": "Samo slike, maks. 4 MB",
+      "uploadError": "Prenesi snimku svoje uplate predujma.",
+      "fileTooLarge": "Datoteka prevelika. Maks. 4 MB.",
+      "copy": "Kopiraj",
+      "copied": "Kopirano!",
+      "recommended": "Preporučeno"
+    },
+    "success": {
+      "title": "Zahtjev primljen",
+      "intro": "Pregledat ćemo tvoju rezervaciju i potvrditi mailom uskoro. Tvoja referenca: {ref}.",
+      "summaryBike": "Motor",
+      "summaryFrom": "Preuzimanje",
+      "summaryTo": "Povrat",
+      "summaryTotal": "Ukupno",
+      "summaryPaid": "Predujam plaćen",
+      "summaryRemaining": "Plaća se pri preuzimanju",
+      "back": "Natrag na početnu"
+    }
+  },
+  "bikes": {
+    "scooter-50": {
+      "description": "Niska potrošnja, jednostavno upravljanje, savršen za grad.",
+      "longDescription": "Vrlo niska potrošnja, jednostavno upravljanje i savršen za opušteno krstarenje Zadrom i obalom.",
+      "tagline": "Niska potrošnja. Potrebno iskustvo.",
+      "experienceNote": "Potrebno iskustvo. Bez početnika."
+    },
+    "scooter-50-topcase": {
+      "description": "Piaggio Liberty 50 s topcase-om, više prostora za stvari.",
+      "longDescription": "Isti Liberty 50 kao standardni, s topcase-om za više prostora za stvari na duljim vožnjama.",
+      "tagline": "Topcase uključen, više prostora.",
+      "experienceNote": "Potrebno iskustvo. Bez početnika."
+    },
+    "scooter-125": {
+      "description": "Savršen univerzalac za grad i obalu.",
+      "longDescription": "Isto jednostavno upravljanje kao 50, ali s više snage za izlete uz obalu.",
+      "tagline": "Univerzalac za grad i obalu."
+    },
+    "bike-125-a": {
+      "description": "Sportski i okretan, za aktivne vozače.",
+      "longDescription": "Supermoto osjećaj sa 125ccm. Lagan, okretan i idealan za vozače koji vole zavoje i obalne ceste.",
+      "tagline": "Sportski. Veća potrošnja zbog stila vožnje."
+    },
+    "bike-125-b": {
+      "description": "Osjećaj nakeda s odličnim dometom i sportskim karakterom.",
+      "longDescription": "Pravi naked karakter sa 125ccm. Izvrstan domet, savršen za duže ture uz obalu i na otoke.",
+      "tagline": "Veliki domet, savršen za duže ture."
+    },
+    "bike-390": {
+      "description": "A2-spremna snaga za obalu. Lagan, okretan, za grad, selo i zavoje.",
+      "longDescription": "Premium A2 motocikl. Lagan, okretan i savršen za grad, selo i zavoje, bilo na dan ili cijeli mjesec.",
+      "tagline": "Snažan i premium. Top izbor za iskusne vozače."
+    }
+  },
+  "faqItems": [
+    {
+      "question": "Što uključuje cestovna pomoć?",
+      "answer": "Do 20 km: besplatno (dodatni troškovi za nesreće ili izgubljene ključeve). Preko 20 km: 50€. Otoci: Preko 150€, Dugi Otok 500€. Izgubljeni ključ: 50€. Cestovna pomoć vrijedi ako se ne možeš vratiti na našu adresu zbog nesreće ili izgubljenog ključa. U slučaju kvara motora pokrivamo sve troškove."
+    },
+    {
+      "question": "U kakvom se stanju predaje motor?",
+      "answer": "Svi motori i skuteri predaju se u savršenom stanju. Tražimo od najmoprimaca da pregledaju motor, snime jasne fotografije i videozapise pri preuzimanju koji dokumentiraju postojeće ogrebotine ili štetu, i vrate ga u istom stanju. Te snimke su službeni dokaz u slučaju spora."
+    },
+    {
+      "question": "Koje osiguranje je uključeno?",
+      "answer": "Osnovno osiguranje pokriva krađu motora i štetu na motoru. Nesreće, ogrebotine, štete i ispuhane gume su odgovornost najmoprimca. Ako treća strana uzrokuje nesreću, moraš pozvati policiju i dobiti službeni izvještaj. Odgovorna strana plaća."
+    },
+    {
+      "question": "Kakva je vaša politika otkazivanja?",
+      "answer": "Sve rezervacije su nepovratne. 20% predujma osigurava termine i ne vraća se pri otkazu. Ako motor postane nedostupan zbog nesreće ili štete drugog klijenta, otkazujemo i vraćamo cijeli iznos."
+    },
+    {
+      "question": "Kada i gdje vraćam motor?",
+      "answer": "U dogovoreno vrijeme na dogovorenom mjestu. Dajemo 15 minuta tolerancije. Kasniji povrati se dodatno naplaćuju. Povrat na našoj adresi: Velebitska Ulica 2, 23000 Zadar."
+    },
+    {
+      "question": "Tko je odgovoran za nesreće ili ozljede?",
+      "answer": "Najmoprimac preuzima punu odgovornost za sve nesreće, štete ili ozljede koje se dogode tijekom najma."
+    },
+    {
+      "question": "Što ako se motor ošteti?",
+      "answer": "Polog pokriva početne troškove popravka. Vodimo motor lokalnom mehaničaru na procjenu i popravak, najmoprimac plaća pune troškove popravka prema računu mehaničara. Ako popravak prelazi polog, najmoprimac plaća razliku. Kopija računa se uvijek dostavlja radi transparentnosti."
+    },
+    {
+      "question": "Što ako izgubim ključ?",
+      "answer": "Zamjenski ključ se dostavlja za 50€ plus eventualna naknada za cestovnu pomoć ovisno o tvojoj lokaciji."
+    },
+    {
+      "question": "Kako napraviti rezervaciju?",
+      "answer": "Uvijek prvo potvrdi dostupnost s nama. Brzo se mijenja. 20% predujma osigurava termine. Plaćanje preko PayPala, bankovne uplate, Revoluta ili gotovine pri dolasku. Nakon plaćanja pošalji nam snimku transakcije. Ako kasniš više od 1 sata bez najave, rezervacija se automatski otkazuje. Ne primamo kreditne kartice."
+    },
+    {
+      "question": "Nudite li držače za mobitel?",
+      "answer": "Ne. Ne nudimo niti ugrađujemo držače za mobitel, a ne možeš donijeti ni svoj. Nijedan naš motor nema držač. Planiraj rutu prije polaska."
+    },
+    {
+      "question": "Kako funkcionira gorivo, pun ili prazan spremnik?",
+      "answer": "Svaki motor se predaje s punim spremnikom. Vrati ga također s punim spremnikom. Ako ga vratiš bez punog spremnika, naplaćujemo nedostajuće gorivo plus naknadu za točenje."
+    },
+    {
+      "question": "Kako navigirati bez držača za mobitel?",
+      "answer": "Dvije praktične opcije: putuj s putnikom koji upravlja uputama, ili koristi Bluetooth slušalice za zvučnu navigaciju bez skidanja pogleda s ceste. U svakom slučaju, planiraj rutu prije preuzimanja."
+    },
+    {
+      "question": "Što ako odlučite da nemam dovoljno iskustva?",
+      "answer": "Za vožnju je potrebno prethodno iskustvo. Ako pri preuzimanju utvrdimo da nemaš dovoljno iskustva za sigurnu vožnju, zadržavamo pravo odbiti najam. U tom slučaju predujam se ne vraća, budi iskren oko svog iskustva pri rezervaciji."
+    }
+  ],
+  "common": {
+    "loading": "Učitavanje...",
+    "tryAgain": "Pokušaj ponovno",
+    "language": "Jezik"
+  },
+  "emails": {
+    "bookingReceived": {
+      "subject": "Primili smo zahtjev, {bike} {from} do {to}",
+      "preheader": "Primili smo tvoj zahtjev za {bike}. Vlasnik potvrđuje uskoro.",
+      "headline": "Zahtjev primljen",
+      "greeting": "Bok {name},",
+      "intro": "hvala na zahtjevu. Pregledat ćemo ga i potvrditi mailom uskoro, obično u roku nekoliko sati.",
+      "urgentLine": "U međuvremenu, nešto hitno?",
+      "signoff": "Vidimo se u Zadru."
+    },
+    "bookingConfirmed": {
+      "subject": "Potvrđeno, {bike} {from} do {to}",
+      "preheader": "Tvoja {bike} je potvrđena za {from} do {to}.",
+      "headline": "Rezervacija potvrđena",
+      "greeting": "Bok {name},",
+      "intro": "tvoja {bike} je rezervirana. Vidimo se u Zadru.",
+      "pickupHeader": "Preuzimanje",
+      "openHoursLabel": "Otvoreno",
+      "bringHeader": "Donesi sa sobom",
+      "bringLicence": "Važeću vozačku za motor, bez nje ne možemo predati",
+      "bringDeposit": "{deposit} polog (gotovina pri dolasku, vraća se nakon povrata ako nema oštećenja)",
+      "bringTank": "Motor dolazi s punim spremnikom, vrati ga također punim",
+      "adjustHeader": "Treba prilagoditi?",
+      "adjustLine": "Preuzimanje je za {from} u {pickupTime}, povrat {to} do {returnTime}. Javi nam ako se nešto promijeni:",
+      "cancelLine": "Promijenili planovi?",
+      "cancelLink": "Otkaži rezervaciju",
+      "cancelTail": ", termini se odmah oslobađaju za nekoga drugog."
+    },
+    "bookingDeclined": {
+      "subject": "Ažuriranje rezervacije, {bike}",
+      "preheader": "Ažuriranje tvoje rezervacije {bike}, ovi datumi nisu prošli.",
+      "headline": "Ažuriranje rezervacije",
+      "greeting": "Bok {name},",
+      "intro": "nažalost ne možemo ti dati {bike} za ove datume. Žao nam je.",
+      "tryOther": "Želiš probati druge datume ili drugi motor? Piši nam i potrudit ćemo se naći nešto što odgovara."
+    },
+    "contactReceived": {
+      "subject": "Hvala na poruci",
+      "preheader": "Primili smo tvoju poruku, javljamo se uskoro.",
+      "headline": "Poruka primljena",
+      "greeting": "Bok {name},",
+      "intro": "hvala što si nam pisao. Javljamo se što prije.",
+      "yourMessage": "Tvoja poruka:",
+      "signoff": "Vidimo se u Zadru."
+    },
+    "summary": {
+      "bike": "Motor",
+      "pickup": "Preuzimanje",
+      "return": "Povrat",
+      "total": "Ukupno",
+      "days": "dana",
+      "day": "dan"
+    }
+  }
+}

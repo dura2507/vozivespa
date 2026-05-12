@@ -124,7 +124,7 @@ export default function Navbar({
                 </svg>
               </button>
               {langOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-off-white border border-ink/10 shadow-lg min-w-[140px] py-1">
+                <div className="absolute right-0 top-full mt-2 bg-off-white shadow-xl ring-1 ring-ink/10 min-w-[140px] py-1">
                   {LOCALES.map((l) => (
                     <Link
                       key={l}
@@ -157,7 +157,7 @@ export default function Navbar({
                 type="button"
                 onClick={() => setLangOpen((o) => !o)}
                 onBlur={() => setTimeout(() => setLangOpen(false), 150)}
-                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1.5 px-2 py-1.5 border ${transparent ? "border-white/40" : "border-ink/20"}`}
+                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1.5 px-1`}
                 aria-label={t.languageSwitcher}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -170,7 +170,7 @@ export default function Navbar({
                 </svg>
               </button>
               {langOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-off-white border border-ink/10 shadow-lg min-w-[140px] py-1 z-50">
+                <div className="absolute right-0 top-full mt-2 bg-off-white shadow-xl ring-1 ring-ink/10 min-w-[140px] py-1 z-50">
                   {LOCALES.map((l) => (
                     <Link
                       key={l}

@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   const message = asString(body.message);
   const localeRaw = asString(body.locale);
   const locale =
-    localeRaw && ["en", "de", "es", "it"].includes(localeRaw) ? localeRaw : "en";
+    localeRaw && ["en", "de", "es", "it", "hr"].includes(localeRaw) ? localeRaw : "en";
 
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
   if (!email) return NextResponse.json({ error: "Email is required" }, { status: 400 });

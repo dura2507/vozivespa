@@ -42,7 +42,7 @@ export type BookingRow = {
   riding_style: "solo" | "with_passenger" | null;
   // UI locale the customer used when submitting. Drives the language
   // of the receipt / confirmed / declined emails.
-  locale: "en" | "de" | "es" | "it";
+  locale: "en" | "de" | "es" | "it" | "hr";
   status: BookingStatus;
   secret_token: string;
   created_at: string;

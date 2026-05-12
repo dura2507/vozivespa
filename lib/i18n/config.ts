@@ -1,7 +1,7 @@
 // Supported UI locales. Order here is also the order shown in the
 // language switcher. The first entry is the default fallback when
 // nothing else matches.
-export const LOCALES = ["en", "de", "es", "it"] as const;
+export const LOCALES = ["en", "de", "es", "it", "hr"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = "en";
@@ -11,6 +11,7 @@ export const LOCALE_LABELS: Record<Locale, { short: string; name: string }> = {
   de: { short: "DE", name: "Deutsch" },
   es: { short: "ES", name: "Español" },
   it: { short: "IT", name: "Italiano" },
+  hr: { short: "HR", name: "Hrvatski" },
 };
 
 export function isLocale(value: string): value is Locale {

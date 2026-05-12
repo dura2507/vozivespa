@@ -114,9 +114,9 @@ export async function POST(request: Request) {
       ? parseInt(totalPriceRaw, 10)
       : null;
   const localeRaw = form.get("locale");
-  const locale: "en" | "de" | "es" | "it" =
-    typeof localeRaw === "string" && ["en", "de", "es", "it"].includes(localeRaw)
-      ? (localeRaw as "en" | "de" | "es" | "it")
+  const locale: "en" | "de" | "es" | "it" | "hr" =
+    typeof localeRaw === "string" && ["en", "de", "es", "it", "hr"].includes(localeRaw)
+      ? (localeRaw as "en" | "de" | "es" | "it" | "hr")
       : "en";
   const receipt = form.get("receipt");
 
