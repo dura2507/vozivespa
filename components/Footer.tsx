@@ -142,29 +142,31 @@ export default function Footer({
         <div className="mt-12 pt-8 border-t border-white/10 w-full text-xs text-white/30 space-y-1">
           <p>{BRAND.legal} · OIB: {BRAND.oib} · {t.openHoursPrefix} {BRAND.hours}</p>
           <p>© {new Date().getFullYear()} {BRAND.name}. {t.rights}</p>
-          <p className="pt-4 flex items-center justify-center gap-2 text-sm">
-            <span>
-              made with{" "}
-              <span className="text-red/80" aria-hidden>
-                ♡
-              </span>{" "}
-              by
-            </span>
-            <a
-              href="https://krileo.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 font-semibold text-white/70 hover:text-white transition-colors"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/krileo.png"
-                alt="Krileo"
-                className="h-6 w-auto"
-              />
-              <span className="text-base">Krileo</span>
-            </a>
+        </div>
+
+        {/* Agency credit */}
+        <div className="mt-10 flex flex-col items-center gap-3">
+          <p className="text-sm tracking-wide text-white/55">
+            made with{" "}
+            <span className="text-red/80" aria-hidden>
+              ♡
+            </span>{" "}
+            by
           </p>
+          <a
+            href="https://krileo.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block opacity-80 hover:opacity-100 transition-opacity"
+            aria-label="Krileo — krileo.com"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/krileo-full.png"
+              alt="Krileo"
+              className="h-20 sm:h-24 w-auto"
+            />
+          </a>
         </div>
       </div>
     </footer>
