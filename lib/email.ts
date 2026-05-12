@@ -272,6 +272,13 @@ Confirm or decline in Telegram.`;
 // ---------- Customer: booking received --------------------------------------
 
 export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Promise<void> {
+  // Walk-in bookings are created without a customer email (owner
+  // records them outside the website). Nothing to send — skip
+  // silently instead of letting Resend error on an empty `to`.
+  if (!booking.customer_email || !booking.customer_email.includes("@")) {
+    console.warn("[email:customerReceived] no customer email, skipping");
+    return;
+  }
   const bikeName = bikeNameFor(booking);
   const dict = await getDictionary(bookingLocale(booking));
   const t = dict.emails.bookingReceived;
@@ -330,6 +337,12 @@ export async function sendCustomerBookingDecidedEmail(
   booking: BookingRow,
   decision: "confirmed" | "declined",
 ): Promise<void> {
+  // Same guard as the received email — walk-ins may be stored with
+  // no customer email and we don't want to send to "".
+  if (!booking.customer_email || !booking.customer_email.includes("@")) {
+    console.warn("[email:customerDecided] no customer email, skipping");
+    return;
+  }
   const bikeName = bikeNameFor(booking);
   const isConfirmed = decision === "confirmed";
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
