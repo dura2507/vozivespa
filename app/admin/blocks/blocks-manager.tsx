@@ -75,9 +75,11 @@ export function BlocksManager({
     setBusy(true);
     try {
       if (hasCustomerInfo) {
-        // Walk-in booking. "all" doesn't make sense here — fall back
-        // to auto-pick if the owner left it on that choice.
-        const wantedUnit = unitChoice && unitChoice !== "all" ? unitChoice : undefined;
+        // Walk-in booking:
+        //   "all"     → group booking, one row per active unit
+        //   <unitId>  → walk-in on that exact unit
+        //   ""        → backend auto-picks a free unit
+        const wantedUnit = unitChoice || undefined;
         const res = await fetch("/api/admin/bookings/manual", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -100,7 +102,12 @@ export function BlocksManager({
           setBusy(false);
           return;
         }
-        setInfo("Booking saved — it now shows in the dashboard.");
+        const n = typeof body?.count === "number" ? body.count : 1;
+        setInfo(
+          n > 1
+            ? `Group booking saved — ${n} units locked for this customer.`
+            : "Booking saved — it now shows in the dashboard.",
+        );
       } else {
         // Service / repair block. "all" = whole-model block (no unit
         // id). Anything else = single unit. Empty = same as "all"
@@ -374,9 +381,11 @@ export function BlocksManager({
         <div className="flex items-center justify-between gap-4 pt-2">
           <p className="text-xs text-muted">
             {hasCustomerInfo
-              ? unitChoice && unitChoice !== "all"
-                ? "Walk-in booking on this specific unit."
-                : "Walk-in booking — system picks a free unit."
+              ? unitChoice === "all"
+                ? "Group walk-in — one booking per active unit."
+                : unitChoice
+                  ? "Walk-in booking on this specific unit."
+                  : "Walk-in booking — system picks a free unit."
               : unitChoice === "all"
                 ? `Whole-model block${allDay ? "" : " (time-bounded)"} — all units unavailable.`
                 : unitChoice

@@ -135,11 +135,65 @@ export async function POST(request: Request) {
     );
   }
 
-  // 2b. Owner picked a specific unit — honour it as long as that
-  //     unit is actually free. Otherwise fall back to the auto-
-  //     assigned one and surface the swap in the response.
-  let assignedUnitId = availability.unitId;
-  if (requestedUnitId) {
+  // 2b. Figure out which physical units this walk-in covers:
+  //     - "all"       → every active unit of the model (group booking)
+  //     - <unit-id>   → exactly that unit, must be free
+  //     - undefined   → just the auto-picked free unit (single)
+  const unitsToBook: string[] = [];
+  if (requestedUnitId === "all") {
+    const { data: allUnits, error: unitErr } = await supabase
+      .from("bike_units")
+      .select("id")
+      .eq("bike_id", bikeId)
+      .eq("active", true);
+    if (unitErr) {
+      console.error("[/api/admin/bookings/manual] all-units lookup", unitErr);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+    const unitIds = (allUnits ?? []).map((u) => (u as { id: string }).id);
+    if (unitIds.length === 0) {
+      return NextResponse.json({ error: "This bike has no active units" }, { status: 404 });
+    }
+    // Every unit needs to be free for the same window — otherwise we
+    // can't fulfil the group booking. One DB round-trip per check kind
+    // (bookings + blocks) keeps it tight.
+    const { data: occBookings, error: bErr } = await supabase
+      .from("bookings")
+      .select("bike_unit_id")
+      .eq("status", "confirmed")
+      .in("bike_unit_id", unitIds)
+      .lte("date_from", dateTo)
+      .gte("date_to", dateFrom);
+    if (bErr) {
+      console.error("[/api/admin/bookings/manual] all-units bookings", bErr);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+    const { data: occBlocks, error: blkErr } = await supabase
+      .from("blocked_dates")
+      .select("bike_unit_id")
+      .is("booking_id", null)
+      .in("bike_unit_id", unitIds)
+      .lte("date_from", dateTo)
+      .gte("date_to", dateFrom);
+    if (blkErr) {
+      console.error("[/api/admin/bookings/manual] all-units blocks", blkErr);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+    const taken = new Set<string>([
+      ...(occBookings ?? []).map((r) => (r as { bike_unit_id: string }).bike_unit_id),
+      ...(occBlocks ?? []).map((r) => (r as { bike_unit_id: string }).bike_unit_id),
+    ]);
+    const free = unitIds.filter((id) => !taken.has(id));
+    if (free.length < unitIds.length) {
+      return NextResponse.json(
+        {
+          error: `Can't book all units — ${unitIds.length - free.length} of ${unitIds.length} unavailable for this window`,
+        },
+        { status: 409 },
+      );
+    }
+    unitsToBook.push(...unitIds);
+  } else if (requestedUnitId) {
     const { data: unit, error: unitErr } = await supabase
       .from("bike_units")
       .select("id, bike_id, active")
@@ -152,10 +206,6 @@ export async function POST(request: Request) {
     if (!unit || (unit as { bike_id: string }).bike_id !== bikeId) {
       return NextResponse.json({ error: "Unit doesn't belong to this bike" }, { status: 400 });
     }
-    // Re-check by running availability with the rest of the fleet
-    // hidden — cheapest is just to inspect the existing result: if
-    // the auto-pick differs from the request, the requested unit
-    // must be occupied (booking or service block).
     if (requestedUnitId !== availability.unitId) {
       const { data: occBookings } = await supabase
         .from("bookings")
@@ -180,39 +230,47 @@ export async function POST(request: Request) {
         );
       }
     }
-    assignedUnitId = requestedUnitId;
+    unitsToBook.push(requestedUnitId);
+  } else {
+    unitsToBook.push(availability.unitId);
   }
 
-  // 3. Insert directly as confirmed. No receipt, no payment method —
-  //    walk-ins are handled outside the website.
+  // 3. Insert one confirmed booking per unit. No receipt, no payment
+  //    method — walk-ins are handled outside the website. For group
+  //    bookings (multiple units) all rows share the same customer
+  //    info; owner can spot them as a group via shared name + dates.
   const nowIso = new Date().toISOString();
-  const { data: booking, error: insertErr } = await supabase
+  const rows = unitsToBook.map((unitId) => ({
+    bike_id: bikeId,
+    customer_name: customerName,
+    customer_email: customerEmail ?? "",
+    customer_phone: customerPhone ?? "",
+    notes,
+    date_from: dateFrom,
+    date_to: dateTo,
+    pickup_time: pickupTime,
+    return_time: returnTime,
+    total_price_cents: null,
+    payment_method: null,
+    bike_unit_id: unitId,
+    drivers_licence: null,
+    riding_style: null,
+    locale: "en" as const,
+    status: "confirmed" as const,
+    decided_at: nowIso,
+  }));
+  const { data: bookings, error: insertErr } = await supabase
     .from("bookings")
-    .insert({
-      bike_id: bikeId,
-      customer_name: customerName,
-      customer_email: customerEmail ?? "",
-      customer_phone: customerPhone ?? "",
-      notes,
-      date_from: dateFrom,
-      date_to: dateTo,
-      pickup_time: pickupTime,
-      return_time: returnTime,
-      total_price_cents: null,
-      payment_method: null,
-      bike_unit_id: assignedUnitId,
-      drivers_licence: null,
-      riding_style: null,
-      locale: "en",
-      status: "confirmed",
-      decided_at: nowIso,
-    })
-    .select("id, status")
-    .single();
-  if (insertErr || !booking) {
+    .insert(rows)
+    .select("id, status");
+  if (insertErr || !bookings || bookings.length === 0) {
     console.error("[/api/admin/bookings/manual] insert", insertErr);
     return NextResponse.json({ error: "Could not save booking" }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, id: booking.id, status: booking.status });
+  return NextResponse.json({
+    ok: true,
+    count: bookings.length,
+    ids: bookings.map((b) => (b as { id: string }).id),
+  });
 }
