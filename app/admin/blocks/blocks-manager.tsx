@@ -49,6 +49,14 @@ export function BlocksManager({
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [notes, setNotes] = useState("");
+  // Optional walk-in details. Owner can fill them at creation time
+  // or leave blank and edit later via /admin/bookings/[id].
+  const [totalPriceEuros, setTotalPriceEuros] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [driversLicence, setDriversLicence] = useState("");
+  const [licenceCountry, setLicenceCountry] = useState("");
+  const [ridingStyle, setRidingStyle] = useState("");
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -76,6 +84,12 @@ export function BlocksManager({
     setReturnTime("19:00");
     setAllDay(true);
     setQuantity(1);
+    setTotalPriceEuros("");
+    setPaymentMethod("");
+    setDriversLicence("");
+    setLicenceCountry("");
+    setRidingStyle("");
+    setDetailsOpen(false);
   }
 
   async function submit(e: React.FormEvent) {
@@ -117,6 +131,11 @@ export function BlocksManager({
           customerPhone: customerPhone.trim(),
           customerEmail: customerEmail.trim() || undefined,
           notes: notes.trim() || undefined,
+          totalPriceEuros: totalPriceEuros.trim() || undefined,
+          paymentMethod: paymentMethod || undefined,
+          driversLicence: driversLicence || undefined,
+          ridingStyle: ridingStyle || undefined,
+          licenceCountry: licenceCountry.trim() || undefined,
         };
         if (isAllUnits) payload.bikeUnitId = "all";
         else if (targetIds.length > 0) payload.bikeUnitIds = targetIds;
@@ -456,6 +475,93 @@ export function BlocksManager({
               className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
             />
           </label>
+
+          {hasCustomerInfo && (
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => setDetailsOpen((o) => !o)}
+                className="text-xs font-bold tracking-[0.15em] uppercase text-ink/50 hover:text-red flex items-center gap-1"
+              >
+                {detailsOpen ? "−" : "+"} Optional details (price · licence · payment)
+              </button>
+              {detailsOpen && (
+                <div className="mt-3 grid sm:grid-cols-2 gap-3">
+                  <label className="block">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                      Total price (€)
+                    </span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={totalPriceEuros}
+                      onChange={(e) => setTotalPriceEuros(e.target.value)}
+                      placeholder="e.g. 70"
+                      className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                      Deposit via
+                    </span>
+                    <select
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
+                    >
+                      <option value="">—</option>
+                      <option value="paypal_ff">PayPal · Friends & Family</option>
+                      <option value="paypal_company">PayPal · Company</option>
+                      <option value="bank">Bank Transfer</option>
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                      Driver licence
+                    </span>
+                    <select
+                      value={driversLicence}
+                      onChange={(e) => setDriversLicence(e.target.value)}
+                      className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
+                    >
+                      <option value="">—</option>
+                      <option value="A">A</option>
+                      <option value="A1">A1</option>
+                      <option value="A2">A2</option>
+                      <option value="AM">AM</option>
+                      <option value="B">B</option>
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                      Licence country
+                    </span>
+                    <input
+                      type="text"
+                      value={licenceCountry}
+                      onChange={(e) => setLicenceCountry(e.target.value)}
+                      placeholder="e.g. Germany"
+                      className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
+                    />
+                  </label>
+                  <label className="block sm:col-span-2">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                      Riding style
+                    </span>
+                    <select
+                      value={ridingStyle}
+                      onChange={(e) => setRidingStyle(e.target.value)}
+                      className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
+                    >
+                      <option value="">—</option>
+                      <option value="solo">Solo</option>
+                      <option value="with_passenger">With passenger</option>
+                    </select>
+                  </label>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-end gap-4 pt-2">

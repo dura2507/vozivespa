@@ -33,6 +33,14 @@ export async function POST(request: Request) {
     customerPhone?: unknown;
     customerEmail?: unknown;
     notes?: unknown;
+    // Optional walk-in details the owner may fill in at creation
+    // time or later via the edit form. All persist on the booking
+    // row so the dashboard / detail page can show them.
+    totalPriceEuros?: unknown;
+    paymentMethod?: unknown;
+    driversLicence?: unknown;
+    ridingStyle?: unknown;
+    licenceCountry?: unknown;
   };
   try {
     body = await request.json();
@@ -72,8 +80,49 @@ export async function POST(request: Request) {
     typeof body.customerEmail === "string" && body.customerEmail.trim().length > 0
       ? body.customerEmail.trim()
       : null;
-  const notes =
+  const rawNotes =
     typeof body.notes === "string" && body.notes.trim().length > 0 ? body.notes.trim() : null;
+  // Optional detail fields. All are nullable on the row, so a sloppy
+  // walk-in with name+phone only still works; richer entries can have
+  // price / licence / payment method filled in too. Numbers come in
+  // as euros (frontend friendly), stored as cents on the row.
+  const totalPriceCents = (() => {
+    const v = body.totalPriceEuros;
+    if (typeof v === "number" && Number.isFinite(v) && v >= 0) return Math.round(v * 100);
+    if (typeof v === "string" && v.trim().length > 0) {
+      const n = parseFloat(v.replace(",", "."));
+      return Number.isFinite(n) && n >= 0 ? Math.round(n * 100) : null;
+    }
+    return null;
+  })();
+  const PAYMENT_METHODS = ["paypal_ff", "paypal_company", "bank"] as const;
+  const paymentMethod =
+    typeof body.paymentMethod === "string" &&
+    (PAYMENT_METHODS as readonly string[]).includes(body.paymentMethod)
+      ? (body.paymentMethod as (typeof PAYMENT_METHODS)[number])
+      : null;
+  const LICENCES = ["A", "A1", "A2", "AM", "B"] as const;
+  const driversLicence =
+    typeof body.driversLicence === "string" &&
+    (LICENCES as readonly string[]).includes(body.driversLicence)
+      ? (body.driversLicence as (typeof LICENCES)[number])
+      : null;
+  const RIDING_STYLES = ["solo", "with_passenger"] as const;
+  const ridingStyle =
+    typeof body.ridingStyle === "string" &&
+    (RIDING_STYLES as readonly string[]).includes(body.ridingStyle)
+      ? (body.ridingStyle as (typeof RIDING_STYLES)[number])
+      : null;
+  const licenceCountry =
+    typeof body.licenceCountry === "string" && body.licenceCountry.trim().length > 0
+      ? body.licenceCountry.trim()
+      : null;
+  // Mirror the public booking flow: licenceCountry isn't its own
+  // column, it lives prepended to notes so owner sees it in Telegram
+  // / email / detail view without a schema change.
+  const notes = licenceCountry
+    ? `Licence country: ${licenceCountry}${rawNotes ? `\n\n${rawNotes}` : ""}`
+    : rawNotes;
 
   if (!bikeId) return NextResponse.json({ error: "bikeId is required" }, { status: 400 });
   if (!dateFrom || !dateTo) {
@@ -289,12 +338,12 @@ export async function POST(request: Request) {
     date_to: dateTo,
     pickup_time: pickupTime,
     return_time: returnTime,
-    total_price_cents: null,
-    payment_method: null,
+    total_price_cents: totalPriceCents,
+    payment_method: paymentMethod,
     bike_unit_id: unitId,
     booking_group_id: groupId,
-    drivers_licence: null,
-    riding_style: null,
+    drivers_licence: driversLicence,
+    riding_style: ridingStyle,
     locale: "en" as const,
     status: "confirmed" as const,
     decided_at: nowIso,
