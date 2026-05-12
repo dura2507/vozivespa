@@ -116,14 +116,18 @@ type InlineKeyboardButton =
 type InlineKeyboard = InlineKeyboardButton[][];
 
 function statusBanner(booking: BookingRow): string {
-  const decidedAt = booking.decided_at ? ` · ${escapeMd(fmtDateTime(booking.decided_at))}` : "";
+  // We used to append fmtDateTime(decided_at) here, but the timestamp
+  // confused the owner more than it helped, and validating that it
+  // always renders in Europe/Zagreb across DST switches added noise.
+  // The status word alone is enough since the message itself updates
+  // in place the moment the owner taps Confirm / Decline.
   switch (booking.status) {
     case "confirmed":
-      return `\n\n*Confirmed*${decidedAt}`;
+      return `\n\n*Confirmed*`;
     case "declined":
-      return `\n\n*Declined*${decidedAt}`;
+      return `\n\n*Declined*`;
     case "cancelled":
-      return `\n\n*Cancelled*${decidedAt}`;
+      return `\n\n*Cancelled*`;
     default:
       return "";
   }
