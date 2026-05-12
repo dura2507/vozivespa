@@ -39,7 +39,7 @@
       "topSpeed": "Maks. brzina",
       "experienceRequired": "Potrebno iskustvo",
       "bookNow": "Rezerviraj",
-      "inStock": "× {n} u našoj floti",
+      "inStock": "{n} u našoj floti",
       "inStockHint": "Idete s društvom? Imamo ih {n}."
     },
     "included": {
@@ -210,7 +210,7 @@
   },
   "fleet": {
     "back": "Svi motori",
-    "inStock": "× {n} u našoj floti",
+    "inStock": "{n} u našoj floti",
     "inStockHint": "Idete s društvom? Imamo ih {n}.",
     "licenceByCode": {
       "AM/B": "Vozačka AM ili B",

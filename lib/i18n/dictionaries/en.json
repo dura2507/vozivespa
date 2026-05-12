@@ -39,7 +39,7 @@
       "topSpeed": "Top speed",
       "experienceRequired": "Experience required",
       "bookNow": "Book Now",
-      "inStock": "× {n} in our fleet",
+      "inStock": "{n} in our fleet",
       "inStockHint": "Riding with friends? We have {n} of these."
     },
     "included": {
@@ -210,7 +210,7 @@
   },
   "fleet": {
     "back": "All bikes",
-    "inStock": "× {n} in our fleet",
+    "inStock": "{n} in our fleet",
     "inStockHint": "Riding with friends? We have {n} of these.",
     "licenceByCode": {
       "AM/B": "AM or B licence",

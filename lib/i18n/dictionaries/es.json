@@ -39,7 +39,7 @@
       "topSpeed": "Velocidad máxima",
       "experienceRequired": "Se requiere experiencia",
       "bookNow": "Reservar",
-      "inStock": "× {n} en nuestra flota",
+      "inStock": "{n} en nuestra flota",
       "inStockHint": "¿Vas con amigos? Tenemos {n} de estas."
     },
     "included": {
@@ -210,7 +210,7 @@
   },
   "fleet": {
     "back": "Todas las motos",
-    "inStock": "× {n} en nuestra flota",
+    "inStock": "{n} en nuestra flota",
     "inStockHint": "¿Vas con amigos? Tenemos {n} de estas.",
     "licenceByCode": {
       "AM/B": "Carnet AM o B",

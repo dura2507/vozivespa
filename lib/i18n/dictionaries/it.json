@@ -39,7 +39,7 @@
       "topSpeed": "Velocità max",
       "experienceRequired": "Richiesta esperienza",
       "bookNow": "Prenota",
-      "inStock": "× {n} nella nostra flotta",
+      "inStock": "{n} nella nostra flotta",
       "inStockHint": "In giro con amici? Ne abbiamo {n}."
     },
     "included": {
@@ -210,7 +210,7 @@
   },
   "fleet": {
     "back": "Tutte le moto",
-    "inStock": "× {n} nella nostra flotta",
+    "inStock": "{n} nella nostra flotta",
     "inStockHint": "In giro con amici? Ne abbiamo {n}.",
     "licenceByCode": {
       "AM/B": "Patente AM o B",

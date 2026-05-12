@@ -39,7 +39,7 @@
       "topSpeed": "Höchstgeschwindigkeit",
       "experienceRequired": "Fahrerfahrung erforderlich",
       "bookNow": "Jetzt buchen",
-      "inStock": "× {n} in unserer Flotte",
+      "inStock": "{n} in unserer Flotte",
       "inStockHint": "Mit Freunden unterwegs? Wir haben {n} Stück davon."
     },
     "included": {
@@ -210,7 +210,7 @@
   },
   "fleet": {
     "back": "Alle Bikes",
-    "inStock": "× {n} in unserer Flotte",
+    "inStock": "{n} in unserer Flotte",
     "inStockHint": "Mit Freunden unterwegs? Wir haben {n} Stück davon.",
     "licenceByCode": {
       "AM/B": "Führerschein AM oder B",
