@@ -262,6 +262,15 @@
       "fuelLabel": "Tank",
       "fuelText": "Übergabe mit vollem Tank. Bitte auch mit vollem Tank zurückgeben."
     },
+    "tierLabel": {
+      "day": "Tagestarif",
+      "weekend": "Wochenend-Tarif (Fr bis So)",
+      "weekend-mix": "Wochenende plus Tage",
+      "week": "Wochen-Tarif",
+      "week-mix": "Woche plus Tage",
+      "month": "Monats-Tarif",
+      "month-mix": "Monat plus Tage"
+    },
     "calendar": {
       "title": "Dieses Bike buchen",
       "eyebrow": "Termine wählen",
@@ -287,6 +296,8 @@
       "notesPlaceholder": "Z.B. 2 Helme nötig, spezielle Abholzeit, alles weitere...",
       "licence": "Führerschein",
       "licencePlaceholder": "Klasse wählen",
+      "licenceCountry": "Ausstellungsland",
+      "licenceCountryPlaceholder": "z.B. Deutschland, Österreich, Italien...",
       "ridingStyle": "Fahrstil",
       "ridingStyleSolo": "Alleine",
       "ridingStyleWithPassenger": "Mit Sozius",

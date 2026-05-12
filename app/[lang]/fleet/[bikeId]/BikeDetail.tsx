@@ -83,6 +83,7 @@ export default function BikeDetail({
   });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId>("paypal_ff");
   const [driversLicence, setDriversLicence] = useState<Licence | "">("");
+  const [licenceCountry, setLicenceCountry] = useState("");
   const [ridingStyle, setRidingStyle] = useState<RidingStyleId | "">("");
   const [receipt, setReceipt] = useState<File | null>(null);
   const [receiptError, setReceiptError] = useState<string | null>(null);
@@ -242,6 +243,7 @@ export default function BikeDetail({
       fd.set("returnTime", returnTime);
       fd.set("paymentMethod", paymentMethod);
       fd.set("driversLicence", driversLicence);
+      if (licenceCountry.trim()) fd.set("licenceCountry", licenceCountry.trim());
       fd.set("ridingStyle", ridingStyle);
       fd.set("totalPriceCents", String(totalPrice * 100));
       fd.set("locale", lang);
@@ -741,7 +743,7 @@ export default function BikeDetail({
                           </div>
                           {appliedTier && appliedTier !== "day" && (
                             <p className="text-[10px] tracking-[0.15em] uppercase text-muted font-bold mt-1">
-                              {TIER_LABEL[appliedTier]}
+                              {tF.tierLabel[appliedTier]}
                             </p>
                           )}
                         </div>
@@ -889,6 +891,18 @@ export default function BikeDetail({
                       <p className="text-muted text-xs mt-1.5">
                         <span className="font-semibold text-ink">{tF.licenceByCode[bike.licenceCode as keyof typeof tF.licenceByCode] ?? bike.licence}</span>
                       </p>
+                    </label>
+                    <label className="block sm:col-span-2">
+                      <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
+                        {tF.form.licenceCountry}
+                      </span>
+                      <input
+                        type="text"
+                        value={licenceCountry}
+                        onChange={(e) => setLicenceCountry(e.target.value)}
+                        placeholder={tF.form.licenceCountryPlaceholder}
+                        className={inputClass}
+                      />
                     </label>
                     <label className="block">
                       <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">

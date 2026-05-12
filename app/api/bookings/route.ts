@@ -93,7 +93,14 @@ export async function POST(request: Request) {
   const name = asString(form.get("name"));
   const email = asString(form.get("email"));
   const phone = asString(form.get("phone"));
-  const notes = asString(form.get("notes"));
+  const rawNotes = asString(form.get("notes"));
+  const licenceCountry = asString(form.get("licenceCountry"));
+  // Owner needs to see the licence country at a glance; prepend it to
+  // notes so it shows in Telegram + email + admin detail without a
+  // separate schema column.
+  const notes = licenceCountry
+    ? `Licence country: ${licenceCountry}${rawNotes ? `\n\n${rawNotes}` : ""}`
+    : rawNotes;
   const from = asIsoDate(form.get("from"));
   const to = asIsoDate(form.get("to"));
   const pickupTime = asSlot(form.get("pickupTime"));

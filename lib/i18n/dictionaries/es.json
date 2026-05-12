@@ -262,6 +262,15 @@
       "fuelLabel": "Combustible",
       "fuelText": "Se entrega con depósito lleno. Devuélvela también con depósito lleno."
     },
+    "tierLabel": {
+      "day": "Tarifa diaria",
+      "weekend": "Tarifa fin de semana (Vi-Do)",
+      "weekend-mix": "Fin de semana mas dias",
+      "week": "Tarifa semanal",
+      "week-mix": "Semana mas dias",
+      "month": "Tarifa mensual",
+      "month-mix": "Mes mas dias"
+    },
     "calendar": {
       "title": "Reservar esta moto",
       "eyebrow": "Elige las fechas",
@@ -287,6 +296,8 @@
       "notesPlaceholder": "Ej. necesito 2 cascos, hora de recogida especial, lo que sea...",
       "licence": "Carnet de conducir",
       "licencePlaceholder": "Elige una categoría",
+      "licenceCountry": "País de emisión",
+      "licenceCountryPlaceholder": "ej. España, Alemania, Italia...",
       "ridingStyle": "Tipo de viaje",
       "ridingStyleSolo": "Solo",
       "ridingStyleWithPassenger": "Con pasajero",

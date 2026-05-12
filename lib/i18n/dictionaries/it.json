@@ -262,6 +262,15 @@
       "fuelLabel": "Carburante",
       "fuelText": "Consegnata con il pieno. Restituiscila con il pieno."
     },
+    "tierLabel": {
+      "day": "Tariffa giornaliera",
+      "weekend": "Tariffa weekend (Ven-Dom)",
+      "weekend-mix": "Weekend piu giorni",
+      "week": "Tariffa settimanale",
+      "week-mix": "Settimana piu giorni",
+      "month": "Tariffa mensile",
+      "month-mix": "Mese piu giorni"
+    },
     "calendar": {
       "title": "Prenota questa moto",
       "eyebrow": "Scegli le date",
@@ -287,6 +296,8 @@
       "notesPlaceholder": "Es. mi servono 2 caschi, ora di ritiro speciale, qualsiasi cosa...",
       "licence": "Patente di guida",
       "licencePlaceholder": "Scegli una categoria",
+      "licenceCountry": "Paese di rilascio",
+      "licenceCountryPlaceholder": "es. Italia, Germania, Austria...",
       "ridingStyle": "Tipo di viaggio",
       "ridingStyleSolo": "Da solo",
       "ridingStyleWithPassenger": "Con passeggero",

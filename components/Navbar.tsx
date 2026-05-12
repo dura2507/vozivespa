@@ -111,9 +111,13 @@ export default function Navbar({
                 type="button"
                 onClick={() => setLangOpen((o) => !o)}
                 onBlur={() => setTimeout(() => setLangOpen(false), 150)}
-                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1`}
+                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1.5`}
                 aria-label={t.languageSwitcher}
               >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <circle cx="12" cy="12" r="9" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 010 18M12 3a14 14 0 000 18" />
+                </svg>
                 <span>{LOCALE_LABELS[lang].short}</span>
                 <svg className={`w-3 h-3 transition-transform ${langOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -154,9 +158,13 @@ export default function Navbar({
                 type="button"
                 onClick={() => setLangOpen((o) => !o)}
                 onBlur={() => setTimeout(() => setLangOpen(false), 150)}
-                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1 px-2 py-1.5 border ${transparent ? "border-white/40" : "border-ink/20"}`}
+                className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1.5 px-2 py-1.5 border ${transparent ? "border-white/40" : "border-ink/20"}`}
                 aria-label={t.languageSwitcher}
               >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <circle cx="12" cy="12" r="9" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 010 18M12 3a14 14 0 000 18" />
+                </svg>
                 <span>{LOCALE_LABELS[lang].short}</span>
                 <svg className={`w-3 h-3 transition-transform ${langOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />

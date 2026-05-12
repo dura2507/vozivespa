@@ -262,6 +262,15 @@
       "fuelLabel": "Fuel",
       "fuelText": "Handed over with a full tank. Return it with a full tank too."
     },
+    "tierLabel": {
+      "day": "Daily rate",
+      "weekend": "Weekend rate (Fri-Sun)",
+      "weekend-mix": "Weekend + day mix",
+      "week": "Week rate",
+      "week-mix": "Week + day mix",
+      "month": "Month rate",
+      "month-mix": "Month + day mix"
+    },
     "calendar": {
       "title": "Book this bike",
       "eyebrow": "Pick your dates",
@@ -287,6 +296,8 @@
       "notesPlaceholder": "E.g. need 2 helmets, special pickup time, anything else...",
       "licence": "Driver's licence",
       "licencePlaceholder": "Pick a category",
+      "licenceCountry": "Country of issue",
+      "licenceCountryPlaceholder": "e.g. Germany, Austria, Italy...",
       "ridingStyle": "Riding style",
       "ridingStyleSolo": "Solo",
       "ridingStyleWithPassenger": "With passenger",
