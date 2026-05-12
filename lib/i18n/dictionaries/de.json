@@ -212,6 +212,7 @@
     "back": "Alle Bikes",
     "inStock": "{n} in unserer Flotte",
     "inStockHint": "Mit Freunden unterwegs? Wir haben {n} Stück davon.",
+    "inStockCta": "Mehr als einen auf einmal? Einfach kurz melden →",
     "licenceByCode": {
       "AM/B": "Führerschein AM oder B",
       "A1": "Führerschein A1",

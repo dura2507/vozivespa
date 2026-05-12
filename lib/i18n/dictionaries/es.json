@@ -212,6 +212,7 @@
     "back": "Todas las motos",
     "inStock": "{n} en nuestra flota",
     "inStockHint": "¿Vas con amigos? Tenemos {n} de estas.",
+    "inStockCta": "¿Quieres más de una a la vez? Escríbenos →",
     "licenceByCode": {
       "AM/B": "Carnet AM o B",
       "A1": "Carnet A1",

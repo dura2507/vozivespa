@@ -212,6 +212,7 @@
     "back": "Svi motori",
     "inStock": "{n} u našoj floti",
     "inStockHint": "Idete s društvom? Imamo ih {n}.",
+    "inStockCta": "Trebaš više od jednog odjednom? Javi nam se →",
     "licenceByCode": {
       "AM/B": "Vozačka AM ili B",
       "A1": "Vozačka A1",
