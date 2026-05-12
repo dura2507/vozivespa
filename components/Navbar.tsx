@@ -125,36 +125,45 @@ export default function Navbar({
                 </svg>
               </button>
               <div
-                className={`absolute right-0 top-full mt-2 bg-white py-1.5 origin-top-right transition-all duration-200 ease-out [filter:drop-shadow(0_10px_28px_rgba(0,0,0,0.2))] ${
+                className={`absolute right-0 top-full mt-2 bg-white overflow-hidden transition-all duration-300 ease-out [filter:drop-shadow(0_10px_28px_rgba(0,0,0,0.2))] ${
                   langOpen
-                    ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
-                    : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
+                    ? "max-h-96 opacity-100 pointer-events-auto"
+                    : "max-h-0 opacity-0 pointer-events-none"
                 }`}
                 role="menu"
                 aria-hidden={!langOpen}
               >
-                {LOCALES.map((l) => {
-                  const active = l === lang;
-                  return (
-                    <Link
-                      key={l}
-                      href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                      className={`relative flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase transition-colors ${
-                        active ? "text-red bg-red/5" : "text-ink hover:bg-ink/5"
-                      }`}
-                      onClick={() => setLangOpen(false)}
-                      role="menuitem"
-                    >
-                      <span
-                        className={`w-1 h-1 rounded-full transition-colors ${
-                          active ? "bg-red" : "bg-transparent"
+                <div className="py-1.5">
+                  {LOCALES.map((l, i) => {
+                    const active = l === lang;
+                    return (
+                      <Link
+                        key={l}
+                        href={`/${l}${bareHere === "/" ? "" : bareHere}`}
+                        className={`relative flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase transition-all duration-200 ${
+                          active ? "text-red bg-red/5" : "text-ink hover:bg-ink/5"
+                        } ${
+                          langOpen
+                            ? "opacity-100 translate-y-0"
+                            : "opacity-0 -translate-y-1"
                         }`}
-                        aria-hidden
-                      />
-                      <span>{LOCALE_LABELS[l].name}</span>
-                    </Link>
-                  );
-                })}
+                        style={{
+                          transitionDelay: langOpen ? `${60 + i * 40}ms` : "0ms",
+                        }}
+                        onClick={() => setLangOpen(false)}
+                        role="menuitem"
+                      >
+                        <span
+                          className={`w-1 h-1 rounded-full transition-colors ${
+                            active ? "bg-red" : "bg-transparent"
+                          }`}
+                          aria-hidden
+                        />
+                        <span>{LOCALE_LABELS[l].name}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -188,36 +197,45 @@ export default function Navbar({
                 </svg>
               </button>
               <div
-                className={`absolute right-0 top-full mt-2 bg-white py-1.5 z-50 origin-top-right transition-all duration-200 ease-out [filter:drop-shadow(0_10px_28px_rgba(0,0,0,0.2))] ${
+                className={`absolute right-0 top-full mt-2 bg-white z-50 overflow-hidden transition-all duration-300 ease-out [filter:drop-shadow(0_10px_28px_rgba(0,0,0,0.2))] ${
                   langOpen
-                    ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
-                    : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
+                    ? "max-h-96 opacity-100 pointer-events-auto"
+                    : "max-h-0 opacity-0 pointer-events-none"
                 }`}
                 role="menu"
                 aria-hidden={!langOpen}
               >
-                {LOCALES.map((l) => {
-                  const active = l === lang;
-                  return (
-                    <Link
-                      key={l}
-                      href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                      className={`relative flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase transition-colors ${
-                        active ? "text-red bg-red/5" : "text-ink hover:bg-ink/5"
-                      }`}
-                      onClick={() => setLangOpen(false)}
-                      role="menuitem"
-                    >
-                      <span
-                        className={`w-1 h-1 rounded-full transition-colors ${
-                          active ? "bg-red" : "bg-transparent"
+                <div className="py-1.5">
+                  {LOCALES.map((l, i) => {
+                    const active = l === lang;
+                    return (
+                      <Link
+                        key={l}
+                        href={`/${l}${bareHere === "/" ? "" : bareHere}`}
+                        className={`relative flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase transition-all duration-200 ${
+                          active ? "text-red bg-red/5" : "text-ink hover:bg-ink/5"
+                        } ${
+                          langOpen
+                            ? "opacity-100 translate-y-0"
+                            : "opacity-0 -translate-y-1"
                         }`}
-                        aria-hidden
-                      />
-                      <span>{LOCALE_LABELS[l].name}</span>
-                    </Link>
-                  );
-                })}
+                        style={{
+                          transitionDelay: langOpen ? `${60 + i * 40}ms` : "0ms",
+                        }}
+                        onClick={() => setLangOpen(false)}
+                        role="menuitem"
+                      >
+                        <span
+                          className={`w-1 h-1 rounded-full transition-colors ${
+                            active ? "bg-red" : "bg-transparent"
+                          }`}
+                          aria-hidden
+                        />
+                        <span>{LOCALE_LABELS[l].name}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           <button
