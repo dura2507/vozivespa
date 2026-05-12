@@ -62,6 +62,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               {n.label}
             </Link>
           ))}
+          <Link
+            href="/"
+            target="_blank"
+            className="text-xs font-bold tracking-[0.15em] uppercase text-white/40 hover:text-white whitespace-nowrap"
+          >
+            View site →
+          </Link>
           <LogoutButton />
         </nav>
       </header>
