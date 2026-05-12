@@ -32,6 +32,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               Admin
             </span>
           </Link>
+          <Link
+            href="/"
+            target="_blank"
+            className="sm:hidden text-xs font-bold tracking-[0.15em] uppercase text-white/70 hover:text-white whitespace-nowrap"
+          >
+            View site →
+          </Link>
           <nav className="hidden sm:flex items-center gap-6">
             {NAV.map((n) => (
               <Link
@@ -62,13 +69,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               {n.label}
             </Link>
           ))}
-          <Link
-            href="/"
-            target="_blank"
-            className="text-xs font-bold tracking-[0.15em] uppercase text-white/40 hover:text-white whitespace-nowrap"
-          >
-            View site →
-          </Link>
           <LogoutButton />
         </nav>
       </header>
