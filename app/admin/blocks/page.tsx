@@ -1,5 +1,5 @@
 import { CATEGORIES } from "@/lib/mockData";
-import { listManualBlocks } from "@/lib/admin-data";
+import { listManualBlocks, listWalkInBookings } from "@/lib/admin-data";
 import { getServiceClient } from "@/lib/supabase";
 import { BlocksManager } from "./blocks-manager";
 
@@ -19,7 +19,11 @@ async function listAllUnits(): Promise<BikeUnitRow[]> {
 }
 
 export default async function AdminBlocksPage() {
-  const [blocks, units] = await Promise.all([listManualBlocks(), listAllUnits()]);
+  const [blocks, walkIns, units] = await Promise.all([
+    listManualBlocks(),
+    listWalkInBookings(),
+    listAllUnits(),
+  ]);
   const bikes = CATEGORIES.map((c) => ({ id: c.id, name: c.shortName ?? c.model }));
   // Pre-group units by bike so the client doesn't have to filter on
   // every render. Friendlier label "#1, #2, …" derived per bike from
@@ -42,7 +46,12 @@ export default async function AdminBlocksPage() {
         name the entry becomes a confirmed booking and appears in the
         dashboard; without one it&apos;s a service block.
       </p>
-      <BlocksManager initialBlocks={blocks} bikes={bikes} unitsByBike={unitsByBike} />
+      <BlocksManager
+        initialBlocks={blocks}
+        initialWalkIns={walkIns}
+        bikes={bikes}
+        unitsByBike={unitsByBike}
+      />
     </div>
   );
 }

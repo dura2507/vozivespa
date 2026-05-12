@@ -263,6 +263,35 @@ export async function listServiceBlocks(): Promise<ServiceBlock[]> {
   }));
 }
 
+// Walk-in bookings are the ones created from the admin panel — they
+// carry no payment_method (website flow always requires one). Used by
+// /admin/blocks to merge them into the "Recent entries" list next to
+// service blocks, so the page heading "Blocks & walk-ins" actually
+// lists both.
+export async function listWalkInBookings(): Promise<EnrichedBooking[]> {
+  const supabase = getServiceClient();
+  const [{ data, error }, unitLabels] = await Promise.all([
+    supabase
+      .from("bookings")
+      .select("*")
+      .is("payment_method", null)
+      .neq("status", "cancelled")
+      .neq("status", "declined")
+      .order("date_from", { ascending: false }),
+    listUnitLabelMap(),
+  ]);
+  if (error) throw new Error(error.message);
+  const rows = (data ?? []) as BookingRow[];
+  return rows.map((b) => ({
+    ...b,
+    bikeName: bikeName(b.bike_id),
+    unitLabel: b.bike_unit_id ? unitLabels.get(b.bike_unit_id) ?? null : null,
+    pickupAt: toMs(b.date_from, b.pickup_time),
+    returnAt: toMs(b.date_to, b.return_time),
+    receiptUrl: null, // walk-ins never carry a receipt
+  }));
+}
+
 export type BookingBuckets = {
   out: EnrichedBooking[];
   pending: EnrichedBooking[];

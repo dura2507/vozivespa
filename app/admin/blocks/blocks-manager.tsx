@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { buildSlots } from "@/lib/pricing";
-import type { EnrichedBlock } from "@/lib/admin-data";
+import type { EnrichedBlock, EnrichedBooking } from "@/lib/admin-data";
 
 type Bike = { id: string; name: string };
 type Unit = { id: string; label: string };
@@ -17,10 +18,12 @@ const SLOTS = buildSlots();
 
 export function BlocksManager({
   initialBlocks,
+  initialWalkIns,
   bikes,
   unitsByBike,
 }: {
   initialBlocks: EnrichedBlock[];
+  initialWalkIns: EnrichedBooking[];
   bikes: Bike[];
   unitsByBike: Record<string, Unit[]>;
 }) {
@@ -410,19 +413,26 @@ export function BlocksManager({
       )}
 
       <h2 className="font-barlow font-black uppercase text-lg tracking-tight text-ink mb-3">
-        Active blocks
+        Recent entries
       </h2>
-      {initialBlocks.length === 0 ? (
-        <p className="text-sm text-muted">No blocks set.</p>
+      <p className="text-xs text-muted mb-4">
+        Service blocks live here. Walk-in bookings are also listed for
+        quick access — click one to manage it.
+      </p>
+      {initialBlocks.length === 0 && initialWalkIns.length === 0 ? (
+        <p className="text-sm text-muted">Nothing yet.</p>
       ) : (
         <div className="space-y-2">
           {initialBlocks.map((b) => (
             <div
-              key={b.id}
-              className="flex items-center justify-between bg-white border border-ink/10 px-4 py-3 gap-4"
+              key={`block-${b.id}`}
+              className="flex items-center justify-between bg-amber-50 border border-amber-300 px-4 py-3 gap-4"
             >
               <div className="min-w-0 flex-1">
-                <p className="font-semibold text-ink truncate flex items-center gap-2">
+                <p className="font-semibold text-ink truncate flex items-center gap-2 flex-wrap">
+                  <span className="text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 bg-amber-300 text-ink">
+                    service
+                  </span>
                   <span>{b.bikeName}</span>
                   {b.unitLabel ? (
                     <span className="text-[10px] tracking-[0.15em] uppercase font-bold text-ink/40">
@@ -453,6 +463,34 @@ export function BlocksManager({
                 Delete
               </button>
             </div>
+          ))}
+          {initialWalkIns.map((w) => (
+            <Link
+              key={`walkin-${w.id}`}
+              href={`/admin/bookings/${w.id}`}
+              className="flex items-center justify-between bg-white border border-ink/10 px-4 py-3 gap-4 hover:border-red transition-colors"
+            >
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-ink truncate flex items-center gap-2 flex-wrap">
+                  <span className="text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 bg-green-200 text-ink">
+                    walk-in
+                  </span>
+                  <span>{w.customer_name}</span>
+                  <span className="text-[10px] tracking-[0.15em] uppercase font-bold text-ink/40">
+                    {w.bikeName}
+                    {w.unitLabel && ` · ${w.unitLabel}`}
+                  </span>
+                </p>
+                <p className="text-xs text-muted">
+                  {fmtDate(w.date_from)} {w.pickup_time.slice(0, 5)}
+                  {" → "}
+                  {fmtDate(w.date_to)} {w.return_time.slice(0, 5)}
+                </p>
+              </div>
+              <span className="text-xs font-bold tracking-widest uppercase text-ink/40">
+                open →
+              </span>
+            </Link>
           ))}
         </div>
       )}
