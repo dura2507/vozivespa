@@ -123,7 +123,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       .select("bike_id, bike_unit_id, status, date_from, date_to, pickup_time, return_time"),
     supabase
       .from("blocked_dates")
-      .select("bike_id, bike_unit_id, date_from, date_to")
+      .select("bike_id, bike_unit_id, date_from, date_to, start_time, end_time")
       .is("booking_id", null),
   ]);
   if (unitsRes.error) throw new Error(unitsRes.error.message);
@@ -170,9 +170,13 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     bike_unit_id: string | null;
     date_from: string;
     date_to: string;
+    start_time: string | null;
+    end_time: string | null;
   }>) {
-    const start = toMs(m.date_from, "00:00");
-    const end = toMs(m.date_to, "23:59") + 60_000;
+    // Time-bounded block uses its real window; whole-day block covers
+    // the full day(s).
+    const start = m.start_time ? toMs(m.date_from, m.start_time) : toMs(m.date_from, "00:00");
+    const end = m.end_time ? toMs(m.date_to, m.end_time) : toMs(m.date_to, "23:59") + 60_000;
     if (nowMs < start || nowMs > end) {
       // Future block — counted via upcomingCount instead.
       if (start > nowMs) {
@@ -249,10 +253,13 @@ export async function listServiceBlocks(): Promise<ServiceBlock[]> {
   const blocks = await listManualBlocks();
   return blocks.map((b) => ({
     ...b,
-    startMs: toMs(b.date_from, "00:00"),
-    // End of day = next day at 00:00 so a block on 12.05 covers all
-    // of the 12th.
-    endMs: toMs(b.date_to, "23:59") + 60_000,
+    // Time-bounded block (both times set): exact window. Whole-day
+    // block: from 00:00 of date_from until 00:00 of the day after
+    // date_to so a block on 12.05 covers all of the 12th.
+    startMs: b.start_time ? toMs(b.date_from, b.start_time) : toMs(b.date_from, "00:00"),
+    endMs: b.end_time
+      ? toMs(b.date_to, b.end_time)
+      : toMs(b.date_to, "23:59") + 60_000,
   }));
 }
 

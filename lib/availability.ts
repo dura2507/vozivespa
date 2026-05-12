@@ -50,21 +50,45 @@ export async function findFreeUnit(
   // 1. Manual owner blocks. A row with bike_unit_id = null still
   //    shuts down the whole model (legacy + saison-pause use cases).
   //    Per-unit rows only take that single unit out — we collect them
-  //    so step 5 can skip occupied units.
+  //    so step 5 can skip occupied units. Time-bounded blocks (with
+  //    start_time + end_time set) only conflict on actual time overlap
+  //    so a 2h morning service doesn't grey out the whole day.
   const { data: manuals, error: manualErr } = await supabase
     .from("blocked_dates")
-    .select("date_from, date_to, bike_unit_id")
+    .select("date_from, date_to, start_time, end_time, bike_unit_id")
     .eq("bike_id", w.bikeId)
     .is("booking_id", null)
     .lte("date_from", w.dateTo)
     .gte("date_to", w.dateFrom);
   if (manualErr) throw new Error(`manual block lookup: ${manualErr.message}`);
+
+  const newStartMs = toMs(w.dateFrom, w.pickupTime);
+  const newEndMs = toMs(w.dateTo, w.returnTime);
+
+  // Does the customer's requested window actually overlap a manual
+  // block? Whole-day blocks (no times) overlap any window that lands
+  // on those dates; time-bounded blocks need a real time overlap.
+  function overlapsManual(m: {
+    date_from: string;
+    date_to: string;
+    start_time: string | null;
+    end_time: string | null;
+  }): boolean {
+    if (!m.start_time || !m.end_time) return true; // whole-day → always
+    const mStart = toMs(m.date_from, m.start_time);
+    const mEnd = toMs(m.date_to, m.end_time);
+    return newStartMs < mEnd && mStart < newEndMs;
+  }
+
   const blockedUnitIds = new Set<string>();
   for (const m of (manuals ?? []) as Array<{
     date_from: string;
     date_to: string;
+    start_time: string | null;
+    end_time: string | null;
     bike_unit_id: string | null;
   }>) {
+    if (!overlapsManual(m)) continue;
     if (m.bike_unit_id === null) {
       return {
         unitId: null,

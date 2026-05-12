@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
+import { isValidSlot, parseTime } from "@/lib/pricing";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,6 +23,8 @@ export async function POST(request: Request) {
     dateTo?: unknown;
     bikeUnitId?: unknown;
     reason?: unknown;
+    startTime?: unknown;
+    endTime?: unknown;
   };
   try {
     body = await request.json();
@@ -41,6 +44,24 @@ export async function POST(request: Request) {
     typeof body.reason === "string" && body.reason.trim().length > 0
       ? body.reason.trim().slice(0, 200)
       : null;
+  // Time window: either both set (time-bounded block) or both null
+  // (whole-day block). A half-spec is rejected to avoid ambiguous data.
+  const startTime =
+    typeof body.startTime === "string" && isValidSlot(body.startTime) ? body.startTime : null;
+  const endTime =
+    typeof body.endTime === "string" && isValidSlot(body.endTime) ? body.endTime : null;
+  if ((startTime && !endTime) || (!startTime && endTime)) {
+    return NextResponse.json(
+      { error: "Provide both start and end time, or neither" },
+      { status: 400 },
+    );
+  }
+  if (startTime && endTime && parseTime(startTime)! >= parseTime(endTime)!) {
+    return NextResponse.json(
+      { error: "End time must be later than start time" },
+      { status: 400 },
+    );
+  }
 
   if (!bikeId) return NextResponse.json({ error: "bikeId is required" }, { status: 400 });
   if (!dateFrom || !dateTo) {
@@ -84,6 +105,8 @@ export async function POST(request: Request) {
     bike_unit_id: bikeUnitId,
     date_from: dateFrom,
     date_to: dateTo,
+    start_time: startTime,
+    end_time: endTime,
     reason,
   });
   if (insertErr) {

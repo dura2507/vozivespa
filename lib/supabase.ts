@@ -58,6 +58,10 @@ export type BlockedDateRow = {
   bike_unit_id: string | null;
   date_from: string;
   date_to: string;
+  // Optional time window (HH:MM:SS). Both null = whole day; both set =
+  // time-bounded service block (e.g. 09:00-12:00 for a quick repair).
+  start_time: string | null;
+  end_time: string | null;
   // Null → manual block by owner. Set → auto-block from confirmed booking.
   booking_id: string | null;
   // Free-text owner note for service / repair / private use.

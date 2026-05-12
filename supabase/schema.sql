@@ -95,6 +95,11 @@ create table public.blocked_dates (
   bike_unit_id uuid references public.bike_units(id) on delete cascade,
   date_from date not null,
   date_to date not null,
+  -- Optional time window. Null on both = whole-day block. When set,
+  -- the availability check only conflicts on time overlap so e.g. a
+  -- 2h morning service doesn't grey out the whole day.
+  start_time time,
+  end_time time,
   booking_id uuid references public.bookings(id) on delete cascade,
   -- Free-text owner note: "Reparatur Bremse", "Service", "Privat".
   reason text,

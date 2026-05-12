@@ -32,6 +32,10 @@ export function BlocksManager({
   const [dateTo, setDateTo] = useState("");
   const [pickupTime, setPickupTime] = useState("09:00");
   const [returnTime, setReturnTime] = useState("19:00");
+  // Service-block specific: when allDay is on, no time fields go to
+  // the server (whole-day block). When off, the same pickupTime /
+  // returnTime are sent as start_time / end_time.
+  const [allDay, setAllDay] = useState(true);
   const [reason, setReason] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -59,6 +63,7 @@ export function BlocksManager({
     setNotes("");
     setPickupTime("09:00");
     setReturnTime("19:00");
+    setAllDay(true);
     setUnitChoice("");
   }
 
@@ -111,6 +116,10 @@ export function BlocksManager({
             bikeUnitId: targetUnitId,
             dateFrom,
             dateTo,
+            // Whole-day block sends no times; time-bounded uses the
+            // same pickup/return controls the walk-in mode uses.
+            startTime: allDay ? undefined : pickupTime,
+            endTime: allDay ? undefined : returnTime,
             reason: reason.trim() || undefined,
           }),
         });
@@ -226,19 +235,36 @@ export function BlocksManager({
           </label>
         </div>
 
+        {!hasCustomerInfo && (
+          <label className="flex items-center gap-2 select-none cursor-pointer">
+            <input
+              type="checkbox"
+              checked={allDay}
+              onChange={(e) => setAllDay(e.target.checked)}
+              className="w-4 h-4 accent-red"
+            />
+            <span className="text-xs font-bold tracking-[0.1em] uppercase text-ink/70">
+              All day
+            </span>
+            <span className="text-xs text-muted">
+              · uncheck for a time-bounded service block
+            </span>
+          </label>
+        )}
+
         <div
           className={`grid sm:grid-cols-2 gap-3 transition-opacity ${
-            hasCustomerInfo ? "opacity-100" : "opacity-60"
+            hasCustomerInfo || !allDay ? "opacity-100" : "opacity-50"
           }`}
         >
           <label className="block">
             <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-              Pickup time
+              {hasCustomerInfo ? "Pickup time" : "Start time"}
             </span>
             <select
               value={pickupTime}
               onChange={(e) => setPickupTime(e.target.value)}
-              disabled={!hasCustomerInfo}
+              disabled={!hasCustomerInfo && allDay}
               className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white disabled:bg-ink/5"
             >
               {SLOTS.map((s) => (
@@ -250,12 +276,12 @@ export function BlocksManager({
           </label>
           <label className="block">
             <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-              Return time
+              {hasCustomerInfo ? "Return time" : "End time"}
             </span>
             <select
               value={returnTime}
               onChange={(e) => setReturnTime(e.target.value)}
-              disabled={!hasCustomerInfo}
+              disabled={!hasCustomerInfo && allDay}
               className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white disabled:bg-ink/5"
             >
               {SLOTS.map((s) => (
@@ -352,9 +378,9 @@ export function BlocksManager({
                 ? "Walk-in booking on this specific unit."
                 : "Walk-in booking — system picks a free unit."
               : unitChoice === "all"
-                ? "Whole-model block (all units unavailable)."
+                ? `Whole-model block${allDay ? "" : " (time-bounded)"} — all units unavailable.`
                 : unitChoice
-                  ? "Service block on this specific unit."
+                  ? `Service block on this unit${allDay ? "" : ` from ${pickupTime} to ${returnTime}`}.`
                   : "Pick a unit (or All units) to block."}
           </p>
           <button
@@ -400,7 +426,11 @@ export function BlocksManager({
                   )}
                 </p>
                 <p className="text-xs text-muted">
-                  {fmtDate(b.date_from)} → {fmtDate(b.date_to)}
+                  {fmtDate(b.date_from)}
+                  {b.start_time && <span> {b.start_time.slice(0, 5)}</span>}
+                  {" → "}
+                  {fmtDate(b.date_to)}
+                  {b.end_time && <span> {b.end_time.slice(0, 5)}</span>}
                   {b.reason && (
                     <span className="ml-2 text-ink/70 italic">· {b.reason}</span>
                   )}
