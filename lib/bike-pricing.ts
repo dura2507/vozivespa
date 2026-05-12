@@ -79,6 +79,27 @@ export async function listPricingRows(): Promise<PricingRow[]> {
   });
 }
 
+// Map of bike-id → number of active physical units. Used on the
+// public fleet cards / detail pages so customers see "we have 4 of
+// these" and know group bookings are possible. Falls back to an
+// empty map if the read fails so the page never breaks over this.
+export async function getUnitCounts(): Promise<Record<string, number>> {
+  const supabase = getServiceClient();
+  const { data, error } = await supabase
+    .from("bike_units")
+    .select("bike_id")
+    .eq("active", true);
+  if (error) {
+    console.error("[bike-pricing] getUnitCounts", error);
+    return {};
+  }
+  const out: Record<string, number> = {};
+  for (const u of (data ?? []) as Array<{ bike_id: string }>) {
+    out[u.bike_id] = (out[u.bike_id] ?? 0) + 1;
+  }
+  return out;
+}
+
 export async function setDayPriceOverride(bikeId: string, dayEuros: number): Promise<void> {
   if (!Number.isInteger(dayEuros) || dayEuros <= 0) {
     throw new Error("Day price must be a positive integer");

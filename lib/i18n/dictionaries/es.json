@@ -38,7 +38,9 @@
       "fromPrefix": "desde",
       "topSpeed": "Velocidad máxima",
       "experienceRequired": "Se requiere experiencia",
-      "bookNow": "Reservar"
+      "bookNow": "Reservar",
+      "inStock": "× {n} en nuestra flota",
+      "inStockHint": "¿Vas con amigos? Tenemos {n} de estas."
     },
     "included": {
       "eyebrow": "En cada alquiler",
@@ -208,6 +210,8 @@
   },
   "fleet": {
     "back": "Todas las motos",
+    "inStock": "× {n} en nuestra flota",
+    "inStockHint": "¿Vas con amigos? Tenemos {n} de estas.",
     "licenceByCode": {
       "AM/B": "Carnet AM o B",
       "A1": "Carnet A1",

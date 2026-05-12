@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getBikeWithPricing } from "@/lib/bike-pricing";
+import { getBikeWithPricing, getUnitCounts } from "@/lib/bike-pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import BikeDetail from "./BikeDetail";
@@ -13,10 +13,19 @@ export default async function BikeDetailPage({
 }) {
   const { lang, bikeId } = await params;
   if (!isLocale(lang)) notFound();
-  const [bike, dict] = await Promise.all([
+  const [bike, dict, unitCounts] = await Promise.all([
     getBikeWithPricing(bikeId),
     getDictionary(lang as Locale),
+    getUnitCounts(),
   ]);
   if (!bike) notFound();
-  return <BikeDetail lang={lang as Locale} dict={dict} bike={bike} />;
+  const unitCount = unitCounts[bike.id] ?? 0;
+  return (
+    <BikeDetail
+      lang={lang as Locale}
+      dict={dict}
+      bike={bike}
+      unitCount={unitCount}
+    />
+  );
 }

@@ -38,7 +38,9 @@
       "fromPrefix": "from",
       "topSpeed": "Top speed",
       "experienceRequired": "Experience required",
-      "bookNow": "Book Now"
+      "bookNow": "Book Now",
+      "inStock": "× {n} in our fleet",
+      "inStockHint": "Riding with friends? We have {n} of these."
     },
     "included": {
       "eyebrow": "Every rental",
@@ -208,6 +210,8 @@
   },
   "fleet": {
     "back": "All bikes",
+    "inStock": "× {n} in our fleet",
+    "inStockHint": "Riding with friends? We have {n} of these.",
     "licenceByCode": {
       "AM/B": "AM or B licence",
       "A1": "A1 licence",

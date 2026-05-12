@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ReviewCarousel from "@/components/ReviewCarousel";
 import { REVIEWS, GALLERY_IMAGES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
-import { getCategoriesWithPricing } from "@/lib/bike-pricing";
+import { getCategoriesWithPricing, getUnitCounts } from "@/lib/bike-pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 
@@ -24,7 +24,10 @@ export default async function HomePage({
   if (!isLocale(lang)) notFound();
   const dict = await getDictionary(lang as Locale);
   const t = dict.home;
-  const CATEGORIES = await getCategoriesWithPricing();
+  const [CATEGORIES, unitCounts] = await Promise.all([
+    getCategoriesWithPricing(),
+    getUnitCounts(),
+  ]);
 
   // Hero "from XX€" label tracks the cheapest day price across the
   // current fleet (mockData defaults + admin overrides), so a price
@@ -162,6 +165,13 @@ export default async function HomePage({
                       <span className="text-xs font-normal opacity-80 ml-0.5">{cat.priceUnit}</span>
                     </p>
                   </div>
+                  {unitCounts[cat.id] > 1 && (
+                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-white/90 backdrop-blur-sm text-ink px-2.5 py-1 sm:px-3 sm:py-1.5 shadow-md">
+                      <p className="text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase leading-none whitespace-nowrap">
+                        {fmt(t.fleet.inStock, { n: unitCounts[cat.id] })}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div className="px-5 pt-5 pb-5 sm:px-6 sm:pt-7 sm:pb-7 text-center flex flex-col flex-1">
                   <h3 className="font-barlow font-black text-ink text-2xl sm:text-3xl uppercase tracking-wide leading-none mb-3 sm:mb-4">
