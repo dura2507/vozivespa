@@ -34,7 +34,21 @@ function token(): string | null {
 }
 
 function ownerChatId(): string | null {
-  return process.env.TELEGRAM_OWNER_CHAT_ID?.trim() || null;
+  // Backwards-compatible primary: when multiple IDs are configured we
+  // return the first one so existing callers that only send to "the
+  // owner" still work. Use ownerChatIds() to fan out to everyone.
+  return ownerChatIds()[0] ?? null;
+}
+
+// Comma-separated list in TELEGRAM_OWNER_CHAT_ID lets us notify
+// multiple people (e.g. owner + partner). Whitespace and empty
+// entries are stripped so "1234, 5678,, 9012" works.
+function ownerChatIds(): string[] {
+  const raw = process.env.TELEGRAM_OWNER_CHAT_ID?.trim() || "";
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
 }
 
 function fmtDate(iso: string): string {
@@ -195,8 +209,8 @@ export async function sendOwnerBookingTelegram(
   receipt?: { url: string; mime: string },
   unitLabel?: string | null,
 ): Promise<void> {
-  const chatId = ownerChatId();
-  if (!chatId) {
+  const chatIds = ownerChatIds();
+  if (chatIds.length === 0) {
     console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping owner notification");
     return;
   }
@@ -205,26 +219,31 @@ export async function sendOwnerBookingTelegram(
   // before the receipt. Receipt then arrives as a reply to the
   // booking message . Telegram renders that as a quoted thread, so
   // it's clearly the deposit attachment for this booking and not a
-  // free-standing photo.
-  const msgRes = await callTelegram<{ message_id: number }>("sendMessage", {
-    chat_id: chatId,
-    text: buildText(booking, unitLabel),
-    parse_mode: "MarkdownV2",
-    reply_markup: { inline_keyboard: buildKeyboard(booking) },
-  });
-  const replyToId = msgRes.result?.message_id;
+  // free-standing photo. We fan out to every owner chat sequentially
+  // so a 401 on one chat ID doesn't block the others (allSettled).
+  await Promise.allSettled(
+    chatIds.map(async (chatId) => {
+      const msgRes = await callTelegram<{ message_id: number }>("sendMessage", {
+        chat_id: chatId,
+        text: buildText(booking, unitLabel),
+        parse_mode: "MarkdownV2",
+        reply_markup: { inline_keyboard: buildKeyboard(booking) },
+      });
+      const replyToId = msgRes.result?.message_id;
 
-  if (receipt?.url) {
-    const isPhoto = PHOTO_MIMES.has(receipt.mime);
-    const caption = `Deposit receipt · ${escapeMd(bikeNameFor(booking))} · ${escapeMd(booking.customer_name)}`;
-    await callTelegram(isPhoto ? "sendPhoto" : "sendDocument", {
-      chat_id: chatId,
-      [isPhoto ? "photo" : "document"]: receipt.url,
-      caption,
-      parse_mode: "MarkdownV2",
-      ...(replyToId ? { reply_to_message_id: replyToId } : {}),
-    });
-  }
+      if (receipt?.url) {
+        const isPhoto = PHOTO_MIMES.has(receipt.mime);
+        const caption = `Deposit receipt · ${escapeMd(bikeNameFor(booking))} · ${escapeMd(booking.customer_name)}`;
+        await callTelegram(isPhoto ? "sendPhoto" : "sendDocument", {
+          chat_id: chatId,
+          [isPhoto ? "photo" : "document"]: receipt.url,
+          caption,
+          parse_mode: "MarkdownV2",
+          ...(replyToId ? { reply_to_message_id: replyToId } : {}),
+        });
+      }
+    }),
+  );
 }
 
 export async function editTelegramMessageForBooking(
@@ -259,8 +278,8 @@ export async function sendOwnerContactMessage(input: {
   phone?: string | null;
   message: string;
 }): Promise<void> {
-  const chatId = ownerChatId();
-  if (!chatId) {
+  const chatIds = ownerChatIds();
+  if (chatIds.length === 0) {
     console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping contact notification");
     return;
   }
@@ -286,14 +305,18 @@ export async function sendOwnerContactMessage(input: {
   // No mailto: button . Telegram inline-keyboard URLs must be http(s) only,
   // so we put the email inside a code-span (tap to copy) and tell the owner
   // to reply to the parallel email.
-  await callTelegram("sendMessage", {
-    chat_id: chatId,
-    text: lines.join("\n"),
-    parse_mode: "MarkdownV2",
-    ...(buttons.length > 0
-      ? { reply_markup: { inline_keyboard: [buttons] } }
-      : {}),
-  });
+  await Promise.allSettled(
+    chatIds.map((chatId) =>
+      callTelegram("sendMessage", {
+        chat_id: chatId,
+        text: lines.join("\n"),
+        parse_mode: "MarkdownV2",
+        ...(buttons.length > 0
+          ? { reply_markup: { inline_keyboard: [buttons] } }
+          : {}),
+      }),
+    ),
+  );
 }
 
 /**
@@ -302,8 +325,8 @@ export async function sendOwnerContactMessage(input: {
  * may already be far up the chat, so we send a fresh one.
  */
 export async function sendOwnerCancellationTelegram(booking: BookingRow): Promise<void> {
-  const chatId = ownerChatId();
-  if (!chatId) {
+  const chatIds = ownerChatIds();
+  if (chatIds.length === 0) {
     console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping cancellation notification");
     return;
   }
@@ -332,12 +355,16 @@ export async function sendOwnerCancellationTelegram(booking: BookingRow): Promis
       }
     : undefined;
 
-  await callTelegram("sendMessage", {
-    chat_id: chatId,
-    text: lines.join("\n"),
-    parse_mode: "MarkdownV2",
-    ...(reply_markup ? { reply_markup } : {}),
-  });
+  await Promise.allSettled(
+    chatIds.map((chatId) =>
+      callTelegram("sendMessage", {
+        chat_id: chatId,
+        text: lines.join("\n"),
+        parse_mode: "MarkdownV2",
+        ...(reply_markup ? { reply_markup } : {}),
+      }),
+    ),
+  );
 }
 
 type RiderlyBookingForward = {
@@ -386,8 +413,8 @@ function formatReceived(d: Date | null): string {
 // inline buttons . owner taps Accept directly, Riderly's API processes
 // the response, no portal switch.
 export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<void> {
-  const chatId = ownerChatId();
-  if (!chatId) {
+  const chatIds = ownerChatIds();
+  if (chatIds.length === 0) {
     console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping riderly forward");
     return;
   }
@@ -434,13 +461,17 @@ export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<v
     if (row1.length) keyboard.push(row1);
     if (row2.length) keyboard.push(row2);
 
-    await callTelegram("sendMessage", {
-      chat_id: chatId,
-      text: lines.join("\n"),
-      parse_mode: "MarkdownV2",
-      disable_web_page_preview: true,
-      ...(keyboard.length > 0 ? { reply_markup: { inline_keyboard: keyboard } } : {}),
-    });
+    await Promise.allSettled(
+      chatIds.map((chatId) =>
+        callTelegram("sendMessage", {
+          chat_id: chatId,
+          text: lines.join("\n"),
+          parse_mode: "MarkdownV2",
+          disable_web_page_preview: true,
+          ...(keyboard.length > 0 ? { reply_markup: { inline_keyboard: keyboard } } : {}),
+        }),
+      ),
+    );
     return;
   }
 
@@ -457,13 +488,17 @@ export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<v
     escapeMd(email.preview),
   ].filter(Boolean);
   const url = email.riderlyUrl ?? "https://riderly.com";
-  await callTelegram("sendMessage", {
-    chat_id: chatId,
-    text: lines.join("\n"),
-    parse_mode: "MarkdownV2",
-    disable_web_page_preview: true,
-    reply_markup: { inline_keyboard: [[{ text: "Open on Riderly", url }]] },
-  });
+  await Promise.allSettled(
+    chatIds.map((chatId) =>
+      callTelegram("sendMessage", {
+        chat_id: chatId,
+        text: lines.join("\n"),
+        parse_mode: "MarkdownV2",
+        disable_web_page_preview: true,
+        reply_markup: { inline_keyboard: [[{ text: "Open on Riderly", url }]] },
+      }),
+    ),
+  );
 }
 
 export type CallbackAction = "confirm" | "decline";
