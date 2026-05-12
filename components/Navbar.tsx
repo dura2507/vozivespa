@@ -124,7 +124,7 @@ export default function Navbar({
                 </svg>
               </button>
               {langOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-off-white shadow-2xl min-w-[140px] py-1">
+                <div className="absolute right-0 top-full mt-2 bg-white rounded-md min-w-[140px] py-2 [filter:drop-shadow(0_8px_24px_rgba(0,0,0,0.18))]">
                   {LOCALES.map((l) => (
                     <Link
                       key={l}
@@ -170,7 +170,7 @@ export default function Navbar({
                 </svg>
               </button>
               {langOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-off-white shadow-2xl min-w-[140px] py-1 z-50">
+                <div className="absolute right-0 top-full mt-2 bg-white rounded-md min-w-[140px] py-2 z-50 [filter:drop-shadow(0_8px_24px_rgba(0,0,0,0.18))]">
                   {LOCALES.map((l) => (
                     <Link
                       key={l}
