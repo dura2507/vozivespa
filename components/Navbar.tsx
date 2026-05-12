@@ -113,32 +113,49 @@ export default function Navbar({
                 onBlur={() => setTimeout(() => setLangOpen(false), 150)}
                 className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1.5`}
                 aria-label={t.languageSwitcher}
+                aria-expanded={langOpen}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <circle cx="12" cy="12" r="9" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 010 18M12 3a14 14 0 000 18" />
                 </svg>
                 <span>{LOCALE_LABELS[lang].short}</span>
-                <svg className={`w-3 h-3 transition-transform ${langOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <svg className={`w-3 h-3 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              {langOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-white py-2 [filter:drop-shadow(0_8px_24px_rgba(0,0,0,0.18))]">
-                  {LOCALES.map((l) => (
+              <div
+                className={`absolute right-0 top-full mt-2 bg-white py-1.5 origin-top-right transition-all duration-200 ease-out [filter:drop-shadow(0_10px_28px_rgba(0,0,0,0.2))] ${
+                  langOpen
+                    ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+                    : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
+                }`}
+                role="menu"
+                aria-hidden={!langOpen}
+              >
+                {LOCALES.map((l) => {
+                  const active = l === lang;
+                  return (
                     <Link
                       key={l}
                       href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                      className={`block px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase text-ink hover:bg-ink/5 transition-colors ${
-                        l === lang ? "opacity-50" : ""
+                      className={`relative flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase transition-colors ${
+                        active ? "text-red bg-red/5" : "text-ink hover:bg-ink/5"
                       }`}
                       onClick={() => setLangOpen(false)}
+                      role="menuitem"
                     >
-                      {LOCALE_LABELS[l].name}
+                      <span
+                        className={`w-1 h-1 rounded-full transition-colors ${
+                          active ? "bg-red" : "bg-transparent"
+                        }`}
+                        aria-hidden
+                      />
+                      <span>{LOCALE_LABELS[l].name}</span>
                     </Link>
-                  ))}
-                </div>
-              )}
+                  );
+                })}
+              </div>
             </div>
 
             <Link
@@ -159,32 +176,49 @@ export default function Navbar({
                 onBlur={() => setTimeout(() => setLangOpen(false), 150)}
                 className={`text-xs font-bold tracking-[0.1em] uppercase transition-colors ${textColor} ${hoverColor} flex items-center gap-1.5 px-1`}
                 aria-label={t.languageSwitcher}
+                aria-expanded={langOpen}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <circle cx="12" cy="12" r="9" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 010 18M12 3a14 14 0 000 18" />
                 </svg>
                 <span>{LOCALE_LABELS[lang].short}</span>
-                <svg className={`w-3 h-3 transition-transform ${langOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <svg className={`w-3 h-3 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              {langOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-white py-2 z-50 [filter:drop-shadow(0_8px_24px_rgba(0,0,0,0.18))]">
-                  {LOCALES.map((l) => (
+              <div
+                className={`absolute right-0 top-full mt-2 bg-white py-1.5 z-50 origin-top-right transition-all duration-200 ease-out [filter:drop-shadow(0_10px_28px_rgba(0,0,0,0.2))] ${
+                  langOpen
+                    ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+                    : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
+                }`}
+                role="menu"
+                aria-hidden={!langOpen}
+              >
+                {LOCALES.map((l) => {
+                  const active = l === lang;
+                  return (
                     <Link
                       key={l}
                       href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                      className={`block px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase text-ink hover:bg-ink/5 transition-colors ${
-                        l === lang ? "opacity-50" : ""
+                      className={`relative flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase transition-colors ${
+                        active ? "text-red bg-red/5" : "text-ink hover:bg-ink/5"
                       }`}
                       onClick={() => setLangOpen(false)}
+                      role="menuitem"
                     >
-                      {LOCALE_LABELS[l].name}
+                      <span
+                        className={`w-1 h-1 rounded-full transition-colors ${
+                          active ? "bg-red" : "bg-transparent"
+                        }`}
+                        aria-hidden
+                      />
+                      <span>{LOCALE_LABELS[l].name}</span>
                     </Link>
-                  ))}
-                </div>
-              )}
+                  );
+                })}
+              </div>
             </div>
           <button
             className={`w-9 h-9 flex flex-col items-center justify-center gap-[5px] ${textColor}`}
