@@ -142,6 +142,21 @@ export default function Footer({
         <div className="mt-12 pt-8 border-t border-white/10 w-full text-xs text-white/30 space-y-1">
           <p>{BRAND.legal} · OIB: {BRAND.oib} · {t.openHoursPrefix} {BRAND.hours}</p>
           <p>© {new Date().getFullYear()} {BRAND.name}. {t.rights}</p>
+          <p className="pt-2">
+            made with{" "}
+            <span className="text-red/80" aria-hidden>
+              ♡
+            </span>{" "}
+            by{" "}
+            <a
+              href="https://krileo.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold tracking-wider uppercase text-white/55 hover:text-white transition-colors"
+            >
+              krileo
+            </a>
+          </p>
         </div>
       </div>
     </footer>
