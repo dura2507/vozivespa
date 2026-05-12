@@ -152,9 +152,9 @@ export default function Footer({
               href="https://krileo.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold tracking-wider uppercase text-white/55 hover:text-white transition-colors"
+              className="font-semibold text-white/55 hover:text-white transition-colors"
             >
-              krileo
+              Krileo
             </a>
           </p>
         </div>
