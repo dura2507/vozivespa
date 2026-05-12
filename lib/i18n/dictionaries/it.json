@@ -417,5 +417,59 @@
     "loading": "Caricamento...",
     "tryAgain": "Riprova",
     "language": "Lingua"
+  },
+  "emails": {
+    "bookingReceived": {
+      "subject": "Richiesta ricevuta, {bike} {from} a {to}",
+      "preheader": "Abbiamo la tua richiesta per la {bike}. Conferma a breve.",
+      "headline": "Richiesta ricevuta",
+      "greeting": "Ciao {name},",
+      "intro": "grazie per la tua richiesta. La esaminiamo e confermiamo via email a breve, di solito entro poche ore.",
+      "urgentLine": "Intanto, qualcosa di urgente?",
+      "signoff": "A presto a Zara."
+    },
+    "bookingConfirmed": {
+      "subject": "Confermata, {bike} {from} a {to}",
+      "preheader": "La tua {bike} è confermata dal {from} al {to}.",
+      "headline": "Prenotazione confermata",
+      "greeting": "Ciao {name},",
+      "intro": "la tua {bike} è bloccata. A presto a Zara.",
+      "pickupHeader": "Ritiro",
+      "openHoursLabel": "Aperto",
+      "bringHeader": "Porta con te",
+      "bringLicence": "Patente moto valida, senza non possiamo consegnare",
+      "bringDeposit": "{deposit} di cauzione (contanti all'arrivo, restituita dopo la riconsegna se non ci sono danni)",
+      "bringTank": "La moto arriva con il pieno, riconsegnala anche con il pieno",
+      "adjustHeader": "Devi modificare?",
+      "adjustLine": "Ritiro previsto per {from} alle {pickupTime}, riconsegna {to} entro {returnTime}. Scrivici se cambia qualcosa:",
+      "cancelLine": "Cambiati i piani?",
+      "cancelLink": "Annulla la prenotazione",
+      "cancelTail": ", le date si liberano subito per qualcun altro."
+    },
+    "bookingDeclined": {
+      "subject": "Aggiornamento sulla tua prenotazione, {bike}",
+      "preheader": "Aggiornamento sulla tua prenotazione {bike}, queste date non sono andate.",
+      "headline": "Aggiornamento prenotazione",
+      "greeting": "Ciao {name},",
+      "intro": "purtroppo non possiamo darti la {bike} per queste date. Ci dispiace.",
+      "tryOther": "Vuoi provare altre date o un'altra moto? Scrivici e troviamo qualcosa che funziona."
+    },
+    "contactReceived": {
+      "subject": "Grazie per il tuo messaggio",
+      "preheader": "Abbiamo il tuo messaggio, ti rispondiamo a breve.",
+      "headline": "Messaggio ricevuto",
+      "greeting": "Ciao {name},",
+      "intro": "grazie per averci scritto. Ti rispondiamo il prima possibile.",
+      "yourMessage": "Il tuo messaggio:",
+      "signoff": "A presto a Zara."
+    },
+    "summary": {
+      "bike": "Moto",
+      "pickup": "Ritiro",
+      "return": "Riconsegna",
+      "total": "Totale",
+      "days": "giorni",
+      "day": "giorno"
+    }
   }
 }

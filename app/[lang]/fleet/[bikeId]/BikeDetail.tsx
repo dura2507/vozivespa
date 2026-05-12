@@ -244,6 +244,7 @@ export default function BikeDetail({
       fd.set("driversLicence", driversLicence);
       fd.set("ridingStyle", ridingStyle);
       fd.set("totalPriceCents", String(totalPrice * 100));
+      fd.set("locale", lang);
       fd.set("receipt", receipt);
 
       const res = await fetch("/api/bookings", {

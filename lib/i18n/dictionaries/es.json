@@ -417,5 +417,59 @@
     "loading": "Cargando...",
     "tryAgain": "Reintentar",
     "language": "Idioma"
+  },
+  "emails": {
+    "bookingReceived": {
+      "subject": "Solicitud recibida, {bike} {from} a {to}",
+      "preheader": "Tenemos tu solicitud para la {bike}. El propietario confirma en breve.",
+      "headline": "Solicitud recibida",
+      "greeting": "Hola {name},",
+      "intro": "gracias por tu solicitud. La revisaremos y confirmaremos por email en breve, normalmente en pocas horas.",
+      "urgentLine": "Mientras tanto, algo urgente?",
+      "signoff": "Hasta pronto en Zadar."
+    },
+    "bookingConfirmed": {
+      "subject": "Confirmada, {bike} {from} a {to}",
+      "preheader": "Tu {bike} está confirmada de {from} a {to}.",
+      "headline": "Reserva confirmada",
+      "greeting": "Hola {name},",
+      "intro": "tu {bike} está bloqueada. Hasta pronto en Zadar.",
+      "pickupHeader": "Recogida",
+      "openHoursLabel": "Horario",
+      "bringHeader": "Trae contigo",
+      "bringLicence": "Carnet de moto válido, sin él no podemos entregar",
+      "bringDeposit": "{deposit} de depósito (efectivo a la llegada, se devuelve tras la entrega si no hay daños)",
+      "bringTank": "La moto llega con el depósito lleno, devuélvela también llena",
+      "adjustHeader": "Necesitas ajustar algo?",
+      "adjustLine": "Recogida prevista para {from} a las {pickupTime}, devolución {to} a las {returnTime}. Escríbenos si cambia algo:",
+      "cancelLine": "Cambiaron los planes?",
+      "cancelLink": "Cancelar reserva",
+      "cancelTail": ", las fechas vuelven a estar libres al instante."
+    },
+    "bookingDeclined": {
+      "subject": "Actualización de tu reserva, {bike}",
+      "preheader": "Actualización de tu reserva de {bike}, esas fechas no encajaron.",
+      "headline": "Actualización de reserva",
+      "greeting": "Hola {name},",
+      "intro": "lamentablemente no podemos darte la {bike} para esas fechas. Lo sentimos.",
+      "tryOther": "Quieres probar otras fechas u otra moto? Escríbenos y buscaremos algo que encaje."
+    },
+    "contactReceived": {
+      "subject": "Gracias por tu mensaje",
+      "preheader": "Tenemos tu mensaje, te respondemos en breve.",
+      "headline": "Mensaje recibido",
+      "greeting": "Hola {name},",
+      "intro": "gracias por escribirnos. Te respondemos lo antes posible.",
+      "yourMessage": "Tu mensaje:",
+      "signoff": "Hasta pronto en Zadar."
+    },
+    "summary": {
+      "bike": "Moto",
+      "pickup": "Recogida",
+      "return": "Devolución",
+      "total": "Total",
+      "days": "días",
+      "day": "día"
+    }
   }
 }

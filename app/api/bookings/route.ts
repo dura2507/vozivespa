@@ -106,6 +106,11 @@ export async function POST(request: Request) {
     typeof totalPriceRaw === "string" && /^\d+$/.test(totalPriceRaw)
       ? parseInt(totalPriceRaw, 10)
       : null;
+  const localeRaw = form.get("locale");
+  const locale: "en" | "de" | "es" | "it" =
+    typeof localeRaw === "string" && ["en", "de", "es", "it"].includes(localeRaw)
+      ? (localeRaw as "en" | "de" | "es" | "it")
+      : "en";
   const receipt = form.get("receipt");
 
   if (!bikeId) return NextResponse.json({ error: "bikeId is required" }, { status: 400 });
@@ -215,6 +220,7 @@ export async function POST(request: Request) {
       bike_unit_id: assignedUnitId,
       drivers_licence: driversLicence,
       riding_style: ridingStyle,
+      locale,
     })
     .select("*")
     .single();

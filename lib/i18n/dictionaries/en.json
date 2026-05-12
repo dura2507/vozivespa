@@ -417,5 +417,59 @@
     "loading": "Loading...",
     "tryAgain": "Try again",
     "language": "Language"
+  },
+  "emails": {
+    "bookingReceived": {
+      "subject": "We got your booking, {bike} {from} to {to}",
+      "preheader": "We got your booking request for the {bike}. Owner confirms shortly.",
+      "headline": "Got your request",
+      "greeting": "Hi {name},",
+      "intro": "thanks for your booking request. We'll review it and confirm by email shortly, usually within a few hours.",
+      "urgentLine": "In the meantime, anything urgent?",
+      "signoff": "See you in Zadar."
+    },
+    "bookingConfirmed": {
+      "subject": "Confirmed, {bike} {from} to {to}",
+      "preheader": "Your {bike} is confirmed for {from} to {to}.",
+      "headline": "Booking confirmed",
+      "greeting": "Hi {name},",
+      "intro": "your {bike} is locked in. See you in Zadar.",
+      "pickupHeader": "Pickup",
+      "openHoursLabel": "Open",
+      "bringHeader": "Bring with you",
+      "bringLicence": "Valid motorcycle licence, we can't hand over without it",
+      "bringDeposit": "{deposit} deposit (cash on arrival, refunded after drop-off if no damage)",
+      "bringTank": "Bike comes with a full tank, please return it full",
+      "adjustHeader": "Need to adjust?",
+      "adjustLine": "Pickup is locked in for {from} at {pickupTime}, return {to} by {returnTime}. Reach out if anything changes:",
+      "cancelLine": "Plans changed?",
+      "cancelLink": "Cancel this booking",
+      "cancelTail": ", the dates open up immediately for someone else."
+    },
+    "bookingDeclined": {
+      "subject": "Update on your booking, {bike}",
+      "preheader": "Update on your {bike} booking, these dates didn't work out.",
+      "headline": "Update on your booking",
+      "greeting": "Hi {name},",
+      "intro": "unfortunately we can't accommodate the {bike} for these dates. Sorry about that.",
+      "tryOther": "Want to try other dates or another bike? Drop us a line and we'll do our best to find something that works."
+    },
+    "contactReceived": {
+      "subject": "Thanks for your message",
+      "preheader": "We got your message, we'll reply shortly.",
+      "headline": "Got your message",
+      "greeting": "Hi {name},",
+      "intro": "thanks for reaching out. We'll get back to you as soon as possible.",
+      "yourMessage": "Your message:",
+      "signoff": "See you in Zadar."
+    },
+    "summary": {
+      "bike": "Bike",
+      "pickup": "Pickup",
+      "return": "Return",
+      "total": "Total",
+      "days": "days",
+      "day": "day"
+    }
   }
 }

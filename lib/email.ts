@@ -2,6 +2,16 @@ import { Resend, type CreateEmailOptions } from "resend";
 import { CATEGORIES, BRAND } from "@/lib/mockData";
 import { retry } from "@/lib/retry";
 import type { BookingRow } from "@/lib/supabase";
+import { getDictionary, type Dictionary } from "@/lib/i18n/dictionaries";
+import { type Locale, isLocale } from "@/lib/i18n/config";
+
+function fmt(template: string, vars: Record<string, string>): string {
+  return template.replace(/\{(\w+)\}/g, (_, key) => vars[key] ?? "");
+}
+
+function bookingLocale(booking: BookingRow): Locale {
+  return isLocale(booking.locale) ? booking.locale : "en";
+}
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -160,16 +170,22 @@ function ridingStyleLabel(s: BookingRow["riding_style"]): string {
   return "-";
 }
 
-function bookingSummaryHtml(booking: BookingRow): string {
+function bookingSummaryHtml(booking: BookingRow, sum?: Dictionary["emails"]["summary"]): string {
   const bikeName = bikeNameFor(booking);
   const nights = nightsBetween(booking.date_from, booking.date_to);
   const pickup = fmtTimeOfDay(booking.pickup_time);
   const ret = fmtTimeOfDay(booking.return_time);
+  const lBike = sum?.bike ?? "Bike";
+  const lPickup = sum?.pickup ?? "Pickup";
+  const lReturn = sum?.return ?? "Return";
+  const lTotal = sum?.total ?? "Total";
+  const lDays = sum?.days ?? "days";
+  const lDay = sum?.day ?? "day";
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
-    <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Bike</td><td style="padding:4px 0;font-weight:600;">${escape(bikeName)}</td></tr>
-    <tr><td style="padding:4px 0;color:#6b6b6b;">Pickup</td><td style="padding:4px 0;font-weight:600;">${fmtDate(booking.date_from)}${pickup ? ` &middot; ${pickup}` : ""}</td></tr>
-    <tr><td style="padding:4px 0;color:#6b6b6b;">Return</td><td style="padding:4px 0;font-weight:600;">${fmtDate(booking.date_to)}${ret ? ` &middot; ${ret}` : ""} <span style="color:#6b6b6b;font-weight:400;">(${nights} ${nights === 1 ? "day" : "days"})</span></td></tr>
-    <tr><td style="padding:4px 0;color:#6b6b6b;">Total</td><td style="padding:4px 0;font-weight:600;color:#B61F36;">${totalEur(booking)}</td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">${lBike}</td><td style="padding:4px 0;font-weight:600;">${escape(bikeName)}</td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;">${lPickup}</td><td style="padding:4px 0;font-weight:600;">${fmtDate(booking.date_from)}${pickup ? ` &middot; ${pickup}` : ""}</td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;">${lReturn}</td><td style="padding:4px 0;font-weight:600;">${fmtDate(booking.date_to)}${ret ? ` &middot; ${ret}` : ""} <span style="color:#6b6b6b;font-weight:400;">(${nights} ${nights === 1 ? lDay : lDays})</span></td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;">${lTotal}</td><td style="padding:4px 0;font-weight:600;color:#B61F36;">${totalEur(booking)}</td></tr>
   </table>`;
 }
 
@@ -257,43 +273,51 @@ Confirm or decline in Telegram.`;
 
 export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Promise<void> {
   const bikeName = bikeNameFor(booking);
+  const dict = await getDictionary(bookingLocale(booking));
+  const t = dict.emails.bookingReceived;
+  const vars = {
+    name: booking.customer_name,
+    bike: bikeName,
+    from: fmtDate(booking.date_from),
+    to: fmtDate(booking.date_to),
+  };
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escape(booking.customer_name)},</p>
-    <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">thanks for your booking request. We&apos;ll review it and confirm by email shortly - usually within a few hours.</p>
-    ${bookingSummaryHtml(booking)}
-    <p style="margin:24px 0 8px;font-size:14px;color:#6b6b6b;line-height:1.6;">In the meantime, anything urgent?</p>
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${escape(fmt(t.greeting, vars))}</p>
+    <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(t.intro)}</p>
+    ${bookingSummaryHtml(booking, dict.emails.summary)}
+    <p style="margin:24px 0 8px;font-size:14px;color:#6b6b6b;line-height:1.6;">${escape(t.urgentLine)}</p>
     ${contactButtonsHtml()}
-    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">See you in Zadar.</p>
+    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">${escape(t.signoff)}</p>
   `;
 
   const html = htmlLayout({
-    preheader: `We got your booking request for the ${bikeName}. Owner confirms shortly.`,
-    headline: "Got your request",
+    preheader: fmt(t.preheader, vars),
+    headline: t.headline,
     accent: "ink",
     bodyHtml,
   });
 
   const pickup = fmtTimeOfDay(booking.pickup_time);
   const ret = fmtTimeOfDay(booking.return_time);
-  const text = `Hi ${booking.customer_name},
+  const text = `${fmt(t.greeting, vars)}
 
-Thanks for your booking request. We'll review it and confirm by email shortly - usually within a few hours.
+${t.intro}
 
-Bike: ${bikeName}
-Pickup: ${fmtDate(booking.date_from)}${pickup ? ` · ${pickup}` : ""}
-Return: ${fmtDate(booking.date_to)}${ret ? ` · ${ret}` : ""}
-Total: ${totalEur(booking)}
+${dict.emails.summary.bike}: ${bikeName}
+${dict.emails.summary.pickup}: ${fmtDate(booking.date_from)}${pickup ? ` · ${pickup}` : ""}
+${dict.emails.summary.return}: ${fmtDate(booking.date_to)}${ret ? ` · ${ret}` : ""}
+${dict.emails.summary.total}: ${totalEur(booking)}
 
-Anything urgent? WhatsApp us: ${ownerWaLink()}
+${t.urgentLine} WhatsApp: ${ownerWaLink()}
 
-See you in Zadar.
+${t.signoff}
 ${BRAND.name}`;
 
   await sendWithRetry("customerReceived", {
     from: fromAddress(),
     to: booking.customer_email,
-    subject: `We got your booking - ${bikeName} ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`,
+    subject: fmt(t.subject, vars),
     html,
     text,
     replyTo: BRAND.email,
@@ -311,84 +335,84 @@ export async function sendCustomerBookingDecidedEmail(
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
   const cancelUrl = `${siteUrl}/booking/${encodeURIComponent(booking.secret_token)}/cancel`;
 
-  const headline = isConfirmed ? "✓ Booking confirmed" : "Update on your booking";
+  const dict = await getDictionary(bookingLocale(booking));
+  const t = isConfirmed ? dict.emails.bookingConfirmed : dict.emails.bookingDeclined;
+  const vars = {
+    name: booking.customer_name,
+    bike: bikeName,
+    from: fmtDate(booking.date_from),
+    to: fmtDate(booking.date_to),
+    pickupTime: fmtTimeOfDay(booking.pickup_time),
+    returnTime: fmtTimeOfDay(booking.return_time),
+    deposit: BRAND.deposit,
+  };
   const accent = isConfirmed ? "green" : "ink";
 
   const bodyHtml = isConfirmed
     ? `
-      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escape(booking.customer_name)},</p>
-      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">your ${escape(bikeName)} is locked in. See you in Zadar.</p>
-      ${bookingSummaryHtml(booking)}
-      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">Pickup</h3>
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${escape(fmt(t.greeting, vars))}</p>
+      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(fmt(t.intro, vars))}</p>
+      ${bookingSummaryHtml(booking, dict.emails.summary)}
+      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).pickupHeader)}</h3>
       <p style="margin:0 0 4px;font-size:14px;line-height:1.6;font-weight:600;">${escape(BRAND.address)}</p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#6b6b6b;">Open ${escape(BRAND.hours)}</p>
-      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">Bring with you</h3>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).openHoursLabel)} ${escape(BRAND.hours)}</p>
+      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringHeader)}</h3>
       <ul style="margin:0 0 16px;padding-left:18px;font-size:14px;line-height:1.7;">
-        <li>Valid motorcycle licence (we can't hand over without it)</li>
-        <li>${escape(BRAND.deposit)} deposit (cash on arrival, refunded after drop-off if no damage)</li>
-        <li>Bike comes with a full tank - please return it full</li>
+        <li>${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringLicence)}</li>
+        <li>${escape(fmt((t as Dictionary["emails"]["bookingConfirmed"]).bringDeposit, vars))}</li>
+        <li>${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringTank)}</li>
       </ul>
-      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">Need to adjust?</h3>
-      <p style="margin:0 0 8px;font-size:14px;line-height:1.6;">Pickup is locked in for ${escape(fmtDate(booking.date_from))} at ${escape(fmtTimeOfDay(booking.pickup_time))}, return ${escape(fmtDate(booking.date_to))} by ${escape(fmtTimeOfDay(booking.return_time))}. Reach out if anything changes:</p>
+      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).adjustHeader)}</h3>
+      <p style="margin:0 0 8px;font-size:14px;line-height:1.6;">${escape(fmt((t as Dictionary["emails"]["bookingConfirmed"]).adjustLine, vars))}</p>
       ${contactButtonsHtml()}
-      <p style="margin:32px 0 0;padding-top:18px;border-top:1px solid #e6e4dd;font-size:12px;color:#6b6b6b;line-height:1.6;">Plans changed? <a href="${cancelUrl}" style="color:#B61F36;">Cancel this booking</a> - the dates open up immediately for someone else.</p>
+      <p style="margin:32px 0 0;padding-top:18px;border-top:1px solid #e6e4dd;font-size:12px;color:#6b6b6b;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).cancelLine)} <a href="${cancelUrl}" style="color:#B61F36;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).cancelLink)}</a>${escape((t as Dictionary["emails"]["bookingConfirmed"]).cancelTail)}</p>
     `
     : `
-      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escape(booking.customer_name)},</p>
-      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">unfortunately we can't accommodate the ${escape(bikeName)} for these dates. Sorry about that.</p>
-      ${bookingSummaryHtml(booking)}
-      <p style="margin:24px 0 8px;font-size:14px;line-height:1.6;">Want to try other dates or another bike? Drop us a line - we'll do our best to find something that works.</p>
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${escape(fmt(t.greeting, vars))}</p>
+      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(fmt(t.intro, vars))}</p>
+      ${bookingSummaryHtml(booking, dict.emails.summary)}
+      <p style="margin:24px 0 8px;font-size:14px;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingDeclined"]).tryOther)}</p>
       ${contactButtonsHtml()}
     `;
 
   const html = htmlLayout({
-    preheader: isConfirmed
-      ? `Your ${bikeName} is confirmed for ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}.`
-      : `Update on your ${bikeName} booking - these dates didn't work out.`,
-    headline,
+    preheader: fmt(t.preheader, vars),
+    headline: t.headline,
     accent,
     bodyHtml,
   });
 
-  const pickupT = fmtTimeOfDay(booking.pickup_time);
-  const returnT = fmtTimeOfDay(booking.return_time);
   const text = isConfirmed
-    ? `Hi ${booking.customer_name},
+    ? `${fmt(t.greeting, vars)}
 
-Your ${bikeName} is locked in.
+${fmt(t.intro, vars)}
 
-Pickup: ${fmtDate(booking.date_from)}${pickupT ? ` · ${pickupT}` : ""}
-Return: ${fmtDate(booking.date_to)}${returnT ? ` · ${returnT}` : ""}
-Total: ${totalEur(booking)}
+${dict.emails.summary.pickup}: ${fmtDate(booking.date_from)} ${fmtTimeOfDay(booking.pickup_time)}
+${dict.emails.summary.return}: ${fmtDate(booking.date_to)} ${fmtTimeOfDay(booking.return_time)}
+${dict.emails.summary.total}: ${totalEur(booking)}
 
-Pickup location: ${BRAND.address}
-Shop hours: ${BRAND.hours}
+${(t as Dictionary["emails"]["bookingConfirmed"]).pickupHeader}: ${BRAND.address}
+${(t as Dictionary["emails"]["bookingConfirmed"]).openHoursLabel}: ${BRAND.hours}
 
-Bring:
-- Valid motorcycle licence (no licence, no ride)
-- ${BRAND.deposit} deposit cash, refunded after drop-off
-- Full tank in / full tank out
+WhatsApp: ${ownerWaLink()}
 
-Need to adjust? WhatsApp us: ${ownerWaLink()}
+${(t as Dictionary["emails"]["bookingConfirmed"]).cancelLine} ${cancelUrl}
 
-Plans changed? Cancel anytime: ${cancelUrl}
-
-See you in Zadar.
 ${BRAND.name}`
-    : `Hi ${booking.customer_name},
+    : `${fmt(t.greeting, vars)}
 
-Unfortunately we can't accommodate the ${bikeName} for ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}.
+${fmt(t.intro, vars)}
 
-Want to try other dates or another bike? WhatsApp us: ${ownerWaLink()}
+${(t as Dictionary["emails"]["bookingDeclined"]).tryOther}
+
+WhatsApp: ${ownerWaLink()}
 
 ${BRAND.name}`;
 
   await sendWithRetry(`customer${isConfirmed ? "Confirmed" : "Declined"}`, {
     from: fromAddress(),
     to: booking.customer_email,
-    subject: isConfirmed
-      ? `✓ Confirmed - ${bikeName} ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`
-      : `Update on your booking - ${bikeName}`,
+    subject: fmt(t.subject, vars),
     html,
     text,
     replyTo: BRAND.email,
@@ -465,42 +489,46 @@ export async function sendCustomerContactReceivedEmail(input: {
   name: string;
   email: string;
   message: string;
+  locale?: string;
 }): Promise<void> {
+  const locale: Locale = isLocale(input.locale ?? "") ? (input.locale as Locale) : "en";
+  const dict = await getDictionary(locale);
+  const t = dict.emails.contactReceived;
+  const vars = { name: input.name };
   const messageHtml = escape(input.message).replace(/\n/g, "<br/>");
 
   const bodyHtml = `
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escape(input.name)},</p>
-    <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">thanks for getting in touch. Your message landed with us and we&apos;ll reply as soon as we can - usually within a few hours.</p>
-    <p style="margin:0 0 8px;font-size:13px;color:#6b6b6b;">Your message</p>
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${escape(fmt(t.greeting, vars))}</p>
+    <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(t.intro)}</p>
+    <p style="margin:0 0 8px;font-size:13px;color:#6b6b6b;">${escape(t.yourMessage)}</p>
     <div style="background:#f6f5f1;padding:18px;font-size:14px;line-height:1.6;border-left:3px solid #B61F36;">${messageHtml}</div>
-    <p style="margin:24px 0 8px;font-size:14px;line-height:1.6;">Anything urgent in the meantime?</p>
     ${contactButtonsHtml()}
-    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">See you in Zadar.</p>
+    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">${escape(t.signoff)}</p>
   `;
 
   const html = htmlLayout({
-    preheader: "Got your message - we'll reply shortly.",
-    headline: "Got your message",
+    preheader: t.preheader,
+    headline: t.headline,
     accent: "ink",
     bodyHtml,
   });
 
-  const text = `Hi ${input.name},
+  const text = `${fmt(t.greeting, vars)}
 
-Thanks for getting in touch. Your message landed with us and we'll reply as soon as we can - usually within a few hours.
+${t.intro}
 
-Your message:
+${t.yourMessage}
 ${input.message}
 
-Anything urgent? WhatsApp us: ${ownerWaLink()}
+WhatsApp: ${ownerWaLink()}
 
-See you in Zadar.
+${t.signoff}
 ${BRAND.name}`;
 
   await sendWithRetry("customerContact", {
     from: fromAddress(),
     to: input.email,
-    subject: "We got your message - SickMotos",
+    subject: t.subject,
     html,
     text,
     replyTo: BRAND.email,

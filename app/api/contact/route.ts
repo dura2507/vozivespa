@@ -12,6 +12,7 @@ type ContactPayload = {
   email?: unknown;
   phone?: unknown;
   message?: unknown;
+  locale?: unknown;
 };
 
 function asString(v: unknown): string | null {
@@ -34,6 +35,9 @@ export async function POST(request: Request) {
   const email = asString(body.email);
   const phone = asString(body.phone);
   const message = asString(body.message);
+  const localeRaw = asString(body.locale);
+  const locale =
+    localeRaw && ["en", "de", "es", "it"].includes(localeRaw) ? localeRaw : "en";
 
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
   if (!email) return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -48,7 +52,7 @@ export async function POST(request: Request) {
     await Promise.allSettled([
       sendOwnerContactMessage(payload),
       sendOwnerContactEmail(payload),
-      sendCustomerContactReceivedEmail(payload),
+      sendCustomerContactReceivedEmail({ ...payload, locale }),
     ]);
   });
 

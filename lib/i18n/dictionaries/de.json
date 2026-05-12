@@ -417,5 +417,59 @@
     "loading": "Lade...",
     "tryAgain": "Erneut versuchen",
     "language": "Sprache"
+  },
+  "emails": {
+    "bookingReceived": {
+      "subject": "Buchungsanfrage erhalten, {bike} {from} bis {to}",
+      "preheader": "Wir haben deine Anfrage für die {bike} erhalten. Antwort folgt in Kürze.",
+      "headline": "Anfrage erhalten",
+      "greeting": "Hi {name},",
+      "intro": "danke für deine Anfrage. Wir prüfen sie und bestätigen per Email in Kürze, normalerweise innerhalb weniger Stunden.",
+      "urgentLine": "In der Zwischenzeit, etwas Dringendes?",
+      "signoff": "Bis bald in Zadar."
+    },
+    "bookingConfirmed": {
+      "subject": "Bestätigt, {bike} {from} bis {to}",
+      "preheader": "Deine {bike} ist bestätigt für {from} bis {to}.",
+      "headline": "Buchung bestätigt",
+      "greeting": "Hi {name},",
+      "intro": "deine {bike} ist gebucht. Bis bald in Zadar.",
+      "pickupHeader": "Abholung",
+      "openHoursLabel": "Geöffnet",
+      "bringHeader": "Bring mit",
+      "bringLicence": "Gültiger Motorradführerschein, ohne den können wir nicht übergeben",
+      "bringDeposit": "{deposit} Kaution (bar bei Ankunft, wird nach unbeschadeter Rückgabe zurückerstattet)",
+      "bringTank": "Bike kommt mit vollem Tank, bitte auch mit vollem Tank zurückgeben",
+      "adjustHeader": "Anpassungen nötig?",
+      "adjustLine": "Abholung ist für {from} um {pickupTime}, Rückgabe {to} bis {returnTime}. Meld dich falls sich was ändert:",
+      "cancelLine": "Pläne geändert?",
+      "cancelLink": "Buchung stornieren",
+      "cancelTail": ", die Termine sind sofort wieder frei für jemand anderen."
+    },
+    "bookingDeclined": {
+      "subject": "Update zu deiner Buchung, {bike}",
+      "preheader": "Update zu deiner {bike} Buchung, diese Termine haben nicht geklappt.",
+      "headline": "Update zu deiner Buchung",
+      "greeting": "Hi {name},",
+      "intro": "leider können wir die {bike} für diese Termine nicht anbieten. Sorry dafür.",
+      "tryOther": "Andere Termine oder ein anderes Bike testen? Schreib uns kurz und wir suchen was passendes."
+    },
+    "contactReceived": {
+      "subject": "Danke für deine Nachricht",
+      "preheader": "Wir haben deine Nachricht, antworten in Kürze.",
+      "headline": "Nachricht erhalten",
+      "greeting": "Hi {name},",
+      "intro": "danke für deine Nachricht. Wir melden uns so schnell wie möglich zurück.",
+      "yourMessage": "Deine Nachricht:",
+      "signoff": "Bis bald in Zadar."
+    },
+    "summary": {
+      "bike": "Bike",
+      "pickup": "Abholung",
+      "return": "Rückgabe",
+      "total": "Gesamt",
+      "days": "Tage",
+      "day": "Tag"
+    }
   }
 }
