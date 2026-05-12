@@ -133,14 +133,14 @@ export default function Navbar({
                 role="menu"
                 aria-hidden={!langOpen}
               >
-                <div className="py-1.5">
+                <div className="py-1">
                   {LOCALES.map((l, i) => {
                     const active = l === lang;
                     return (
                       <Link
                         key={l}
                         href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                        className={`relative flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase transition-all duration-200 ${
+                        className={`block text-center px-5 py-2 text-xs font-bold tracking-[0.15em] uppercase transition-all duration-200 ${
                           active ? "text-red bg-red/5" : "text-ink hover:bg-ink/5"
                         } ${
                           langOpen
@@ -152,14 +152,9 @@ export default function Navbar({
                         }}
                         onClick={() => setLangOpen(false)}
                         role="menuitem"
+                        title={LOCALE_LABELS[l].name}
                       >
-                        <span
-                          className={`w-1 h-1 rounded-full transition-colors ${
-                            active ? "bg-red" : "bg-transparent"
-                          }`}
-                          aria-hidden
-                        />
-                        <span>{LOCALE_LABELS[l].name}</span>
+                        {LOCALE_LABELS[l].short}
                       </Link>
                     );
                   })}
@@ -205,14 +200,14 @@ export default function Navbar({
                 role="menu"
                 aria-hidden={!langOpen}
               >
-                <div className="py-1.5">
+                <div className="py-1">
                   {LOCALES.map((l, i) => {
                     const active = l === lang;
                     return (
                       <Link
                         key={l}
                         href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                        className={`relative flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase transition-all duration-200 ${
+                        className={`block text-center px-5 py-2 text-xs font-bold tracking-[0.15em] uppercase transition-all duration-200 ${
                           active ? "text-red bg-red/5" : "text-ink hover:bg-ink/5"
                         } ${
                           langOpen
@@ -224,14 +219,9 @@ export default function Navbar({
                         }}
                         onClick={() => setLangOpen(false)}
                         role="menuitem"
+                        title={LOCALE_LABELS[l].name}
                       >
-                        <span
-                          className={`w-1 h-1 rounded-full transition-colors ${
-                            active ? "bg-red" : "bg-transparent"
-                          }`}
-                          aria-hidden
-                        />
-                        <span>{LOCALE_LABELS[l].name}</span>
+                        {LOCALE_LABELS[l].short}
                       </Link>
                     );
                   })}
