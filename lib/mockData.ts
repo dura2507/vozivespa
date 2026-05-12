@@ -137,7 +137,7 @@ export const CATEGORIES: Category[] = [
     gallery: ["/bikes/scooter-125.jpg"],
     licence: "A1 category",
     licenceCode: "A1",
-    maxSpeed: "110 km/h",
+    maxSpeed: "90 km/h",
     extraHour: "9€/h",
     displacement: "125cc",
     power: "~11 PS (8,1 kW)",
