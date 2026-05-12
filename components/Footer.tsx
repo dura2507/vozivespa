@@ -164,7 +164,7 @@ export default function Footer({
             <img
               src="/krileo-full.png"
               alt="Krileo"
-              className="h-12 sm:h-14 w-auto"
+              className="h-10 sm:h-12 w-auto"
             />
           </a>
         </div>
