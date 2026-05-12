@@ -165,18 +165,16 @@ export default async function HomePage({
                       <span className="text-xs font-normal opacity-80 ml-0.5">{cat.priceUnit}</span>
                     </p>
                   </div>
-                  {unitCounts[cat.id] > 1 && (
-                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-white/90 backdrop-blur-sm text-ink px-2.5 py-1 sm:px-3 sm:py-1.5 shadow-md">
-                      <p className="text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase leading-none whitespace-nowrap">
-                        {fmt(t.fleet.inStock, { n: unitCounts[cat.id] })}
-                      </p>
-                    </div>
-                  )}
                 </div>
                 <div className="px-5 pt-5 pb-5 sm:px-6 sm:pt-7 sm:pb-7 text-center flex flex-col flex-1">
-                  <h3 className="font-barlow font-black text-ink text-2xl sm:text-3xl uppercase tracking-wide leading-none mb-3 sm:mb-4">
+                  <h3 className="font-barlow font-black text-ink text-2xl sm:text-3xl uppercase tracking-wide leading-none mb-2">
                     {cat.name}
                   </h3>
+                  {unitCounts[cat.id] > 1 && (
+                    <p className="text-[10px] tracking-[0.2em] uppercase font-bold text-red mb-3">
+                      {fmt(t.fleet.inStock, { n: unitCounts[cat.id] })}
+                    </p>
+                  )}
                   <p className="text-xs sm:text-sm text-muted leading-relaxed mb-3">{bikeDict?.description ?? cat.description}</p>
                   <div className="flex flex-row items-center justify-center gap-4 mb-3 sm:flex-col sm:gap-1">
                     <Image
