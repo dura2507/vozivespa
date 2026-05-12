@@ -217,10 +217,11 @@ export async function POST(request: Request) {
   }
 
   // 3. Insert one confirmed booking per unit. No receipt, no payment
-  //    method — walk-ins are handled outside the website. For group
-  //    bookings (multiple units) all rows share the same customer
-  //    info; owner can spot them as a group via shared name + dates.
+  //    method — walk-ins are handled outside the website. Group
+  //    bookings (2+ units) carry a shared booking_group_id so the
+  //    dashboard can collapse them into a single customer entry.
   const nowIso = new Date().toISOString();
+  const groupId = unitsToBook.length > 1 ? crypto.randomUUID() : null;
   const rows = unitsToBook.map((unitId) => ({
     bike_id: bikeId,
     customer_name: customerName,
@@ -234,6 +235,7 @@ export async function POST(request: Request) {
     total_price_cents: null,
     payment_method: null,
     bike_unit_id: unitId,
+    booking_group_id: groupId,
     drivers_licence: null,
     riding_style: null,
     locale: "en" as const,

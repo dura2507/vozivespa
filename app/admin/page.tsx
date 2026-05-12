@@ -1,9 +1,11 @@
 import Link from "next/link";
 import {
   bucketBookings,
+  groupBookingsForDisplay,
   listAllBookings,
   listFleetSummary,
   listServiceBlocks,
+  type BookingDisplay,
   type EnrichedBooking,
   type FleetEntry,
   type ServiceBlock,
@@ -60,62 +62,77 @@ function totalEur(b: EnrichedBooking): string {
   return b.total_price_cents ? `${(b.total_price_cents / 100).toFixed(0)}€` : "-";
 }
 
+// Group of bookings (or singleton wrapped as a group) rendered as a
+// single card. For walk-in groups, the unit count is highlighted so
+// the owner sees "Max · 2× Liberty 50" instead of two separate rows.
 function BookingRow({
-  booking,
+  group,
   nowMs,
   highlight,
 }: {
-  booking: EnrichedBooking;
+  group: BookingDisplay;
   nowMs: number;
   highlight?: "return" | "pickup";
 }) {
-  const subtitle = highlight === "return"
-    ? `Returns ${fmtCountdown(booking.returnAt, nowMs)}`
-    : highlight === "pickup"
-    ? `Picks up ${fmtCountdown(booking.pickupAt, nowMs)}`
-    : null;
+  const head = group.bookings[0];
+  const totalCents = group.bookings.reduce(
+    (sum, b) => sum + (b.total_price_cents ?? 0),
+    0,
+  );
+  const totalLabel = totalCents > 0 ? `${(totalCents / 100).toFixed(0)}€` : "-";
+  const subtitle =
+    highlight === "return"
+      ? `Returns ${fmtCountdown(group.returnAt, nowMs)}`
+      : highlight === "pickup"
+        ? `Picks up ${fmtCountdown(group.pickupAt, nowMs)}`
+        : null;
   return (
     <Link
-      href={`/admin/bookings/${booking.id}`}
+      href={`/admin/bookings/${group.primaryId}`}
       className="block bg-white border border-ink/10 px-4 py-3 hover:border-red transition-colors"
     >
       <div className="flex items-center justify-between gap-3 mb-1">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
           <span className="font-semibold text-ink truncate">
-            {booking.customer_name}
+            {group.customerName}
           </span>
-          <span className={`text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 ${statusColor(booking.status)}`}>
-            {booking.status}
+          <span
+            className={`text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 ${statusColor(group.status)}`}
+          >
+            {group.status}
           </span>
-          {booking.deposit_screenshot_path && (
+          {group.isGroup && (
+            <span className="text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 bg-green-200 text-ink">
+              × {group.bookings.length} bikes
+            </span>
+          )}
+          {head.deposit_screenshot_path && (
             <span className="text-[10px] tracking-[0.15em] uppercase font-bold text-ink/40">
               receipt
             </span>
           )}
         </div>
-        <p className="font-bold text-ink shrink-0">{totalEur(booking)}</p>
+        <p className="font-bold text-ink shrink-0">{totalLabel}</p>
       </div>
       <p className="text-xs text-muted truncate">
-        {booking.bikeName}
-        {booking.unitLabel && (
-          <span className="ml-2 text-ink/60 font-mono">[{booking.unitLabel}]</span>
+        {group.bikeName}
+        {group.unitsSummary && (
+          <span className="ml-2 text-ink/60 font-mono">{group.unitsSummary}</span>
         )}
       </p>
       <div className="text-xs text-ink mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
         <span>
-          {fmtDate(booking.date_from)} {fmtTimeOfDay(booking.pickup_time)}
+          {fmtDate(head.date_from)} {fmtTimeOfDay(head.pickup_time)}
         </span>
         <span className="text-muted">→</span>
         <span>
-          {fmtDate(booking.date_to)} {fmtTimeOfDay(booking.return_time)}
+          {fmtDate(head.date_to)} {fmtTimeOfDay(head.return_time)}
         </span>
-        {subtitle && (
-          <span className="text-red font-bold">· {subtitle}</span>
-        )}
+        {subtitle && <span className="text-red font-bold">· {subtitle}</span>}
       </div>
-      {booking.payment_method && (
+      {head.payment_method && (
         <p className="text-[10px] tracking-[0.1em] uppercase text-ink/40 mt-1">
-          {paymentMethodLabel(booking.payment_method)}
+          {paymentMethodLabel(head.payment_method)}
         </p>
       )}
     </Link>
@@ -309,11 +326,11 @@ export default async function AdminDashboard({
 
       <Section
         title="Currently out"
-        count={buckets.out.length + blocksActive.length}
+        count={groupBookingsForDisplay(buckets.out).length + blocksActive.length}
         empty="No bikes are currently with a customer or in service."
       >
-        {buckets.out.map((b) => (
-          <BookingRow key={b.id} booking={b} nowMs={nowMs} highlight="return" />
+        {groupBookingsForDisplay(buckets.out).map((g) => (
+          <BookingRow key={g.key} group={g} nowMs={nowMs} highlight="return" />
         ))}
         {blocksActive.map((b) => (
           <ServiceBlockRow key={b.id} block={b} nowMs={nowMs} highlight="return" />
@@ -322,21 +339,21 @@ export default async function AdminDashboard({
 
       <Section
         title="Pending, needs decision"
-        count={buckets.pending.length}
+        count={groupBookingsForDisplay(buckets.pending).length}
         empty="No pending requests."
       >
-        {buckets.pending.map((b) => (
-          <BookingRow key={b.id} booking={b} nowMs={nowMs} highlight="pickup" />
+        {groupBookingsForDisplay(buckets.pending).map((g) => (
+          <BookingRow key={g.key} group={g} nowMs={nowMs} highlight="pickup" />
         ))}
       </Section>
 
       <Section
         title="Upcoming confirmed"
-        count={buckets.upcoming.length + blocksUpcoming.length}
+        count={groupBookingsForDisplay(buckets.upcoming).length + blocksUpcoming.length}
         empty="No upcoming pickups or service blocks."
       >
-        {buckets.upcoming.map((b) => (
-          <BookingRow key={b.id} booking={b} nowMs={nowMs} highlight="pickup" />
+        {groupBookingsForDisplay(buckets.upcoming).map((g) => (
+          <BookingRow key={g.key} group={g} nowMs={nowMs} highlight="pickup" />
         ))}
         {blocksUpcoming.map((b) => (
           <ServiceBlockRow key={b.id} block={b} nowMs={nowMs} highlight="pickup" />
@@ -345,11 +362,11 @@ export default async function AdminDashboard({
 
       <Section
         title="Past + closed"
-        count={buckets.past.length + blocksPast.length}
+        count={groupBookingsForDisplay(buckets.past).length + blocksPast.length}
         empty="Nothing yet."
       >
-        {buckets.past.slice(0, 25).map((b) => (
-          <BookingRow key={b.id} booking={b} nowMs={nowMs} />
+        {groupBookingsForDisplay(buckets.past).slice(0, 25).map((g) => (
+          <BookingRow key={g.key} group={g} nowMs={nowMs} />
         ))}
         {blocksPast.slice(0, 10).map((b) => (
           <ServiceBlockRow key={b.id} block={b} nowMs={nowMs} />

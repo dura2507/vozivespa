@@ -38,6 +38,10 @@ export type BookingRow = {
   // time; may be reassigned at confirm-time if the original unit isn't
   // free anymore.
   bike_unit_id: string | null;
+  // Set on each row when the owner records a walk-in group booking
+  // (e.g. "Max rents both Duke 390s") so the dashboard can collapse
+  // N rows into one customer entry. Null on solo + website bookings.
+  booking_group_id: string | null;
   drivers_licence: "A" | "A1" | "A2" | "AM" | "B" | null;
   riding_style: "solo" | "with_passenger" | null;
   // UI locale the customer used when submitting. Drives the language

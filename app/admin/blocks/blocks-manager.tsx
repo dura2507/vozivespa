@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { buildSlots } from "@/lib/pricing";
+import { groupBookingsForDisplay } from "@/lib/admin-data";
 import type { EnrichedBlock, EnrichedBooking } from "@/lib/admin-data";
 
 type Bike = { id: string; name: string };
@@ -552,34 +553,42 @@ export function BlocksManager({
               </button>
             </div>
           ))}
-          {initialWalkIns.map((w) => (
-            <Link
-              key={`walkin-${w.id}`}
-              href={`/admin/bookings/${w.id}`}
-              className="flex items-center justify-between bg-white border border-ink/10 px-4 py-3 gap-4 hover:border-red transition-colors"
-            >
-              <div className="min-w-0 flex-1">
-                <p className="font-semibold text-ink truncate flex items-center gap-2 flex-wrap">
-                  <span className="text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 bg-green-200 text-ink">
-                    walk-in
-                  </span>
-                  <span>{w.customer_name}</span>
-                  <span className="text-[10px] tracking-[0.15em] uppercase font-bold text-ink/40">
-                    {w.bikeName}
-                    {w.unitLabel && ` · ${w.unitLabel}`}
-                  </span>
-                </p>
-                <p className="text-xs text-muted">
-                  {fmtDate(w.date_from)} {w.pickup_time.slice(0, 5)}
-                  {" → "}
-                  {fmtDate(w.date_to)} {w.return_time.slice(0, 5)}
-                </p>
-              </div>
-              <span className="text-xs font-bold tracking-widest uppercase text-ink/40">
-                open →
-              </span>
-            </Link>
-          ))}
+          {groupBookingsForDisplay(initialWalkIns).map((g) => {
+            const head = g.bookings[0];
+            return (
+              <Link
+                key={`walkin-${g.key}`}
+                href={`/admin/bookings/${g.primaryId}`}
+                className="flex items-center justify-between bg-white border border-ink/10 px-4 py-3 gap-4 hover:border-red transition-colors"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-ink truncate flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 bg-green-200 text-ink">
+                      walk-in
+                    </span>
+                    <span>{g.customerName}</span>
+                    {g.isGroup && (
+                      <span className="text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 bg-green-200 text-ink">
+                        × {g.bookings.length} bikes
+                      </span>
+                    )}
+                    <span className="text-[10px] tracking-[0.15em] uppercase font-bold text-ink/40">
+                      {g.bikeName}
+                      {g.unitsSummary && ` · ${g.unitsSummary}`}
+                    </span>
+                  </p>
+                  <p className="text-xs text-muted">
+                    {fmtDate(head.date_from)} {head.pickup_time.slice(0, 5)}
+                    {" → "}
+                    {fmtDate(head.date_to)} {head.return_time.slice(0, 5)}
+                  </p>
+                </div>
+                <span className="text-xs font-bold tracking-widest uppercase text-ink/40">
+                  open →
+                </span>
+              </Link>
+            );
+          })}
         </div>
       )}
     </>

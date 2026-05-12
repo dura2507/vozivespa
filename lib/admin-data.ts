@@ -292,6 +292,64 @@ export async function listWalkInBookings(): Promise<EnrichedBooking[]> {
   }));
 }
 
+// A walk-in group rendered as one row: customer + the N booking
+// rows that make it up. Solo bookings come back as a group of one.
+export type BookingDisplay = {
+  // ID used in links — for groups, the first member's id (detail
+  // page works on any single row in the group).
+  primaryId: string;
+  // Stable key for React lists. Groups use the group_id, singletons
+  // use the booking id.
+  key: string;
+  bookings: EnrichedBooking[];
+  // Convenience accessors that all rows in the group share.
+  customerName: string;
+  bikeName: string;
+  // "[#1, #3]" for a 2-unit group, "[#2]" for a singleton with unit,
+  // null for singletons without a unit assigned.
+  unitsSummary: string | null;
+  pickupAt: number;
+  returnAt: number;
+  status: BookingRow["status"];
+  isGroup: boolean;
+};
+
+// Collapse a list of bookings into BookingDisplay entries. Rows
+// with the same booking_group_id become one entry; nulls each
+// become their own. Order is preserved from the input.
+export function groupBookingsForDisplay(rows: EnrichedBooking[]): BookingDisplay[] {
+  const byGroup = new Map<string, EnrichedBooking[]>();
+  const order: string[] = [];
+  for (const r of rows) {
+    const key = r.booking_group_id ?? `solo-${r.id}`;
+    if (!byGroup.has(key)) {
+      byGroup.set(key, []);
+      order.push(key);
+    }
+    byGroup.get(key)!.push(r);
+  }
+  return order.map((key) => {
+    const group = byGroup.get(key)!;
+    const head = group[0];
+    const unitLabels = group
+      .map((b) => b.unitLabel)
+      .filter((l): l is string => !!l);
+    return {
+      primaryId: head.id,
+      key,
+      bookings: group,
+      customerName: head.customer_name,
+      bikeName: head.bikeName,
+      unitsSummary:
+        unitLabels.length > 0 ? `[${unitLabels.join(", ")}]` : null,
+      pickupAt: head.pickupAt,
+      returnAt: head.returnAt,
+      status: head.status,
+      isGroup: group.length > 1,
+    };
+  });
+}
+
 export type BookingBuckets = {
   out: EnrichedBooking[];
   pending: EnrichedBooking[];

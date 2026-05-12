@@ -60,6 +60,11 @@ create table public.bookings (
   -- time and possibly reassigned at confirm-time if the originally-
   -- chosen unit is no longer free.
   bike_unit_id uuid references public.bike_units(id) on delete restrict,
+  -- Walk-in group bookings: same uuid across all rows the owner
+  -- created in one transaction (e.g. "Max rents both Duke 390s").
+  -- Null = solo booking. Lets the dashboard collapse N rows into
+  -- one customer-facing entry.
+  booking_group_id uuid,
   -- Customer-provided licence category and intended riding style.
   -- Owner uses these at pickup to verify entitlement and plan helmet
   -- count.
