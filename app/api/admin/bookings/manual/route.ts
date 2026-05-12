@@ -27,6 +27,7 @@ export async function POST(request: Request) {
     dateTo?: unknown;
     pickupTime?: unknown;
     returnTime?: unknown;
+    bikeUnitId?: unknown;
     customerName?: unknown;
     customerPhone?: unknown;
     customerEmail?: unknown;
@@ -47,6 +48,10 @@ export async function POST(request: Request) {
     typeof body.pickupTime === "string" && isValidSlot(body.pickupTime) ? body.pickupTime : null;
   const returnTime =
     typeof body.returnTime === "string" && isValidSlot(body.returnTime) ? body.returnTime : null;
+  const requestedUnitId =
+    typeof body.bikeUnitId === "string" && body.bikeUnitId.trim().length > 0
+      ? body.bikeUnitId.trim()
+      : null;
   const customerName =
     typeof body.customerName === "string" && body.customerName.trim().length > 0
       ? body.customerName.trim()
@@ -130,6 +135,54 @@ export async function POST(request: Request) {
     );
   }
 
+  // 2b. Owner picked a specific unit — honour it as long as that
+  //     unit is actually free. Otherwise fall back to the auto-
+  //     assigned one and surface the swap in the response.
+  let assignedUnitId = availability.unitId;
+  if (requestedUnitId) {
+    const { data: unit, error: unitErr } = await supabase
+      .from("bike_units")
+      .select("id, bike_id, active")
+      .eq("id", requestedUnitId)
+      .maybeSingle();
+    if (unitErr) {
+      console.error("[/api/admin/bookings/manual] unit lookup", unitErr);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+    if (!unit || (unit as { bike_id: string }).bike_id !== bikeId) {
+      return NextResponse.json({ error: "Unit doesn't belong to this bike" }, { status: 400 });
+    }
+    // Re-check by running availability with the rest of the fleet
+    // hidden — cheapest is just to inspect the existing result: if
+    // the auto-pick differs from the request, the requested unit
+    // must be occupied (booking or service block).
+    if (requestedUnitId !== availability.unitId) {
+      const { data: occBookings } = await supabase
+        .from("bookings")
+        .select("id")
+        .eq("status", "confirmed")
+        .eq("bike_unit_id", requestedUnitId)
+        .lte("date_from", dateTo)
+        .gte("date_to", dateFrom)
+        .limit(1);
+      const { data: occBlocks } = await supabase
+        .from("blocked_dates")
+        .select("id")
+        .eq("bike_unit_id", requestedUnitId)
+        .is("booking_id", null)
+        .lte("date_from", dateTo)
+        .gte("date_to", dateFrom)
+        .limit(1);
+      if ((occBookings && occBookings.length > 0) || (occBlocks && occBlocks.length > 0)) {
+        return NextResponse.json(
+          { error: "Selected unit is not free for this window" },
+          { status: 409 },
+        );
+      }
+    }
+    assignedUnitId = requestedUnitId;
+  }
+
   // 3. Insert directly as confirmed. No receipt, no payment method —
   //    walk-ins are handled outside the website.
   const nowIso = new Date().toISOString();
@@ -147,7 +200,7 @@ export async function POST(request: Request) {
       return_time: returnTime,
       total_price_cents: null,
       payment_method: null,
-      bike_unit_id: availability.unitId,
+      bike_unit_id: assignedUnitId,
       drivers_licence: null,
       riding_style: null,
       locale: "en",

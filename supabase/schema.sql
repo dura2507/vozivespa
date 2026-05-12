@@ -90,9 +90,14 @@ create index bookings_bike_unit_idx   on public.bookings (bike_unit_id);
 create table public.blocked_dates (
   id uuid primary key default gen_random_uuid(),
   bike_id text not null references public.bikes(id) on delete cascade,
+  -- When set: block only that physical unit (e.g. one Liberty 50 is in
+  -- for service). Null = block the whole model (legacy semantics).
+  bike_unit_id uuid references public.bike_units(id) on delete cascade,
   date_from date not null,
   date_to date not null,
   booking_id uuid references public.bookings(id) on delete cascade,
+  -- Free-text owner note: "Reparatur Bremse", "Service", "Privat".
+  reason text,
   created_at timestamptz not null default now(),
   constraint blocked_dates_date_order check (date_from <= date_to)
 );

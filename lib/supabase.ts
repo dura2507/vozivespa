@@ -52,10 +52,16 @@ export type BookingRow = {
 export type BlockedDateRow = {
   id: string;
   bike_id: string;
+  // Null = block the whole model. Set = block only this physical unit
+  // (e.g. one of four Liberty 50s is in for service). Manual blocks
+  // from the admin UI always carry a unit id; legacy rows may not.
+  bike_unit_id: string | null;
   date_from: string;
   date_to: string;
   // Null → manual block by owner. Set → auto-block from confirmed booking.
   booking_id: string | null;
+  // Free-text owner note for service / repair / private use.
+  reason: string | null;
   created_at: string;
 };
 

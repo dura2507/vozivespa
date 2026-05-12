@@ -17,6 +17,9 @@ export type EnrichedBooking = BookingRow & {
 
 export type EnrichedBlock = BlockedDateRow & {
   bikeName: string;
+  // Friendly label of the locked unit, when the block targets a
+  // specific unit. Null when the block covers the whole model.
+  unitLabel: string | null;
 };
 
 export type FleetEntry = {
@@ -108,17 +111,24 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
 }
 
 // Per-bike rollup for the admin Fleet section: total physical units,
-// how many are currently out, plus pending/upcoming counts.
+// how many are currently out, plus pending/upcoming counts. "Out"
+// covers both customer bookings and active per-unit service blocks
+// so the owner sees a single accurate count.
 export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
   const supabase = getServiceClient();
-  const [unitsRes, bookingsRes] = await Promise.all([
+  const [unitsRes, bookingsRes, blocksRes] = await Promise.all([
     supabase.from("bike_units").select("id, bike_id").eq("active", true),
     supabase
       .from("bookings")
       .select("bike_id, bike_unit_id, status, date_from, date_to, pickup_time, return_time"),
+    supabase
+      .from("blocked_dates")
+      .select("bike_id, bike_unit_id, date_from, date_to")
+      .is("booking_id", null),
   ]);
   if (unitsRes.error) throw new Error(unitsRes.error.message);
   if (bookingsRes.error) throw new Error(bookingsRes.error.message);
+  if (blocksRes.error) throw new Error(blocksRes.error.message);
 
   const unitsByBike = new Map<string, number>();
   for (const u of (unitsRes.data ?? []) as Array<{ id: string; bike_id: string }>) {
@@ -153,6 +163,45 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       }
     }
   }
+  // Manual blocks: per-unit blocks count an extra unit as out; whole-
+  // model blocks mark every unit of that bike out.
+  for (const m of (blocksRes.data ?? []) as Array<{
+    bike_id: string;
+    bike_unit_id: string | null;
+    date_from: string;
+    date_to: string;
+  }>) {
+    const start = toMs(m.date_from, "00:00");
+    const end = toMs(m.date_to, "23:59") + 60_000;
+    if (nowMs < start || nowMs > end) {
+      // Future block — counted via upcomingCount instead.
+      if (start > nowMs) {
+        const entry =
+          out.get(m.bike_id) ??
+          (() => {
+            const e = { outUnits: new Set<string>(), pending: 0, upcoming: 0 };
+            out.set(m.bike_id, e);
+            return e;
+          })();
+        entry.upcoming++;
+      }
+      continue;
+    }
+    const entry =
+      out.get(m.bike_id) ??
+      (() => {
+        const e = { outUnits: new Set<string>(), pending: 0, upcoming: 0 };
+        out.set(m.bike_id, e);
+        return e;
+      })();
+    if (m.bike_unit_id) {
+      entry.outUnits.add(m.bike_unit_id);
+    } else {
+      // Whole-model block: every active unit is unavailable.
+      const all = (unitsRes.data ?? []).filter((u) => u.bike_id === m.bike_id);
+      for (const u of all) entry.outUnits.add(u.id);
+    }
+  }
 
   return CATEGORIES.map<FleetEntry>((cat) => {
     const entry = out.get(cat.id);
@@ -169,15 +218,41 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
 
 export async function listManualBlocks(): Promise<EnrichedBlock[]> {
   const supabase = getServiceClient();
-  const { data, error } = await supabase
-    .from("blocked_dates")
-    .select("*")
-    .is("booking_id", null)
-    .order("date_from", { ascending: true });
+  const [{ data, error }, unitLabels] = await Promise.all([
+    supabase
+      .from("blocked_dates")
+      .select("*")
+      .is("booking_id", null)
+      .order("date_from", { ascending: true }),
+    listUnitLabelMap(),
+  ]);
   if (error) throw new Error(error.message);
-  return (data ?? []).map((b) => ({
-    ...(b as BlockedDateRow),
-    bikeName: bikeName((b as BlockedDateRow).bike_id),
+  return (data ?? []).map((b) => {
+    const row = b as BlockedDateRow;
+    return {
+      ...row,
+      bikeName: bikeName(row.bike_id),
+      unitLabel: row.bike_unit_id ? unitLabels.get(row.bike_unit_id) ?? null : null,
+    };
+  });
+}
+
+// Active per-unit service blocks (right now or in the future) shown
+// in the dashboard "Currently out / Upcoming" alongside customer
+// bookings so the owner sees one combined fleet picture.
+export type ServiceBlock = EnrichedBlock & {
+  startMs: number;
+  endMs: number;
+};
+
+export async function listServiceBlocks(): Promise<ServiceBlock[]> {
+  const blocks = await listManualBlocks();
+  return blocks.map((b) => ({
+    ...b,
+    startMs: toMs(b.date_from, "00:00"),
+    // End of day = next day at 00:00 so a block on 12.05 covers all
+    // of the 12th.
+    endMs: toMs(b.date_to, "23:59") + 60_000,
   }));
 }
 

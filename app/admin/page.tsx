@@ -3,8 +3,10 @@ import {
   bucketBookings,
   listAllBookings,
   listFleetSummary,
+  listServiceBlocks,
   type EnrichedBooking,
   type FleetEntry,
+  type ServiceBlock,
 } from "@/lib/admin-data";
 
 export const dynamic = "force-dynamic";
@@ -120,6 +122,57 @@ function BookingRow({
   );
 }
 
+// Visually-distinct row for owner service / repair blocks so they
+// don't get confused with customer bookings in the same section.
+function ServiceBlockRow({
+  block,
+  nowMs,
+  highlight,
+}: {
+  block: ServiceBlock;
+  nowMs: number;
+  highlight?: "return" | "pickup";
+}) {
+  const subtitle =
+    highlight === "return"
+      ? `Until ${fmtCountdown(block.endMs, nowMs)}`
+      : highlight === "pickup"
+        ? `Starts ${fmtCountdown(block.startMs, nowMs)}`
+        : null;
+  return (
+    <div className="block bg-amber-50 border border-amber-300 px-4 py-3">
+      <div className="flex items-center justify-between gap-3 mb-1">
+        <div className="flex items-center gap-2 flex-wrap min-w-0">
+          <span className="font-semibold text-ink truncate">
+            {block.bikeName}
+            {block.unitLabel ? (
+              <span className="ml-2 text-ink/60 font-mono text-xs">
+                [{block.unitLabel}]
+              </span>
+            ) : (
+              <span className="ml-2 text-red text-xs uppercase tracking-widest font-bold">
+                all units
+              </span>
+            )}
+          </span>
+          <span className="text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 bg-amber-300 text-ink">
+            service
+          </span>
+        </div>
+      </div>
+      <p className="text-xs text-ink/80 truncate">
+        {block.reason ?? "Manual block"}
+      </p>
+      <div className="text-xs text-ink mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <span>{fmtDate(block.date_from)}</span>
+        <span className="text-muted">→</span>
+        <span>{fmtDate(block.date_to)}</span>
+        {subtitle && <span className="text-amber-700 font-bold">· {subtitle}</span>}
+      </div>
+    </div>
+  );
+}
+
 function Section({
   title,
   count,
@@ -191,13 +244,30 @@ export default async function AdminDashboard({
 }) {
   const { bike: bikeFilter } = await searchParams;
   const nowMs = Date.now();
-  const [allRaw, fleet] = await Promise.all([
+  const [allRaw, fleet, blocksRaw] = await Promise.all([
     listAllBookings(),
     listFleetSummary(nowMs),
+    listServiceBlocks(),
   ]);
   const all = bikeFilter ? allRaw.filter((b) => b.bike_id === bikeFilter) : allRaw;
+  const blocks = bikeFilter ? blocksRaw.filter((b) => b.bike_id === bikeFilter) : blocksRaw;
   const buckets = bucketBookings(all, nowMs);
   const filteredEntry = bikeFilter ? fleet.find((f) => f.bikeId === bikeFilter) : null;
+
+  // Split service blocks into "active now", "future", "past" the same
+  // way bucketBookings splits bookings, so each section shows a mixed
+  // list of bookings + blocks.
+  const blocksActive: ServiceBlock[] = [];
+  const blocksUpcoming: ServiceBlock[] = [];
+  const blocksPast: ServiceBlock[] = [];
+  for (const b of blocks) {
+    if (nowMs >= b.startMs && nowMs <= b.endMs) blocksActive.push(b);
+    else if (b.startMs > nowMs) blocksUpcoming.push(b);
+    else blocksPast.push(b);
+  }
+  blocksActive.sort((a, b) => a.endMs - b.endMs);
+  blocksUpcoming.sort((a, b) => a.startMs - b.startMs);
+  blocksPast.sort((a, b) => b.endMs - a.endMs);
 
   return (
     <div className="max-w-7xl mx-auto px-5 md:px-8 py-8">
@@ -239,11 +309,14 @@ export default async function AdminDashboard({
 
       <Section
         title="Currently out"
-        count={buckets.out.length}
-        empty="No bikes are currently with a customer."
+        count={buckets.out.length + blocksActive.length}
+        empty="No bikes are currently with a customer or in service."
       >
         {buckets.out.map((b) => (
           <BookingRow key={b.id} booking={b} nowMs={nowMs} highlight="return" />
+        ))}
+        {blocksActive.map((b) => (
+          <ServiceBlockRow key={b.id} block={b} nowMs={nowMs} highlight="return" />
         ))}
       </Section>
 
@@ -259,21 +332,27 @@ export default async function AdminDashboard({
 
       <Section
         title="Upcoming confirmed"
-        count={buckets.upcoming.length}
-        empty="No upcoming pickups."
+        count={buckets.upcoming.length + blocksUpcoming.length}
+        empty="No upcoming pickups or service blocks."
       >
         {buckets.upcoming.map((b) => (
           <BookingRow key={b.id} booking={b} nowMs={nowMs} highlight="pickup" />
+        ))}
+        {blocksUpcoming.map((b) => (
+          <ServiceBlockRow key={b.id} block={b} nowMs={nowMs} highlight="pickup" />
         ))}
       </Section>
 
       <Section
         title="Past + closed"
-        count={buckets.past.length}
+        count={buckets.past.length + blocksPast.length}
         empty="Nothing yet."
       >
         {buckets.past.slice(0, 25).map((b) => (
           <BookingRow key={b.id} booking={b} nowMs={nowMs} />
+        ))}
+        {blocksPast.slice(0, 10).map((b) => (
+          <ServiceBlockRow key={b.id} block={b} nowMs={nowMs} />
         ))}
       </Section>
     </div>

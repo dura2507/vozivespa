@@ -47,21 +47,31 @@ export async function findFreeUnit(
   supabase: SupabaseClient,
   w: BookingWindow,
 ): Promise<AvailabilityResult> {
-  // 1. Manual owner blocks shut down the whole model.
+  // 1. Manual owner blocks. A row with bike_unit_id = null still
+  //    shuts down the whole model (legacy + saison-pause use cases).
+  //    Per-unit rows only take that single unit out — we collect them
+  //    so step 5 can skip occupied units.
   const { data: manuals, error: manualErr } = await supabase
     .from("blocked_dates")
-    .select("date_from, date_to")
+    .select("date_from, date_to, bike_unit_id")
     .eq("bike_id", w.bikeId)
     .is("booking_id", null)
     .lte("date_from", w.dateTo)
-    .gte("date_to", w.dateFrom)
-    .limit(1);
+    .gte("date_to", w.dateFrom);
   if (manualErr) throw new Error(`manual block lookup: ${manualErr.message}`);
-  if (manuals && manuals.length > 0) {
-    return {
-      unitId: null,
-      conflict: { kind: "manual", from: manuals[0].date_from, to: manuals[0].date_to },
-    };
+  const blockedUnitIds = new Set<string>();
+  for (const m of (manuals ?? []) as Array<{
+    date_from: string;
+    date_to: string;
+    bike_unit_id: string | null;
+  }>) {
+    if (m.bike_unit_id === null) {
+      return {
+        unitId: null,
+        conflict: { kind: "manual", from: m.date_from, to: m.date_to },
+      };
+    }
+    blockedUnitIds.add(m.bike_unit_id);
   }
 
   // 2. Active units for this bike model.
@@ -76,6 +86,9 @@ export async function findFreeUnit(
     // No physical fleet defined yet . refuse rather than guessing.
     return { unitId: null, conflict: { kind: "no_units" } };
   }
+  // Per-unit manual blocks are treated as if the unit was held by a
+  // booking — combine the two sets later.
+  const occupiedByManual = blockedUnitIds;
 
   // 3. Other confirmed bookings on this model that overlap by date.
   let q = supabase
@@ -114,9 +127,25 @@ export async function findFreeUnit(
     }
   }
 
-  // 5. First active unit that nobody else holds.
-  const free = units.find((u) => !occupied.has(u.id));
+  // 5. First active unit that nobody else holds (and that isn't
+  //    flagged for service / repair via a per-unit manual block).
+  const free = units.find((u) => !occupied.has(u.id) && !occupiedByManual.has(u.id));
   if (free) return { unitId: free.id, conflict: null };
+
+  // 5b. Every unit free of bookings is service-blocked → surface that
+  //     instead of "Time conflict with another booking".
+  const onlyServiceBusy = units.every((u) => occupiedByManual.has(u.id) || occupied.has(u.id));
+  if (onlyServiceBusy && occupiedByManual.size > 0 && !lastConflict) {
+    // We don't know which exact row to point at — pick the first
+    // overlapping manual so the message still has a date range.
+    const first = (manuals ?? []).find((m) => m.bike_unit_id);
+    if (first) {
+      return {
+        unitId: null,
+        conflict: { kind: "manual", from: first.date_from, to: first.date_to },
+      };
+    }
+  }
 
   // 6. Every unit is busy → return a representative conflict.
   if (lastConflict) {
