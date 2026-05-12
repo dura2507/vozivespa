@@ -142,7 +142,7 @@ export default function Footer({
         <div className="mt-12 pt-8 border-t border-white/10 w-full text-xs text-white/30 space-y-1">
           <p>{BRAND.legal} · OIB: {BRAND.oib} · {t.openHoursPrefix} {BRAND.hours}</p>
           <p>© {new Date().getFullYear()} {BRAND.name}. {t.rights}</p>
-          <p className="pt-2 flex items-center justify-center gap-1.5">
+          <p className="pt-4 flex items-center justify-center gap-2 text-sm">
             <span>
               made with{" "}
               <span className="text-red/80" aria-hidden>
@@ -154,15 +154,15 @@ export default function Footer({
               href="https://krileo.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-semibold text-white/55 hover:text-white transition-colors"
+              className="inline-flex items-center gap-1.5 font-semibold text-white/70 hover:text-white transition-colors"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/krileo.png"
                 alt="Krileo"
-                className="h-3.5 w-auto opacity-80"
+                className="h-6 w-auto"
               />
-              <span>Krileo</span>
+              <span className="text-base">Krileo</span>
             </a>
           </p>
         </div>
