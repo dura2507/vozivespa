@@ -30,10 +30,12 @@ export function BlocksManager({
 }) {
   const router = useRouter();
   const [bikeId, setBikeId] = useState(bikes[0]?.id ?? "");
-  // List of unit ids the owner has ticked. Special value "all" =
-  // master "All units" toggle is on (whole-model block / group
-  // booking). Empty array on a walk-in means "auto-pick a free unit".
-  const [unitChoices, setUnitChoices] = useState<string[]>([]);
+  // How many bikes of this model the action covers. Quantity-based
+  // is the owner's mental model — "I have 4, I'm using 2 for this
+  // customer / putting 2 in for service" — they don't care which
+  // specific unit gets the row, they're identical bikes. "all" is a
+  // special value that maps to a whole-model block (one DB row).
+  const [quantity, setQuantity] = useState<number | "all">(1);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [pickupTime, setPickupTime] = useState("09:00");
@@ -58,23 +60,9 @@ export function BlocksManager({
 
   // Customer name = "this is a walk-in booking"; empty = "service block"
   const hasCustomerInfo = customerName.trim().length > 0;
-  const isAllUnits = unitChoices.includes("all");
-  const specificUnits = unitChoices.filter((c) => c !== "all");
-
-  function toggleUnit(unitId: string) {
-    // Picking a specific unit cancels the "All units" master, since
-    // those are mutually exclusive (whole-model vs subset).
-    setUnitChoices((curr) => {
-      const withoutAll = curr.filter((c) => c !== "all");
-      return withoutAll.includes(unitId)
-        ? withoutAll.filter((c) => c !== unitId)
-        : [...withoutAll, unitId];
-    });
-  }
-
-  function toggleAll() {
-    setUnitChoices((curr) => (curr.includes("all") ? [] : ["all"]));
-  }
+  const fleetSize = availableUnits.length;
+  const isAllUnits = quantity === "all";
+  const numericQuantity = quantity === "all" ? fleetSize : quantity;
 
   function resetFields() {
     setDateFrom("");
@@ -87,7 +75,7 @@ export function BlocksManager({
     setPickupTime("09:00");
     setReturnTime("19:00");
     setAllDay(true);
-    setUnitChoices([]);
+    setQuantity(1);
   }
 
   async function submit(e: React.FormEvent) {
@@ -97,40 +85,38 @@ export function BlocksManager({
     setInfo(null);
     setBusy(true);
     try {
+      // Quantity-based: owner says "I'm using 2 of my 4 Liberty 50 TCs".
+      // For the API we map that to either:
+      //   • bikeUnitId "all"      (quantity = "all" → whole-model)
+      //   • bikeUnitId undefined  (quantity = 1     → backend auto-picks one)
+      //   • bikeUnitIds [N first] (quantity = 2..N  → first N units from the
+      //                            list; backend validates each is free)
+      // Picking from the front of the list is arbitrary but deterministic;
+      // the bikes are identical so "which specific ones" doesn't matter.
+      const targetIds =
+        !isAllUnits && numericQuantity > 1
+          ? availableUnits.slice(0, numericQuantity).map((u) => u.id)
+          : [];
+
       if (hasCustomerInfo) {
-        // Walk-in booking. Walk-in mode currently supports:
-        //   • 0 ticked         → auto-pick a free unit
-        //   • 1 ticked         → that specific unit
-        //   • All units master → group booking, one row per active unit
-        // Multi-select on specific units would be a group booking on a
-        // subset — needs API support, not built yet.
-        if (specificUnits.length > 1) {
-          setError(
-            "Walk-in: tick 1 unit or use All units. Multi-unit subset isn't supported for walk-ins yet.",
-          );
-          setBusy(false);
-          return;
-        }
-        const wantedUnit = isAllUnits
-          ? "all"
-          : specificUnits.length === 1
-            ? specificUnits[0]
-            : undefined;
+        const payload: Record<string, unknown> = {
+          bikeId,
+          dateFrom,
+          dateTo,
+          pickupTime,
+          returnTime,
+          customerName: customerName.trim(),
+          customerPhone: customerPhone.trim() || undefined,
+          customerEmail: customerEmail.trim() || undefined,
+          notes: notes.trim() || undefined,
+        };
+        if (isAllUnits) payload.bikeUnitId = "all";
+        else if (targetIds.length > 0) payload.bikeUnitIds = targetIds;
+        // else: quantity = 1 → no unit field, backend auto-picks
         const res = await fetch("/api/admin/bookings/manual", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            bikeId,
-            bikeUnitId: wantedUnit,
-            dateFrom,
-            dateTo,
-            pickupTime,
-            returnTime,
-            customerName: customerName.trim(),
-            customerPhone: customerPhone.trim() || undefined,
-            customerEmail: customerEmail.trim() || undefined,
-            notes: notes.trim() || undefined,
-          }),
+          body: JSON.stringify(payload),
         });
         const body = await res.json().catch(() => ({}));
         if (!res.ok) {
@@ -141,20 +127,18 @@ export function BlocksManager({
         const n = typeof body?.count === "number" ? body.count : 1;
         setInfo(
           n > 1
-            ? `Group booking saved — ${n} units locked for this customer.`
+            ? `Group booking saved — ${n} bikes locked for this customer.`
             : "Booking saved — it now shows in the dashboard.",
         );
       } else {
-        // Service / repair block. Multiple specific units fan out into
-        // N POSTs (one block row per unit) so existing API stays
-        // unchanged. "All units" master sends a single row with no
-        // bike_unit_id (whole-model block).
-        if (unitChoices.length === 0) {
-          setError("Pick at least one unit (or All units).");
-          setBusy(false);
-          return;
-        }
-        const targets = isAllUnits ? [undefined] : specificUnits;
+        // Service / repair block. Same shape: quantity → N POSTs.
+        // "All units" sends one whole-model row (bike_unit_id null);
+        // other counts fan out into N specific blocks.
+        const blockTargets: Array<string | undefined> = isAllUnits
+          ? [undefined]
+          : numericQuantity === 1
+            ? [availableUnits[0]?.id]
+            : availableUnits.slice(0, numericQuantity).map((u) => u.id);
         const payloadBase = {
           bikeId,
           dateFrom,
@@ -164,7 +148,7 @@ export function BlocksManager({
           reason: reason.trim() || undefined,
         };
         const results = await Promise.all(
-          targets.map((unitId) =>
+          blockTargets.map((unitId) =>
             fetch("/api/admin/blocks", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -177,24 +161,22 @@ export function BlocksManager({
         );
         const failures = results.filter((r) => !r.ok);
         if (failures.length === results.length) {
-          // Every request failed → show the first error.
           setError(failures[0].body?.error || "Could not add block");
           setBusy(false);
           return;
         }
         if (failures.length > 0) {
-          // Partial success — surface so owner knows.
           setError(
-            `${failures.length} of ${results.length} units couldn't be blocked: ${failures[0].body?.error || "conflict"}`,
+            `${failures.length} of ${results.length} bikes couldn't be blocked: ${failures[0].body?.error || "conflict"}`,
           );
         } else if (isAllUnits) {
           setInfo("Whole-model block added.");
-        } else if (targets.length > 1) {
+        } else if (blockTargets.length > 1) {
           setInfo(
-            `${targets.length} service blocks added — other units of this model stay bookable.`,
+            `${blockTargets.length} bikes blocked — the rest of the model stays bookable.`,
           );
         } else {
-          setInfo("Service block added — other units of this model stay bookable.");
+          setInfo("Bike blocked — the rest of the model stays bookable.");
         }
       }
       resetFields();
@@ -236,7 +218,7 @@ export function BlocksManager({
             value={bikeId}
             onChange={(e) => {
               setBikeId(e.target.value);
-              setUnitChoices([]);
+              setQuantity(1);
             }}
             className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
           >
@@ -250,57 +232,55 @@ export function BlocksManager({
 
         <div>
           <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-            Units
+            How many bikes?
           </span>
-          <div className="mt-2 space-y-2">
-            <label className="flex items-center gap-2 select-none cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isAllUnits}
-                onChange={toggleAll}
-                className="w-4 h-4 accent-red"
-              />
-              <span className="text-sm font-semibold text-ink">
-                All units
-              </span>
-              <span className="text-xs text-muted">
-                {hasCustomerInfo
-                  ? "· group booking on the whole model"
-                  : "· whole-model block"}
-              </span>
-            </label>
-            {availableUnits.length > 0 && (
-              <div className="pl-6 flex flex-wrap gap-x-5 gap-y-2">
-                {availableUnits.map((u) => (
-                  <label
-                    key={u.id}
-                    className={`flex items-center gap-2 select-none ${
-                      isAllUnits ? "opacity-40 cursor-not-allowed" : "cursor-pointer"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={!isAllUnits && unitChoices.includes(u.id)}
-                      onChange={() => toggleUnit(u.id)}
-                      disabled={isAllUnits}
-                      className="w-4 h-4 accent-red"
-                    />
-                    <span className="text-sm font-semibold text-ink">{u.label}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-            {!hasCustomerInfo && unitChoices.length === 0 && (
-              <p className="text-xs text-muted pt-1">
-                Tick one or more units, or All units.
-              </p>
-            )}
-            {hasCustomerInfo && unitChoices.length === 0 && (
-              <p className="text-xs text-muted pt-1">
-                Leave empty to auto-pick a free unit, or tick a specific one.
-              </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {Array.from({ length: Math.max(fleetSize, 1) }, (_, i) => i + 1).map((n) => {
+              const active = quantity === n;
+              return (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setQuantity(n)}
+                  className={`min-w-12 px-4 py-2 text-sm font-bold border transition-colors ${
+                    active
+                      ? "bg-red text-white border-red"
+                      : "bg-white text-ink border-ink/15 hover:border-red"
+                  }`}
+                >
+                  {n}
+                </button>
+              );
+            })}
+            {fleetSize > 1 && (
+              <button
+                type="button"
+                onClick={() => setQuantity("all")}
+                className={`px-4 py-2 text-sm font-bold border transition-colors ${
+                  isAllUnits
+                    ? "bg-red text-white border-red"
+                    : "bg-white text-ink border-ink/15 hover:border-red"
+                }`}
+              >
+                All ({fleetSize})
+              </button>
             )}
           </div>
+          <p className="text-xs text-muted pt-2">
+            {fleetSize === 0
+              ? "No active units for this model."
+              : hasCustomerInfo
+                ? isAllUnits
+                  ? `Group booking on all ${fleetSize} bikes.`
+                  : numericQuantity === 1
+                    ? "Walk-in on one bike (system picks a free one)."
+                    : `Group booking on ${numericQuantity} bikes.`
+                : isAllUnits
+                  ? "Whole-model block — every unit unavailable."
+                  : numericQuantity === 1
+                    ? "One bike out of service."
+                    : `${numericQuantity} bikes out of service — the rest stay bookable.`}
+          </p>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-3">
@@ -466,27 +446,10 @@ export function BlocksManager({
           </label>
         </div>
 
-        <div className="flex items-center justify-between gap-4 pt-2">
-          <p className="text-xs text-muted">
-            {hasCustomerInfo
-              ? isAllUnits
-                ? "Group walk-in — one booking per active unit."
-                : specificUnits.length > 1
-                  ? "Walk-in: tick 1 unit or All units (multi-unit not supported)."
-                  : specificUnits.length === 1
-                    ? "Walk-in booking on this specific unit."
-                    : "Walk-in booking — system picks a free unit."
-              : isAllUnits
-                ? `Whole-model block${allDay ? "" : " (time-bounded)"} — all units unavailable.`
-                : specificUnits.length > 1
-                  ? `Service block on ${specificUnits.length} units${allDay ? "" : ` from ${pickupTime} to ${returnTime}`}.`
-                  : specificUnits.length === 1
-                    ? `Service block on this unit${allDay ? "" : ` from ${pickupTime} to ${returnTime}`}.`
-                    : "Pick a unit (or All units) to block."}
-          </p>
+        <div className="flex items-center justify-end gap-4 pt-2">
           <button
             type="submit"
-            disabled={busy || (!hasCustomerInfo && unitChoices.length === 0)}
+            disabled={busy || fleetSize === 0}
             className="bg-red text-white font-bold text-xs tracking-widest uppercase px-5 py-2.5 hover:bg-red-dark disabled:opacity-50"
           >
             {busy ? "Saving…" : hasCustomerInfo ? "Save booking" : "Add block"}

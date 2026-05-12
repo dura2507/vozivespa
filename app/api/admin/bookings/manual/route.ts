@@ -28,6 +28,7 @@ export async function POST(request: Request) {
     pickupTime?: unknown;
     returnTime?: unknown;
     bikeUnitId?: unknown;
+    bikeUnitIds?: unknown;
     customerName?: unknown;
     customerPhone?: unknown;
     customerEmail?: unknown;
@@ -51,6 +52,13 @@ export async function POST(request: Request) {
   const requestedUnitId =
     typeof body.bikeUnitId === "string" && body.bikeUnitId.trim().length > 0
       ? body.bikeUnitId.trim()
+      : null;
+  // Array form: book N specific units in one transaction. Used by
+  // the "quantity > 1" path in the admin form where the client
+  // pre-selects N unit ids from the available pool.
+  const requestedUnitIds: string[] | null =
+    Array.isArray(body.bikeUnitIds) && body.bikeUnitIds.every((u) => typeof u === "string" && u.length > 0)
+      ? (body.bikeUnitIds as string[])
       : null;
   const customerName =
     typeof body.customerName === "string" && body.customerName.trim().length > 0
@@ -136,11 +144,52 @@ export async function POST(request: Request) {
   }
 
   // 2b. Figure out which physical units this walk-in covers:
-  //     - "all"       → every active unit of the model (group booking)
-  //     - <unit-id>   → exactly that unit, must be free
-  //     - undefined   → just the auto-picked free unit (single)
+  //     - "all"             → every active unit of the model (group booking)
+  //     - bikeUnitIds array → those N specific units (quantity-based path)
+  //     - <unit-id>         → exactly that unit, must be free
+  //     - undefined         → just the auto-picked free unit (single)
   const unitsToBook: string[] = [];
-  if (requestedUnitId === "all") {
+  if (requestedUnitIds && requestedUnitIds.length > 0) {
+    // Validate every id belongs to this bike + is active + is free.
+    const { data: ownedUnits, error: ownErr } = await supabase
+      .from("bike_units")
+      .select("id, bike_id, active")
+      .in("id", requestedUnitIds);
+    if (ownErr) {
+      console.error("[/api/admin/bookings/manual] units lookup", ownErr);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+    const valid = (ownedUnits ?? []) as Array<{ id: string; bike_id: string; active: boolean }>;
+    const bad = requestedUnitIds.find(
+      (id) => !valid.some((v) => v.id === id && v.bike_id === bikeId && v.active),
+    );
+    if (bad) {
+      return NextResponse.json(
+        { error: "One of the chosen units doesn't belong to this bike" },
+        { status: 400 },
+      );
+    }
+    const conflicts: string[] = [];
+    for (const uid of requestedUnitIds) {
+      const c = await findUnitConflict(supabase, {
+        bikeUnitId: uid,
+        dateFrom,
+        dateTo,
+        pickupTime,
+        returnTime,
+      });
+      if (c) conflicts.push(uid);
+    }
+    if (conflicts.length > 0) {
+      return NextResponse.json(
+        {
+          error: `Can't book — ${conflicts.length} of ${requestedUnitIds.length} unit(s) not free for this window`,
+        },
+        { status: 409 },
+      );
+    }
+    unitsToBook.push(...requestedUnitIds);
+  } else if (requestedUnitId === "all") {
     const { data: allUnits, error: unitErr } = await supabase
       .from("bike_units")
       .select("id")
