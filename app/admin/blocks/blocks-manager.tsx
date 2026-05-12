@@ -29,8 +29,10 @@ export function BlocksManager({
 }) {
   const router = useRouter();
   const [bikeId, setBikeId] = useState(bikes[0]?.id ?? "");
-  // Unit id, or "" for "auto-pick" (walk-in) / "all" for whole-model block.
-  const [unitChoice, setUnitChoice] = useState<string>("");
+  // List of unit ids the owner has ticked. Special value "all" =
+  // master "All units" toggle is on (whole-model block / group
+  // booking). Empty array on a walk-in means "auto-pick a free unit".
+  const [unitChoices, setUnitChoices] = useState<string[]>([]);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [pickupTime, setPickupTime] = useState("09:00");
@@ -55,6 +57,23 @@ export function BlocksManager({
 
   // Customer name = "this is a walk-in booking"; empty = "service block"
   const hasCustomerInfo = customerName.trim().length > 0;
+  const isAllUnits = unitChoices.includes("all");
+  const specificUnits = unitChoices.filter((c) => c !== "all");
+
+  function toggleUnit(unitId: string) {
+    // Picking a specific unit cancels the "All units" master, since
+    // those are mutually exclusive (whole-model vs subset).
+    setUnitChoices((curr) => {
+      const withoutAll = curr.filter((c) => c !== "all");
+      return withoutAll.includes(unitId)
+        ? withoutAll.filter((c) => c !== unitId)
+        : [...withoutAll, unitId];
+    });
+  }
+
+  function toggleAll() {
+    setUnitChoices((curr) => (curr.includes("all") ? [] : ["all"]));
+  }
 
   function resetFields() {
     setDateFrom("");
@@ -67,7 +86,7 @@ export function BlocksManager({
     setPickupTime("09:00");
     setReturnTime("19:00");
     setAllDay(true);
-    setUnitChoice("");
+    setUnitChoices([]);
   }
 
   async function submit(e: React.FormEvent) {
@@ -78,11 +97,24 @@ export function BlocksManager({
     setBusy(true);
     try {
       if (hasCustomerInfo) {
-        // Walk-in booking:
-        //   "all"     → group booking, one row per active unit
-        //   <unitId>  → walk-in on that exact unit
-        //   ""        → backend auto-picks a free unit
-        const wantedUnit = unitChoice || undefined;
+        // Walk-in booking. Walk-in mode currently supports:
+        //   • 0 ticked         → auto-pick a free unit
+        //   • 1 ticked         → that specific unit
+        //   • All units master → group booking, one row per active unit
+        // Multi-select on specific units would be a group booking on a
+        // subset — needs API support, not built yet.
+        if (specificUnits.length > 1) {
+          setError(
+            "Walk-in: tick 1 unit or use All units. Multi-unit subset isn't supported for walk-ins yet.",
+          );
+          setBusy(false);
+          return;
+        }
+        const wantedUnit = isAllUnits
+          ? "all"
+          : specificUnits.length === 1
+            ? specificUnits[0]
+            : undefined;
         const res = await fetch("/api/admin/bookings/manual", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -112,38 +144,57 @@ export function BlocksManager({
             : "Booking saved — it now shows in the dashboard.",
         );
       } else {
-        // Service / repair block. "all" = whole-model block (no unit
-        // id). Anything else = single unit. Empty = same as "all"
-        // for backward compat but we treat "" as "pick first unit"
-        // is too surprising — require an explicit choice via UI.
-        const targetUnitId =
-          unitChoice && unitChoice !== "all" ? unitChoice : undefined;
-        const res = await fetch("/api/admin/blocks", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            bikeId,
-            bikeUnitId: targetUnitId,
-            dateFrom,
-            dateTo,
-            // Whole-day block sends no times; time-bounded uses the
-            // same pickup/return controls the walk-in mode uses.
-            startTime: allDay ? undefined : pickupTime,
-            endTime: allDay ? undefined : returnTime,
-            reason: reason.trim() || undefined,
-          }),
-        });
-        const body = await res.json().catch(() => ({}));
-        if (!res.ok) {
-          setError(body?.error || "Could not add block");
+        // Service / repair block. Multiple specific units fan out into
+        // N POSTs (one block row per unit) so existing API stays
+        // unchanged. "All units" master sends a single row with no
+        // bike_unit_id (whole-model block).
+        if (unitChoices.length === 0) {
+          setError("Pick at least one unit (or All units).");
           setBusy(false);
           return;
         }
-        setInfo(
-          targetUnitId
-            ? "Service block added — other units of this model stay bookable."
-            : "Whole-model block added.",
+        const targets = isAllUnits ? [undefined] : specificUnits;
+        const payloadBase = {
+          bikeId,
+          dateFrom,
+          dateTo,
+          startTime: allDay ? undefined : pickupTime,
+          endTime: allDay ? undefined : returnTime,
+          reason: reason.trim() || undefined,
+        };
+        const results = await Promise.all(
+          targets.map((unitId) =>
+            fetch("/api/admin/blocks", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ...payloadBase, bikeUnitId: unitId }),
+            }).then(async (r) => ({
+              ok: r.ok,
+              body: await r.json().catch(() => ({})),
+            })),
+          ),
         );
+        const failures = results.filter((r) => !r.ok);
+        if (failures.length === results.length) {
+          // Every request failed → show the first error.
+          setError(failures[0].body?.error || "Could not add block");
+          setBusy(false);
+          return;
+        }
+        if (failures.length > 0) {
+          // Partial success — surface so owner knows.
+          setError(
+            `${failures.length} of ${results.length} units couldn't be blocked: ${failures[0].body?.error || "conflict"}`,
+          );
+        } else if (isAllUnits) {
+          setInfo("Whole-model block added.");
+        } else if (targets.length > 1) {
+          setInfo(
+            `${targets.length} service blocks added — other units of this model stay bookable.`,
+          );
+        } else {
+          setInfo("Service block added — other units of this model stay bookable.");
+        }
       }
       resetFields();
       router.refresh();
@@ -176,46 +227,79 @@ export function BlocksManager({
         onSubmit={submit}
         className="bg-white border border-ink/10 p-5 mb-8 space-y-5"
       >
-        <div className="grid sm:grid-cols-2 gap-3">
-          <label className="block">
-            <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-              Bike model
-            </span>
-            <select
-              value={bikeId}
-              onChange={(e) => {
-                setBikeId(e.target.value);
-                setUnitChoice("");
-              }}
-              className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
-            >
-              {bikes.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block">
-            <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-              Unit
-            </span>
-            <select
-              value={unitChoice}
-              onChange={(e) => setUnitChoice(e.target.value)}
-              className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
-            >
-              <option value="">
-                {hasCustomerInfo ? "Auto-pick free unit" : "— pick a unit —"}
+        <label className="block">
+          <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+            Bike model
+          </span>
+          <select
+            value={bikeId}
+            onChange={(e) => {
+              setBikeId(e.target.value);
+              setUnitChoices([]);
+            }}
+            className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
+          >
+            {bikes.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
               </option>
-              {availableUnits.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.label}
-                </option>
-              ))}
-              <option value="all">All units (whole model)</option>
-            </select>
-          </label>
+            ))}
+          </select>
+        </label>
+
+        <div>
+          <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+            Units
+          </span>
+          <div className="mt-2 space-y-2">
+            <label className="flex items-center gap-2 select-none cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isAllUnits}
+                onChange={toggleAll}
+                className="w-4 h-4 accent-red"
+              />
+              <span className="text-sm font-semibold text-ink">
+                All units
+              </span>
+              <span className="text-xs text-muted">
+                {hasCustomerInfo
+                  ? "· group booking on the whole model"
+                  : "· whole-model block"}
+              </span>
+            </label>
+            {availableUnits.length > 0 && (
+              <div className="pl-6 flex flex-wrap gap-x-5 gap-y-2">
+                {availableUnits.map((u) => (
+                  <label
+                    key={u.id}
+                    className={`flex items-center gap-2 select-none ${
+                      isAllUnits ? "opacity-40 cursor-not-allowed" : "cursor-pointer"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={!isAllUnits && unitChoices.includes(u.id)}
+                      onChange={() => toggleUnit(u.id)}
+                      disabled={isAllUnits}
+                      className="w-4 h-4 accent-red"
+                    />
+                    <span className="text-sm font-semibold text-ink">{u.label}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+            {!hasCustomerInfo && unitChoices.length === 0 && (
+              <p className="text-xs text-muted pt-1">
+                Tick one or more units, or All units.
+              </p>
+            )}
+            {hasCustomerInfo && unitChoices.length === 0 && (
+              <p className="text-xs text-muted pt-1">
+                Leave empty to auto-pick a free unit, or tick a specific one.
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-3">
@@ -384,20 +468,24 @@ export function BlocksManager({
         <div className="flex items-center justify-between gap-4 pt-2">
           <p className="text-xs text-muted">
             {hasCustomerInfo
-              ? unitChoice === "all"
+              ? isAllUnits
                 ? "Group walk-in — one booking per active unit."
-                : unitChoice
-                  ? "Walk-in booking on this specific unit."
-                  : "Walk-in booking — system picks a free unit."
-              : unitChoice === "all"
+                : specificUnits.length > 1
+                  ? "Walk-in: tick 1 unit or All units (multi-unit not supported)."
+                  : specificUnits.length === 1
+                    ? "Walk-in booking on this specific unit."
+                    : "Walk-in booking — system picks a free unit."
+              : isAllUnits
                 ? `Whole-model block${allDay ? "" : " (time-bounded)"} — all units unavailable.`
-                : unitChoice
-                  ? `Service block on this unit${allDay ? "" : ` from ${pickupTime} to ${returnTime}`}.`
-                  : "Pick a unit (or All units) to block."}
+                : specificUnits.length > 1
+                  ? `Service block on ${specificUnits.length} units${allDay ? "" : ` from ${pickupTime} to ${returnTime}`}.`
+                  : specificUnits.length === 1
+                    ? `Service block on this unit${allDay ? "" : ` from ${pickupTime} to ${returnTime}`}.`
+                    : "Pick a unit (or All units) to block."}
           </p>
           <button
             type="submit"
-            disabled={busy || (!hasCustomerInfo && !unitChoice)}
+            disabled={busy || (!hasCustomerInfo && unitChoices.length === 0)}
             className="bg-red text-white font-bold text-xs tracking-widest uppercase px-5 py-2.5 hover:bg-red-dark disabled:opacity-50"
           >
             {busy ? "Saving…" : hasCustomerInfo ? "Save booking" : "Add block"}
