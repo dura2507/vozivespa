@@ -100,6 +100,93 @@ export async function POST(request: Request) {
     }
   }
 
+  // Refuse a service block that would land on top of an existing
+  // confirmed customer booking — the bike physically can't be both
+  // with the customer and in the shop. Owner needs to cancel the
+  // booking first or pick a different unit / date. Same check covers
+  // whole-model blocks (bikeUnitId null) by widening the unit filter.
+  const conflictQuery = supabase
+    .from("bookings")
+    .select("id, customer_name, bike_unit_id, date_from, date_to, pickup_time, return_time")
+    .eq("bike_id", bikeId)
+    .eq("status", "confirmed")
+    .lte("date_from", dateTo)
+    .gte("date_to", dateFrom)
+    .limit(5);
+  // Per-unit block only conflicts with bookings on that same unit;
+  // whole-model block conflicts with any confirmed booking on the model.
+  const { data: clashBookings, error: clashErr } = bikeUnitId
+    ? await conflictQuery.eq("bike_unit_id", bikeUnitId)
+    : await conflictQuery;
+  if (clashErr) {
+    console.error("[/api/admin/blocks] conflict lookup", clashErr);
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
+  }
+  // Time-bounded block: only conflict on actual time overlap. Whole-
+  // day block conflicts with anything on those dates.
+  const realClashes = (clashBookings ?? []).filter((b) => {
+    if (!startTime || !endTime) return true;
+    const r = b as {
+      date_from: string;
+      date_to: string;
+      pickup_time: string;
+      return_time: string;
+    };
+    const bookStart = new Date(`${r.date_from}T${r.pickup_time}`).getTime();
+    const bookEnd = new Date(`${r.date_to}T${r.return_time}`).getTime();
+    const blockStart = new Date(`${dateFrom}T${startTime}`).getTime();
+    const blockEnd = new Date(`${dateTo}T${endTime}`).getTime();
+    return blockStart < bookEnd && bookStart < blockEnd;
+  });
+  if (realClashes.length > 0) {
+    const c = realClashes[0] as { customer_name: string; date_from: string; date_to: string };
+    return NextResponse.json(
+      {
+        error: `Can't block — conflicts with confirmed booking for ${c.customer_name} (${c.date_from} → ${c.date_to}). Cancel the booking first or pick another unit.`,
+      },
+      { status: 409 },
+    );
+  }
+
+  // Also refuse if another manual block already covers the same unit
+  // and overlaps. Stops the owner from accidentally double-blocking
+  // a unit and inflating the "out" count.
+  const existingBlockQuery = supabase
+    .from("blocked_dates")
+    .select("id, date_from, date_to, start_time, end_time, reason")
+    .eq("bike_id", bikeId)
+    .is("booking_id", null)
+    .lte("date_from", dateTo)
+    .gte("date_to", dateFrom)
+    .limit(5);
+  const { data: existingBlocks, error: existingErr } = bikeUnitId
+    ? await existingBlockQuery.eq("bike_unit_id", bikeUnitId)
+    : await existingBlockQuery.is("bike_unit_id", null);
+  if (existingErr) {
+    console.error("[/api/admin/blocks] existing-block lookup", existingErr);
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
+  }
+  const realBlockClashes = (existingBlocks ?? []).filter((b) => {
+    const r = b as {
+      date_from: string;
+      date_to: string;
+      start_time: string | null;
+      end_time: string | null;
+    };
+    if (!startTime || !endTime || !r.start_time || !r.end_time) return true;
+    const exStart = new Date(`${r.date_from}T${r.start_time}`).getTime();
+    const exEnd = new Date(`${r.date_to}T${r.end_time}`).getTime();
+    const blockStart = new Date(`${dateFrom}T${startTime}`).getTime();
+    const blockEnd = new Date(`${dateTo}T${endTime}`).getTime();
+    return blockStart < exEnd && exStart < blockEnd;
+  });
+  if (realBlockClashes.length > 0) {
+    return NextResponse.json(
+      { error: "An overlapping block already exists for this unit and window." },
+      { status: 409 },
+    );
+  }
+
   const { error: insertErr } = await supabase.from("blocked_dates").insert({
     bike_id: bikeId,
     bike_unit_id: bikeUnitId,

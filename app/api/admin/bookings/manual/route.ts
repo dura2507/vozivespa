@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
-import { findFreeUnit, describeConflict } from "@/lib/availability";
+import { findFreeUnit, findUnitConflict, describeConflict } from "@/lib/availability";
 import { isValidSlot, parseTime } from "@/lib/pricing";
 
 export const runtime = "nodejs";
@@ -155,39 +155,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "This bike has no active units" }, { status: 404 });
     }
     // Every unit needs to be free for the same window — otherwise we
-    // can't fulfil the group booking. One DB round-trip per check kind
-    // (bookings + blocks) keeps it tight.
-    const { data: occBookings, error: bErr } = await supabase
-      .from("bookings")
-      .select("bike_unit_id")
-      .eq("status", "confirmed")
-      .in("bike_unit_id", unitIds)
-      .lte("date_from", dateTo)
-      .gte("date_to", dateFrom);
-    if (bErr) {
-      console.error("[/api/admin/bookings/manual] all-units bookings", bErr);
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    // can't fulfil the group booking. Time-aware so a 2h service
+    // block in the morning doesn't kill an afternoon group booking.
+    const conflicts: string[] = [];
+    for (const uid of unitIds) {
+      const c = await findUnitConflict(supabase, {
+        bikeUnitId: uid,
+        dateFrom,
+        dateTo,
+        pickupTime,
+        returnTime,
+      });
+      if (c) conflicts.push(uid);
     }
-    const { data: occBlocks, error: blkErr } = await supabase
-      .from("blocked_dates")
-      .select("bike_unit_id")
-      .is("booking_id", null)
-      .in("bike_unit_id", unitIds)
-      .lte("date_from", dateTo)
-      .gte("date_to", dateFrom);
-    if (blkErr) {
-      console.error("[/api/admin/bookings/manual] all-units blocks", blkErr);
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
-    }
-    const taken = new Set<string>([
-      ...(occBookings ?? []).map((r) => (r as { bike_unit_id: string }).bike_unit_id),
-      ...(occBlocks ?? []).map((r) => (r as { bike_unit_id: string }).bike_unit_id),
-    ]);
-    const free = unitIds.filter((id) => !taken.has(id));
-    if (free.length < unitIds.length) {
+    if (conflicts.length > 0) {
       return NextResponse.json(
         {
-          error: `Can't book all units — ${unitIds.length - free.length} of ${unitIds.length} unavailable for this window`,
+          error: `Can't book all units — ${conflicts.length} of ${unitIds.length} unavailable for this window`,
         },
         { status: 409 },
       );
@@ -207,25 +191,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unit doesn't belong to this bike" }, { status: 400 });
     }
     if (requestedUnitId !== availability.unitId) {
-      const { data: occBookings } = await supabase
-        .from("bookings")
-        .select("id")
-        .eq("status", "confirmed")
-        .eq("bike_unit_id", requestedUnitId)
-        .lte("date_from", dateTo)
-        .gte("date_to", dateFrom)
-        .limit(1);
-      const { data: occBlocks } = await supabase
-        .from("blocked_dates")
-        .select("id")
-        .eq("bike_unit_id", requestedUnitId)
-        .is("booking_id", null)
-        .lte("date_from", dateTo)
-        .gte("date_to", dateFrom)
-        .limit(1);
-      if ((occBookings && occBookings.length > 0) || (occBlocks && occBlocks.length > 0)) {
+      const c = await findUnitConflict(supabase, {
+        bikeUnitId: requestedUnitId,
+        dateFrom,
+        dateTo,
+        pickupTime,
+        returnTime,
+      });
+      if (c) {
+        const detail =
+          c.kind === "booking"
+            ? `booked by ${c.customerName}`
+            : c.reason
+              ? `service: ${c.reason}`
+              : "service block";
         return NextResponse.json(
-          { error: "Selected unit is not free for this window" },
+          { error: `Selected unit is not free — ${detail}` },
           { status: 409 },
         );
       }

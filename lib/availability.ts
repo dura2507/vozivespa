@@ -191,6 +191,91 @@ export async function findFreeUnit(
   return { unitId: null, conflict: { kind: "no_units" } };
 }
 
+// Time-aware "is unit X free for this window" check. Returns the
+// first overlapping booking or block when busy, null when free.
+// Use this instead of date-only filters when checking a specific
+// unit, because manual blocks can carry a time window now (e.g.
+// 2h service from 09:00-12:00 leaves the rest of the day open).
+export async function findUnitConflict(
+  supabase: SupabaseClient,
+  args: {
+    bikeUnitId: string;
+    dateFrom: string;
+    dateTo: string;
+    pickupTime: string;
+    returnTime: string;
+    excludeBookingId?: string;
+  },
+): Promise<
+  | { kind: "booking"; customerName: string; from: string; to: string }
+  | { kind: "block"; from: string; to: string; reason: string | null }
+  | null
+> {
+  const newStart = toMs(args.dateFrom, args.pickupTime);
+  const newEnd = toMs(args.dateTo, args.returnTime);
+
+  let bq = supabase
+    .from("bookings")
+    .select("id, customer_name, date_from, date_to, pickup_time, return_time")
+    .eq("status", "confirmed")
+    .eq("bike_unit_id", args.bikeUnitId)
+    .lte("date_from", args.dateTo)
+    .gte("date_to", args.dateFrom);
+  if (args.excludeBookingId) bq = bq.neq("id", args.excludeBookingId);
+  const { data: bookings, error: bErr } = await bq;
+  if (bErr) throw new Error(`booking conflict lookup: ${bErr.message}`);
+  for (const b of (bookings ?? []) as Array<{
+    id: string;
+    customer_name: string;
+    date_from: string;
+    date_to: string;
+    pickup_time: string;
+    return_time: string;
+  }>) {
+    const bStart = toMs(b.date_from, b.pickup_time);
+    const bEnd = toMs(b.date_to, b.return_time);
+    if (newStart < bEnd && bStart < newEnd) {
+      return {
+        kind: "booking",
+        customerName: b.customer_name,
+        from: `${b.date_from} ${b.pickup_time.slice(0, 5)}`,
+        to: `${b.date_to} ${b.return_time.slice(0, 5)}`,
+      };
+    }
+  }
+
+  const { data: blocks, error: blkErr } = await supabase
+    .from("blocked_dates")
+    .select("date_from, date_to, start_time, end_time, reason")
+    .eq("bike_unit_id", args.bikeUnitId)
+    .is("booking_id", null)
+    .lte("date_from", args.dateTo)
+    .gte("date_to", args.dateFrom);
+  if (blkErr) throw new Error(`block conflict lookup: ${blkErr.message}`);
+  for (const m of (blocks ?? []) as Array<{
+    date_from: string;
+    date_to: string;
+    start_time: string | null;
+    end_time: string | null;
+    reason: string | null;
+  }>) {
+    // Whole-day block overlaps anything on those dates; time-bounded
+    // block only overlaps on actual time conflict.
+    if (m.start_time && m.end_time) {
+      const mStart = toMs(m.date_from, m.start_time);
+      const mEnd = toMs(m.date_to, m.end_time);
+      if (!(newStart < mEnd && mStart < newEnd)) continue;
+    }
+    return {
+      kind: "block",
+      from: m.date_from,
+      to: m.date_to,
+      reason: m.reason,
+    };
+  }
+  return null;
+}
+
 // Human-readable reason for showing in toasts / error pages.
 export function describeConflict(c: Conflict): string {
   if (c.kind === "manual") return `manual owner block ${c.from} → ${c.to}`;
