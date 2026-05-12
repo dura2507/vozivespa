@@ -298,6 +298,13 @@
       "licencePlaceholder": "Klasse wählen",
       "licenceCountry": "Ausstellungsland",
       "licenceCountryPlaceholder": "z.B. Deutschland, Österreich, Italien...",
+      "licenceOptions": {
+        "AM": "AM (Mofa / 50ccm)",
+        "A1": "A1 (bis 125ccm)",
+        "A2": "A2 (bis 35 kW)",
+        "A": "A (uneingeschränkt)",
+        "B": "B (Pkw-Führerschein, deckt AM/50ccm)"
+      },
       "ridingStyle": "Fahrstil",
       "ridingStyleSolo": "Alleine",
       "ridingStyleWithPassenger": "Mit Sozius",

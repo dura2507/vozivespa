@@ -884,7 +884,7 @@ export default function BikeDetail({
                         </option>
                         {LICENCE_OPTIONS.map((o) => (
                           <option key={o.value} value={o.value}>
-                            {o.label}
+                            {tF.form.licenceOptions[o.value as keyof typeof tF.form.licenceOptions] ?? o.value}
                           </option>
                         ))}
                       </select>
@@ -892,7 +892,7 @@ export default function BikeDetail({
                         <span className="font-semibold text-ink">{tF.licenceByCode[bike.licenceCode as keyof typeof tF.licenceByCode] ?? bike.licence}</span>
                       </p>
                     </label>
-                    <label className="block sm:col-span-2">
+                    <label className="block">
                       <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
                         {tF.form.licenceCountry}
                       </span>
@@ -904,7 +904,7 @@ export default function BikeDetail({
                         className={inputClass}
                       />
                     </label>
-                    <label className="block">
+                    <label className="block sm:col-span-2">
                       <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
                         {tF.form.ridingStyle} *
                       </span>

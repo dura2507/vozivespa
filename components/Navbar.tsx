@@ -129,13 +129,12 @@ export default function Navbar({
                     <Link
                       key={l}
                       href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                      className={`flex items-center justify-between gap-3 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase text-ink hover:bg-ink/5 transition-colors ${
+                      className={`block px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase text-ink hover:bg-ink/5 transition-colors ${
                         l === lang ? "opacity-50" : ""
                       }`}
                       onClick={() => setLangOpen(false)}
                     >
-                      <span>{LOCALE_LABELS[l].name}</span>
-                      <span className="text-ink/40">{LOCALE_LABELS[l].short}</span>
+                      {LOCALE_LABELS[l].name}
                     </Link>
                   ))}
                 </div>
@@ -176,13 +175,12 @@ export default function Navbar({
                     <Link
                       key={l}
                       href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                      className={`flex items-center justify-between gap-3 px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase text-ink hover:bg-ink/5 transition-colors ${
+                      className={`block px-4 py-2 text-xs font-bold tracking-[0.1em] uppercase text-ink hover:bg-ink/5 transition-colors ${
                         l === lang ? "opacity-50" : ""
                       }`}
                       onClick={() => setLangOpen(false)}
                     >
-                      <span>{LOCALE_LABELS[l].name}</span>
-                      <span className="text-ink/40">{LOCALE_LABELS[l].short}</span>
+                      {LOCALE_LABELS[l].name}
                     </Link>
                   ))}
                 </div>

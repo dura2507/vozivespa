@@ -298,6 +298,13 @@
       "licencePlaceholder": "Pick a category",
       "licenceCountry": "Country of issue",
       "licenceCountryPlaceholder": "e.g. Germany, Austria, Italy...",
+      "licenceOptions": {
+        "AM": "AM (moped / 50cc)",
+        "A1": "A1 (up to 125cc)",
+        "A2": "A2 (up to 35 kW)",
+        "A": "A (unrestricted)",
+        "B": "B (car licence, covers AM/50cc)"
+      },
       "ridingStyle": "Riding style",
       "ridingStyleSolo": "Solo",
       "ridingStyleWithPassenger": "With passenger",

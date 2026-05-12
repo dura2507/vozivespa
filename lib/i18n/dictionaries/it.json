@@ -298,6 +298,13 @@
       "licencePlaceholder": "Scegli una categoria",
       "licenceCountry": "Paese di rilascio",
       "licenceCountryPlaceholder": "es. Italia, Germania, Austria...",
+      "licenceOptions": {
+        "AM": "AM (ciclomotore / 50cc)",
+        "A1": "A1 (fino a 125cc)",
+        "A2": "A2 (fino a 35 kW)",
+        "A": "A (senza limiti)",
+        "B": "B (patente auto, copre AM/50cc)"
+      },
       "ridingStyle": "Tipo di viaggio",
       "ridingStyleSolo": "Da solo",
       "ridingStyleWithPassenger": "Con passeggero",

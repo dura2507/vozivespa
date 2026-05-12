@@ -26,7 +26,15 @@ const LOCALE_EXEMPT_PREFIXES = [
   "/window.svg",
 ];
 
+// Any path with a file extension (.svg, .ico, .png, .txt, etc.) is a
+// static asset and must not be locale-prefixed. Hits Next's auto-
+// detected app/icon.svg, manifest.webmanifest, robots.txt, etc.
+function isStaticFile(pathname: string): boolean {
+  return /\.[a-z0-9]{2,5}$/i.test(pathname);
+}
+
 function isExempt(pathname: string): boolean {
+  if (isStaticFile(pathname)) return true;
   return LOCALE_EXEMPT_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(p),
   );
