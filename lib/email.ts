@@ -269,6 +269,160 @@ Confirm or decline in Telegram.`;
   await sendWithRetry("ownerBooking", options);
 }
 
+// ---------- Owner: cancellation notice --------------------------------------
+
+// Sent when a booking flips to `cancelled` — either via the admin
+// panel (owner-side cancel) or the customer's cancel link from the
+// confirmation email. Mirrors the Telegram fan-out so the owner has
+// an inbox record regardless of where the cancel came from.
+export async function sendOwnerCancellationEmail(
+  booking: BookingRow,
+  source: "customer" | "owner",
+): Promise<void> {
+  const ownerEmail = process.env.OWNER_EMAIL?.trim();
+  if (!ownerEmail) {
+    console.warn("[email] OWNER_EMAIL not set - skipping owner cancellation notice");
+    return;
+  }
+
+  const bikeName = bikeNameFor(booking);
+  const phoneDigits = booking.customer_phone.replace(/[^\d]/g, "");
+  const waLink = phoneDigits ? `https://wa.me/${phoneDigits}` : null;
+  const who = source === "customer" ? "Customer cancelled" : "Booking cancelled (admin)";
+
+  const bodyHtml = `
+    <p style="margin:0 0 14px;font-size:15px;line-height:1.6;"><strong>${escape(booking.customer_name)}</strong> &middot; ${escape(bikeName)}</p>
+    ${bookingSummaryHtml(booking)}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
+      <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Email</td><td style="padding:4px 0;"><a href="mailto:${escape(booking.customer_email)}" style="color:#1a1a1a;">${escape(booking.customer_email)}</a></td></tr>
+      <tr><td style="padding:4px 0;color:#6b6b6b;">Phone</td><td style="padding:4px 0;">${escape(booking.customer_phone)}${waLink ? ` &middot; <a href="${waLink}" style="color:#25D366;text-decoration:none;font-weight:600;">WhatsApp →</a>` : ""}</td></tr>
+    </table>
+    <p style="margin:18px 0 0;font-size:13px;color:#6b6b6b;">Dates have been released automatically · calendar updated.</p>
+  `;
+
+  const html = htmlLayout({
+    preheader: `${who}: ${bikeName} ${fmtDate(booking.date_from)} → ${fmtDate(booking.date_to)}`,
+    headline: who,
+    accent: "red",
+    bodyHtml,
+  });
+
+  const text = `${who}
+
+Bike: ${bikeName}
+Pickup: ${fmtDate(booking.date_from)} ${fmtTimeOfDay(booking.pickup_time)}
+Return: ${fmtDate(booking.date_to)} ${fmtTimeOfDay(booking.return_time)}
+
+Customer: ${booking.customer_name}
+Email: ${booking.customer_email}
+Phone: ${booking.customer_phone}
+
+Dates released automatically.`;
+
+  await sendWithRetry("ownerCancellation", {
+    from: fromAddress(),
+    to: ownerEmail,
+    subject: `Cancelled · ${booking.customer_name} · ${bikeName} · ${fmtDate(booking.date_from)}`,
+    html,
+    text,
+    replyTo: booking.customer_email && booking.customer_email.includes("@")
+      ? `${booking.customer_name} <${booking.customer_email}>`
+      : undefined,
+  });
+}
+
+// ---------- Owner: Riderly forward ------------------------------------------
+
+// Sent in parallel to the Telegram forward so the owner has the
+// Riderly booking in their inbox too. Buttons stay in Telegram (the
+// magic accept/reject URLs work in both, but Telegram inline buttons
+// are nicer); email is just a record + quick view link.
+export async function sendOwnerRiderlyEmail(payload: {
+  kind: "booking" | "other";
+  receivedAt: Date | null;
+  subject?: string;
+  from?: string;
+  preview?: string;
+  riderlyUrl?: string | null;
+  booking?: {
+    bookingId: string;
+    bikeName: string | null;
+    startDate: string | null;
+    endDate: string | null;
+    totalEur: string | null;
+    acceptUrl: string | null;
+    rejectUrl: string | null;
+    inboxUrl: string | null;
+  };
+}): Promise<void> {
+  const ownerEmail = process.env.OWNER_EMAIL?.trim();
+  if (!ownerEmail) {
+    console.warn("[email] OWNER_EMAIL not set - skipping owner Riderly email");
+    return;
+  }
+
+  if (payload.kind === "booking" && payload.booking) {
+    const b = payload.booking;
+    const bodyHtml = `
+      <p style="margin:0 0 14px;font-size:15px;line-height:1.6;">New booking via <strong>Riderly</strong>.</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
+        <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Booking ID</td><td style="padding:4px 0;font-family:monospace;">${escape(b.bookingId)}</td></tr>
+        ${b.bikeName ? `<tr><td style="padding:4px 0;color:#6b6b6b;">Bike</td><td style="padding:4px 0;font-weight:600;">${escape(b.bikeName)}</td></tr>` : ""}
+        ${b.startDate ? `<tr><td style="padding:4px 0;color:#6b6b6b;">Pickup</td><td style="padding:4px 0;">${escape(b.startDate)}</td></tr>` : ""}
+        ${b.endDate ? `<tr><td style="padding:4px 0;color:#6b6b6b;">Return</td><td style="padding:4px 0;">${escape(b.endDate)}</td></tr>` : ""}
+        ${b.totalEur ? `<tr><td style="padding:4px 0;color:#6b6b6b;">Total</td><td style="padding:4px 0;font-weight:600;">€${escape(b.totalEur)}</td></tr>` : ""}
+      </table>
+      <p style="margin:18px 0 0;font-size:13px;">
+        ${b.acceptUrl ? `<a href="${b.acceptUrl}" style="color:#25D366;font-weight:600;text-decoration:none;">✓ Accept</a>` : ""}
+        ${b.acceptUrl && b.rejectUrl ? " &middot; " : ""}
+        ${b.rejectUrl ? `<a href="${b.rejectUrl}" style="color:#B61F36;font-weight:600;text-decoration:none;">✗ Reject</a>` : ""}
+        ${b.inboxUrl ? ` &middot; <a href="${b.inboxUrl}" style="color:#6b6b6b;">Open in Riderly inbox</a>` : ""}
+      </p>
+      <p style="margin:14px 0 0;font-size:12px;color:#6b6b6b;">Buttons also available in your Telegram message.</p>
+    `;
+    const html = htmlLayout({
+      preheader: `Riderly booking · ${b.bikeName ?? b.bookingId}`,
+      headline: "Riderly booking",
+      accent: "ink",
+      bodyHtml,
+    });
+    const text = `Riderly booking
+
+Booking: ${b.bookingId}
+${b.bikeName ? `Bike: ${b.bikeName}\n` : ""}${b.startDate ? `Pickup: ${b.startDate}\n` : ""}${b.endDate ? `Return: ${b.endDate}\n` : ""}${b.totalEur ? `Total: €${b.totalEur}\n` : ""}
+${b.acceptUrl ? `Accept: ${b.acceptUrl}\n` : ""}${b.rejectUrl ? `Reject: ${b.rejectUrl}\n` : ""}${b.inboxUrl ? `Inbox: ${b.inboxUrl}\n` : ""}`;
+    await sendWithRetry("ownerRiderly", {
+      from: fromAddress(),
+      to: ownerEmail,
+      subject: `Riderly · ${b.bikeName ?? b.bookingId}`,
+      html,
+      text,
+    });
+    return;
+  }
+
+  // Non-booking Riderly email — just forward the preview.
+  const subject = payload.subject ?? "(no subject)";
+  const bodyHtml = `
+    <p style="margin:0 0 14px;font-size:15px;line-height:1.6;"><strong>${escape(subject)}</strong></p>
+    <p style="margin:0 0 6px;font-size:12px;color:#6b6b6b;">From ${escape(payload.from ?? "-")}</p>
+    <div style="margin-top:14px;font-size:14px;line-height:1.6;white-space:pre-wrap;">${escape(payload.preview ?? "")}</div>
+    ${payload.riderlyUrl ? `<p style="margin:18px 0 0;font-size:13px;"><a href="${payload.riderlyUrl}" style="color:#B61F36;text-decoration:none;font-weight:600;">Open on Riderly →</a></p>` : ""}
+  `;
+  await sendWithRetry("ownerRiderly", {
+    from: fromAddress(),
+    to: ownerEmail,
+    subject: `Riderly · ${subject}`,
+    html: htmlLayout({
+      preheader: subject,
+      headline: "Riderly notification",
+      accent: "ink",
+      bodyHtml,
+    }),
+    text: `Riderly notification\n\n${subject}\n\nFrom: ${payload.from ?? "-"}\n\n${payload.preview ?? ""}\n\n${payload.riderlyUrl ?? ""}`,
+  });
+}
+
 // ---------- Customer: booking received --------------------------------------
 
 export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Promise<void> {

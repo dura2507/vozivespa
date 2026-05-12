@@ -1,6 +1,7 @@
 import { after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendOwnerCancellationTelegram } from "@/lib/telegram";
+import { sendOwnerCancellationEmail } from "@/lib/email";
 import { DecisionView } from "@/app/booking/_components/decision-view";
 
 export const dynamic = "force-dynamic";
@@ -68,9 +69,12 @@ export default async function CancelBookingPage({
     );
   }
 
-  // Tell the owner - best effort, runs after response.
+  // Tell the owner via both channels - best effort, runs after response.
   after(async () => {
-    await sendOwnerCancellationTelegram(updated);
+    await Promise.allSettled([
+      sendOwnerCancellationTelegram(updated),
+      sendOwnerCancellationEmail(updated, "customer"),
+    ]);
   });
 
   return (

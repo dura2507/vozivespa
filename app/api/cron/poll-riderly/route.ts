@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { pollRiderlyInbox } from "@/lib/riderly";
 import { sendOwnerRiderlyTelegram } from "@/lib/telegram";
+import { sendOwnerRiderlyEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,11 +42,43 @@ export async function GET(request: Request) {
 
   let forwarded = 0;
   for (const email of emails) {
-    try {
-      await sendOwnerRiderlyTelegram(email);
-      forwarded++;
-    } catch (err) {
-      console.error("[cron/poll-riderly] telegram forward failed", err);
+    // Fan out to Telegram + Email in parallel. Either side can fail
+    // independently — we still count the email as forwarded if at
+    // least one channel went through, so a flaky Resend day doesn't
+    // make the inbox pile up.
+    const results = await Promise.allSettled([
+      sendOwnerRiderlyTelegram(email),
+      sendOwnerRiderlyEmail(
+        email.kind === "booking"
+          ? {
+              kind: "booking",
+              receivedAt: email.receivedAt,
+              booking: {
+                bookingId: email.booking.bookingId,
+                bikeName: email.booking.bikeName,
+                startDate: email.booking.startDate,
+                endDate: email.booking.endDate,
+                totalEur: email.booking.totalEur,
+                acceptUrl: email.booking.acceptUrl,
+                rejectUrl: email.booking.rejectUrl,
+                inboxUrl: email.booking.inboxUrl,
+              },
+            }
+          : {
+              kind: "other",
+              receivedAt: email.receivedAt,
+              subject: email.subject,
+              from: email.from,
+              preview: email.preview,
+              riderlyUrl: email.riderlyUrl,
+            },
+      ),
+    ]);
+    if (results.some((r) => r.status === "fulfilled")) forwarded++;
+    for (const r of results) {
+      if (r.status === "rejected") {
+        console.error("[cron/poll-riderly] forward failed", r.reason);
+      }
     }
   }
 

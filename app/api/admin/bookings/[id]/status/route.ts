@@ -1,7 +1,10 @@
 import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { findFreeUnit, describeConflict } from "@/lib/availability";
-import { sendCustomerBookingDecidedEmail } from "@/lib/email";
+import {
+  sendCustomerBookingDecidedEmail,
+  sendOwnerCancellationEmail,
+} from "@/lib/email";
 import {
   editTelegramMessageForBooking,
   sendOwnerCancellationTelegram,
@@ -111,10 +114,12 @@ export async function POST(
         await sendCustomerBookingDecidedEmail(updated, decision);
       }
       // Owner-side cancel of a confirmed booking: tell the customer
-      // their dates are released using the declined template.
+      // their dates are released using the declined template, and
+      // record an owner notification on both channels for the inbox.
       if (decision === "cancelled" && wasConfirmed) {
         await sendCustomerBookingDecidedEmail(updated, "declined");
         await sendOwnerCancellationTelegram(updated);
+        await sendOwnerCancellationEmail(updated, "owner");
       }
       // Try to keep any existing Telegram booking message in sync if
       // one's still around (best-effort: this requires the original
