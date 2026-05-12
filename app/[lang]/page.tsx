@@ -26,6 +26,15 @@ export default async function HomePage({
   const t = dict.home;
   const CATEGORIES = await getCategoriesWithPricing();
 
+  // Hero "from XX€" label tracks the cheapest day price across the
+  // current fleet (mockData defaults + admin overrides), so a price
+  // change in /admin/pricing flows through automatically.
+  const cheapestDayPrice = CATEGORIES.reduce<number>((min, cat) => {
+    const n = parseInt(cat.pricing.day.replace(/[^\d]/g, ""), 10);
+    return Number.isFinite(n) && n > 0 && n < min ? n : min;
+  }, Number.POSITIVE_INFINITY);
+  const fromPriceLabel = Number.isFinite(cheapestDayPrice) ? `${cheapestDayPrice}€` : "35€";
+
   const INCLUDED = [
     { key: "insurance", icon: (
       <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -104,7 +113,7 @@ export default async function HomePage({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
-            <span className="text-white/60 text-sm">{fmt(t.hero.fromPrice, { price: "35€" })}</span>
+            <span className="text-white/60 text-sm">{fmt(t.hero.fromPrice, { price: fromPriceLabel })}</span>
           </div>
         </div>
 
