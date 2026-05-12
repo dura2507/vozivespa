@@ -208,6 +208,11 @@
   },
   "fleet": {
     "back": "Todas las motos",
+    "licenceByCode": {
+      "AM/B": "Carnet AM o B",
+      "A1": "Carnet A1",
+      "A2": "Carnet A2"
+    },
     "specs": {
       "title": "Ficha técnica",
       "eyebrow": "La moto",

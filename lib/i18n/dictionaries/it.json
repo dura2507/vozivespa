@@ -208,6 +208,11 @@
   },
   "fleet": {
     "back": "Tutte le moto",
+    "licenceByCode": {
+      "AM/B": "Patente AM o B",
+      "A1": "Patente A1",
+      "A2": "Patente A2"
+    },
     "specs": {
       "title": "Scheda tecnica",
       "eyebrow": "La moto",

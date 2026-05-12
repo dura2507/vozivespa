@@ -208,6 +208,11 @@
   },
   "fleet": {
     "back": "Alle Bikes",
+    "licenceByCode": {
+      "AM/B": "Führerschein AM oder B",
+      "A1": "Führerschein A1",
+      "A2": "Führerschein A2"
+    },
     "specs": {
       "title": "Technische Daten",
       "eyebrow": "Das Bike",

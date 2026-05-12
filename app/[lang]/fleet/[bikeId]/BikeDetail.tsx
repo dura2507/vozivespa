@@ -6,6 +6,8 @@ import Link from "next/link";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
 import { format, addDays, differenceInCalendarDays, isSameDay } from "date-fns";
+import { enUS, de, es, it } from "date-fns/locale";
+import type { Locale as DateFnsLocale } from "date-fns";
 import "react-day-picker/style.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -66,6 +68,7 @@ export default function BikeDetail({
 }) {
   const tF = dict.fleet;
   const tBike = dict.bikes[bike.id as keyof typeof dict.bikes];
+  const dateLocale: DateFnsLocale = ({ en: enUS, de, es, it } as Record<string, DateFnsLocale>)[lang] ?? enUS;
   const [activeImage, setActiveImage] = useState(bike.image);
   const [range, setRange] = useState<DateRange | undefined>();
   const [pickupTime, setPickupTime] = useState("09:00");
@@ -448,7 +451,7 @@ export default function BikeDetail({
                       {tF.priceBox.licenceEyebrow}
                     </p>
                     <p className="text-white text-sm font-semibold leading-snug">
-                      {bike.licence}
+                      {tF.licenceByCode[bike.licenceCode as keyof typeof tF.licenceByCode] ?? bike.licence}
                     </p>
                     <p className="text-white/50 text-xs leading-snug mt-1">
                       {tF.priceBox.bringLicence}
@@ -614,6 +617,7 @@ export default function BikeDetail({
                 <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
                   <DayPicker
                     mode="range"
+                    locale={dateLocale}
                     selected={range}
                     onSelect={setRange}
                     weekStartsOn={1}
@@ -671,7 +675,7 @@ export default function BikeDetail({
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <label className="block">
                         <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                          {tF.calendar.pickupTime} · {format(range.from, "EEE dd MMM")}
+                          {tF.calendar.pickupTime} · {format(range.from, "EEE dd MMM", { locale: dateLocale })}
                         </span>
                         <select
                           value={pickupTime}
@@ -691,7 +695,7 @@ export default function BikeDetail({
                       </label>
                       <label className="block">
                         <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                          {tF.calendar.returnTime} · {format(range.to, "EEE dd MMM")}
+                          {tF.calendar.returnTime} · {format(range.to, "EEE dd MMM", { locale: dateLocale })}
                         </span>
                         <select
                           value={returnTime}
@@ -717,11 +721,11 @@ export default function BikeDetail({
                     <div className="mt-4 bg-sand px-5 py-4 flex flex-wrap items-center justify-between gap-4">
                       <div className="text-sm text-ink">
                         <span className="font-semibold">
-                          {format(range.from, "dd MMM")} {pickupTime}
+                          {format(range.from, "dd MMM", { locale: dateLocale })} {pickupTime}
                         </span>
                         {" → "}
                         <span className="font-semibold">
-                          {format(range.to, "dd MMM yyyy")} {returnTime}
+                          {format(range.to, "dd MMM yyyy", { locale: dateLocale })} {returnTime}
                         </span>
                         {billableDays > 0 && (
                           <span className="text-muted ml-2">
@@ -784,13 +788,13 @@ export default function BikeDetail({
                   <div>
                     <p className="text-white/40 text-[10px] uppercase tracking-wider">{tF.success.summaryFrom}</p>
                     <p className="font-semibold mt-0.5">
-                      {range?.from ? `${format(range.from, "dd MMM yyyy")} · ${pickupTime}` : "-"}
+                      {range?.from ? `${format(range.from, "dd MMM yyyy", { locale: dateLocale })} · ${pickupTime}` : "-"}
                     </p>
                   </div>
                   <div>
                     <p className="text-white/40 text-[10px] uppercase tracking-wider">{tF.success.summaryTo}</p>
                     <p className="font-semibold mt-0.5">
-                      {range?.to ? `${format(range.to, "dd MMM yyyy")} · ${returnTime}` : "-"}
+                      {range?.to ? `${format(range.to, "dd MMM yyyy", { locale: dateLocale })} · ${returnTime}` : "-"}
                     </p>
                   </div>
                   <div className="ml-auto">
@@ -882,7 +886,7 @@ export default function BikeDetail({
                         ))}
                       </select>
                       <p className="text-muted text-xs mt-1.5">
-                        <span className="font-semibold text-ink">{bike.licence}</span>
+                        <span className="font-semibold text-ink">{tF.licenceByCode[bike.licenceCode as keyof typeof tF.licenceByCode] ?? bike.licence}</span>
                       </p>
                     </label>
                     <label className="block">
@@ -1019,7 +1023,7 @@ export default function BikeDetail({
                                             }}
                                             className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red transition-colors px-2 py-1 border border-ink/15 hover:border-red"
                                           >
-                                            {copied === `${p.id}-sub` ? "✓ Copied" : "Copy"}
+                                            {copied === `${p.id}-sub` ? `✓ ${tF.reservation.copied}` : tF.reservation.copy}
                                           </button>
                                         </div>
                                       </div>
@@ -1135,11 +1139,11 @@ export default function BikeDetail({
                     <>
                       <p className="text-ink">
                         <span className="text-muted">{tF.success.summaryFrom}: </span>
-                        {format(range.from, "dd MMM yyyy")} · {pickupTime}
+                        {format(range.from, "dd MMM yyyy", { locale: dateLocale })} · {pickupTime}
                       </p>
                       <p className="text-ink">
                         <span className="text-muted">{tF.success.summaryTo}: </span>
-                        {format(range.to, "dd MMM yyyy")} · {returnTime}
+                        {format(range.to, "dd MMM yyyy", { locale: dateLocale })} · {returnTime}
                       </p>
                     </>
                   )}

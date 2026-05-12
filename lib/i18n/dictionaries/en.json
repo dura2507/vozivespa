@@ -208,6 +208,11 @@
   },
   "fleet": {
     "back": "All bikes",
+    "licenceByCode": {
+      "AM/B": "AM or B licence",
+      "A1": "A1 licence",
+      "A2": "A2 licence"
+    },
     "specs": {
       "title": "Specs",
       "eyebrow": "The Bike",
