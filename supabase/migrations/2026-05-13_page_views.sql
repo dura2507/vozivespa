@@ -22,3 +22,9 @@ create index if not exists page_views_path_idx
 
 create index if not exists page_views_session_idx
   on public.page_views (session_hash);
+
+-- RLS on. Both the tracker insert and the admin read go through the
+-- service_role key (server-only), which bypasses RLS. Enabling it
+-- without policies blocks anon + authenticated access entirely, so
+-- the hit log can never leak through the public anon key.
+alter table public.page_views enable row level security;
