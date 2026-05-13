@@ -344,7 +344,13 @@
       "copy": "Copy",
       "copied": "Copied!",
       "openInApp": "Open app",
-      "recommended": "Recommended"
+      "recommended": "Recommended",
+      "paymentNotes": {
+        "paypal_ff": "No fee. Use Friends & Family option.",
+        "paypal_company": "Standard PayPal. Small fee applies.",
+        "revolut": "Tap the button on mobile, or scan the QR with your phone camera.",
+        "bank": "Use instant transfer. Currency conversion may add a fee."
+      }
     },
     "success": {
       "title": "Request received",

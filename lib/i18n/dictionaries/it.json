@@ -344,6 +344,12 @@
       "copy": "Copia",
       "copied": "Copiato!",
       "openInApp": "Apri l'app",
+      "paymentNotes": {
+        "paypal_ff": "Nessuna commissione. Usa l'opzione Friends & Family.",
+        "paypal_company": "PayPal standard. Si applica una piccola commissione.",
+        "revolut": "Tocca il pulsante su cellulare o scansiona il QR con la fotocamera del telefono.",
+        "bank": "Usa un bonifico istantaneo. La conversione valutaria può comportare commissioni."
+      },
       "recommended": "Consigliato"
     },
     "success": {

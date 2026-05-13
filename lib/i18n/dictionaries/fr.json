@@ -344,6 +344,12 @@
       "copy": "Copier",
       "copied": "Copié !",
       "openInApp": "Ouvrir l'app",
+      "paymentNotes": {
+        "paypal_ff": "Sans frais. Utilisez l'option Friends & Family.",
+        "paypal_company": "PayPal standard. De faibles frais s'appliquent.",
+        "revolut": "Touchez le bouton sur mobile ou scannez le QR avec l'appareil photo du téléphone.",
+        "bank": "Utilisez un virement instantané. Une conversion de devises peut entraîner des frais."
+      },
       "recommended": "Recommandé"
     },
     "success": {

@@ -344,6 +344,12 @@
       "copy": "Kopiuj",
       "copied": "Skopiowane!",
       "openInApp": "Otwórz aplikację",
+      "paymentNotes": {
+        "paypal_ff": "Bez prowizji. Użyj opcji Friends & Family.",
+        "paypal_company": "Standardowy PayPal. Niewielka prowizja.",
+        "revolut": "Stuknij przycisk na telefonie lub zeskanuj kod QR aparatem telefonu.",
+        "bank": "Użyj przelewu natychmiastowego. Konwersja walut może wiązać się z prowizją."
+      },
       "recommended": "Polecane"
     },
     "success": {

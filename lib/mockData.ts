@@ -396,8 +396,6 @@ export type PaymentMethod = {
   // Optional second copyable field, typically the account holder.
   subValue?: string;
   subValueLabel?: string;
-  // Short note shown beneath the option (fees, instructions, etc.).
-  note?: string;
   // Recommended option appears first and is highlighted.
   recommended?: boolean;
   // Deep-link to open in the payment app (revolut.me/...). When set,
@@ -432,21 +430,18 @@ export const BRAND = {
       label: "PayPal · Friends & Family",
       valueLabel: "Email",
       value: "priscilla_sebastiani@yahoo.com.br",
-      note: "No fee. Use Friends & Family option.",
       recommended: true,
     },
     {
       id: "revolut",
       label: "Revolut",
       link: "https://revolut.me/prisciuqys",
-      note: "Tap the button on mobile or scan the QR with your Revolut app.",
     },
     {
       id: "paypal_company",
       label: "PayPal · Company",
       valueLabel: "Email",
       value: "Ktoms_braap284@freenet.de",
-      note: "Standard PayPal , small fee applies.",
     },
     {
       id: "bank",
@@ -456,7 +451,6 @@ export const BRAND = {
       valueCopy: "DE71720500000240723130",
       subValueLabel: "Account holder",
       subValue: "Thomas Krawietz",
-      note: "Use instant transfer. Currency conversion may add a fee.",
     },
   ] satisfies PaymentMethod[] as PaymentMethod[],
   contacts: [

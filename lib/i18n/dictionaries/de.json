@@ -344,6 +344,12 @@
       "copy": "Kopieren",
       "copied": "Kopiert!",
       "openInApp": "App öffnen",
+      "paymentNotes": {
+        "paypal_ff": "Keine Gebühr. Nutze die Friends & Family Option.",
+        "paypal_company": "Standard-PayPal, kleine Gebühr fällt an.",
+        "revolut": "Auf dem Handy auf den Button tippen oder den QR-Code mit der Handy-Kamera scannen.",
+        "bank": "Nutze eine Sofortüberweisung. Bei Währungsumrechnung können Gebühren anfallen."
+      },
       "recommended": "Empfohlen"
     },
     "success": {

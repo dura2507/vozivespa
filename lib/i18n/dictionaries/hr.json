@@ -344,6 +344,12 @@
       "copy": "Kopiraj",
       "copied": "Kopirano!",
       "openInApp": "Otvori aplikaciju",
+      "paymentNotes": {
+        "paypal_ff": "Bez naknade. Koristi opciju Friends & Family.",
+        "paypal_company": "Standardni PayPal. Primjenjuje se mala naknada.",
+        "revolut": "Klikni gumb na mobitelu ili skeniraj QR kod kamerom telefona.",
+        "bank": "Koristi instant transfer. Konverzija valute može imati naknadu."
+      },
       "recommended": "Preporučeno"
     },
     "success": {

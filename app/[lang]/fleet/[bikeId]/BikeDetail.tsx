@@ -1166,8 +1166,10 @@ export default function BikeDetail({
                                     )}
                                   </div>
                                 )}
-                                {p.note && (
-                                  <p className="text-muted text-xs mt-1.5">{p.note}</p>
+                                {tF.reservation.paymentNotes[p.id] && (
+                                  <p className="text-muted text-xs mt-1.5">
+                                    {tF.reservation.paymentNotes[p.id]}
+                                  </p>
                                 )}
                               </div>
                             </div>
