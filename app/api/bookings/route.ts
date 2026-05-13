@@ -2,6 +2,7 @@ import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail, sendOwnerBookingEmail } from "@/lib/email";
+import { markEmailReadByHeader } from "@/lib/imap-mark";
 import { isValidSlot, parseTime } from "@/lib/pricing";
 import { describeConflict, findFreeUnit, getBikeUnitLabel } from "@/lib/availability";
 import {
@@ -285,11 +286,18 @@ export async function POST(request: Request) {
     // Persist the Telegram message ids so the admin status endpoint
     // can edit those exact messages later. Best-effort: if the DB
     // update fails we just lose the sync ability for this booking.
-    if (tgRefsResult.status === "fulfilled" && tgRefsResult.value.length > 0) {
+    const telegramOk =
+      tgRefsResult.status === "fulfilled" && tgRefsResult.value.length > 0;
+    if (telegramOk) {
       await supabase
         .from("bookings")
         .update({ telegram_message_refs: tgRefsResult.value })
         .eq("id", finalBooking.id);
+      // Telegram is the primary owner channel — once the message
+      // landed there we auto-archive the parallel email so the
+      // inbox stays clean. If Telegram failed (rare) the email
+      // stays unread as the backup signal.
+      await markEmailReadByHeader("X-Booking-Id", finalBooking.id);
     }
   });
 

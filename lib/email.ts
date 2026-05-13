@@ -261,6 +261,9 @@ Confirm or decline in Telegram.`;
     html,
     text,
     replyTo: `${booking.customer_name} <${booking.customer_email}>`,
+    // Tagged so the IMAP read-state sync can find the right message
+    // in INBOX after Telegram delivery succeeds. See lib/imap-mark.ts.
+    headers: { "X-Booking-Id": booking.id },
   };
   if (receipt?.url) {
     options.attachments = [{ path: receipt.url, filename: receipt.filename }];
@@ -328,6 +331,7 @@ Dates released automatically.`;
     replyTo: booking.customer_email && booking.customer_email.includes("@")
       ? `${booking.customer_name} <${booking.customer_email}>`
       : undefined,
+    headers: { "X-Booking-Id": booking.id },
   });
 }
 
@@ -588,16 +592,20 @@ ${BRAND.name}`;
 
 // ---------- Owner: contact form submission ----------------------------------
 
+// Returns a short reference id that's stamped on the outgoing email
+// as the X-Contact-Ref header so the IMAP read-state sync can mark
+// this exact message as seen once Telegram delivery confirms.
+// Returns null when OWNER_EMAIL isn't configured (we skip the send).
 export async function sendOwnerContactEmail(input: {
   name: string;
   email: string;
   phone?: string | null;
   message: string;
-}): Promise<void> {
+}): Promise<string | null> {
   const ownerEmail = process.env.OWNER_EMAIL?.trim();
   if (!ownerEmail) {
     console.warn("[email] OWNER_EMAIL not set - skipping contact email");
-    return;
+    return null;
   }
 
   const messageHtml = escape(input.message).replace(/\n/g, "<br/>");
@@ -640,6 +648,9 @@ Reply to ${input.email} to respond.`;
   const fromAddr = fromMatch ? fromMatch[2] : fromAddress();
   const customisedFrom = `${input.name} (via SickMotos) <${fromAddr}>`;
 
+  // Each contact submission gets a one-shot id so the IMAP marker
+  // can find this exact email after Telegram delivery confirms.
+  const contactRef = `contact-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   await sendWithRetry("ownerContact", {
     from: customisedFrom,
     to: ownerEmail,
@@ -647,7 +658,9 @@ Reply to ${input.email} to respond.`;
     html,
     text,
     replyTo: `${input.name} <${input.email}>`,
+    headers: { "X-Contact-Ref": contactRef },
   });
+  return contactRef;
 }
 
 // ---------- Customer: contact form acknowledgement --------------------------

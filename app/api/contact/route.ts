@@ -4,6 +4,7 @@ import {
   sendOwnerContactEmail,
   sendCustomerContactReceivedEmail,
 } from "@/lib/email";
+import { markEmailReadByHeader } from "@/lib/imap-mark";
 
 export const dynamic = "force-dynamic";
 
@@ -49,11 +50,21 @@ export async function POST(request: Request) {
   const payload = { name, email, phone, message };
 
   after(async () => {
-    await Promise.allSettled([
+    const [tgResult, emailResult] = await Promise.allSettled([
       sendOwnerContactMessage(payload),
       sendOwnerContactEmail(payload),
       sendCustomerContactReceivedEmail({ ...payload, locale }),
     ]);
+    // If Telegram delivered the ping, archive the parallel owner
+    // email so the inbox doesn't pile up duplicates. Telegram
+    // failure → email stays unread as the backup signal.
+    if (
+      tgResult.status === "fulfilled" &&
+      emailResult.status === "fulfilled" &&
+      emailResult.value
+    ) {
+      await markEmailReadByHeader("X-Contact-Ref", emailResult.value);
+    }
   });
 
   return NextResponse.json({ ok: true });
