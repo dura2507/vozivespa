@@ -1,0 +1,505 @@
+{
+  "nav": {
+    "home": "Start",
+    "fleet": "Flota",
+    "gallery": "Galeria",
+    "info": "Info",
+    "faq": "FAQ",
+    "contact": "Kontakt",
+    "terms": "Regulamin",
+    "bookNow": "Zarezerwuj",
+    "menuAria": "Menu",
+    "languageSwitcher": "Język"
+  },
+  "footer": {
+    "intro": "Wypożyczalnia skuterów i motocykli w Zadarze. Odkryj dalmatyńskie wybrzeże na dwóch kółkach.",
+    "locationLabel": "Zadar, Chorwacja",
+    "call": "Zadzwoń",
+    "whatsapp": "WhatsApp",
+    "trusted": "Sprawdzony partner wypożyczalni",
+    "openHoursPrefix": "Otwarte",
+    "rights": "Wszelkie prawa zastrzeżone."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Zadar, Chorwacja",
+      "headline1": "Ride the",
+      "headline2": "Croatian Coast",
+      "sub": "Wypożyczalnia skuterów i motocykli w Zadarze, od 50cc do 390cc. Kaski i ubezpieczenie podstawowe w cenie. Nadmorskie trasy, wyspy, wolność.",
+      "checkAvailability": "Sprawdź dostępność",
+      "fromPrice": "Od {price}/dzień",
+      "statBikes": "Motocykli i skuterów",
+      "statReviews": "5-gwiazdkowe opinie",
+      "statKm": "Kilometrów w cenie"
+    },
+    "fleet": {
+      "eyebrow": "Wybierz swój pojazd",
+      "title": "Nasza flota",
+      "fromPrefix": "od",
+      "topSpeed": "Prędkość maks.",
+      "experienceRequired": "Wymagane doświadczenie",
+      "bookNow": "Zarezerwuj",
+      "inStock": "{n} w naszej flocie",
+      "inStockHint": "Jedziecie ze znajomymi? Mamy {n} sztuk."
+    },
+    "included": {
+      "eyebrow": "Każdy wynajem",
+      "title": "Co jest w cenie",
+      "items": {
+        "insurance": { "label": "Ubezpieczenie podstawowe", "sub": "Kradzież + awaria silnika" },
+        "helmets": { "label": "Kaski", "sub": "Zawsze w zestawie" },
+        "unlimitedKm": { "label": "Bez limitu km", "sub": "Żadnych limitów" },
+        "roadside": { "label": "Pomoc drogowa", "sub": "Bezpłatnie do 20km, potem od 50€" },
+        "transparent": { "label": "Przejrzyste ceny", "sub": "Co widzisz, to płacisz" },
+        "warranty": { "label": "Gwarancja silnika", "sub": "Awarie silnika na nas" }
+      }
+    },
+    "goodToKnow": {
+      "eyebrow": "Warto wiedzieć",
+      "title": "Dobrze wiedzieć",
+      "deposit": { "label": "Kaucja", "sub": "Za pojazd, zwracana po oddaniu bez uszkodzeń." },
+      "phoneHolders": { "value": "Nie", "label": "Uchwyty na telefon", "sub": "Nie oferujemy ani nie montujemy uchwytów na telefon, nie można też przywieźć własnego. Żaden z naszych pojazdów go nie ma." },
+      "season": { "value": "Kwi-Paź", "label": "Sezon", "sub": "Wynajmujemy od kwietnia do października. Pełen bak przy wydaniu, pełen bak przy zwrocie." },
+      "languages": { "label": "Języki", "sub": "Mówimy po niemiecku i angielsku. Napisz do nas na WhatsApp." }
+    },
+    "howItWorks": {
+      "eyebrow": "Prosty proces",
+      "title": "Jak to działa",
+      "step1": { "title": "Wybierz pojazd", "text": "Wybierz skuter lub motocykl, od miejskiego 50cc aż po szosową maszynę 390cc." },
+      "step2": { "title": "Wybierz terminy", "text": "Sprawdź dostępność w kalendarzu i wyślij krótką prośbę. Odbiór w naszym salonie w Zadarze." },
+      "step3": { "title": "Potwierdzamy, ty ruszasz", "text": "Potwierdzenie mailem otrzymasz w ciągu kilku godzin. Zapłać 20% zaliczki, odbierz pojazd i jedź." },
+      "cta": "Zarezerwuj pojazd"
+    },
+    "reviews": {
+      "eyebrow": "Co mówią klienci",
+      "title": "Opinie",
+      "leaveReview": "Zostaw opinię na Google"
+    },
+    "gallerySection": {
+      "eyebrow": "W drodze",
+      "title": "Galeria",
+      "seeAll": "Zobacz wszystkie zdjęcia"
+    },
+    "cta": {
+      "eyebrow": "Gotów na trasę?",
+      "headline1": "Book Your",
+      "headline2": "Bike Today",
+      "ctaBtn": "Sprawdź dostępność"
+    }
+  },
+  "info": {
+    "eyebrow": "Wszystko, co musisz wiedzieć",
+    "title": "Info",
+    "licenceRequirements": {
+      "title": "Wymagane prawo jazdy",
+      "scooter50": "Skuter 50cc: prawo jazdy kat. B lub AM plus doświadczenie w jeździe skuterem",
+      "scooter125": "Skuter 125cc i motocykl 125cc: prawo jazdy kat. A1",
+      "motorbike390": "Motocykl 390cc: prawo jazdy kat. A2",
+      "verify": "Sprawdzamy prawo jazdy przy odbiorze"
+    },
+    "depositPayment": {
+      "title": "Kaucja i płatność",
+      "deposit": "{deposit} kaucji za pojazd, zwracana po oddaniu bez uszkodzeń.",
+      "bookingFee": "20% zaliczki zabezpiecza twoje terminy.",
+      "noCards": "Nie akceptujemy kart przy zaliczce."
+    },
+    "fleetSection": {
+      "title": "Nasza flota w skrócie"
+    }
+  },
+  "faq": {
+    "eyebrow": "Pytania?",
+    "title": "FAQ",
+    "categories": {
+      "booking": "Rezerwacja i płatność",
+      "pickup": "Przy odbiorze",
+      "ride": "Podczas jazdy",
+      "return": "Zwrot",
+      "incidents": "Szkody i pomoc drogowa"
+    }
+  },
+  "terms": {
+    "eyebrow": "Warunki rezerwacji",
+    "title": "Regulamin",
+    "intro": "Warunki wynajmu skuterów i motocykli. Dokonując rezerwacji u {legal} akceptujesz poniższe zasady.",
+    "questionsLine": "Pytania? Napisz do nas na",
+    "questionsTail": "lub przez WhatsApp na stronie kontaktowej.",
+    "sections": [
+      {
+        "heading": "Rezerwacje",
+        "bullets": [
+          "Zawsze potwierdź dostępność bezpośrednio przed dokonaniem płatności. Dostępność może się szybko zmienić, a wcześniejsze potwierdzenie nie gwarantuje, że skuter lub motocykl jest nadal dostępny.",
+          "Przy rezerwacji prosimy podać datę i godzinę odbioru oraz zwrotu.",
+          "Zaliczka w wysokości 20% wartości całkowitej jest wymagana, aby zabezpieczyć rezerwację.",
+          "Metody płatności: PayPal, przelew bankowy, Revolut lub gotówka osobiście (jeśli jesteś już w Zadarze). Nie akceptujemy kart kredytowych.",
+          "Po dokonaniu płatności prosimy przesłać zrzut ekranu transakcji jako potwierdzenie. Przy płatności gotówką nie jest to wymagane.",
+          "Jeśli spóźnisz się więcej niż 1 godzinę bez uprzedzenia, rezerwacja zostanie automatycznie anulowana, a zaliczka nie podlega zwrotowi.",
+          "Jeśli skuter lub motocykl stanie się niedostępny z powodu wypadku lub szkody wyrządzonej przez innego klienta, możemy anulować twoją rezerwację i zwrócić pełną kwotę zaliczki.",
+          "Jazda skuterem lub motocyklem wymaga wcześniejszego doświadczenia. Jeśli zauważymy, że nie masz wystarczającego doświadczenia, by jeździć bezpiecznie, zastrzegamy sobie prawo do odrzucenia rezerwacji bez zwrotu."
+        ]
+      },
+      {
+        "heading": "Kaucja i płatność",
+        "bullets": [
+          "Kaucja: 250€ za pojazd, zwracana po oddaniu bez uszkodzeń.",
+          "Zaliczka: 20% wartości całkowitej. Zabezpiecza twoje terminy, nie podlega zwrotowi w przypadku anulowania.",
+          "Metody płatności: PayPal (preferowane Friends & Family, bez prowizji), przelew bankowy, Revolut lub gotówka po przyjeździe.",
+          "Nie akceptujemy kart kredytowych."
+        ]
+      },
+      {
+        "heading": "Odbiór i zwrot",
+        "bullets": [
+          "Odbiór i zwrot pod adresem Velebitska Ulica 2, 23000 Zadar.",
+          "Otwarte pn-nd, 09:00 do 19:00.",
+          "Okna odbioru i zwrotu to 30-minutowe przedziały między 09:00 a 19:00.",
+          "15 minut tolerancji przy zwrocie. Spóźnienia powyżej tego wiążą się z dodatkowymi opłatami.",
+          "Po dokonaniu zaliczki prześlij zrzut ekranu transakcji, abyśmy mogli zweryfikować i potwierdzić."
+        ]
+      },
+      {
+        "heading": "Ubezpieczenie i bezpieczeństwo",
+        "bullets": [
+          "Ubezpieczenie podstawowe jest wliczone w każdy wynajem i obejmuje kradzież pojazdu oraz awarię silnika.",
+          "Wypadki, zarysowania, uszkodzenia i przebite opony są odpowiedzialnością wypożyczającego.",
+          "Jeśli wypadek spowoduje osoba trzecia, musisz wezwać policję i uzyskać oficjalny raport. Odpowiedzialność ponosi sprawca.",
+          "Kaski są zawsze zapewniane.",
+          "Wszystkie pojazdy przekazujemy w idealnym stanie technicznym. Prosimy wypożyczających o sprawdzenie pojazdu, zrobienie zdjęć i nagrań przy odbiorze oraz zwrot w tym samym stanie."
+        ]
+      },
+      {
+        "heading": "Szkody, naprawa i awaria",
+        "bullets": [
+          "Kaucja pokrywa wstępne koszty naprawy. Zawozimy pojazd do lokalnego mechanika w celu wyceny. Wypożyczający płaci pełny koszt naprawy zgodnie z fakturą mechanika (kopia jest zawsze przekazywana).",
+          "Pomoc drogowa: bezpłatnie do 20 km. Powyżej 20 km: 50€. Wyspy: Preko 150€, Dugi Otok 500€.",
+          "Zgubiony kluczyk: 50€ za wymianę plus ewentualna opłata za pomoc drogową w zależności od lokalizacji.",
+          "W przypadku awarii silnika niezwiązanej z zachowaniem wypożyczającego pokrywamy wszystkie koszty."
+        ]
+      },
+      {
+        "heading": "Paliwo",
+        "bullets": [
+          "Każdy pojazd jest wydawany z pełnym bakiem. Prosimy o zwrot również z pełnym bakiem.",
+          "Jeśli pojazd zostanie zwrócony bez pełnego baku, doliczymy brakujące paliwo plus opłatę za tankowanie."
+        ]
+      },
+      {
+        "heading": "Wymagania wobec kierowcy",
+        "bullets": [
+          "Przywieź ważne prawo jazdy do odbioru. Bez prawa jazdy nie ma jazdy. Sprawdzamy, czy kategoria prawa jazdy odpowiada klasie pojazdu.",
+          "Jazda wymaga wcześniejszego doświadczenia. Jeśli przy odbiorze stwierdzimy, że doświadczenie jest niewystarczające do bezpiecznej obsługi pojazdu, zastrzegamy sobie prawo do odmowy. Zaliczka w takim wypadku nie podlega zwrotowi, dlatego prosimy o szczerość przy rezerwacji.",
+          "Wypożyczający bierze pełną odpowiedzialność za wszystkie wypadki, szkody i obrażenia w okresie wynajmu."
+        ]
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Skontaktuj się",
+    "title": "Kontakt",
+    "intro": "Najszybciej odpowiadamy na WhatsAppie, ale możesz też wysłać wiadomość, a my odpowiemy w ciągu kilku godzin.",
+    "form": {
+      "name": "Imię i nazwisko",
+      "email": "Email",
+      "message": "Wiadomość",
+      "messagePlaceholder": "Twoje pytanie, plany, cokolwiek innego...",
+      "send": "Wyślij wiadomość",
+      "sending": "Wysyłanie...",
+      "sent": "Wiadomość wysłana. Odpowiemy w krótce.",
+      "error": "Nie udało się wysłać. Spróbuj WhatsApp lub zadzwoń."
+    },
+    "openHours": "Godziny otwarcia",
+    "address": "Adres"
+  },
+  "gallery": {
+    "eyebrow": "W drodze",
+    "title": "Galeria",
+    "intro": "Migawki z prawdziwych tras po wybrzeżu i wyspach."
+  },
+  "fleet": {
+    "back": "Wszystkie pojazdy",
+    "inStock": "{n} w naszej flocie",
+    "inStockHint": "Jedziecie ze znajomymi? Mamy {n} sztuk.",
+    "inStockCta": "Chcesz więcej niż jeden naraz? Napisz do nas →",
+    "licenceByCode": {
+      "AM/B": "Prawo jazdy kat. AM lub B",
+      "A1": "Prawo jazdy kat. A1",
+      "A2": "Prawo jazdy kat. A2"
+    },
+    "specs": {
+      "title": "Dane techniczne",
+      "eyebrow": "Pojazd",
+      "engine": "Silnik",
+      "power": "Moc",
+      "topSpeed": "Prędkość maks.",
+      "tank": "Bak",
+      "consumption": "Zużycie",
+      "range": "Zasięg",
+      "seats": "Miejsca",
+      "year": "Rocznik"
+    },
+    "pricing": {
+      "title": "Ceny",
+      "eyebrow": "Elastyczne taryfy",
+      "daily": "Dzień",
+      "dailySub": "1 dzień",
+      "weekend": "Weekend",
+      "weekendSub": "Pt do Nd",
+      "week": "Tydzień",
+      "weekSub": "7 dni",
+      "month": "Miesiąc",
+      "monthSub": "30 dni",
+      "unlimitedKm": "Bez limitu km, wszystkie ceny zawierają ubezpieczenie PODSTAWOWE",
+      "depositLine": "Kaucja: {deposit} · Sezon: {season}",
+      "perDay": "/ dzień",
+      "fromPrefix": "od"
+    },
+    "priceBox": {
+      "perDay": "/ dzień",
+      "unlimitedLine": "Bez limitu km · Ubezpieczenie podstawowe · {deposit} kaucji",
+      "licenceEyebrow": "Wymagane prawo jazdy",
+      "bringLicence": "Przywieź ważne prawo jazdy do odbioru. Bez prawa jazdy nie ma jazdy.",
+      "dayBadge": "24h",
+      "dayLabel": "1 dzień = 24 godziny",
+      "dayCopy": "Od odbioru do odbioru, nie dzień kalendarzowy. Np. dziś 11:00 do jutro 11:00 = 1 dzień."
+    },
+    "headsUp": "Uwaga",
+    "checkAvailability": "Sprawdź dostępność",
+    "specsSection": {
+      "depositLabel": "Kaucja",
+      "depositText": "{deposit} za pojazd, zwracana po oddaniu bez uszkodzeń. Przy odbiorze: gotówka (bez prowizji), PayPal, Revolut lub Wise (mogą wystąpić prowizje od transakcji). Bez kart kredytowych ani debetowych.",
+      "noPhoneHoldersLabel": "Brak uchwytów na telefon",
+      "noPhoneHoldersText": "Nie oferujemy ani nie montujemy uchwytów na telefon, nie można też przywieźć własnego.",
+      "seasonLabel": "Sezon",
+      "seasonText": "{season}. Wynajmujemy tylko w tym okresie.",
+      "fuelLabel": "Paliwo",
+      "fuelText": "Wydawany z pełnym bakiem. Zwróć go również z pełnym bakiem."
+    },
+    "tierLabel": {
+      "day": "Stawka dzienna",
+      "weekend": "Stawka weekendowa (Pt-Nd)",
+      "weekend-mix": "Weekend + dni",
+      "week": "Stawka tygodniowa",
+      "week-mix": "Tydzień + dni",
+      "month": "Stawka miesięczna",
+      "month-mix": "Miesiąc + dni"
+    },
+    "calendar": {
+      "title": "Zarezerwuj ten pojazd",
+      "eyebrow": "Wybierz daty",
+      "pickupDate": "Data odbioru",
+      "returnDate": "Data zwrotu",
+      "pickupTime": "Godzina odbioru",
+      "returnTime": "Godzina zwrotu",
+      "shopHours": "Godziny otwarcia 09:00 do 19:00. Godziny poza tym oknem nie są dostępne",
+      "tooClose": " (lub zbyt blisko innej rezerwacji, potrzebujemy 1h przerwy między rezerwacjami)",
+      "totalDays": "{n} dni",
+      "totalDay": "1 dzień",
+      "appliedTier": "Zastosowana stawka",
+      "total": "Razem",
+      "continue": "Przejdź do formularza rezerwacji",
+      "selectDates": "Najpierw wybierz daty odbioru i zwrotu"
+    },
+    "form": {
+      "title": "Twoje dane",
+      "name": "Imię i nazwisko",
+      "email": "Email",
+      "phone": "Telefon (z kierunkowym, np. +48...)",
+      "notes": "Uwagi (opcjonalne)",
+      "notesPlaceholder": "Np. potrzebne 2 kaski, specjalna godzina odbioru, cokolwiek innego...",
+      "licence": "Prawo jazdy",
+      "licencePlaceholder": "Wybierz kategorię",
+      "licenceCountry": "Kraj wydania",
+      "licenceCountryPlaceholder": "np. Polska, Niemcy, Austria...",
+      "licenceOptions": {
+        "AM": "AM (motorower / 50cc)",
+        "A1": "A1 (do 125cc)",
+        "A2": "A2 (do 35 kW)",
+        "A": "A (bez ograniczeń)",
+        "B": "B (prawo jazdy samochodowe, obejmuje AM/50cc)"
+      },
+      "ridingStyle": "Styl jazdy",
+      "ridingStyleSolo": "Solo",
+      "ridingStyleWithPassenger": "Z pasażerem",
+      "ridingStylePlaceholder": "Wybierz styl",
+      "soloOnly": "Ten pojazd jest jednoosobowy. Tylko solo.",
+      "maxRiders": "Dozwolone do {n} osób.",
+      "experienceWarning": "Wymagane doświadczenie w jeździe. Prosimy o szczerość co do twojego doświadczenia przy rezerwacji.",
+      "submit": "Wyślij zgłoszenie",
+      "submitting": "Wysyłanie...",
+      "reviewLine": "Sprawdzimy zrzut ekranu twojej rezerwacji i potwierdzimy mailem, zwykle w ciągu kilku godzin. Wysyłając akceptujesz nasz",
+      "termsLink": "regulamin"
+    },
+    "reservation": {
+      "title": "Rezerwacja",
+      "lockBooking": "20% z {total}€ aby zabezpieczyć rezerwację",
+      "instructions": "Zapłać {fee}€ jedną z poniższych metod, a następnie prześlij zrzut ekranu transakcji. Pozostałe {rest}€ zapłacisz przy odbiorze gotówką (bez prowizji), Revolutem, PayPalem lub kartą debetową/kredytową (mogą wystąpić prowizje od transakcji).",
+      "noBooking": "Bez zaliczki nie ma rezerwacji.",
+      "uploadScreenshot": "Prześlij zrzut ekranu płatności",
+      "uploadPicked": "Wybrane",
+      "uploadHint": "Tylko obraz, maks. 4 MB",
+      "uploadError": "Prześlij zrzut ekranu płatności za rezerwację.",
+      "fileTooLarge": "Plik jest za duży. Maks. 4 MB.",
+      "copy": "Kopiuj",
+      "copied": "Skopiowane!",
+      "recommended": "Polecane"
+    },
+    "success": {
+      "title": "Zgłoszenie przyjęte",
+      "intro": "Sprawdzimy twoją rezerwację i wkrótce potwierdzimy mailem. Twój numer referencyjny: {ref}.",
+      "summaryBike": "Pojazd",
+      "summaryFrom": "Odbiór",
+      "summaryTo": "Zwrot",
+      "summaryTotal": "Razem",
+      "summaryPaid": "Zaliczka opłacona",
+      "summaryRemaining": "Do zapłaty przy odbiorze",
+      "back": "Powrót do strony głównej"
+    }
+  },
+  "bikes": {
+    "scooter-50": {
+      "description": "Niskie spalanie, łatwa obsługa, idealny do miasta.",
+      "longDescription": "Bardzo oszczędny, łatwy w prowadzeniu i idealny do spokojnej jazdy po Zadarze i wzdłuż wybrzeża.",
+      "tagline": "Oszczędny. Wymagane wcześniejsze doświadczenie.",
+      "experienceNote": "Wymagane wcześniejsze doświadczenie. Żadnych początkujących."
+    },
+    "scooter-50-topcase": {
+      "description": "Piaggio Liberty 50 z kufrem, więcej miejsca na bagaż.",
+      "longDescription": "Ten sam Liberty 50 co standardowy, wyposażony w kufer dla dodatkowej przestrzeni przy dłuższych trasach.",
+      "tagline": "Kufer w zestawie, więcej miejsca na bagaż.",
+      "experienceNote": "Wymagane wcześniejsze doświadczenie. Żadnych początkujących."
+    },
+    "scooter-125": {
+      "description": "Idealny pojazd uniwersalny do miasta i jazdy nadmorskiej.",
+      "longDescription": "Ta sama łatwa obsługa co 50-tka, z większą mocą na wycieczki wzdłuż wybrzeża.",
+      "tagline": "Uniwersalny do miasta i wybrzeża."
+    },
+    "bike-125-a": {
+      "description": "Sportowy i zwinny, stworzony dla aktywnych kierowców.",
+      "longDescription": "Charakter supermoto przy 125cc. Lekki, zwinny i idealny dla temperamentnych kierowców kochających zakręty i nadmorskie trasy.",
+      "tagline": "Sportowy. Wyższe spalanie przez styl jazdy."
+    },
+    "bike-125-b": {
+      "description": "Klimat naked z dużym zasięgiem i sportowym charakterem.",
+      "longDescription": "Prawdziwy charakter naked przy 125cc. Doskonały zasięg, idealny na dłuższe trasy wzdłuż wybrzeża i na wyspy.",
+      "tagline": "Duży zasięg, idealny na dłuższe trasy."
+    },
+    "bike-390": {
+      "description": "Moc zgodna z A2 dla wybrzeża. Lekki, zwinny, do miasta, terenu i zakrętów.",
+      "longDescription": "Premium motocykl zgodny z A2. Lekki, zwinny i idealny do miasta, terenu i zakrętów, czy to na dzień, czy na cały miesiąc.",
+      "tagline": "Mocny i premium. Top dla doświadczonych kierowców."
+    }
+  },
+  "faqItems": [
+    {
+      "question": "Co obejmuje pomoc drogowa?",
+      "answer": "Do 20 km: bezpłatnie (dodatkowe koszty przy wypadkach lub zgubionych kluczykach). Powyżej 20 km: 50€. Wyspy: Preko 150€, Dugi Otok 500€. Zgubiony kluczyk: 50€. Pomoc drogowa działa, gdy nie możesz wrócić pod nasz adres z powodu wypadku lub zgubionego kluczyka. W przypadku awarii silnika pokrywamy wszystkie koszty."
+    },
+    {
+      "question": "W jakim stanie wydawany jest pojazd?",
+      "answer": "Wszystkie pojazdy i skutery są wydawane w idealnym stanie technicznym. Prosimy wypożyczających o sprawdzenie pojazdu, zrobienie wyraźnych zdjęć i nagrań przy odbiorze, dokumentujących wszelkie istniejące zarysowania lub uszkodzenia, oraz o zwrot w tym samym stanie. Te nagrania są oficjalnym dowodem w razie sporu."
+    },
+    {
+      "question": "Jakie ubezpieczenie jest w cenie?",
+      "answer": "Ubezpieczenie podstawowe obejmuje kradzież pojazdu i awarię silnika. Wypadki, zarysowania, uszkodzenia i przebite opony są odpowiedzialnością wypożyczającego. Jeśli wypadek spowoduje osoba trzecia, musisz wezwać policję i uzyskać oficjalny raport. Odpowiedzialność ponosi sprawca."
+    },
+    {
+      "question": "Jaka jest polityka anulowania?",
+      "answer": "Wszystkie rezerwacje są bezzwrotne. 20% zaliczki zabezpiecza twoje terminy i nie jest zwracane w przypadku anulowania. Jeśli pojazd stanie się niedostępny z powodu wypadku lub szkody wyrządzonej przez innego klienta, anulujemy i zwrócimy pełną kwotę."
+    },
+    {
+      "question": "Kiedy i gdzie zwracam pojazd?",
+      "answer": "O umówionej godzinie w umówionym miejscu. Dajemy 15 minut tolerancji. Spóźnienia powyżej tego wiążą się z dodatkowymi opłatami. Zwrot pod naszym adresem: Velebitska Ulica 2, 23000 Zadar."
+    },
+    {
+      "question": "Kto odpowiada za wypadki lub obrażenia?",
+      "answer": "Wypożyczający bierze pełną odpowiedzialność za wszystkie wypadki, szkody lub obrażenia, które wystąpią w okresie wynajmu."
+    },
+    {
+      "question": "Co się stanie, jeśli pojazd zostanie uszkodzony?",
+      "answer": "Kaucja pokrywa wstępne koszty naprawy. Zawozimy pojazd do lokalnego mechanika w celu wyceny i naprawy, a wypożyczający pokrywa pełne koszty naprawy zgodnie z fakturą mechanika. Jeśli naprawy przekraczają kaucję, wypożyczający dopłaca różnicę. Kopia faktury jest zawsze przekazywana dla przejrzystości."
+    },
+    {
+      "question": "Co jeśli zgubię kluczyk?",
+      "answer": "Zapasowy kluczyk zostanie dostarczony za 50€ plus ewentualna opłata za pomoc drogową w zależności od lokalizacji."
+    },
+    {
+      "question": "Jak dokonać rezerwacji?",
+      "answer": "Zawsze najpierw potwierdź z nami dostępność. Może się szybko zmienić. 20% zaliczki zabezpiecza twoje terminy. Płatność przez PayPal, przelew bankowy, Revolut lub gotówką po przyjeździe. Po dokonaniu płatności prześlij nam zrzut ekranu transakcji. Jeśli spóźnisz się więcej niż 1 godzinę bez uprzedzenia, rezerwacja zostanie automatycznie anulowana. Nie akceptujemy kart kredytowych."
+    },
+    {
+      "question": "Czy oferujecie uchwyty na telefon?",
+      "answer": "Nie. Nie oferujemy ani nie montujemy uchwytów na telefon, nie można też przywieźć własnego. Żaden z naszych pojazdów go nie ma. Zaplanuj trasę zanim wyruszysz."
+    },
+    {
+      "question": "Jak to jest z paliwem, pełny bak czy pusty?",
+      "answer": "Każdy pojazd jest wydawany z pełnym bakiem. Prosimy o zwrot również z pełnym bakiem. Jeśli oddasz pojazd bez pełnego baku, doliczymy brakujące paliwo plus opłatę za tankowanie."
+    },
+    {
+      "question": "Jak nawigować bez uchwytu na telefon?",
+      "answer": "Dwie praktyczne opcje: jedź z pasażerem, który zajmie się nawigacją, lub użyj zestawu Bluetooth dousznego do nawigacji głosowej bez odrywania wzroku od drogi. Tak czy inaczej, zaplanuj trasę przed odbiorem."
+    },
+    {
+      "question": "Co jeśli uznacie, że nie mam wystarczającego doświadczenia?",
+      "answer": "Jazda wymaga wcześniejszego doświadczenia. Jeśli przy odbiorze stwierdzimy, że nie masz wystarczającego doświadczenia do bezpiecznej obsługi pojazdu, zastrzegamy sobie prawo do odmowy wynajmu. W takim wypadku zaliczka nie podlega zwrotowi, dlatego prosimy o szczerość co do swojego doświadczenia przy rezerwacji."
+    }
+  ],
+  "common": {
+    "loading": "Ładowanie...",
+    "tryAgain": "Spróbuj ponownie",
+    "language": "Język"
+  },
+  "emails": {
+    "bookingReceived": {
+      "subject": "Mamy twoją rezerwację, {bike} {from} do {to}",
+      "preheader": "Otrzymaliśmy twoje zgłoszenie rezerwacji {bike}. Wkrótce potwierdzimy.",
+      "headline": "Mamy twoje zgłoszenie",
+      "greeting": "Cześć {name},",
+      "intro": "dzięki za zgłoszenie rezerwacji. Sprawdzimy je i wkrótce potwierdzimy mailem, zwykle w ciągu kilku godzin.",
+      "urgentLine": "W międzyczasie coś pilnego?",
+      "signoff": "Do zobaczenia w Zadarze."
+    },
+    "bookingConfirmed": {
+      "subject": "Potwierdzone, {bike} {from} do {to}",
+      "preheader": "Twój {bike} jest potwierdzony na {from} do {to}.",
+      "headline": "Rezerwacja potwierdzona",
+      "greeting": "Cześć {name},",
+      "intro": "twój {bike} jest zarezerwowany. Do zobaczenia w Zadarze.",
+      "pickupHeader": "Odbiór",
+      "openHoursLabel": "Otwarte",
+      "bringHeader": "Zabierz ze sobą",
+      "bringLicence": "Ważne prawo jazdy motocyklowe, bez niego nie możemy wydać pojazdu",
+      "bringDeposit": "{deposit} kaucji (gotówka po przyjeździe, zwracana po oddaniu bez uszkodzeń)",
+      "bringTank": "Pojazd przychodzi z pełnym bakiem, prosimy zwrócić również pełny",
+      "adjustHeader": "Trzeba coś zmienić?",
+      "adjustLine": "Odbiór ustalony na {from} o {pickupTime}, zwrot {to} do {returnTime}. Daj znać, jeśli coś się zmieni:",
+      "cancelLine": "Plany się zmieniły?",
+      "cancelLink": "Anuluj tę rezerwację",
+      "cancelTail": ", terminy od razu zwolnią się dla kogoś innego."
+    },
+    "bookingDeclined": {
+      "subject": "Aktualizacja twojej rezerwacji, {bike}",
+      "preheader": "Aktualizacja rezerwacji {bike}, te terminy nie wyszły.",
+      "headline": "Aktualizacja twojej rezerwacji",
+      "greeting": "Cześć {name},",
+      "intro": "niestety nie możemy zapewnić {bike} w tych terminach. Przepraszamy za to.",
+      "tryOther": "Chcesz spróbować innych terminów lub innego pojazdu? Napisz do nas, a postaramy się znaleźć coś pasującego."
+    },
+    "contactReceived": {
+      "subject": "Dzięki za wiadomość",
+      "preheader": "Otrzymaliśmy twoją wiadomość, wkrótce odpowiemy.",
+      "headline": "Mamy twoją wiadomość",
+      "greeting": "Cześć {name},",
+      "intro": "dzięki za kontakt. Odezwiemy się tak szybko, jak to możliwe.",
+      "yourMessage": "Twoja wiadomość:",
+      "signoff": "Do zobaczenia w Zadarze."
+    },
+    "summary": {
+      "bike": "Pojazd",
+      "pickup": "Odbiór",
+      "return": "Zwrot",
+      "total": "Razem",
+      "days": "dni",
+      "day": "dzień"
+    }
+  }
+}

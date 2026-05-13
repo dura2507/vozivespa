@@ -46,7 +46,7 @@ export type BookingRow = {
   riding_style: "solo" | "with_passenger" | null;
   // UI locale the customer used when submitting. Drives the language
   // of the receipt / confirmed / declined emails.
-  locale: "en" | "de" | "es" | "it" | "hr";
+  locale: "en" | "de" | "es" | "it" | "hr" | "pl" | "fr";
   // Telegram message refs captured at send-time so the admin status
   // endpoint can edit the existing messages instead of leaving stale
   // "pending" messages around. Null on bookings created before the

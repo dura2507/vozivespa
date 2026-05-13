@@ -115,9 +115,10 @@ export async function POST(request: Request) {
       ? parseInt(totalPriceRaw, 10)
       : null;
   const localeRaw = form.get("locale");
-  const locale: "en" | "de" | "es" | "it" | "hr" =
-    typeof localeRaw === "string" && ["en", "de", "es", "it", "hr"].includes(localeRaw)
-      ? (localeRaw as "en" | "de" | "es" | "it" | "hr")
+  const locale: "en" | "de" | "es" | "it" | "hr" | "pl" | "fr" =
+    typeof localeRaw === "string" &&
+    ["en", "de", "es", "it", "hr", "pl", "fr"].includes(localeRaw)
+      ? (localeRaw as "en" | "de" | "es" | "it" | "hr" | "pl" | "fr")
       : "en";
   const receipt = form.get("receipt");
 

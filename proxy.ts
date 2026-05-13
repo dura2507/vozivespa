@@ -52,7 +52,8 @@ const COUNTRY_TO_LOCALE: Record<string, string> = {
   IT: "it", SM: "it", VA: "it",
   ES: "es",
   HR: "hr", BA: "hr", SI: "hr", ME: "hr", RS: "hr", MK: "hr",
-  // pl + fr will be added once those locales are introduced.
+  PL: "pl",
+  FR: "fr", BE: "fr", LU: "fr", MC: "fr",
 };
 
 function pickLocale(req: NextRequest): string {
