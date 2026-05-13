@@ -60,7 +60,7 @@
       "deposit": { "label": "Cauzione", "sub": "Per moto, restituita dopo la riconsegna se non ci sono danni." },
       "phoneHolders": { "value": "No", "label": "Supporti per telefono", "sub": "Non offriamo né installiamo supporti per telefono e non puoi nemmeno portare il tuo. Nessuna delle nostre moto ne ha uno." },
       "season": { "value": "Apr-Ott", "label": "Stagione", "sub": "Noleggiamo da aprile a ottobre. Pieno alla partenza, pieno al ritorno." },
-      "languages": { "label": "Lingue", "sub": "Parliamo tedesco e inglese. Scrivici su WhatsApp." }
+      "languages": { "label": "Lingue", "sub": "Parliamo tedesco, inglese e portoghese. Scrivici su WhatsApp." }
     },
     "howItWorks": {
       "eyebrow": "Processo semplice",

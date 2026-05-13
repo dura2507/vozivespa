@@ -60,7 +60,7 @@
       "deposit": { "label": "Kaution", "sub": "Pro Bike, wird nach unbeschadeter Rückgabe zurückerstattet." },
       "phoneHolders": { "value": "Nein", "label": "Handyhalter", "sub": "Wir bieten keine Handyhalter an und du darfst auch keinen eigenen mitbringen. Keines unserer Bikes hat einen." },
       "season": { "value": "Apr-Okt", "label": "Saison", "sub": "Wir vermieten von April bis Oktober. Mit vollem Tank raus, mit vollem Tank zurück." },
-      "languages": { "label": "Sprachen", "sub": "Wir sprechen Deutsch und Englisch. Schreib uns auf WhatsApp." }
+      "languages": { "label": "Sprachen", "sub": "Wir sprechen Deutsch, Englisch und Portugiesisch. Schreib uns auf WhatsApp." }
     },
     "howItWorks": {
       "eyebrow": "Einfacher Ablauf",

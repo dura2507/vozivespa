@@ -60,7 +60,7 @@
       "deposit": { "label": "Deposit", "sub": "Per bike, refunded after drop-off if no damage." },
       "phoneHolders": { "value": "No", "label": "Phone holders", "sub": "We don't offer or fit phone holders, and you can't bring your own. None of our bikes have one." },
       "season": { "value": "Apr-Oct", "label": "Riding season", "sub": "We rent April through October. Full tank in, full tank out." },
-      "languages": { "label": "Languages", "sub": "We speak German and English. Chat with us on WhatsApp." }
+      "languages": { "label": "Languages", "sub": "We speak German, English and Portuguese. Chat with us on WhatsApp." }
     },
     "howItWorks": {
       "eyebrow": "Simple process",

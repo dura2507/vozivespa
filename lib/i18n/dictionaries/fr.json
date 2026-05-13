@@ -60,7 +60,7 @@
       "deposit": { "label": "Caution", "sub": "Par moto, restituée après la restitution si aucun dommage." },
       "phoneHolders": { "value": "Non", "label": "Supports de téléphone", "sub": "Nous ne proposons ni n'installons de supports de téléphone, et vous ne pouvez pas apporter le vôtre. Aucune de nos motos n'en a." },
       "season": { "value": "Avr-Oct", "label": "Saison", "sub": "Nous louons d'avril à octobre. Plein au départ, plein au retour." },
-      "languages": { "label": "Langues", "sub": "Nous parlons allemand et anglais. Écrivez-nous sur WhatsApp." }
+      "languages": { "label": "Langues", "sub": "Nous parlons allemand, anglais et portugais. Écrivez-nous sur WhatsApp." }
     },
     "howItWorks": {
       "eyebrow": "Processus simple",

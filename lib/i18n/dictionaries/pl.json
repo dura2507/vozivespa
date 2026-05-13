@@ -60,7 +60,7 @@
       "deposit": { "label": "Kaucja", "sub": "Za pojazd, zwracana po oddaniu bez uszkodzeń." },
       "phoneHolders": { "value": "Nie", "label": "Uchwyty na telefon", "sub": "Nie oferujemy ani nie montujemy uchwytów na telefon, nie można też przywieźć własnego. Żaden z naszych pojazdów go nie ma." },
       "season": { "value": "Kwi-Paź", "label": "Sezon", "sub": "Wynajmujemy od kwietnia do października. Pełen bak przy wydaniu, pełen bak przy zwrocie." },
-      "languages": { "label": "Języki", "sub": "Mówimy po niemiecku i angielsku. Napisz do nas na WhatsApp." }
+      "languages": { "label": "Języki", "sub": "Mówimy po niemiecku, angielsku i portugalsku. Napisz do nas na WhatsApp." }
     },
     "howItWorks": {
       "eyebrow": "Prosty proces",

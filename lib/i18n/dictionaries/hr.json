@@ -60,7 +60,7 @@
       "deposit": { "label": "Polog", "sub": "Po motoru, vraća se nakon povrata ako nema oštećenja." },
       "phoneHolders": { "value": "Ne", "label": "Držači za mobitel", "sub": "Ne nudimo niti ugrađujemo držače za mobitel, a ne možeš donijeti ni svoj. Nijedan naš motor nema držač." },
       "season": { "value": "Tra-Lis", "label": "Sezona", "sub": "Iznajmljujemo od travnja do listopada. Pun spremnik na izlasku, pun spremnik na povratu." },
-      "languages": { "label": "Jezici", "sub": "Govorimo njemački i engleski. Piši nam na WhatsApp." }
+      "languages": { "label": "Jezici", "sub": "Govorimo njemački, engleski i portugalski. Piši nam na WhatsApp." }
     },
     "howItWorks": {
       "eyebrow": "Jednostavan proces",

@@ -60,7 +60,7 @@
       "deposit": { "label": "Depósito", "sub": "Por moto, se devuelve tras la entrega si no hay daños." },
       "phoneHolders": { "value": "No", "label": "Soportes de móvil", "sub": "No ofrecemos ni instalamos soportes de móvil y tampoco puedes traer el tuyo. Ninguna de nuestras motos tiene uno." },
       "season": { "value": "Abr-Oct", "label": "Temporada", "sub": "Alquilamos de abril a octubre. Sale con depósito lleno, vuelve con depósito lleno." },
-      "languages": { "label": "Idiomas", "sub": "Hablamos alemán e inglés. Escríbenos por WhatsApp." }
+      "languages": { "label": "Idiomas", "sub": "Hablamos alemán, inglés y portugués. Escríbenos por WhatsApp." }
     },
     "howItWorks": {
       "eyebrow": "Proceso sencillo",
