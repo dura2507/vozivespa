@@ -344,6 +344,7 @@
       "copy": "Copia",
       "copied": "Copiato!",
       "openInApp": "Apri l'app",
+      "payWith": "Paga con {method}",
       "paymentNotes": {
         "paypal_ff": "Nessuna commissione. Usa l'opzione Friends & Family.",
         "paypal_company": "PayPal standard. Si applica una piccola commissione.",

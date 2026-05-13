@@ -344,6 +344,7 @@
       "copy": "Kopiuj",
       "copied": "Skopiowane!",
       "openInApp": "Otwórz aplikację",
+      "payWith": "Zapłać przez {method}",
       "paymentNotes": {
         "paypal_ff": "Bez prowizji. Użyj opcji Friends & Family.",
         "paypal_company": "Standardowy PayPal. Niewielka prowizja.",
