@@ -1104,14 +1104,14 @@ export default function BikeDetail({
                                           target="_blank"
                                           rel="noopener noreferrer"
                                           onClick={(e) => e.stopPropagation()}
-                                          className="group inline-flex flex-1 items-center justify-center gap-2.5 bg-red text-white text-sm font-bold tracking-wide px-6 py-4 shadow-[0_4px_12px_-2px_rgba(182,31,54,0.4)] hover:shadow-[0_6px_16px_-2px_rgba(182,31,54,0.55)] hover:bg-red-dark active:scale-[0.98] transition-all"
+                                          className="inline-flex items-center justify-center gap-2 bg-ink text-white text-[11px] font-bold tracking-widest uppercase px-4 py-2.5 hover:bg-red transition-colors"
                                         >
+                                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                          </svg>
                                           {tF.reservation.payWith
                                             .replace("{amount}", String(bookingFee))
                                             .replace("{method}", p.label.split(" · ")[0])}
-                                          <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-                                          </svg>
                                         </a>
                                         <div className="bg-white border border-ink/10 p-2 inline-block shrink-0 self-start sm:self-center">
                                           <QRCodeSVG value={p.link} size={96} level="M" />
