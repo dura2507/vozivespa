@@ -456,10 +456,10 @@ export const BRAND = {
       languages: ["🇩🇪"],
     },
     {
-      label: "English",
+      label: "English / Português",
       phone: "+385 95 8195 453",
       phoneRaw: "385958195453",
-      languages: ["🇬🇧"],
+      languages: ["🇬🇧", "🇵🇹"],
     },
   ] as Contact[],
 };
