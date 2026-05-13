@@ -119,23 +119,60 @@ export default function BikeDetail({
   const [manualBlocks, setManualBlocks] = useState<BlockedRange[]>([]);
   const [bookings, setBookings] = useState<ConfirmedBooking[]>([]);
   const [totalUnits, setTotalUnits] = useState(1);
+  // Virtual bookings derived from full-day manual blocks. Treating
+  // each effective-all-day block as a synthetic booking on its unit
+  // lets us reuse fullyBookedDates() to grey out a calendar day only
+  // when EVERY unit is unavailable — half-blocked days stay open.
+  const [blockBookings, setBlockBookings] = useState<ConfirmedBooking[]>([]);
   useEffect(() => {
     let cancelled = false;
     fetch(`/api/availability?bikeId=${encodeURIComponent(bike.id)}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(r)))
       .then(
         (json: {
-          manualBlocks: { from: string; to: string }[];
+          manualBlocks: Array<{
+            from: string;
+            to: string;
+            startTime: string | null;
+            endTime: string | null;
+            unitId: string | null;
+            effectiveAllDay: boolean;
+          }>;
           bookings: ConfirmedBooking[];
           totalUnits: number;
+          unitIds: string[];
         }) => {
           if (cancelled) return;
+          // Manual blocks shown on the calendar as full-grey are
+          // limited to "effectively all-day" entries (no times set,
+          // or end-time ≥ shop close). Partial blocks stay invisible
+          // on the calendar — the time-slot picker filters them out
+          // when the user picks a date.
+          const allDayBlocks = json.manualBlocks.filter((b) => b.effectiveAllDay);
           setManualBlocks(
-            json.manualBlocks.map((b) => ({
+            allDayBlocks.map((b) => ({
               from: new Date(`${b.from}T00:00:00`),
               to: new Date(`${b.to}T00:00:00`),
             })),
           );
+          // Build synthetic bookings out of all-day blocks. Whole-
+          // model blocks (unitId null) expand to one synthetic per
+          // active unit so the date counts as "every unit busy".
+          // Per-unit blocks become a single synthetic on that unit.
+          const synth: ConfirmedBooking[] = [];
+          for (const b of allDayBlocks) {
+            const targets = b.unitId ? [b.unitId] : json.unitIds ?? [];
+            for (const uid of targets) {
+              synth.push({
+                from: b.from,
+                to: b.to,
+                pickupTime: "09:00",
+                returnTime: "19:00",
+                unitId: uid,
+              });
+            }
+          }
+          setBlockBookings(synth);
           setBookings(json.bookings);
           setTotalUnits(json.totalUnits || 1);
         },
@@ -171,7 +208,12 @@ export default function BikeDetail({
       }
     }
   } else {
-    for (const iso of fullyBookedDates(bookings, totalUnits)) {
+    // Multi-unit: a day is fully grey only when every active unit
+    // has either a confirmed booking OR an effective-all-day block
+    // covering it. blockBookings carries the synthetic entries from
+    // manual blocks so the existing fullyBookedDates logic handles
+    // both with one call.
+    for (const iso of fullyBookedDates([...bookings, ...blockBookings], totalUnits)) {
       bookedFullDays.push(new Date(`${iso}T00:00:00`));
     }
   }

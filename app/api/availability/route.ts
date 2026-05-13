@@ -30,7 +30,7 @@ export async function GET(request: Request) {
   const [manualRes, bookingsRes, unitsRes] = await Promise.all([
     supabase
       .from("blocked_dates")
-      .select("date_from, date_to")
+      .select("date_from, date_to, start_time, end_time, bike_unit_id")
       .eq("bike_id", bikeId)
       .is("booking_id", null)
       .order("date_from", { ascending: true }),
@@ -62,10 +62,27 @@ export async function GET(request: Request) {
 
   const trimT = (t: string) => t.slice(0, 5);
 
+  // A block is "effectively all-day" when it has no time bounds
+  // (start_time + end_time both null = legacy whole-day block) OR
+  // when it runs all the way to shop close (19:00). Owner asked: if
+  // a unit is blocked until close, treat it as the whole day — the
+  // remaining hours aren't useful for a rental anyway.
+  const isEffectivelyAllDay = (
+    start: string | null,
+    end: string | null,
+  ): boolean => {
+    if (!start || !end) return true;
+    return end >= "19:00:00";
+  };
+
   return NextResponse.json({
     manualBlocks: (manualRes.data ?? []).map((row) => ({
       from: row.date_from,
       to: row.date_to,
+      startTime: row.start_time ? trimT(row.start_time) : null,
+      endTime: row.end_time ? trimT(row.end_time) : null,
+      unitId: row.bike_unit_id, // null = whole-model block
+      effectiveAllDay: isEffectivelyAllDay(row.start_time, row.end_time),
     })),
     bookings: (bookingsRes.data ?? []).map((row) => ({
       from: row.date_from,
@@ -75,5 +92,9 @@ export async function GET(request: Request) {
       unitId: row.bike_unit_id,
     })),
     totalUnits: (unitsRes.data ?? []).length,
+    // List of active unit ids — frontend needs it to expand a
+    // whole-model block (unit_id null) into "every unit blocked"
+    // when computing the fully-grey calendar dates.
+    unitIds: (unitsRes.data ?? []).map((u) => (u as { id: string }).id),
   });
 }

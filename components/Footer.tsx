@@ -109,13 +109,19 @@ export default function Footer({
             </svg>
             @{BRAND.instagram}
           </a>
-          <span className="flex items-center gap-2 text-white/45">
+          <a
+            href={BRAND.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-white/55 hover:text-white transition-colors"
+            title="Open in Google Maps"
+          >
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
             </svg>
             {BRAND.address}
-          </span>
+          </a>
         </div>
 
         {/* Trusted Rental Partner badge */}

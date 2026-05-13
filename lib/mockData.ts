@@ -407,6 +407,10 @@ export const BRAND = {
   legal: "Joyful d.o.o.",
   oib: "84055846851",
   address: "Velebitska Ulica 2, 23000 Zadar",
+  // Google Maps deep link — opens the SickMotos location directly
+  // in Maps (web or native app). Used by the footer "Adresse" line
+  // so a customer can tap straight into turn-by-turn directions.
+  mapsUrl: "https://maps.app.goo.gl/XCr6kKfFqrfR1PXR6?g_st=ic",
   hours: "Mon-Sun, 09:00-19:00",
   phone: "+49 176 34658003",
   phoneRaw: "4917634658003",
