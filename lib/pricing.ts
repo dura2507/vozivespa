@@ -8,7 +8,7 @@ const GRACE_MINUTES = 15;
 // Owner needs this much time between two bookings on the same bike to
 // receive the returning bike, check it, refuel and prep for the next
 // renter. Applied as a buffer in the time-aware overlap check.
-export const TURNAROUND_MINUTES = 60;
+export const TURNAROUND_MINUTES = 30;
 
 export type AppliedTier =
   | "day"
