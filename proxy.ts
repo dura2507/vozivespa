@@ -40,14 +40,47 @@ function isExempt(pathname: string): boolean {
   );
 }
 
+// Country → locale map for the geo-fallback path. When the browser
+// hasn't sent a clear preference for any of our locales we look at
+// where the request is coming from (Vercel injects the country into
+// x-vercel-ip-country). A German tourist with an English browser
+// visiting from Italy still gets Italian, while an Italian with a
+// German browser gets German — Accept-Language always wins when it
+// matches a supported locale, geo only fills the gap.
+const COUNTRY_TO_LOCALE: Record<string, string> = {
+  DE: "de", AT: "de", CH: "de", LI: "de",
+  IT: "it", SM: "it", VA: "it",
+  ES: "es",
+  HR: "hr", BA: "hr", SI: "hr", ME: "hr", RS: "hr", MK: "hr",
+  // pl + fr will be added once those locales are introduced.
+};
+
 function pickLocale(req: NextRequest): string {
-  const headers = { "accept-language": req.headers.get("accept-language") ?? "" };
+  // 1. Accept-Language: try every language the browser advertises in
+  //    preference order and pick the first one that maps onto one of
+  //    our locales. We split off the region (de-AT → de) since our
+  //    dicts are language-only.
+  const acceptLang = req.headers.get("accept-language") ?? "";
   let languages: string[] = [];
   try {
-    languages = new Negotiator({ headers }).languages();
+    languages = new Negotiator({ headers: { "accept-language": acceptLang } }).languages();
   } catch {
-    languages = [DEFAULT_LOCALE];
+    languages = [];
   }
+  for (const lang of languages) {
+    const code = lang.split("-")[0].toLowerCase();
+    if (isLocale(code)) return code;
+  }
+
+  // 2. Geo fallback. Vercel sets x-vercel-ip-country to the two-
+  //    letter country code; map it to our closest locale if we have
+  //    one. Falls through to DEFAULT_LOCALE for anywhere else.
+  const country = (req.headers.get("x-vercel-ip-country") ?? "").toUpperCase();
+  const geo = COUNTRY_TO_LOCALE[country];
+  if (geo && isLocale(geo)) return geo;
+
+  // 3. Last resort: the intl-localematcher best-effort over whatever
+  //    the browser sent, defaulting to DEFAULT_LOCALE.
   try {
     return match(languages, LOCALES as readonly string[], DEFAULT_LOCALE);
   } catch {
