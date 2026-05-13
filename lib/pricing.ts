@@ -233,13 +233,20 @@ export function calculatePrice(
   const isSunReturn = toDate.getDay() === 0;
 
   if (p.weekend && isFriPickup) {
-    if (isSunReturn) {
+    // Sunday of the pickup week (pickup Fri + 2 days). We compare
+    // against this so a Fri → SAME-week Sun is the only pure-weekend
+    // booking; a Fri → later-week Sun falls into weekend-mix and
+    // gets billed per extra calendar day past the pickup Sunday.
+    // Without this cap a 10-day booking that happens to start on a
+    // Friday and end on a Sunday would be priced as a flat weekend.
+    const sundayOfPickupWeek = new Date(fromDate);
+    sundayOfPickupWeek.setDate(sundayOfPickupWeek.getDate() + 2);
+    const isSameWeekendReturn =
+      isSunReturn && calendarDaysBetween(sundayOfPickupWeek, toDate) === 0;
+    if (isSameWeekendReturn) {
       candidates.push({ price: p.weekend, tier: "weekend" });
     } else {
-      // Sunday of the pickup week (pickup Fri + 2 days)
-      const sunday = new Date(fromDate);
-      sunday.setDate(sunday.getDate() + 2);
-      const extraDays = calendarDaysBetween(sunday, toDate);
+      const extraDays = calendarDaysBetween(sundayOfPickupWeek, toDate);
       if (extraDays > 0) {
         candidates.push({
           price: p.weekend + extraDays * p.day,
