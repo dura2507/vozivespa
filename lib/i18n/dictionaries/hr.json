@@ -344,7 +344,7 @@
       "copy": "Kopiraj",
       "copied": "Kopirano!",
       "openInApp": "Otvori aplikaciju",
-      "payWith": "Klikni za plaćanje {amount}€ putem {method}",
+      "payWith": "Plati {amount}€ odmah",
       "paymentNotes": {
         "paypal_ff": "Bez naknade. Koristi opciju Friends & Family.",
         "paypal_company": "Standardni PayPal. Primjenjuje se mala naknada.",
