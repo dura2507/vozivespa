@@ -6,12 +6,12 @@ import type { Locale } from "@/lib/i18n/config";
 
 const FLAGS: Record<Locale, React.ReactNode> = {
   en: (
-    <svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice">
-      <rect width="60" height="30" fill="#012169" />
-      <path d="M0,0 L60,30 M60,0 L0,30" stroke="#FFF" strokeWidth="6" />
-      <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" strokeWidth="3" />
-      <path d="M30,0 V30 M0,15 H60" stroke="#FFF" strokeWidth="10" />
-      <path d="M30,0 V30 M0,15 H60" stroke="#C8102E" strokeWidth="6" />
+    <svg viewBox="0 0 9 6" preserveAspectRatio="xMidYMid slice">
+      <rect width="9" height="6" fill="#012169" />
+      <path d="M0,0 L9,6 M9,0 L0,6" stroke="#FFF" strokeWidth="0.9" />
+      <path d="M0,0 L9,6 M9,0 L0,6" stroke="#C8102E" strokeWidth="0.45" />
+      <path d="M4.5,0 V6 M0,3 H9" stroke="#FFF" strokeWidth="1.5" />
+      <path d="M4.5,0 V6 M0,3 H9" stroke="#C8102E" strokeWidth="0.9" />
     </svg>
   ),
   de: (
@@ -66,7 +66,7 @@ export function LocaleFlag({
 }) {
   return (
     <span
-      className={`inline-block overflow-hidden shadow-[0_0_0_1px_rgba(0,0,0,0.08)] ${className ?? "w-4 h-3"}`}
+      className={`inline-block overflow-hidden shadow-[0_0_0_1px_rgba(0,0,0,0.08)] [&>svg]:block [&>svg]:w-full [&>svg]:h-full ${className ?? "w-4 h-3"}`}
       aria-hidden
     >
       {FLAGS[locale]}
