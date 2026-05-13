@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import AnchorOffsetFix from "@/components/AnchorOffsetFix";
+import { PageViewTracker } from "@/components/PageViewTracker";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default function RootLayout({
     >
       <body className={dmSans.className}>
         <AnchorOffsetFix />
+        <PageViewTracker />
         {children}
         <Analytics />
         {/* Elfsight platform: powers the Google Reviews widget on the
