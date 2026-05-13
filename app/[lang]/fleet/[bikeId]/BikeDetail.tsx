@@ -193,15 +193,22 @@ export default function BikeDetail({
   const bookedEndDays: Date[] = [];
   const bookedMiddleRanges: { from: Date; to: Date }[] = [];
   const bookedFullDays: Date[] = [];
+  // Past dates are already disabled by { before: new Date() }; don't
+  // add a "booked" overlay on top of yesterday's bookings or it looks
+  // like the day was unavailable for booking reasons.
+  const todayMidnight = new Date();
+  todayMidnight.setHours(0, 0, 0, 0);
+  const isFutureOrToday = (d: Date) => d.getTime() >= todayMidnight.getTime();
   if (totalUnits === 1) {
     for (const b of bookings) {
       const from = new Date(`${b.from}T00:00:00`);
       const to = new Date(`${b.to}T00:00:00`);
+      if (!isFutureOrToday(to)) continue;
       if (isSameDay(from, to)) {
         bookedFullDays.push(from);
         continue;
       }
-      bookedStartDays.push(from);
+      if (isFutureOrToday(from)) bookedStartDays.push(from);
       bookedEndDays.push(to);
       if (differenceInCalendarDays(to, from) >= 2) {
         bookedMiddleRanges.push({ from: addDays(from, 1), to: addDays(to, -1) });
@@ -214,10 +221,12 @@ export default function BikeDetail({
     // manual blocks so the existing fullyBookedDates logic handles
     // both with one call.
     for (const iso of fullyBookedDates([...bookings, ...blockBookings], totalUnits)) {
-      bookedFullDays.push(new Date(`${iso}T00:00:00`));
+      const d = new Date(`${iso}T00:00:00`);
+      if (isFutureOrToday(d)) bookedFullDays.push(d);
     }
   }
   for (const m of manualBlocks) {
+    if (!isFutureOrToday(m.to)) continue;
     bookedMiddleRanges.push({ from: m.from, to: m.to });
   }
 
