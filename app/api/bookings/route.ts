@@ -277,11 +277,20 @@ export async function POST(request: Request) {
       () => null,
     );
     const receipt = receiptUrl ? { url: receiptUrl, mime: receiptMime, filename } : undefined;
-    await Promise.allSettled([
+    const [tgRefsResult] = await Promise.allSettled([
       sendOwnerBookingTelegram(finalBooking, receipt, unitLabel),
       sendOwnerBookingEmail(finalBooking, receipt, unitLabel),
       sendCustomerBookingReceivedEmail(finalBooking),
     ]);
+    // Persist the Telegram message ids so the admin status endpoint
+    // can edit those exact messages later. Best-effort: if the DB
+    // update fails we just lose the sync ability for this booking.
+    if (tgRefsResult.status === "fulfilled" && tgRefsResult.value.length > 0) {
+      await supabase
+        .from("bookings")
+        .update({ telegram_message_refs: tgRefsResult.value })
+        .eq("id", finalBooking.id);
+    }
   });
 
   return NextResponse.json(

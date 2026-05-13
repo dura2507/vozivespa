@@ -208,11 +208,11 @@ export async function sendOwnerBookingTelegram(
   booking: BookingRow,
   receipt?: { url: string; mime: string },
   unitLabel?: string | null,
-): Promise<void> {
+): Promise<Array<{ chatId: string; messageId: number }>> {
   const chatIds = ownerChatIds();
   if (chatIds.length === 0) {
     console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping owner notification");
-    return;
+    return [];
   }
 
   // Booking message first so the Confirm / Decline buttons land
@@ -221,7 +221,10 @@ export async function sendOwnerBookingTelegram(
   // it's clearly the deposit attachment for this booking and not a
   // free-standing photo. We fan out to every owner chat sequentially
   // so a 401 on one chat ID doesn't block the others (allSettled).
-  await Promise.allSettled(
+  // Each successful send returns its message_id; we collect them so
+  // the caller can persist them on the booking and let the admin
+  // panel edit those exact messages on status change.
+  const results = await Promise.allSettled(
     chatIds.map(async (chatId) => {
       const msgRes = await callTelegram<{ message_id: number }>("sendMessage", {
         chat_id: chatId,
@@ -242,8 +245,14 @@ export async function sendOwnerBookingTelegram(
           ...(replyToId ? { reply_to_message_id: replyToId } : {}),
         });
       }
+
+      return { chatId, messageId: replyToId ?? 0 };
     }),
   );
+  return results
+    .filter((r): r is PromiseFulfilledResult<{ chatId: string; messageId: number }> => r.status === "fulfilled")
+    .map((r) => r.value)
+    .filter((r) => r.messageId > 0);
 }
 
 export async function editTelegramMessageForBooking(

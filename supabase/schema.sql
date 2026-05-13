@@ -65,6 +65,11 @@ create table public.bookings (
   -- Null = solo booking. Lets the dashboard collapse N rows into
   -- one customer-facing entry.
   booking_group_id uuid,
+  -- Captured at send-time when the booking is forwarded to the
+  -- owner's Telegram chat(s). Each entry: {chatId, messageId}.
+  -- Lets the admin status endpoint editMessageText for the exact
+  -- messages it sent instead of leaving "pending" stale.
+  telegram_message_refs jsonb,
   -- Customer-provided licence category and intended riding style.
   -- Owner uses these at pickup to verify entitlement and plan helmet
   -- count.

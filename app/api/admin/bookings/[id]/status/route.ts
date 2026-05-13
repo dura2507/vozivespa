@@ -121,10 +121,23 @@ export async function POST(
         await sendOwnerCancellationTelegram(updated);
         await sendOwnerCancellationEmail(updated, "owner");
       }
-      // Try to keep any existing Telegram booking message in sync if
-      // one's still around (best-effort: this requires the original
-      // message_id which we don't track yet, so skip silently).
-      void editTelegramMessageForBooking;
+      // Keep the original Telegram booking messages in sync with the
+      // new status. We stored each {chatId, messageId} when the
+      // booking was forwarded, so we can call editMessageText for
+      // every chat the bot posted to (owner + partner today). Each
+      // edit is independent — if one chat has deleted the message
+      // we still want the others to update.
+      const refs = (updated.telegram_message_refs ?? []) as Array<{
+        chatId: string;
+        messageId: number;
+      }>;
+      if (refs.length > 0) {
+        await Promise.allSettled(
+          refs.map((r) =>
+            editTelegramMessageForBooking(r.chatId, r.messageId, updated),
+          ),
+        );
+      }
     } catch (err) {
       console.error("[/api/admin/bookings/status] notify", err);
     }

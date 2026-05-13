@@ -47,6 +47,11 @@ export type BookingRow = {
   // UI locale the customer used when submitting. Drives the language
   // of the receipt / confirmed / declined emails.
   locale: "en" | "de" | "es" | "it" | "hr";
+  // Telegram message refs captured at send-time so the admin status
+  // endpoint can edit the existing messages instead of leaving stale
+  // "pending" messages around. Null on bookings created before the
+  // refs migration or never forwarded to Telegram.
+  telegram_message_refs: TelegramMessageRef[] | null;
   status: BookingStatus;
   secret_token: string;
   created_at: string;
@@ -71,6 +76,14 @@ export type BlockedDateRow = {
   // Free-text owner note for service / repair / private use.
   reason: string | null;
   created_at: string;
+};
+
+// One row of telegram_message_refs on a booking. Each entry maps an
+// owner chat to the message id the bot used so the admin panel can
+// edit that exact message when the status flips later.
+export type TelegramMessageRef = {
+  chatId: string;
+  messageId: number;
 };
 
 // ----- Clients -----
