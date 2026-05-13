@@ -344,7 +344,7 @@
       "copy": "Copy",
       "copied": "Copied!",
       "openInApp": "Open app",
-      "payWith": "Pay {amount}€ now",
+      "payWith": "Tap to pay via {method}",
       "recommended": "Recommended",
       "paymentNotes": {
         "paypal_ff": "No fee. Use Friends & Family option.",
