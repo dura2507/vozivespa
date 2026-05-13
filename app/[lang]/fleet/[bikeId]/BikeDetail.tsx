@@ -1104,12 +1104,12 @@ export default function BikeDetail({
                                           target="_blank"
                                           rel="noopener noreferrer"
                                           onClick={(e) => e.stopPropagation()}
-                                          className="group inline-flex flex-1 items-center justify-center gap-3 bg-red text-white text-base sm:text-lg font-bold tracking-wide px-8 py-6 sm:py-7 shadow-[0_8px_24px_-4px_rgba(182,31,54,0.55)] hover:shadow-[0_12px_32px_-4px_rgba(182,31,54,0.7)] hover:bg-red-dark active:scale-[0.98] transition-all w-full"
+                                          className="group inline-flex flex-1 items-center justify-center gap-2.5 bg-red text-white text-sm font-bold tracking-wide px-6 py-4 shadow-[0_4px_12px_-2px_rgba(182,31,54,0.4)] hover:shadow-[0_6px_16px_-2px_rgba(182,31,54,0.55)] hover:bg-red-dark active:scale-[0.98] transition-all"
                                         >
                                           {tF.reservation.payWith
                                             .replace("{amount}", String(bookingFee))
                                             .replace("{method}", p.label.split(" · ")[0])}
-                                          <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                          <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
                                           </svg>
                                         </a>
