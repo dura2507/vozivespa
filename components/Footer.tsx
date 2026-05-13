@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BRAND } from "@/lib/mockData";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { Flag, type FlagCode } from "@/components/Flag";
 
 function localePath(lang: Locale, path: string): string {
   if (path.startsWith("/#")) return `/${lang}${path.slice(1)}`;
@@ -66,7 +67,11 @@ export default function Footer({
               className="flex flex-col gap-2 bg-white/5 border border-white/10 px-4 py-3 text-left"
             >
               <p className="text-[10px] tracking-[0.15em] uppercase font-bold flex items-center gap-1.5">
-                <span className="text-base leading-none opacity-100">{contact.languages.join(" ")}</span>
+                <span className="flex gap-1 leading-none">
+                  {contact.languages.map((c) => (
+                    <Flag key={c} code={c as FlagCode} className="w-4 h-3" />
+                  ))}
+                </span>
                 <span className="text-white/85">{contact.label}</span>
               </p>
               <p className="text-white text-sm font-semibold truncate">{contact.phone}</p>

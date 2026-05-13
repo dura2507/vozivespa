@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Flag, type FlagCode } from "@/components/Flag";
 import { GALLERY_IMAGES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
 import { getCategoriesWithPricing, getUnitCounts } from "@/lib/bike-pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -256,7 +257,11 @@ export default async function HomePage({
               <p className="text-xs text-muted leading-relaxed">{t.goodToKnow.season.sub}</p>
             </div>
             <div className="bg-off-white px-6 py-7 flex flex-col items-start gap-3">
-              <span className="text-3xl leading-none">{BRAND.languages.join(" ")}</span>
+              <span className="flex gap-2 leading-none">
+                {BRAND.languages.map((c) => (
+                  <Flag key={c} code={c as FlagCode} className="w-7 h-5" />
+                ))}
+              </span>
               <p className="font-bold text-ink text-sm">{t.goodToKnow.languages.label}</p>
               <p className="text-xs text-muted leading-relaxed">{t.goodToKnow.languages.sub}</p>
             </div>

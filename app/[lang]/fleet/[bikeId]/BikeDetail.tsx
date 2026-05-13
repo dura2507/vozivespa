@@ -11,6 +11,7 @@ import type { Locale as DateFnsLocale } from "date-fns";
 import "react-day-picker/style.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Flag, type FlagCode } from "@/components/Flag";
 import { BRAND, LICENCE_BADGE, type Category } from "@/lib/mockData";
 import type { PaymentMethod } from "@/lib/mockData";
 import type { Locale } from "@/lib/i18n/config";
@@ -1287,9 +1288,11 @@ export default function BikeDetail({
                 <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] tracking-tight">
                   WhatsApp
                 </h2>
-                <p className="text-white/70 text-xs mt-2">
-                  {BRAND.languages.join(" · ")}
-                </p>
+                <div className="flex gap-1.5 mt-3">
+                  {BRAND.languages.map((c) => (
+                    <Flag key={c} code={c as FlagCode} className="w-5 h-3.5" />
+                  ))}
+                </div>
               </div>
               <a
                 href={`https://wa.me/${BRAND.phoneRaw}?text=${encodeURIComponent(

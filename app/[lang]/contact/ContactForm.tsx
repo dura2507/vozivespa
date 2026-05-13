@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { BRAND } from "@/lib/mockData";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { Flag, type FlagCode } from "@/components/Flag";
 
 export default function ContactForm({
   lang,
@@ -79,8 +80,10 @@ export default function ContactForm({
                     <div className="min-w-0">
                       <p className="font-bold text-ink text-sm flex items-center gap-2">
                         {contact.label}
-                        <span className="text-base leading-none">
-                          {contact.languages.join(" ")}
+                        <span className="flex gap-1 leading-none">
+                          {contact.languages.map((c) => (
+                            <Flag key={c} code={c as FlagCode} className="w-4 h-3" />
+                          ))}
                         </span>
                       </p>
                       <p className="text-muted text-sm truncate">{contact.phone}</p>

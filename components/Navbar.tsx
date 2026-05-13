@@ -10,7 +10,7 @@ import {
   isLocale,
 } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { LocaleFlag } from "@/components/LocaleFlag";
+import { LocaleFlag } from "@/components/Flag";
 
 type NavStrings = Dictionary["nav"];
 
