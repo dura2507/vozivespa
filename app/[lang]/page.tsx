@@ -3,8 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ReviewCarousel from "@/components/ReviewCarousel";
-import { REVIEWS, GALLERY_IMAGES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
+import { GALLERY_IMAGES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
 import { getCategoriesWithPricing, getUnitCounts } from "@/lib/bike-pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -303,7 +302,12 @@ export default async function HomePage({
           <h2 className="font-barlow font-black uppercase text-[clamp(2rem,6vw,4rem)] tracking-tight text-ink mb-12">
             {t.reviews.title}
           </h2>
-          <ReviewCarousel reviews={REVIEWS} />
+          {/* Elfsight Google Reviews widget — live-syncs with the
+              Google Business Profile via Place ID. Lazy-loaded so it
+              doesn't block the page. Replaces the hand-curated mock
+              REVIEWS array; the URL fallback link below still points
+              at the GBP for fresh review submission. */}
+          <div className="elfsight-app-d1d1c2f9-1e5c-4b49-81d3-0a7369e95be9" data-elfsight-app-lazy />
           <a
             href={BRAND.reviewsUrl}
             target="_blank"
