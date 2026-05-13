@@ -54,8 +54,20 @@ export default function AnchorOffsetFix() {
       let hash: string | null = null;
       if (href.startsWith("#")) {
         hash = href;
-      } else if (href.startsWith("/#") && window.location.pathname === "/") {
-        hash = href.slice(1);
+      } else {
+        // Absolute path with a hash, e.g. "/de#fleet" clicked from
+        // "/de". Treat it as a same-page hash so we can take over the
+        // scroll, otherwise Next/Link with scroll={false} just updates
+        // the URL and does nothing visible. Cross-page hash links
+        // (path differs) fall through to Next/Link and the pathname
+        // effect below catches the scroll after the route mounts.
+        const hashIdx = href.indexOf("#");
+        if (hashIdx >= 0) {
+          const targetPath = href.slice(0, hashIdx) || "/";
+          if (targetPath === window.location.pathname) {
+            hash = href.slice(hashIdx);
+          }
+        }
       }
       if (!hash) return;
 
