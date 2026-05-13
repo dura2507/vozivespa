@@ -10,6 +10,7 @@ import {
   isLocale,
 } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { LocaleFlag } from "@/components/LocaleFlag";
 
 type NavStrings = Dictionary["nav"];
 
@@ -115,10 +116,7 @@ export default function Navbar({
                 aria-label={t.languageSwitcher}
                 aria-expanded={langOpen}
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                  <circle cx="12" cy="12" r="9" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 010 18M12 3a14 14 0 000 18" />
-                </svg>
+                <LocaleFlag locale={lang} className="w-[18px] h-3" />
                 <span>{LOCALE_LABELS[lang].short}</span>
                 <svg className={`w-3 h-3 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -140,7 +138,7 @@ export default function Navbar({
                       <Link
                         key={l}
                         href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                        className={`block text-center px-5 py-2 text-xs font-bold tracking-[0.15em] uppercase transition-all duration-200 ${
+                        className={`flex items-center justify-center gap-2 px-5 py-2 text-xs font-bold tracking-[0.15em] uppercase transition-all duration-200 ${
                           active ? "text-red bg-red/5" : "text-ink hover:bg-ink/5"
                         } ${
                           langOpen
@@ -154,6 +152,7 @@ export default function Navbar({
                         role="menuitem"
                         title={LOCALE_LABELS[l].name}
                       >
+                        <LocaleFlag locale={l} className="w-[18px] h-3" />
                         {LOCALE_LABELS[l].short}
                       </Link>
                     );
@@ -182,10 +181,7 @@ export default function Navbar({
                 aria-label={t.languageSwitcher}
                 aria-expanded={langOpen}
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                  <circle cx="12" cy="12" r="9" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 010 18M12 3a14 14 0 000 18" />
-                </svg>
+                <LocaleFlag locale={lang} className="w-[18px] h-3" />
                 <span>{LOCALE_LABELS[lang].short}</span>
                 <svg className={`w-3 h-3 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -207,7 +203,7 @@ export default function Navbar({
                       <Link
                         key={l}
                         href={`/${l}${bareHere === "/" ? "" : bareHere}`}
-                        className={`block text-center px-5 py-2 text-xs font-bold tracking-[0.15em] uppercase transition-all duration-200 ${
+                        className={`flex items-center justify-center gap-2 px-5 py-2 text-xs font-bold tracking-[0.15em] uppercase transition-all duration-200 ${
                           active ? "text-red bg-red/5" : "text-ink hover:bg-ink/5"
                         } ${
                           langOpen
@@ -221,6 +217,7 @@ export default function Navbar({
                         role="menuitem"
                         title={LOCALE_LABELS[l].name}
                       >
+                        <LocaleFlag locale={l} className="w-[18px] h-3" />
                         {LOCALE_LABELS[l].short}
                       </Link>
                     );
