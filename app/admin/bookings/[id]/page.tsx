@@ -58,7 +58,7 @@ export default async function AdminBookingDetail({
       </div>
 
       <div className="flex items-baseline justify-between mb-6 flex-wrap gap-3">
-        <h1 className="font-barlow font-black uppercase text-3xl tracking-tight text-ink">
+        <h1 className="font-bold text-3xl text-ink">
           {b.customer_name}
         </h1>
         <span className="text-[10px] tracking-[0.2em] uppercase font-bold bg-ink text-white px-2 py-1">

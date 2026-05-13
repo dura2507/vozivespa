@@ -26,7 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <header className="bg-ink text-white">
         <div className="max-w-7xl mx-auto px-5 md:px-8 py-4 flex items-center justify-between gap-4">
           <Link href="/admin" className="flex items-baseline gap-3">
-            <span className="font-barlow font-black uppercase text-xl tracking-tight">
+            <span className="font-barlow font-bold uppercase text-lg tracking-tight">
               SickMotos
             </span>
             <span className="text-[10px] tracking-[0.3em] uppercase text-white/40">

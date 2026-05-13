@@ -582,7 +582,7 @@ export function BlocksManager({
         <p className="text-emerald-700 text-sm font-semibold mb-4">{info}</p>
       )}
 
-      <h2 className="font-barlow font-black uppercase text-lg tracking-tight text-ink mb-3">
+      <h2 className="font-semibold uppercase text-xs tracking-[0.12em] text-ink/80 mb-3">
         Recent entries
       </h2>
       <p className="text-xs text-muted mb-4">

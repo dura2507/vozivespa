@@ -204,7 +204,7 @@ function Section({
   return (
     <section className="mb-10">
       <div className="flex items-baseline gap-3 mb-3">
-        <h2 className="font-barlow font-black uppercase text-xl tracking-tight text-ink">
+        <h2 className="font-semibold uppercase text-xs tracking-[0.12em] text-ink/80">
           {title}
         </h2>
         <span className="text-xs tracking-[0.15em] uppercase text-ink/40 font-bold">
@@ -234,7 +234,7 @@ function FleetCard({ entry }: { entry: FleetEntry }) {
       } hover:border-red`}
     >
       <p className="text-xs font-bold text-ink truncate">{entry.bikeName}</p>
-      <p className="font-barlow font-black text-2xl text-ink mt-1 leading-none">
+      <p className="font-bold text-2xl text-ink mt-1 leading-none tabular-nums">
         {entry.outUnits}
         <span className="text-ink/40 text-base"> / {entry.totalUnits}</span>
       </p>
@@ -289,7 +289,7 @@ export default async function AdminDashboard({
   return (
     <div className="max-w-7xl mx-auto px-5 md:px-8 py-8">
       <div className="flex items-baseline justify-between mb-6 flex-wrap gap-4">
-        <h1 className="font-barlow font-black uppercase text-3xl tracking-tight text-ink">
+        <h1 className="font-bold text-3xl text-ink">
           {filteredEntry ? filteredEntry.bikeName : "Dashboard"}
         </h1>
         <p className="text-xs text-muted">
@@ -309,7 +309,7 @@ export default async function AdminDashboard({
       {!bikeFilter && (
         <section className="mb-10">
           <div className="flex items-baseline gap-3 mb-3">
-            <h2 className="font-barlow font-black uppercase text-xl tracking-tight text-ink">
+            <h2 className="font-semibold uppercase text-xs tracking-[0.12em] text-ink/80">
               Fleet status
             </h2>
             <span className="text-xs tracking-[0.15em] uppercase text-ink/40 font-bold">

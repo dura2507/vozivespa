@@ -17,7 +17,7 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub: st
       <p className="text-[10px] tracking-[0.2em] uppercase text-ink/50 font-bold">
         {label}
       </p>
-      <p className="font-barlow font-black text-3xl text-ink mt-1 leading-none">
+      <p className="font-bold text-3xl text-ink mt-1 leading-none tabular-nums">
         {value}
       </p>
       <p className="text-xs text-muted mt-1">{sub}</p>
@@ -39,7 +39,7 @@ function TopTable({
   const max = rows.reduce((m, r) => Math.max(m, r.views), 0);
   return (
     <section className="bg-white border border-ink/10 p-4">
-      <h2 className="font-barlow font-black uppercase text-sm tracking-[0.15em] text-ink mb-3">
+      <h2 className="font-semibold uppercase text-xs tracking-[0.12em] text-ink/80 mb-3">
         {title}
       </h2>
       {rows.length === 0 ? (
@@ -76,7 +76,7 @@ export default async function AdminAnalyticsPage() {
   return (
     <div className="max-w-7xl mx-auto px-5 md:px-8 py-8">
       <div className="flex items-baseline justify-between mb-6 flex-wrap gap-4">
-        <h1 className="font-barlow font-black uppercase text-3xl tracking-tight text-ink">
+        <h1 className="font-bold text-3xl text-ink">
           Visitors
         </h1>
         <p className="text-xs text-muted">
@@ -112,7 +112,7 @@ export default async function AdminAnalyticsPage() {
       </section>
 
       <section className="bg-white border border-ink/10 p-4 mb-8">
-        <h2 className="font-barlow font-black uppercase text-sm tracking-[0.15em] text-ink mb-4">
+        <h2 className="font-semibold uppercase text-xs tracking-[0.12em] text-ink/80 mb-4">
           Last 30 days
         </h2>
         {maxDay === 0 ? (

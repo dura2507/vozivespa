@@ -14,7 +14,7 @@ export default async function AdminLoginPage({
         <p className="text-[11px] tracking-[0.3em] uppercase text-white/40 mb-3">
           SickMotos · Admin
         </p>
-        <h1 className="font-barlow font-black uppercase text-4xl tracking-tight mb-7">
+        <h1 className="font-bold text-4xl mb-7">
           Sign in
         </h1>
         <LoginForm redirectTo={from ?? "/admin"} />
