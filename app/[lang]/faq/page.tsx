@@ -7,6 +7,37 @@ import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import Accordion from "./Accordion";
 
+type CategoryId = "booking" | "pickup" | "ride" | "return" | "incidents";
+
+// Stable mapping of FAQ item index (in the dict array) to category id.
+// Order of items in the dict files is the same across locales, so a
+// position-based map lets us regroup without touching the existing
+// localised question/answer copy.
+const ITEM_CATEGORIES: CategoryId[] = [
+  "incidents", // 0 · breakdown service
+  "pickup",    // 1 · bike condition at handover
+  "incidents", // 2 · insurance
+  "booking",   // 3 · cancellation policy
+  "return",    // 4 · return time + location
+  "incidents", // 5 · accident liability
+  "incidents", // 6 · damage handling
+  "incidents", // 7 · lost key
+  "booking",   // 8 · how to reserve
+  "ride",      // 9 · phone holders
+  "ride",      // 10 · fuel handling
+  "ride",      // 11 · navigation without holder
+  "pickup",    // 12 · experience check
+];
+
+// Render order — controls which group shows up first on the page.
+const CATEGORY_ORDER: CategoryId[] = [
+  "booking",
+  "pickup",
+  "ride",
+  "return",
+  "incidents",
+];
+
 export default async function FaqPage({
   params,
 }: {
@@ -17,6 +48,16 @@ export default async function FaqPage({
   const dict = await getDictionary(lang as Locale);
   const t = dict.faq;
   const items = dict.faqItems;
+  const categoryLabels = t.categories;
+
+  // Bucket the flat items array by category, keeping each item's
+  // position so the order within a group matches the dict order.
+  const grouped = CATEGORY_ORDER.map((catId) => ({
+    id: catId,
+    label: categoryLabels[catId],
+    items: items.filter((_, i) => ITEM_CATEGORIES[i] === catId),
+  })).filter((g) => g.items.length > 0);
+
   return (
     <>
       <Navbar lang={lang as Locale} t={dict.nav} />
@@ -32,9 +73,18 @@ export default async function FaqPage({
             </h1>
           </div>
 
-          <div className="bg-white border border-ink/8 px-6 mb-10">
-            {items.map((item) => (
-              <Accordion key={item.question} {...item} />
+          <div className="space-y-10 mb-10">
+            {grouped.map((group) => (
+              <section key={group.id}>
+                <h2 className="font-barlow font-black uppercase text-xl tracking-[0.05em] text-ink mb-3">
+                  {group.label}
+                </h2>
+                <div className="bg-white border border-ink/8 px-6">
+                  {group.items.map((item) => (
+                    <Accordion key={item.question} {...item} />
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
 

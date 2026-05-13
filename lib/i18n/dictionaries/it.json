@@ -109,7 +109,14 @@
   },
   "faq": {
     "eyebrow": "Domande?",
-    "title": "FAQ"
+    "title": "FAQ",
+    "categories": {
+      "booking": "Prenotazione e pagamento",
+      "pickup": "Al ritiro",
+      "ride": "Durante il noleggio",
+      "return": "Restituzione",
+      "incidents": "Danni e assistenza"
+    }
   },
   "terms": {
     "eyebrow": "Termini di prenotazione",

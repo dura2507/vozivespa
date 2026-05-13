@@ -109,7 +109,14 @@
   },
   "faq": {
     "eyebrow": "Pitanja?",
-    "title": "Česta pitanja"
+    "title": "Česta pitanja",
+    "categories": {
+      "booking": "Rezervacija i plaćanje",
+      "pickup": "Preuzimanje",
+      "ride": "Tijekom najma",
+      "return": "Povrat",
+      "incidents": "Šteta i pomoć na cesti"
+    }
   },
   "terms": {
     "eyebrow": "Uvjeti rezervacije",

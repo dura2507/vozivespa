@@ -109,7 +109,14 @@
   },
   "faq": {
     "eyebrow": "Questions?",
-    "title": "FAQ"
+    "title": "FAQ",
+    "categories": {
+      "booking": "Booking & Payment",
+      "pickup": "At Pickup",
+      "ride": "During the Ride",
+      "return": "Return",
+      "incidents": "Damage & Roadside"
+    }
   },
   "terms": {
     "eyebrow": "Reservation terms",

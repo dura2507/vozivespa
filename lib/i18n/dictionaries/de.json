@@ -109,7 +109,14 @@
   },
   "faq": {
     "eyebrow": "Fragen?",
-    "title": "FAQ"
+    "title": "FAQ",
+    "categories": {
+      "booking": "Buchung & Bezahlung",
+      "pickup": "Bei der Abholung",
+      "ride": "Während der Fahrt",
+      "return": "Rückgabe",
+      "incidents": "Schaden & Pannenhilfe"
+    }
   },
   "terms": {
     "eyebrow": "Buchungsbedingungen",
