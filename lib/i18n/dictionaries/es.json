@@ -344,7 +344,7 @@
       "copy": "Copiar",
       "copied": "Copiado!",
       "openInApp": "Abrir app",
-      "payWith": "Pagar con {method}",
+      "payWith": "Pulsa para pagar {amount}€ con {method}",
       "paymentNotes": {
         "paypal_ff": "Sin comisión. Usa la opción Friends & Family.",
         "paypal_company": "PayPal estándar. Se aplica una pequeña comisión.",
