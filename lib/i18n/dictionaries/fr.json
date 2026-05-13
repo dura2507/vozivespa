@@ -266,10 +266,11 @@
     "checkAvailability": "Vérifier les disponibilités",
     "specsSection": {
       "depositLabel": "Caution",
-      "depositText": "{deposit} par moto, restituée après la restitution si aucun dommage. Au retrait : espèces (sans frais), PayPal, Revolut ou Wise (des frais de transaction peuvent s'appliquer). Pas de carte bancaire ni de crédit.",
+      "depositText": "{deposit} par moto, restituée après la restitution si aucun dommage. Au retrait : espèces (sans frais), PayPal, Revolut ou Wise (des frais de transaction peuvent s'appliquer). Pas de carte de débit ni de carte de crédit.",
       "noPhoneHoldersLabel": "Pas de supports de téléphone",
       "noPhoneHoldersText": "Nous ne proposons ni n'installons de supports de téléphone, et vous ne pouvez pas apporter le vôtre.",
       "seasonLabel": "Saison",
+      "seasonValue": "D'avril à octobre",
       "seasonText": "{season}. Nous louons uniquement sur cette période.",
       "fuelLabel": "Carburant",
       "fuelText": "Remise avec le plein. Merci de la restituer également avec le plein."

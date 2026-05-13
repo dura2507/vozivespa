@@ -270,6 +270,7 @@
       "noPhoneHoldersLabel": "No phone holders",
       "noPhoneHoldersText": "We don't offer or fit phone holders, and you can't bring your own.",
       "seasonLabel": "Season",
+      "seasonValue": "April to October",
       "seasonText": "{season}. We rent only in this window.",
       "fuelLabel": "Fuel",
       "fuelText": "Handed over with a full tank. Return it with a full tank too."

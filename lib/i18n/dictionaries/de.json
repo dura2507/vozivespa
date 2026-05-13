@@ -64,7 +64,7 @@
     },
     "howItWorks": {
       "eyebrow": "Einfacher Ablauf",
-      "title": "So funktionierts",
+      "title": "So funktioniert's",
       "step1": { "title": "Wähle dein Bike", "text": "Such dir deinen Roller oder dein Motorrad aus, vom 50ccm Stadtflitzer bis zur 390ccm Maschine für die Landstraße." },
       "step2": { "title": "Termin anfragen", "text": "Schau im Kalender nach freien Tagen und schick uns eine kurze Anfrage. Abholung in unserem Shop in Zadar." },
       "step3": { "title": "Wir bestätigen, du fährst los", "text": "Du bekommst innerhalb weniger Stunden eine Bestätigung per Email. Zahl die 20% Anzahlung, hol dein Bike ab und los gehts." },
@@ -270,6 +270,7 @@
       "noPhoneHoldersLabel": "Keine Handyhalter",
       "noPhoneHoldersText": "Wir bieten keine Handyhalter an und du darfst auch keinen eigenen mitbringen.",
       "seasonLabel": "Saison",
+      "seasonValue": "April bis Oktober",
       "seasonText": "{season}. Wir vermieten nur in diesem Zeitraum.",
       "fuelLabel": "Tank",
       "fuelText": "Übergabe mit vollem Tank. Bitte auch mit vollem Tank zurückgeben."
@@ -403,7 +404,7 @@
       "answer": "Die Basisversicherung deckt Diebstahl des Bikes und Motorschäden ab. Unfälle, Kratzer, Schäden und platte Reifen liegen in der Verantwortung des Mieters. Verursacht ein Dritter einen Unfall, musst du die Polizei rufen und einen offiziellen Bericht einholen. Der Verursacher haftet."
     },
     {
-      "question": "Wie lautet eure Stornierungsbedingungen?",
+      "question": "Wie lauten eure Stornierungsbedingungen?",
       "answer": "Alle Buchungen sind nicht erstattungsfähig. Die 20% Anzahlung sichert deine Termine und wird im Falle einer Stornierung nicht zurückerstattet. Wird ein Bike durch einen Unfall oder Schaden eines anderen Kunden nicht verfügbar, stornieren wir und erstatten den vollen Betrag."
     },
     {

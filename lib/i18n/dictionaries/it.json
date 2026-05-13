@@ -270,6 +270,7 @@
       "noPhoneHoldersLabel": "Niente supporti per telefono",
       "noPhoneHoldersText": "Non offriamo né installiamo supporti per telefono e non puoi nemmeno portare il tuo.",
       "seasonLabel": "Stagione",
+      "seasonValue": "Da aprile a ottobre",
       "seasonText": "{season}. Noleggiamo solo in questo periodo.",
       "fuelLabel": "Carburante",
       "fuelText": "Consegnata con il pieno. Restituiscila con il pieno."
@@ -277,11 +278,11 @@
     "tierLabel": {
       "day": "Tariffa giornaliera",
       "weekend": "Tariffa weekend (Ven-Dom)",
-      "weekend-mix": "Weekend piu giorni",
+      "weekend-mix": "Weekend più giorni",
       "week": "Tariffa settimanale",
-      "week-mix": "Settimana piu giorni",
+      "week-mix": "Settimana più giorni",
       "month": "Tariffa mensile",
-      "month-mix": "Mese piu giorni"
+      "month-mix": "Mese più giorni"
     },
     "calendar": {
       "title": "Prenota questa moto",
@@ -374,7 +375,7 @@
       "tagline": "Tuttofare per città e costa."
     },
     "bike-125-a": {
-      "description": "Sportiva e agile, fatta per chi vuole pedalare attivo.",
+      "description": "Sportiva e agile, fatta per chi vuole guidare in modo attivo.",
       "longDescription": "Feeling supermoto con 125cc. Leggera, agile e ideale per chi ama le curve e le strade costiere.",
       "tagline": "Sportiva. Consumi più alti per stile di guida."
     },
@@ -386,7 +387,7 @@
     "bike-390": {
       "description": "Potenza A2 per la costa. Leggera, agile, fatta per città, campagna e curve.",
       "longDescription": "Moto premium omologata A2. Leggera, agile e perfetta per città, campagna e curve, sia che la voglia per un giorno o per un mese intero.",
-      "tagline": "Potente e premium. Scelta top per riders esperti."
+      "tagline": "Potente e premium. Scelta top per piloti esperti."
     }
   },
   "faqItems": [

@@ -643,7 +643,7 @@ export default function BikeDetail({
               </div>
               <p className="text-white/50 text-xs">
                 {tF.pricing.depositLine.replace("{deposit}", "").replace("{season}", "").replace("· ·", "·")}
-                <span className="text-white">{BRAND.deposit}</span> · <span className="text-white">{bike.season}</span>
+                <span className="text-white">{BRAND.deposit}</span> · <span className="text-white">{tF.specsSection.seasonValue}</span>
               </p>
             </div>
           </section>
@@ -674,7 +674,7 @@ export default function BikeDetail({
               </svg>
               <div>
                 <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted mb-1">{tF.specsSection.seasonLabel}</p>
-                <p className="text-ink text-sm leading-snug">{tF.specsSection.seasonText.replace("{season}", bike.season)}</p>
+                <p className="text-ink text-sm leading-snug">{tF.specsSection.seasonText.replace("{season}", tF.specsSection.seasonValue)}</p>
               </div>
             </div>
             <div className="bg-off-white px-5 py-5 flex items-start gap-3">

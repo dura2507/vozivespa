@@ -279,6 +279,7 @@
       "noPhoneHoldersLabel": "Bez držača za mobitel",
       "noPhoneHoldersText": "Ne nudimo niti ugrađujemo držače za mobitel, a ne možeš donijeti ni svoj.",
       "seasonLabel": "Sezona",
+      "seasonValue": "Od travnja do listopada",
       "seasonText": "{season}. Iznajmljujemo samo u ovom razdoblju.",
       "fuelLabel": "Gorivo",
       "fuelText": "Predaje se s punim spremnikom. Vrati ga također s punim spremnikom."
@@ -478,7 +479,7 @@
     },
     "bookingDeclined": {
       "subject": "Ažuriranje rezervacije, {bike}",
-      "preheader": "Ažuriranje tvoje rezervacije {bike}, ovi datumi nisu prošli.",
+      "preheader": "Ažuriranje tvoje rezervacije {bike}, ovi termini nisu odgovarali.",
       "headline": "Ažuriranje rezervacije",
       "greeting": "Bok {name},",
       "intro": "nažalost ne možemo ti dati {bike} za ove datume. Žao nam je.",
@@ -489,7 +490,7 @@
       "preheader": "Primili smo tvoju poruku, javljamo se uskoro.",
       "headline": "Poruka primljena",
       "greeting": "Bok {name},",
-      "intro": "hvala što si nam pisao. Javljamo se što prije.",
+      "intro": "hvala na poruci. Javljamo se što prije.",
       "yourMessage": "Tvoja poruka:",
       "signoff": "Vidimo se u Zadru."
     },

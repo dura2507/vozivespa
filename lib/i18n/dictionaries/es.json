@@ -81,7 +81,7 @@
       "seeAll": "Ver todas las fotos"
     },
     "cta": {
-      "eyebrow": "Listo para rodar?",
+      "eyebrow": "¿Listo para rodar?",
       "headline1": "Reserva tu",
       "headline2": "moto hoy",
       "ctaBtn": "Ver disponibilidad"
@@ -108,7 +108,7 @@
     }
   },
   "faq": {
-    "eyebrow": "Preguntas?",
+    "eyebrow": "¿Preguntas?",
     "title": "FAQ",
     "categories": {
       "booking": "Reserva y pago",
@@ -122,7 +122,7 @@
     "eyebrow": "Términos de reserva",
     "title": "Términos y condiciones",
     "intro": "Términos para el alquiler de scooters y motos. Al reservar con {legal} aceptas las siguientes reglas.",
-    "questionsLine": "Dudas? Escríbenos a",
+    "questionsLine": "¿Dudas? Escríbenos a",
     "questionsTail": "o por WhatsApp desde la página de contacto.",
     "sections": [
       {
@@ -270,6 +270,7 @@
       "noPhoneHoldersLabel": "Sin soportes de móvil",
       "noPhoneHoldersText": "No ofrecemos ni instalamos soportes de móvil y tampoco puedes traer el tuyo.",
       "seasonLabel": "Temporada",
+      "seasonValue": "Abril a octubre",
       "seasonText": "{season}. Solo alquilamos durante este periodo.",
       "fuelLabel": "Combustible",
       "fuelText": "Se entrega con depósito lleno. Devuélvela también con depósito lleno."
@@ -277,11 +278,11 @@
     "tierLabel": {
       "day": "Tarifa diaria",
       "weekend": "Tarifa fin de semana (Vi-Do)",
-      "weekend-mix": "Fin de semana mas dias",
+      "weekend-mix": "Fin de semana más días",
       "week": "Tarifa semanal",
-      "week-mix": "Semana mas dias",
+      "week-mix": "Semana más días",
       "month": "Tarifa mensual",
-      "month-mix": "Mes mas dias"
+      "month-mix": "Mes más días"
     },
     "calendar": {
       "title": "Reservar esta moto",
@@ -391,55 +392,55 @@
   },
   "faqItems": [
     {
-      "question": "Qué incluye el servicio de asistencia?",
+      "question": "¿Qué incluye el servicio de asistencia?",
       "answer": "Hasta 20 km: gratis (costes adicionales por accidente o pérdida de llaves). Más de 20 km: 50€. Islas: Preko 150€, Dugi Otok 500€. Pérdida de llave: 50€. La asistencia se aplica si no puedes volver a nuestra dirección por accidente o pérdida de llaves. En caso de avería de motor cubrimos todos los costes."
     },
     {
-      "question": "En qué estado se entrega la moto?",
+      "question": "¿En qué estado se entrega la moto?",
       "answer": "Todas las motos y scooters se entregan en perfecto estado de funcionamiento. Pedimos a los clientes inspeccionar la moto, hacer fotos y vídeos claros en la recogida documentando cualquier arañazo o daño existente, y devolverla en el mismo estado. Estas grabaciones son prueba oficial en caso de disputa."
     },
     {
-      "question": "Qué seguro está incluido?",
+      "question": "¿Qué seguro está incluido?",
       "answer": "El seguro básico cubre robo de la moto y daños al motor. Accidentes, arañazos, daños y pinchazos son responsabilidad del cliente. Si un tercero causa un accidente, debes llamar a la policía y obtener un parte oficial. El responsable paga."
     },
     {
-      "question": "Cuál es la política de cancelación?",
+      "question": "¿Cuál es la política de cancelación?",
       "answer": "Todas las reservas no son reembolsables. El 20% de reserva asegura tus fechas y no se devuelve en caso de cancelación. Si una moto queda no disponible por accidente o daño causado por otro cliente, cancelamos y devolvemos el importe completo."
     },
     {
-      "question": "Cuándo y dónde devuelvo la moto?",
+      "question": "¿Cuándo y dónde devuelvo la moto?",
       "answer": "A la hora y lugar acordados. Damos 15 minutos de cortesía. Retrasos mayores conllevan costes extra. Devolución en nuestra dirección: Velebitska Ulica 2, 23000 Zadar."
     },
     {
-      "question": "Quién es responsable de accidentes o lesiones?",
+      "question": "¿Quién es responsable de accidentes o lesiones?",
       "answer": "El cliente asume la responsabilidad total por todos los accidentes, daños o lesiones que ocurran durante el alquiler."
     },
     {
-      "question": "Qué pasa si la moto se daña?",
+      "question": "¿Qué pasa si la moto se daña?",
       "answer": "El depósito cubre los primeros costes de reparación. Llevamos la moto a un taller local para evaluación y reparación, el cliente paga el coste total según la factura del taller. Si las reparaciones superan el depósito, el cliente paga la diferencia. Siempre proporcionamos copia de la factura para mayor transparencia."
     },
     {
-      "question": "Qué pasa si pierdo la llave?",
+      "question": "¿Qué pasa si pierdo la llave?",
       "answer": "Se entrega una llave de repuesto por 50€ más la asistencia de carretera correspondiente según tu ubicación."
     },
     {
-      "question": "Cómo hago una reserva?",
+      "question": "¿Cómo hago una reserva?",
       "answer": "Confirma siempre la disponibilidad con nosotros primero. Puede cambiar rápido. El 20% de reserva asegura tus fechas. Pago por PayPal, transferencia, Revolut o efectivo a la llegada. Tras el pago envíanos un screenshot de la transacción. Si llegas más de 1 hora tarde sin avisar, la reserva se cancela automáticamente. No aceptamos tarjetas de crédito."
     },
     {
-      "question": "Ofrecéis soportes de móvil?",
+      "question": "¿Ofrecéis soportes de móvil?",
       "answer": "No. No ofrecemos ni instalamos soportes de móvil y tampoco puedes traer el tuyo. Ninguna de nuestras motos tiene uno. Planea tu ruta antes de salir."
     },
     {
-      "question": "Cómo funciona el combustible, depósito lleno o vacío?",
+      "question": "¿Cómo funciona el combustible, depósito lleno o vacío?",
       "answer": "Cada moto se entrega con depósito lleno. Devuélvela también con depósito lleno. Si la devuelves sin llenar, te cobramos el combustible que falte más una tasa de repostaje."
     },
     {
-      "question": "Cómo navego sin soporte de móvil?",
+      "question": "¿Cómo navego sin soporte de móvil?",
       "answer": "Dos opciones prácticas: viaja con un pasajero que se encargue de las indicaciones, o usa un kit de navegación bluetooth in-ear para indicaciones por voz sin apartar la vista de la carretera. En cualquier caso, planea la ruta antes de la recogida."
     },
     {
-      "question": "Qué pasa si decidís que no tengo suficiente experiencia?",
+      "question": "¿Qué pasa si decidís que no tengo suficiente experiencia?",
       "answer": "Conducir requiere experiencia previa. Si en la recogida determinamos que no tienes suficiente experiencia para conducir la moto de forma segura, nos reservamos el derecho a rechazar el alquiler. En ese caso la reserva no es reembolsable, sé honesto sobre tu experiencia al reservar."
     }
   ],
@@ -455,7 +456,7 @@
       "headline": "Solicitud recibida",
       "greeting": "Hola {name},",
       "intro": "gracias por tu solicitud. La revisaremos y confirmaremos por email en breve, normalmente en pocas horas.",
-      "urgentLine": "Mientras tanto, algo urgente?",
+      "urgentLine": "Mientras tanto, ¿algo urgente?",
       "signoff": "Hasta pronto en Zadar."
     },
     "bookingConfirmed": {
@@ -470,9 +471,9 @@
       "bringLicence": "Carnet de moto válido, sin él no podemos entregar",
       "bringDeposit": "{deposit} de depósito (efectivo a la llegada, se devuelve tras la entrega si no hay daños)",
       "bringTank": "La moto llega con el depósito lleno, devuélvela también llena",
-      "adjustHeader": "Necesitas ajustar algo?",
+      "adjustHeader": "¿Necesitas ajustar algo?",
       "adjustLine": "Recogida prevista para {from} a las {pickupTime}, devolución {to} a las {returnTime}. Escríbenos si cambia algo:",
-      "cancelLine": "Cambiaron los planes?",
+      "cancelLine": "¿Cambiaron los planes?",
       "cancelLink": "Cancelar reserva",
       "cancelTail": ", las fechas vuelven a estar libres al instante."
     },

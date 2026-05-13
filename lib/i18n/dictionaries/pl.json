@@ -82,8 +82,8 @@
     },
     "cta": {
       "eyebrow": "Gotów na trasę?",
-      "headline1": "Book Your",
-      "headline2": "Bike Today",
+      "headline1": "Zarezerwuj swój",
+      "headline2": "motocykl już dziś",
       "ctaBtn": "Sprawdź dostępność"
     }
   },
@@ -204,7 +204,7 @@
       "messagePlaceholder": "Twoje pytanie, plany, cokolwiek innego...",
       "send": "Wyślij wiadomość",
       "sending": "Wysyłanie...",
-      "sent": "Wiadomość wysłana. Odpowiemy w krótce.",
+      "sent": "Wiadomość wysłana. Odpowiemy wkrótce.",
       "error": "Nie udało się wysłać. Spróbuj WhatsApp lub zadzwoń."
     },
     "openHours": "Godziny otwarcia",
@@ -270,6 +270,7 @@
       "noPhoneHoldersLabel": "Brak uchwytów na telefon",
       "noPhoneHoldersText": "Nie oferujemy ani nie montujemy uchwytów na telefon, nie można też przywieźć własnego.",
       "seasonLabel": "Sezon",
+      "seasonValue": "Od kwietnia do października",
       "seasonText": "{season}. Wynajmujemy tylko w tym okresie.",
       "fuelLabel": "Paliwo",
       "fuelText": "Wydawany z pełnym bakiem. Zwróć go również z pełnym bakiem."
