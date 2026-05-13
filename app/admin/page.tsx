@@ -54,6 +54,7 @@ function paymentMethodLabel(id: EnrichedBooking["payment_method"]): string {
       paypal_ff: "PayPal F&F",
       paypal_company: "PayPal Co.",
       bank: "Bank Transfer",
+      revolut: "Revolut",
     } as const
   )[id];
 }

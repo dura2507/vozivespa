@@ -95,7 +95,7 @@ export async function POST(request: Request) {
     }
     return null;
   })();
-  const PAYMENT_METHODS = ["paypal_ff", "paypal_company", "bank"] as const;
+  const PAYMENT_METHODS = ["paypal_ff", "paypal_company", "bank", "revolut"] as const;
   const paymentMethod =
     typeof body.paymentMethod === "string" &&
     (PAYMENT_METHODS as readonly string[]).includes(body.paymentMethod)

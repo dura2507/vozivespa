@@ -107,6 +107,7 @@ function paymentLabel(id: BookingRow["payment_method"]): string {
       paypal_ff: "PayPal · Friends & Family",
       paypal_company: "PayPal · Company",
       bank: "Bank Transfer (SEPA)",
+      revolut: "Revolut",
     } as const
   )[id];
 }

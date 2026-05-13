@@ -30,7 +30,7 @@ export type BookingRow = {
   pickup_time: string; // HH:MM:SS (Postgres time)
   return_time: string;
   total_price_cents: number | null;
-  payment_method: "paypal_ff" | "paypal_company" | "bank" | null;
+  payment_method: "paypal_ff" | "paypal_company" | "bank" | "revolut" | null;
   // Path inside the `booking-receipts` Storage bucket. Owner sees a
   // signed URL in Telegram + email, never exposed to the public.
   deposit_screenshot_path: string | null;

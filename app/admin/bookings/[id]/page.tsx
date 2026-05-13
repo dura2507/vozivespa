@@ -31,6 +31,7 @@ const PAYMENT_LABEL: Record<string, string> = {
   paypal_ff: "PayPal · Friends & Family",
   paypal_company: "PayPal · Company",
   bank: "Bank Transfer (SEPA)",
+  revolut: "Revolut",
 };
 
 export default async function AdminBookingDetail({

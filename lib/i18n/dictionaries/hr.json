@@ -343,6 +343,7 @@
       "fileTooLarge": "Datoteka prevelika. Maks. 4 MB.",
       "copy": "Kopiraj",
       "copied": "Kopirano!",
+      "openInApp": "Otvori aplikaciju",
       "recommended": "Preporučeno"
     },
     "success": {

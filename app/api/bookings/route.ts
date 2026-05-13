@@ -15,7 +15,7 @@ import {
 export const dynamic = "force-dynamic";
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-const PAYMENT_METHODS = ["paypal_ff", "paypal_company", "bank"] as const;
+const PAYMENT_METHODS = ["paypal_ff", "paypal_company", "bank", "revolut"] as const;
 type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 const LICENCES = ["A", "A1", "A2", "AM", "B"] as const;

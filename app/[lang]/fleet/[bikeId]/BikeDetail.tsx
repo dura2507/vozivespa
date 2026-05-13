@@ -9,6 +9,7 @@ import { format, addDays, differenceInCalendarDays, isSameDay } from "date-fns";
 import { enUS, de, es, it, hr } from "date-fns/locale";
 import type { Locale as DateFnsLocale } from "date-fns";
 import "react-day-picker/style.css";
+import { QRCodeSVG } from "qrcode.react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Flag, type FlagCode } from "@/components/Flag";
@@ -33,7 +34,7 @@ type CustomerForm = {
   notes: string;
 };
 
-type PaymentMethodId = "paypal_ff" | "paypal_company" | "bank";
+type PaymentMethodId = "paypal_ff" | "paypal_company" | "bank" | "revolut";
 
 const LICENCE_OPTIONS = [
   { value: "AM", label: "AM (moped / 50cc)" },
@@ -1095,7 +1096,27 @@ export default function BikeDetail({
                                   )}
                                 </div>
                                 {selected && (
-                                  <div className="mt-2 space-y-2">
+                                  <div className="mt-2 space-y-3">
+                                    {p.link && (
+                                      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                                        <a
+                                          href={p.link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          onClick={(e) => e.stopPropagation()}
+                                          className="inline-flex items-center justify-center gap-2 bg-ink text-white text-[11px] font-bold tracking-widest uppercase px-4 py-2.5 hover:bg-red transition-colors"
+                                        >
+                                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                          </svg>
+                                          {tF.reservation.openInApp ?? "Open app"}
+                                        </a>
+                                        <div className="bg-white border border-ink/10 p-2 inline-block">
+                                          <QRCodeSVG value={p.link} size={96} level="M" />
+                                        </div>
+                                      </div>
+                                    )}
+                                    {p.value && (
                                     <div>
                                       {p.valueLabel && (
                                         <p className="text-[10px] tracking-[0.15em] uppercase text-muted mb-0.5">
@@ -1110,7 +1131,7 @@ export default function BikeDetail({
                                           type="button"
                                           onClick={(e) => {
                                             e.preventDefault();
-                                            copyValue(p.valueCopy ?? p.value, `${p.id}-value`);
+                                            copyValue(p.valueCopy ?? p.value!, `${p.id}-value`);
                                           }}
                                           className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red transition-colors px-2 py-1 border border-ink/15 hover:border-red"
                                         >
@@ -1118,6 +1139,7 @@ export default function BikeDetail({
                                         </button>
                                       </div>
                                     </div>
+                                    )}
                                     {p.subValue && (
                                       <div>
                                         {p.subValueLabel && (

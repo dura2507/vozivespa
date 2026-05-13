@@ -382,10 +382,11 @@ export type Contact = {
 };
 
 export type PaymentMethod = {
-  id: "paypal_ff" | "paypal_company" | "bank";
+  id: "paypal_ff" | "paypal_company" | "bank" | "revolut";
   label: string;
-  // Headline value (email or IBAN). Shown formatted for humans.
-  value: string;
+  // Headline value (email, IBAN, link). Optional for link-only
+  // methods like Revolut where the user just taps the button.
+  value?: string;
   // Optional override for what gets put on the clipboard , e.g.
   // IBAN with spaces displayed but bare digits copied so banking
   // apps don't choke.
@@ -399,6 +400,10 @@ export type PaymentMethod = {
   note?: string;
   // Recommended option appears first and is highlighted.
   recommended?: boolean;
+  // Deep-link to open in the payment app (revolut.me/...). When set,
+  // the option shows an "Open app" button + QR code for desktop
+  // bookers to scan with their phone.
+  link?: string;
 };
 
 export const BRAND = {
@@ -436,6 +441,12 @@ export const BRAND = {
       valueLabel: "Email",
       value: "Ktoms_braap284@freenet.de",
       note: "Standard PayPal , small fee applies.",
+    },
+    {
+      id: "revolut",
+      label: "Revolut",
+      link: "https://revolut.me/prisciuqys",
+      note: "Tap the button on mobile or scan the QR with your Revolut app.",
     },
     {
       id: "bank",

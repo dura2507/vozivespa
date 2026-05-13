@@ -343,6 +343,7 @@
       "fileTooLarge": "Archivo demasiado grande. Máx 4 MB.",
       "copy": "Copiar",
       "copied": "Copiado!",
+      "openInApp": "Abrir app",
       "recommended": "Recomendado"
     },
     "success": {

@@ -358,6 +358,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
                     <option value="">—</option>
                     <option value="paypal_ff">PayPal · Friends & Family</option>
                     <option value="paypal_company">PayPal · Company</option>
+                    <option value="revolut">Revolut</option>
                     <option value="bank">Bank Transfer</option>
                   </select>
                 </label>
