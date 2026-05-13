@@ -436,17 +436,17 @@ export const BRAND = {
       recommended: true,
     },
     {
+      id: "revolut",
+      label: "Revolut",
+      link: "https://revolut.me/prisciuqys",
+      note: "Tap the button on mobile or scan the QR with your Revolut app.",
+    },
+    {
       id: "paypal_company",
       label: "PayPal · Company",
       valueLabel: "Email",
       value: "Ktoms_braap284@freenet.de",
       note: "Standard PayPal , small fee applies.",
-    },
-    {
-      id: "revolut",
-      label: "Revolut",
-      link: "https://revolut.me/prisciuqys",
-      note: "Tap the button on mobile or scan the QR with your Revolut app.",
     },
     {
       id: "bank",
