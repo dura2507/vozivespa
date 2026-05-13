@@ -709,6 +709,11 @@ export default function BikeDetail({
                     onSelect={setRange}
                     weekStartsOn={1}
                     numberOfMonths={isMobile ? 1 : 2}
+                    // Cap navigation: no scrolling into past months, no
+                    // jumping past next year's season either. Anyone
+                    // booking >18 months ahead should use WhatsApp.
+                    startMonth={new Date()}
+                    endMonth={new Date(new Date().getFullYear() + 1, 11, 1)}
                     disabled={[
                       { before: new Date() },
                       ...bookedFullDays,
