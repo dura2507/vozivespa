@@ -48,11 +48,23 @@ function isExempt(pathname: string): boolean {
 // German browser gets German — Accept-Language always wins when it
 // matches a supported locale, geo only fills the gap.
 const COUNTRY_TO_LOCALE: Record<string, string> = {
+  // German-speaking
   DE: "de", AT: "de", CH: "de", LI: "de",
+  // Italian-speaking
   IT: "it", SM: "it", VA: "it",
+  // Spanish-speaking — Spain + Latin America (browser Accept-Language
+  // usually catches these first, but a Colombian with an English
+  // browser should still land on Spanish, not English).
   ES: "es",
+  MX: "es", AR: "es", CO: "es", CL: "es", PE: "es", VE: "es",
+  EC: "es", BO: "es", UY: "es", PY: "es", DO: "es", CU: "es",
+  GT: "es", HN: "es", NI: "es", CR: "es", PA: "es", SV: "es",
+  PR: "es",
+  // Croatian + neighbouring South-Slavic
   HR: "hr", BA: "hr", SI: "hr", ME: "hr", RS: "hr", MK: "hr",
+  // Polish
   PL: "pl",
+  // French-speaking
   FR: "fr", BE: "fr", LU: "fr", MC: "fr",
 };
 
