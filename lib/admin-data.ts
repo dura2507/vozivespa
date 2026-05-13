@@ -32,9 +32,48 @@ export type FleetEntry = {
   upcomingCount: number;
 };
 
+// All booking times in the DB are wall-clock Zagreb time. Vercel
+// runs in UTC, so `new Date("2026-05-13T18:00:00")` would interpret
+// 18:00 as UTC and put the pickup 2h later than the owner meant.
+// We probe the actual Europe/Zagreb offset for that exact wallclock
+// moment via Intl so DST is handled automatically (CET in winter,
+// CEST in summer).
+const SHOP_TZ = "Europe/Zagreb";
+const tzFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: SHOP_TZ,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: false,
+});
+
 function toMs(date: string, time: string | null | undefined): number {
   const t = time ? (time.length === 5 ? `${time}:00` : time) : "00:00:00";
-  return new Date(`${date}T${t}`).getTime();
+  const [y, m, d] = date.split("-").map(Number);
+  const [hh, mm, ss] = t.split(":").map(Number);
+  // Treat the wallclock as UTC first; then ask "what would Zagreb
+  // call that UTC instant?" and use the gap as the timezone offset.
+  const asUtcMs = Date.UTC(y, m - 1, d, hh, mm, ss);
+  const parts = tzFormatter.formatToParts(new Date(asUtcMs)).reduce(
+    (acc, p) => {
+      if (p.type !== "literal") acc[p.type] = p.value;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+  const zagrebUtcMs = Date.UTC(
+    Number(parts.year),
+    Number(parts.month) - 1,
+    Number(parts.day),
+    Number(parts.hour === "24" ? "0" : parts.hour),
+    Number(parts.minute),
+    Number(parts.second),
+  );
+  const offsetMs = zagrebUtcMs - asUtcMs;
+  return asUtcMs - offsetMs;
 }
 
 // Admin uses the compact label so fleet cards and booking lists fit
