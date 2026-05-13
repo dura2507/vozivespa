@@ -121,7 +121,7 @@ export default async function HomePage({
         </div>
 
         <div className="absolute bottom-8 right-8 md:right-12 hidden md:flex gap-12 text-right">
-          {[[String(CATEGORIES.length), t.hero.statBikes], ["50+", t.hero.statReviews], ["∞", t.hero.statKm]].map(
+          {[[String(Object.values(unitCounts).reduce((s, n) => s + n, 0)), t.hero.statBikes], ["50+", t.hero.statReviews], ["∞", t.hero.statKm]].map(
             ([num, label]) => (
               <div key={label}>
                 <p className="font-barlow font-black text-4xl text-white leading-none">{num}</p>
