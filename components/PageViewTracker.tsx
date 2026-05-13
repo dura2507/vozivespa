@@ -16,7 +16,20 @@ export function PageViewTracker() {
     if (lastSent.current === pathname) return;
     lastSent.current = pathname;
 
-    const referrer = document.referrer || null;
+    // Only treat the referrer as a referrer when it comes from a
+    // different host. Internal nav (home → fleet → contact) would
+    // otherwise log our own domain as a referrer source.
+    let referrer: string | null = null;
+    if (document.referrer) {
+      try {
+        const refHost = new URL(document.referrer).hostname;
+        if (refHost && refHost !== window.location.hostname) {
+          referrer = document.referrer;
+        }
+      } catch {
+        // Malformed referrer, just ignore it.
+      }
+    }
     const locale = pathname.split("/")[1] || null;
 
     fetch("/api/track", {

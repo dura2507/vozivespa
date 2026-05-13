@@ -51,13 +51,31 @@ function normalisePath(p: string): string {
   return noQuery.length > 60 ? `${noQuery.slice(0, 60)}…` : noQuery;
 }
 
+// Our own hostnames — anything coming from these counts as internal
+// navigation, not a referrer. Catches existing rows in the DB that
+// were logged before the client tracker filtered same-origin
+// referrers out.
+const INTERNAL_HOSTS = new Set(
+  [
+    "rentamotozadar.com",
+    "www.rentamotozadar.com",
+    "vozivespa.vercel.app",
+    "vozivespa.com",
+    "www.vozivespa.com",
+    ...(process.env.SITE_HOSTNAMES?.split(",").map((h) => h.trim().toLowerCase()) ??
+      []),
+  ].filter(Boolean),
+);
+
 // Pull the host out of a referrer URL. Falls back to the raw string
-// when it's not a URL. "" / "/" stay as "direct".
+// when it's not a URL. "" / "/" / our own hosts collapse to "direct".
 function normaliseReferrer(r: string | null): string {
   if (!r || r === "" || r === "/") return "(direct)";
   try {
     const u = new URL(r);
-    return u.hostname;
+    const host = u.hostname.toLowerCase();
+    if (INTERNAL_HOSTS.has(host)) return "(direct)";
+    return host;
   } catch {
     return r.slice(0, 60);
   }
