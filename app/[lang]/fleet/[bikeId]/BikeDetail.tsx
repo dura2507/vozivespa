@@ -179,14 +179,22 @@ export default function BikeDetail({
     bookedMiddleRanges.push({ from: m.from, to: m.to });
   }
 
+  // Single click on the calendar leaves range.to undefined — DayPicker
+  // is waiting for a second click to complete the range. We treat
+  // "from set, to missing" as a same-day rental so the user can pick
+  // a single date, see the day-tier price, and continue. A second
+  // click on a later date still extends into a real range normally.
+  const effectiveRange =
+    range?.from && !range.to ? { from: range.from, to: range.from } : range;
+
   // Time-slot pickers count busy units at each candidate time and
   // reject slots only when every unit is busy (or in turnaround) at
   // that moment.
-  const pickupSlots = range?.from
-    ? validPickupSlots(range.from, bookings, totalUnits)
+  const pickupSlots = effectiveRange?.from
+    ? validPickupSlots(effectiveRange.from, bookings, totalUnits)
     : buildSlots();
-  const returnSlots = range?.to
-    ? validReturnSlots(range.to, bookings, totalUnits)
+  const returnSlots = effectiveRange?.to
+    ? validReturnSlots(effectiveRange.to, bookings, totalUnits)
     : buildSlots();
 
   // If the active selection got invalidated by a date change, snap to
@@ -203,8 +211,8 @@ export default function BikeDetail({
   }, [returnSlots, returnTime]);
 
   const priceResult =
-    range?.from && range?.to
-      ? calculatePrice(range.from, range.to, pickupTime, returnTime, bike.pricing)
+    effectiveRange?.from && effectiveRange?.to
+      ? calculatePrice(effectiveRange.from, effectiveRange.to, pickupTime, returnTime, bike.pricing)
       : null;
   const totalPrice = priceResult?.totalPrice ?? 0;
   const appliedTier = priceResult?.appliedTier ?? null;
@@ -223,7 +231,7 @@ export default function BikeDetail({
 
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!range?.from || !range?.to) return;
+    if (!effectiveRange?.from || !effectiveRange?.to) return;
     if (!receipt) {
       setReceiptError(tF.reservation.uploadError);
       return;
@@ -239,8 +247,8 @@ export default function BikeDetail({
       fd.set("email", form.email);
       fd.set("phone", form.phone);
       if (form.notes) fd.set("notes", form.notes);
-      fd.set("from", toIsoDate(range.from));
-      fd.set("to", toIsoDate(range.to));
+      fd.set("from", toIsoDate(effectiveRange.from));
+      fd.set("to", toIsoDate(effectiveRange.to));
       fd.set("pickupTime", pickupTime);
       fd.set("returnTime", returnTime);
       fd.set("paymentMethod", paymentMethod);
@@ -707,12 +715,12 @@ export default function BikeDetail({
                   />
                 </div>
 
-                {range?.from && range?.to && (
+                {effectiveRange?.from && effectiveRange?.to && (
                   <>
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <label className="block">
                         <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                          {tF.calendar.pickupTime} · {format(range.from, "EEE dd MMM", { locale: dateLocale })}
+                          {tF.calendar.pickupTime} · {format(effectiveRange.from, "EEE dd MMM", { locale: dateLocale })}
                         </span>
                         <select
                           value={pickupTime}
@@ -732,7 +740,7 @@ export default function BikeDetail({
                       </label>
                       <label className="block">
                         <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                          {tF.calendar.returnTime} · {format(range.to, "EEE dd MMM", { locale: dateLocale })}
+                          {tF.calendar.returnTime} · {format(effectiveRange.to, "EEE dd MMM", { locale: dateLocale })}
                         </span>
                         <select
                           value={returnTime}
@@ -758,11 +766,11 @@ export default function BikeDetail({
                     <div className="mt-4 bg-sand px-5 py-4 flex flex-wrap items-center justify-between gap-4">
                       <div className="text-sm text-ink">
                         <span className="font-semibold">
-                          {format(range.from, "dd MMM", { locale: dateLocale })} {pickupTime}
+                          {format(effectiveRange.from, "dd MMM", { locale: dateLocale })} {pickupTime}
                         </span>
                         {" → "}
                         <span className="font-semibold">
-                          {format(range.to, "dd MMM yyyy", { locale: dateLocale })} {returnTime}
+                          {format(effectiveRange.to, "dd MMM yyyy", { locale: dateLocale })} {returnTime}
                         </span>
                         {billableDays > 0 && (
                           <span className="text-muted ml-2">
@@ -789,7 +797,7 @@ export default function BikeDetail({
                 {bookingStep === "dates" && (
                   <div className="mt-5 flex justify-end">
                     <button
-                      disabled={!range?.from || !range?.to || totalPrice === 0}
+                      disabled={!effectiveRange?.from || !effectiveRange?.to || totalPrice === 0}
                       onClick={handleContinueToForm}
                       className="bg-red text-white font-bold text-xs tracking-widest uppercase px-8 py-4 hover:bg-red-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
@@ -825,13 +833,13 @@ export default function BikeDetail({
                   <div>
                     <p className="text-white/40 text-[10px] uppercase tracking-wider">{tF.success.summaryFrom}</p>
                     <p className="font-semibold mt-0.5">
-                      {range?.from ? `${format(range.from, "dd MMM yyyy", { locale: dateLocale })} · ${pickupTime}` : "-"}
+                      {effectiveRange?.from ? `${format(effectiveRange.from, "dd MMM yyyy", { locale: dateLocale })} · ${pickupTime}` : "-"}
                     </p>
                   </div>
                   <div>
                     <p className="text-white/40 text-[10px] uppercase tracking-wider">{tF.success.summaryTo}</p>
                     <p className="font-semibold mt-0.5">
-                      {range?.to ? `${format(range.to, "dd MMM yyyy", { locale: dateLocale })} · ${returnTime}` : "-"}
+                      {effectiveRange?.to ? `${format(effectiveRange.to, "dd MMM yyyy", { locale: dateLocale })} · ${returnTime}` : "-"}
                     </p>
                   </div>
                   <div className="ml-auto">
@@ -1184,15 +1192,15 @@ export default function BikeDetail({
 
                 <div className="bg-sand px-5 py-4 mb-10 text-left text-sm">
                   <p className="text-ink"><span className="text-muted">{tF.success.summaryBike}: </span>{bike.model}</p>
-                  {range?.from && range?.to && (
+                  {effectiveRange?.from && effectiveRange?.to && (
                     <>
                       <p className="text-ink">
                         <span className="text-muted">{tF.success.summaryFrom}: </span>
-                        {format(range.from, "dd MMM yyyy", { locale: dateLocale })} · {pickupTime}
+                        {format(effectiveRange.from, "dd MMM yyyy", { locale: dateLocale })} · {pickupTime}
                       </p>
                       <p className="text-ink">
                         <span className="text-muted">{tF.success.summaryTo}: </span>
-                        {format(range.to, "dd MMM yyyy", { locale: dateLocale })} · {returnTime}
+                        {format(effectiveRange.to, "dd MMM yyyy", { locale: dateLocale })} · {returnTime}
                       </p>
                     </>
                   )}
