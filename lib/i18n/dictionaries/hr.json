@@ -348,7 +348,7 @@
       "paymentNotes": {
         "paypal_ff": "Bez naknade. Koristi opciju Friends & Family.",
         "paypal_company": "Standardni PayPal. Primjenjuje se mala naknada.",
-        "revolut": "Klikni gumb na mobitelu ili skeniraj QR kod kamerom telefona.",
+        "revolut": "Klikni gumb za plaćanje ili skeniraj QR kod telefonom.",
         "bank": "Koristi instant transfer. Konverzija valute može imati naknadu."
       },
       "recommended": "Preporučeno"

@@ -348,7 +348,7 @@
       "paymentNotes": {
         "paypal_ff": "Sans frais. Utilisez l'option Friends & Family.",
         "paypal_company": "PayPal standard. De faibles frais s'appliquent.",
-        "revolut": "Touchez le bouton sur mobile ou scannez le QR avec l'appareil photo du téléphone.",
+        "revolut": "Cliquez sur le bouton pour payer ou scannez le QR avec votre téléphone.",
         "bank": "Utilisez un virement instantané. Une conversion de devises peut entraîner des frais."
       },
       "recommended": "Recommandé"

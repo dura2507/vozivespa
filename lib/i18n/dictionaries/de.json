@@ -348,7 +348,7 @@
       "paymentNotes": {
         "paypal_ff": "Keine Gebühr. Nutze die Friends & Family Option.",
         "paypal_company": "Standard-PayPal, kleine Gebühr fällt an.",
-        "revolut": "Auf dem Handy auf den Button tippen oder den QR-Code mit der Handy-Kamera scannen.",
+        "revolut": "Klicke auf den Button oder scanne den QR-Code mit dem Handy.",
         "bank": "Nutze eine Sofortüberweisung. Bei Währungsumrechnung können Gebühren anfallen."
       },
       "recommended": "Empfohlen"

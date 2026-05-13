@@ -349,7 +349,7 @@
       "paymentNotes": {
         "paypal_ff": "No fee. Use Friends & Family option.",
         "paypal_company": "Standard PayPal. Small fee applies.",
-        "revolut": "Tap the button on mobile, or scan the QR with your phone camera.",
+        "revolut": "Click the button to pay, or scan the QR with your phone.",
         "bank": "Use instant transfer. Currency conversion may add a fee."
       }
     },
