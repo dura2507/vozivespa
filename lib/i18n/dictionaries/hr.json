@@ -208,7 +208,8 @@
       "error": "Slanje nije uspjelo. Probaj WhatsApp ili nazovi."
     },
     "openHours": "Radno vrijeme",
-    "address": "Adresa"
+    "address": "Adresa",
+    "getDirections": "Otvori u Google Mapsu"
   },
   "gallery": {
     "eyebrow": "U pokretu",

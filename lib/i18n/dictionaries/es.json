@@ -208,7 +208,8 @@
       "error": "No se pudo enviar. Prueba con WhatsApp o llamando."
     },
     "openHours": "Horario",
-    "address": "Dirección"
+    "address": "Dirección",
+    "getDirections": "Abrir en Google Maps"
   },
   "gallery": {
     "eyebrow": "En movimiento",

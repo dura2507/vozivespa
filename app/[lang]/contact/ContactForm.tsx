@@ -105,18 +105,37 @@ export default function ContactForm({
                 </div>
               ))}
 
-              <div className="flex items-start gap-5 bg-sand px-5 py-5">
-                <div className="w-12 h-12 bg-red/10 flex items-center justify-center shrink-0">
-                  <svg className="w-5 h-5 text-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="font-bold text-ink text-sm">{t.address}</p>
-                  <p className="text-muted text-sm">{BRAND.address}</p>
-                  <p className="text-muted text-xs mt-1">{t.openHours}: {BRAND.hours}</p>
-                </div>
+              <div className="bg-sand overflow-hidden">
+                <a
+                  href={BRAND.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-5 px-5 py-5 hover:bg-sand/70 transition-colors group"
+                >
+                  <div className="w-12 h-12 bg-red/10 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-ink text-sm">{t.address}</p>
+                    <p className="text-muted text-sm group-hover:text-ink transition-colors">
+                      {BRAND.address}
+                    </p>
+                    <p className="text-muted text-xs mt-1">{t.openHours}: {BRAND.hours}</p>
+                    <p className="text-red text-[10px] tracking-[0.15em] uppercase font-bold mt-2 group-hover:underline">
+                      {t.getDirections} →
+                    </p>
+                  </div>
+                </a>
+                <iframe
+                  title="Google Maps"
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(BRAND.address)}&z=15&output=embed`}
+                  className="w-full h-56 border-0 block"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
               </div>
             </div>
 

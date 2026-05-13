@@ -208,7 +208,8 @@
       "error": "Invio fallito. Prova con WhatsApp o telefono."
     },
     "openHours": "Orari",
-    "address": "Indirizzo"
+    "address": "Indirizzo",
+    "getDirections": "Apri in Google Maps"
   },
   "gallery": {
     "eyebrow": "In movimento",

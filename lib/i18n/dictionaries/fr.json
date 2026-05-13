@@ -208,7 +208,8 @@
       "error": "Échec de l'envoi. Essayez WhatsApp ou un appel."
     },
     "openHours": "Horaires",
-    "address": "Adresse"
+    "address": "Adresse",
+    "getDirections": "Ouvrir dans Google Maps"
   },
   "gallery": {
     "eyebrow": "En mouvement",

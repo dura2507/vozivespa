@@ -208,7 +208,8 @@
       "error": "Konnte nicht gesendet werden. Probier WhatsApp oder Anruf."
     },
     "openHours": "Öffnungszeiten",
-    "address": "Adresse"
+    "address": "Adresse",
+    "getDirections": "In Google Maps öffnen"
   },
   "gallery": {
     "eyebrow": "Unterwegs",

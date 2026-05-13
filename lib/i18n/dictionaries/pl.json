@@ -208,7 +208,8 @@
       "error": "Nie udało się wysłać. Spróbuj WhatsApp lub zadzwoń."
     },
     "openHours": "Godziny otwarcia",
-    "address": "Adres"
+    "address": "Adres",
+    "getDirections": "Otwórz w Google Maps"
   },
   "gallery": {
     "eyebrow": "W drodze",

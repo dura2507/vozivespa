@@ -57,7 +57,15 @@ export default async function TermsPage({
 
           <div className="mt-16 pt-8 border-t border-ink/10 text-xs text-muted">
             <p>
-              {BRAND.legal} · OIB {BRAND.oib} · {BRAND.address}
+              {BRAND.legal} · OIB {BRAND.oib} ·{" "}
+              <a
+                href={BRAND.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-ink transition-colors underline-offset-2 hover:underline"
+              >
+                {BRAND.address}
+              </a>
             </p>
             <p className="mt-1">
               {dict.terms.questionsLine}{" "}

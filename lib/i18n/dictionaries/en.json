@@ -208,7 +208,8 @@
       "error": "Could not send. Try WhatsApp or call instead."
     },
     "openHours": "Open hours",
-    "address": "Address"
+    "address": "Address",
+    "getDirections": "Open in Google Maps"
   },
   "gallery": {
     "eyebrow": "In motion",
