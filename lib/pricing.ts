@@ -261,7 +261,10 @@ export function calculatePrice(
     const rem = days - weeks * 7;
     candidates.push({
       price: weeks * p.week + rem * p.day,
-      tier: weeks === 1 && rem === 0 ? "week" : "week-mix",
+      // Pure multiples (2 weeks, 3 weeks, …) get the plain "week"
+      // label since there is no day-tier remainder being added —
+      // "Wochen-Tarif × 2" is friendlier than "Wochen-Mix".
+      tier: rem === 0 ? "week" : "week-mix",
     });
   }
 
@@ -270,7 +273,7 @@ export function calculatePrice(
     const rem = days - months * 30;
     candidates.push({
       price: months * p.month + rem * p.day,
-      tier: months === 1 && rem === 0 ? "month" : "month-mix",
+      tier: rem === 0 ? "month" : "month-mix",
     });
   }
 
