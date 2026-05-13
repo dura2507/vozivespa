@@ -2,6 +2,15 @@ import { loadAnalytics, countryLabel, type TopRow } from "@/lib/analytics-data";
 
 export const dynamic = "force-dynamic";
 
+// One decimal place when the average is <10, integer otherwise. Keeps
+// the card readable on a quiet new tracker (0.4 instead of 0) without
+// going crazy with precision once volume picks up.
+function formatAverage(n: number): string {
+  if (n === 0) return "0";
+  if (n < 10) return n.toFixed(1);
+  return String(Math.round(n));
+}
+
 function StatCard({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div className="bg-white border border-ink/10 p-4">
@@ -87,8 +96,8 @@ export default async function AdminAnalyticsPage() {
           sub={`${data.totalViews30d} page views`}
         />
         <StatCard
-          label="Avg / day (30d)"
-          value={String(Math.round(data.totalVisitors30d / 30))}
+          label="Avg / day (7d)"
+          value={formatAverage(data.totalVisitors7d / 7)}
           sub="unique visitors"
         />
         <StatCard
