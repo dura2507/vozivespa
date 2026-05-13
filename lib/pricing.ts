@@ -207,13 +207,21 @@ function parsePricing(p: PricingTiers) {
 
 // Cheapest applicable tier for the given window.
 //
-// Weekend tier (and weekend-mix) is only eligible when pickup is on Friday.
-// Pure weekend = Fri pickup + Sun return (any 09-19 time both ends), flat.
-// Weekend-mix = Fri pickup + return after Sunday: weekend_price + (calendar
-// days past Sunday) * day_price.
+// Owner's pricing rule (Thomas, 2026-05-13): each tier is a tier-rate
+// scaled by days. Longer rentals get the lower per-day rate of the
+// next tier instead of stacking the old tier with extra day-tier
+// add-ons.
 //
-// Time of day is honoured for the day/week/month tiers via `billableDays`,
-// so a Fri 09:00 → Sat 18:00 trip counts as 2 day-units.
+//   • 1-2 days, or not Fri-pickup → day_rate * days
+//   • Fri pickup + Sun return (same week) → weekend_rate flat (2-3d)
+//   • Fri pickup + 3-6 days → weekend_rate * days / 3 (pro-rata)
+//   • 7+ days → week_rate * days / 7 (pro-rata)
+//   • 30+ days → month_rate * days / 30 (pro-rata)
+//
+// All candidates are added and the cheapest wins, so the customer
+// always gets the best applicable rate even on awkward boundaries
+// (e.g. a 6-day Fri-pickup beats day-tier with weekend pro-rata; a
+// 7-day rental jumps to week-rate which beats day-tier × 7).
 export function calculatePrice(
   fromDate: Date,
   toDate: Date,
@@ -232,48 +240,46 @@ export function calculatePrice(
   const isFriPickup = fromDate.getDay() === 5;
   const isSunReturn = toDate.getDay() === 0;
 
+  // Weekend pricing is only for Friday-pickup rentals. Within that:
+  //   - return on Sun of pickup week → flat weekend (the cheaper of
+  //     "weekend" and "weekend pro-rata" applies anyway via cheapest-
+  //     wins, so adding both is safe).
+  //   - any 3-6 day Fri-pickup → weekend pro-rata.
+  // After 6 days we drop weekend tier entirely; day 7 lives in the
+  // week tier per Thomas's "Siebter Tag = Wochenpreis" rule.
   if (p.weekend && isFriPickup) {
-    // Sunday of the pickup week (pickup Fri + 2 days). We compare
-    // against this so a Fri → SAME-week Sun is the only pure-weekend
-    // booking; a Fri → later-week Sun falls into weekend-mix and
-    // gets billed per extra calendar day past the pickup Sunday.
-    // Without this cap a 10-day booking that happens to start on a
-    // Friday and end on a Sunday would be priced as a flat weekend.
     const sundayOfPickupWeek = new Date(fromDate);
     sundayOfPickupWeek.setDate(sundayOfPickupWeek.getDate() + 2);
     const isSameWeekendReturn =
       isSunReturn && calendarDaysBetween(sundayOfPickupWeek, toDate) === 0;
     if (isSameWeekendReturn) {
       candidates.push({ price: p.weekend, tier: "weekend" });
-    } else {
-      const extraDays = calendarDaysBetween(sundayOfPickupWeek, toDate);
-      if (extraDays > 0) {
-        candidates.push({
-          price: p.weekend + extraDays * p.day,
-          tier: "weekend-mix",
-        });
-      }
+    }
+    if (days >= 3 && days <= 6) {
+      candidates.push({
+        price: Math.round((p.weekend * days) / 3),
+        tier: "weekend-mix",
+      });
     }
   }
 
+  // Week tier: 7 days = flat week_rate; 8+ days scale pro-rata from
+  // the week price (so 8 days = week × 8/7, 14 days = week × 2, etc).
+  // The remainder-as-day-tier model was undercharging compared to the
+  // owner's intent — he wants the cheaper week per-day rate to keep
+  // applying for the full duration up to the month threshold.
   if (p.week && days >= 7) {
-    const weeks = Math.floor(days / 7);
-    const rem = days - weeks * 7;
     candidates.push({
-      price: weeks * p.week + rem * p.day,
-      // Pure multiples (2 weeks, 3 weeks, …) get the plain "week"
-      // label since there is no day-tier remainder being added —
-      // "Wochen-Tarif × 2" is friendlier than "Wochen-Mix".
-      tier: rem === 0 ? "week" : "week-mix",
+      price: Math.round((p.week * days) / 7),
+      tier: days === 7 || days % 7 === 0 ? "week" : "week-mix",
     });
   }
 
+  // Same model for month tier — 30+ days scale pro-rata from month_rate.
   if (p.month && days >= 30) {
-    const months = Math.floor(days / 30);
-    const rem = days - months * 30;
     candidates.push({
-      price: months * p.month + rem * p.day,
-      tier: rem === 0 ? "month" : "month-mix",
+      price: Math.round((p.month * days) / 30),
+      tier: days === 30 || days % 30 === 0 ? "month" : "month-mix",
     });
   }
 
