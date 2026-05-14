@@ -23,7 +23,7 @@ const dancing = Dancing_Script({
   weight: ["600", "700"],
 });
 
-const TITLE = "SickMotos · Rent a Moto Zadar";
+const TITLE = "SickMotos · Rent a Moto in Zadar";
 const DESCRIPTION =
   "Rent a scooter or motorbike in Zadar, Croatia. 50cc, 125cc and 390cc bikes. Helmets and basic insurance included.";
 const SITE_URL = "https://rentamotozadar.com";
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   openGraph: {
     type: "website",
-    siteName: "SickMotos · Rent a Moto Zadar",
+    siteName: "SickMotos · Rent a Moto in Zadar",
     title: TITLE,
     description: DESCRIPTION,
     url: SITE_URL,
