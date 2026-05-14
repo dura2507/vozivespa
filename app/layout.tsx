@@ -25,7 +25,7 @@ const dancing = Dancing_Script({
 
 const TITLE = "SickMotos · Rent a Moto Zadar";
 const DESCRIPTION =
-  "Rent a scooter or motorbike in Zadar, Croatia. 50cc, 125cc and 390cc bikes from 35€/day. Helmets and basic insurance included.";
+  "Rent a scooter or motorbike in Zadar, Croatia. 50cc, 125cc and 390cc bikes. Helmets and basic insurance included.";
 const SITE_URL = "https://rentamotozadar.com";
 
 export const metadata: Metadata = {
