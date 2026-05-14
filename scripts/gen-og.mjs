@@ -28,17 +28,16 @@ const overlaySvg = `
   <rect width="${W}" height="${H}" fill="url(#g)"/>
 
   <!-- Headline -->
-  <text x="64" y="420" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="92" fill="#FFFFFF" letter-spacing="-2">Rent a Moto.</text>
-  <text x="64" y="510" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="92" fill="#B61F36" letter-spacing="-2">Zadar.</text>
+  <text x="64" y="420" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="92" fill="#FFFFFF" letter-spacing="-2">Rent a Moto</text>
+  <text x="64" y="510" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="92" fill="#B61F36" letter-spacing="-2">in Zadar</text>
 
   <!-- Sub line -->
-  <text x="64" y="565" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="500" font-size="24" fill="rgba(255,255,255,0.85)">Scooter &amp; motorbike rental . 50cc to 390cc . from 35€/day</text>
+  <text x="64" y="565" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="500" font-size="24" fill="rgba(255,255,255,0.85)">Scooter &amp; motorbike rental . 50cc to 390cc</text>
 
   <!-- Five-star pill in bottom-right -->
-  <g transform="translate(925 535)">
-    <rect x="0" y="0" width="215" height="54" rx="27" fill="#B61F36"/>
-    <text x="22" y="36" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="22" fill="#FFFFFF" letter-spacing="3">★★★★★</text>
-    <text x="143" y="34" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="13" fill="#FFFFFF" letter-spacing="3">GOOGLE</text>
+  <g transform="translate(960 540)">
+    <rect x="0" y="0" width="180" height="48" rx="24" fill="#B61F36"/>
+    <text x="90" y="32" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="24" fill="#FFFFFF" letter-spacing="4" text-anchor="middle">★★★★★</text>
   </g>
 </svg>
 `;
