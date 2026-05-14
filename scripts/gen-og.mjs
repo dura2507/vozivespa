@@ -33,12 +33,6 @@ const overlaySvg = `
 
   <!-- Sub line -->
   <text x="64" y="565" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="500" font-size="24" fill="rgba(255,255,255,0.85)">Scooter &amp; motorbike rental . 50cc to 390cc</text>
-
-  <!-- Five-star pill in bottom-right -->
-  <g transform="translate(960 540)">
-    <rect x="0" y="0" width="180" height="48" rx="24" fill="#B61F36"/>
-    <text x="90" y="32" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="24" fill="#FFFFFF" letter-spacing="4" text-anchor="middle">★★★★★</text>
-  </g>
 </svg>
 `;
 
