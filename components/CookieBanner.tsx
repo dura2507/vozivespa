@@ -23,43 +23,43 @@ const COPY: Record<
 > = {
   en: {
     text:
-      "We use Google Ads cookies to measure ad performance. Anonymous visit stats are tracked either way.",
+      "We use cookies to measure the performance of our ads. You decide whether to allow them.",
     accept: "Accept",
     reject: "Reject",
   },
   de: {
     text:
-      "Wir nutzen Google-Ads-Cookies, um die Anzeigenleistung zu messen. Anonyme Besucherstatistiken laufen so oder so.",
+      "Wir verwenden Cookies, um die Leistung unserer Anzeigen zu messen. Du entscheidest, ob du sie erlauben möchtest.",
     accept: "Akzeptieren",
     reject: "Ablehnen",
   },
   hr: {
     text:
-      "Koristimo Google Ads kolačiće za mjerenje učinkovitosti oglasa. Anonimne statistike posjeta bilježe se u svakom slučaju.",
+      "Koristimo kolačiće za mjerenje uspješnosti naših oglasa. Vi odlučujete želite li ih dopustiti.",
     accept: "Prihvati",
     reject: "Odbij",
   },
   it: {
     text:
-      "Usiamo cookie di Google Ads per misurare le performance delle inserzioni. Le statistiche anonime di visita vengono comunque tracciate.",
+      "Utilizziamo cookie per misurare l'efficacia delle nostre inserzioni. Decidi tu se consentirli.",
     accept: "Accetta",
     reject: "Rifiuta",
   },
   pl: {
     text:
-      "Używamy plików cookie Google Ads do pomiaru skuteczności reklam. Anonimowe statystyki odwiedzin są śledzone niezależnie.",
+      "Używamy plików cookie do mierzenia skuteczności naszych reklam. To Ty decydujesz, czy je zezwolić.",
     accept: "Akceptuj",
     reject: "Odrzuć",
   },
   fr: {
     text:
-      "Nous utilisons des cookies Google Ads pour mesurer la performance des annonces. Les statistiques de visite anonymes sont suivies dans tous les cas.",
+      "Nous utilisons des cookies pour mesurer la performance de nos publicités. C'est vous qui décidez de les autoriser ou non.",
     accept: "Accepter",
     reject: "Refuser",
   },
   es: {
     text:
-      "Usamos cookies de Google Ads para medir el rendimiento de los anuncios. Las estadísticas anónimas de visita se registran de todos modos.",
+      "Utilizamos cookies para medir el rendimiento de nuestros anuncios. Tú decides si quieres permitirlos.",
     accept: "Aceptar",
     reject: "Rechazar",
   },
