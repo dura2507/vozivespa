@@ -3,6 +3,7 @@ import { BRAND } from "@/lib/mockData";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { Flag, type FlagCode } from "@/components/Flag";
+import { FooterLegalLinks } from "@/components/FooterLegalLinks";
 
 function localePath(lang: Locale, path: string): string {
   if (path.startsWith("/#")) return `/${lang}${path.slice(1)}`;
@@ -150,9 +151,12 @@ export default function Footer({
           </a>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-white/10 w-full text-xs text-white/30 space-y-1">
-          <p>{BRAND.legal} · OIB: {BRAND.oib} · {t.openHoursPrefix} {BRAND.hours}</p>
-          <p>© {new Date().getFullYear()} {BRAND.name}. {t.rights}</p>
+        <div className="mt-12 pt-8 border-t border-white/10 w-full text-xs text-white/30 space-y-3">
+          <FooterLegalLinks lang={lang} />
+          <div className="space-y-1">
+            <p>{BRAND.legal} · OIB: {BRAND.oib} · {t.openHoursPrefix} {BRAND.hours}</p>
+            <p>© {new Date().getFullYear()} {BRAND.name}. {t.rights}</p>
+          </div>
         </div>
 
         {/* Agency credit */}

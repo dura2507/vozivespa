@@ -17,46 +17,83 @@ const TTL_MS = 180 * 86_400_000; // 180 days
 // Inline copy across the 7 UI locales. Kept short on purpose — long
 // disclaimers tank acceptance rate and we mention Google Ads
 // specifically so visitors know what they're consenting to.
-const COPY: Record<
-  string,
-  { text: string; accept: string; reject: string }
-> = {
+type CopyEntry = {
+  text: string;
+  accept: string;
+  reject: string;
+  learnMore: string;
+  settingsLabel: string;
+};
+
+const COPY: Record<string, CopyEntry> = {
   en: {
     text: "We use cookies to measure the performance of our ads.",
     accept: "Accept",
     reject: "Reject",
+    learnMore: "Learn more",
+    settingsLabel: "Cookie settings",
   },
   de: {
     text: "Wir verwenden Cookies, um die Leistung unserer Anzeigen zu messen.",
     accept: "Akzeptieren",
     reject: "Ablehnen",
+    learnMore: "Mehr erfahren",
+    settingsLabel: "Cookie-Einstellungen",
   },
   hr: {
     text: "Koristimo kolačiće za mjerenje uspješnosti naših oglasa.",
     accept: "Prihvati",
     reject: "Odbij",
+    learnMore: "Saznaj više",
+    settingsLabel: "Postavke kolačića",
   },
   it: {
     text: "Utilizziamo cookie per misurare l'efficacia delle nostre inserzioni.",
     accept: "Accetta",
     reject: "Rifiuta",
+    learnMore: "Scopri di più",
+    settingsLabel: "Impostazioni cookie",
   },
   pl: {
     text: "Używamy plików cookie do mierzenia skuteczności naszych reklam.",
     accept: "Akceptuj",
     reject: "Odrzuć",
+    learnMore: "Dowiedz się więcej",
+    settingsLabel: "Ustawienia cookies",
   },
   fr: {
     text: "Nous utilisons des cookies pour mesurer la performance de nos publicités.",
     accept: "Accepter",
     reject: "Refuser",
+    learnMore: "En savoir plus",
+    settingsLabel: "Paramètres des cookies",
   },
   es: {
     text: "Utilizamos cookies para medir el rendimiento de nuestros anuncios.",
     accept: "Aceptar",
     reject: "Rechazar",
+    learnMore: "Más información",
+    settingsLabel: "Configuración de cookies",
   },
 };
+
+// Helper for any other component (e.g. Footer "Cookie settings"
+// button) that wants to reopen the banner programmatically.
+export const REOPEN_EVENT = "open-cookie-settings";
+export function openCookieSettings() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(REOPEN_EVENT));
+  }
+}
+
+// Read the user's currently active language label out of the COPY map
+// without rendering the banner — used by the Footer button so the
+// label stays in sync with the visitor's locale.
+export function cookieSettingsLabel(pathname: string | null): string {
+  if (!pathname) return COPY.en.settingsLabel;
+  const seg = pathname.split("/")[1];
+  return COPY[seg]?.settingsLabel ?? COPY.en.settingsLabel;
+}
 
 function copyForPath(pathname: string | null) {
   if (!pathname) return COPY.en;
@@ -84,6 +121,19 @@ export function CookieBanner({ googleAdsId }: { googleAdsId?: string }) {
     } catch {
       // Bad JSON / quota error — just leave the banner up.
     }
+  }, []);
+
+  // Listen for the global "open cookie settings" event so the
+  // Footer link can re-open the banner without remounting the tree.
+  useEffect(() => {
+    function onReopen() {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch {}
+      setDecision(null);
+    }
+    window.addEventListener(REOPEN_EVENT, onReopen);
+    return () => window.removeEventListener(REOPEN_EVENT, onReopen);
   }, []);
 
   function save(value: Decision) {
@@ -129,7 +179,15 @@ export function CookieBanner({ googleAdsId }: { googleAdsId?: string }) {
           aria-label="Cookie consent"
         >
           <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-6">
-            <p className="text-sm leading-relaxed text-white/85">{copy.text}</p>
+            <p className="text-sm leading-relaxed text-white/85">
+              {copy.text}{" "}
+              <a
+                href={`/${pathname?.split("/")[1] || "en"}/privacy`}
+                className="text-white underline underline-offset-4 hover:text-red transition-colors"
+              >
+                {copy.learnMore}
+              </a>
+            </p>
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
