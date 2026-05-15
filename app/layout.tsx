@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import AnchorOffsetFix from "@/components/AnchorOffsetFix";
 import { PageViewTracker } from "@/components/PageViewTracker";
+import { CookieBanner } from "@/components/CookieBanner";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -71,27 +72,11 @@ export default function RootLayout({
           src="https://elfsightcdn.com/platform.js"
           strategy="lazyOnload"
         />
-        {/* Google Ads tag . conversion tracking for the rentamotozadar
-            campaigns. ID lives in NEXT_PUBLIC_GOOGLE_ADS_ID so it can
-            be swapped without a code change. afterInteractive so it
-            doesn't compete with the page render. */}
-        {GOOGLE_ADS_ID && (
-          <>
-            <Script
-              id="gtag-src"
-              src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="gtag-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${GOOGLE_ADS_ID}');
-              `}
-            </Script>
-          </>
-        )}
+        {/* Cookie consent banner. Owns the Google Ads gtag so it
+            only mounts after the visitor clicks Accept — the rest of
+            the analytics stack (Vercel + our own page_views) is
+            cookieless and runs without consent. */}
+        <CookieBanner googleAdsId={GOOGLE_ADS_ID} />
       </body>
     </html>
   );
