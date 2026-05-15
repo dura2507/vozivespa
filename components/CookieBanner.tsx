@@ -22,44 +22,37 @@ const COPY: Record<
   { text: string; accept: string; reject: string }
 > = {
   en: {
-    text:
-      "We use cookies to measure the performance of our ads. You decide whether to allow them.",
+    text: "We use cookies to measure the performance of our ads.",
     accept: "Accept",
     reject: "Reject",
   },
   de: {
-    text:
-      "Wir verwenden Cookies, um die Leistung unserer Anzeigen zu messen. Du entscheidest, ob du sie erlauben möchtest.",
+    text: "Wir verwenden Cookies, um die Leistung unserer Anzeigen zu messen.",
     accept: "Akzeptieren",
     reject: "Ablehnen",
   },
   hr: {
-    text:
-      "Koristimo kolačiće za mjerenje uspješnosti naših oglasa. Vi odlučujete želite li ih dopustiti.",
+    text: "Koristimo kolačiće za mjerenje uspješnosti naših oglasa.",
     accept: "Prihvati",
     reject: "Odbij",
   },
   it: {
-    text:
-      "Utilizziamo cookie per misurare l'efficacia delle nostre inserzioni. Decidi tu se consentirli.",
+    text: "Utilizziamo cookie per misurare l'efficacia delle nostre inserzioni.",
     accept: "Accetta",
     reject: "Rifiuta",
   },
   pl: {
-    text:
-      "Używamy plików cookie do mierzenia skuteczności naszych reklam. To Ty decydujesz, czy je zezwolić.",
+    text: "Używamy plików cookie do mierzenia skuteczności naszych reklam.",
     accept: "Akceptuj",
     reject: "Odrzuć",
   },
   fr: {
-    text:
-      "Nous utilisons des cookies pour mesurer la performance de nos publicités. C'est vous qui décidez de les autoriser ou non.",
+    text: "Nous utilisons des cookies pour mesurer la performance de nos publicités.",
     accept: "Accepter",
     reject: "Refuser",
   },
   es: {
-    text:
-      "Utilizamos cookies para medir el rendimiento de nuestros anuncios. Tú decides si quieres permitirlos.",
+    text: "Utilizamos cookies para medir el rendimiento de nuestros anuncios.",
     accept: "Aceptar",
     reject: "Rechazar",
   },
