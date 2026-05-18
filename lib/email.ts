@@ -1,6 +1,7 @@
 import { Resend, type CreateEmailOptions } from "resend";
 import { CATEGORIES, BRAND } from "@/lib/mockData";
 import { retry } from "@/lib/retry";
+import { billableDays } from "@/lib/pricing";
 import type { BookingRow } from "@/lib/supabase";
 import { getDictionary, type Dictionary } from "@/lib/i18n/dictionaries";
 import { type Locale, isLocale } from "@/lib/i18n/config";
@@ -47,6 +48,19 @@ function fmtDate(iso: string): string {
 function fmtTimeOfDay(t: string | null | undefined): string {
   if (!t) return "";
   return t.slice(0, 5);
+}
+
+// Same caveat as in lib/telegram.ts — compute the BILLABLE-day count
+// (24h windows + grace) instead of a simple calendar diff so the email
+// matches the invoice. Kept the function name as-is so callers don't
+// need rewiring.
+function bookingDays(b: BookingRow): number {
+  return billableDays(
+    new Date(`${b.date_from}T00:00:00`),
+    new Date(`${b.date_to}T00:00:00`),
+    b.pickup_time?.slice(0, 5) ?? "09:00",
+    b.return_time?.slice(0, 5) ?? "19:00",
+  );
 }
 
 function nightsBetween(from: string, to: string): number {
@@ -173,7 +187,7 @@ function ridingStyleLabel(s: BookingRow["riding_style"]): string {
 
 function bookingSummaryHtml(booking: BookingRow, sum?: Dictionary["emails"]["summary"]): string {
   const bikeName = bikeNameFor(booking);
-  const nights = nightsBetween(booking.date_from, booking.date_to);
+  const nights = bookingDays(booking);
   const pickup = fmtTimeOfDay(booking.pickup_time);
   const ret = fmtTimeOfDay(booking.return_time);
   const lBike = sum?.bike ?? "Bike";

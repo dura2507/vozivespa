@@ -17,7 +17,7 @@ export type FlagCode =
   | "PL"
   | "FR"
   | "ES"
-  | "PT";
+  | "BR";
 
 const FLAGS: Record<FlagCode, React.ReactNode> = {
   GB: (
@@ -112,42 +112,19 @@ const FLAGS: Record<FlagCode, React.ReactNode> = {
       <rect y="4.5" width="9" height="1.5" fill="#AA151B" />
     </svg>
   ),
-  PT: (
+  BR: (
     <svg viewBox="0 0 90 60" preserveAspectRatio="xMidYMid slice">
-      <rect width="36" height="60" fill="#006600" />
-      <rect x="36" width="54" height="60" fill="#FF0000" />
-      {/* Armillary sphere — concentric rings + crossing bands, sitting
-          on the green/red boundary. Then the small Portuguese shield
-          (white with blue inner shield) layered on top. */}
-      <g transform="translate(36 30)">
-        {/* Armillary sphere */}
-        <g fill="none" stroke="#FFCC00" strokeWidth="1.2">
-          <circle r="11" />
-          <ellipse rx="11" ry="4" />
-          <ellipse rx="4" ry="11" />
-          <path d="M-11 0 H11 M0 -11 V11" strokeWidth="0.8" />
-        </g>
-        {/* White shield body */}
-        <path
-          d="M-5.5 -8 H5.5 V2 Q5.5 7 0 9 Q-5.5 7 -5.5 2 Z"
-          fill="#FFF"
-          stroke="#FFCC00"
-          strokeWidth="0.5"
-        />
-        {/* Red border inside shield */}
-        <path
-          d="M-4.3 -6.5 H4.3 V1.8 Q4.3 5.7 0 7.5 Q-4.3 5.7 -4.3 1.8 Z"
-          fill="#FF0000"
-        />
-        {/* Inner white cross-of-shields */}
-        <g fill="#002A8F">
-          <rect x="-0.9" y="-5.5" width="1.8" height="3.6" />
-          <rect x="-0.9" y="-1.2" width="1.8" height="3.6" />
-          <rect x="-0.9" y="3.1" width="1.8" height="3.6" />
-          <rect x="-3.7" y="-1.2" width="1.8" height="3.6" />
-          <rect x="1.9" y="-1.2" width="1.8" height="3.6" />
-        </g>
-      </g>
+      {/* Green field */}
+      <rect width="90" height="60" fill="#009C3B" />
+      {/* Yellow rhombus, slightly inset */}
+      <polygon points="45,5 85,30 45,55 5,30" fill="#FFDF00" />
+      {/* Blue celestial sphere */}
+      <circle cx="45" cy="30" r="13" fill="#002776" />
+      {/* White equatorial band ("Ordem e Progresso") */}
+      <path
+        d="M32 28 A 16 16 0 0 1 58 28 L 58 31 A 16 16 0 0 0 32 31 Z"
+        fill="#FFFFFF"
+      />
     </svg>
   ),
 };

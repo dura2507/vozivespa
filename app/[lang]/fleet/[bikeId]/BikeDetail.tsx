@@ -1306,7 +1306,7 @@ export default function BikeDetail({
 
           {/* Bottom WhatsApp CTA - only when not in done state */}
           {bookingStep !== "done" && (
-            <section className="bg-red text-white px-8 md:px-12 py-12 md:py-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+            <section className="bg-red text-white px-8 md:px-12 py-12 md:py-16 flex flex-col md:flex-row md:items-center justify-between gap-8">
               <div>
                 <p className="text-white/60 text-xs tracking-widest uppercase mb-3">
                   {dict.faq.eyebrow}
@@ -1320,16 +1320,29 @@ export default function BikeDetail({
                   ))}
                 </div>
               </div>
-              <a
-                href={`https://wa.me/${BRAND.phoneRaw}?text=${encodeURIComponent(
-                  `Hi, I'm interested in the ${bike.model}. Is it available?`,
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 inline-flex items-center justify-center gap-2 bg-white text-red font-bold text-sm tracking-widest uppercase px-8 py-4 hover:bg-off-white transition-colors"
-              >
-                {BRAND.phone} →
-              </a>
+              {/* Two buttons — one per contact, so customers can pick the
+                  number matching their language. Single full-width button
+                  on mobile, side-by-side on desktop. */}
+              <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full md:w-auto">
+                {BRAND.contacts.map((contact) => (
+                  <a
+                    key={contact.phoneRaw}
+                    href={`https://wa.me/${contact.phoneRaw}?text=${encodeURIComponent(
+                      `Hi, I'm interested in the ${bike.model}. Is it available?`,
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-3 bg-white text-red font-bold text-sm tracking-widest uppercase px-6 py-4 hover:bg-off-white transition-colors"
+                  >
+                    <span className="flex gap-1">
+                      {contact.languages.map((c) => (
+                        <Flag key={c} code={c as FlagCode} className="w-4 h-3" />
+                      ))}
+                    </span>
+                    {contact.phone} →
+                  </a>
+                ))}
+              </div>
             </section>
           )}
         </div>

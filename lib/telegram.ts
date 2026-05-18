@@ -1,5 +1,6 @@
 import { CATEGORIES } from "@/lib/mockData";
 import { retry } from "@/lib/retry";
+import { billableDays } from "@/lib/pricing";
 import type { BookingRow } from "@/lib/supabase";
 
 const TG_API = "https://api.telegram.org";
@@ -78,10 +79,17 @@ function fmtTimeOfDay(t: string | null | undefined): string {
   return t.slice(0, 5);
 }
 
-function nightsBetween(from: string, to: string): number {
-  const a = new Date(`${from}T00:00:00Z`).getTime();
-  const b = new Date(`${to}T00:00:00Z`).getTime();
-  return Math.max(0, Math.round((b - a) / 86_400_000));
+// Days the customer is being CHARGED for — uses billableDays
+// (24h blocks with the 15-min grace) instead of the old calendar-
+// day diff. Otherwise a 09:00→19:00 next-day rental would show
+// "1 day" while the invoice already counted 2.
+function bookingDays(b: BookingRow): number {
+  return billableDays(
+    new Date(`${b.date_from}T00:00:00`),
+    new Date(`${b.date_to}T00:00:00`),
+    b.pickup_time?.slice(0, 5) ?? "09:00",
+    b.return_time?.slice(0, 5) ?? "19:00",
+  );
 }
 
 function escapeMd(s: string): string {
@@ -174,7 +182,7 @@ function buildKeyboard(booking: BookingRow): InlineKeyboard {
 
 function buildText(booking: BookingRow, unitLabel?: string | null): string {
   const bikeName = bikeNameFor(booking);
-  const nights = nightsBetween(booking.date_from, booking.date_to);
+  const nights = bookingDays(booking);
   const pickup = fmtTimeOfDay(booking.pickup_time);
   const ret = fmtTimeOfDay(booking.return_time);
 

@@ -417,7 +417,7 @@ export const BRAND = {
   hours: "Mon-Sun, 09:00-19:00",
   phone: "+49 176 34658003",
   phoneRaw: "4917634658003",
-  languages: ["DE", "GB", "PT"],
+  languages: ["DE", "GB", "BR"],
   email: "rentamotobooking@gmail.com",
   instagram: "sickmotos_bike_rental_zadar",
   instagramUrl: "https://instagram.com/sickmotos_bike_rental_zadar",
@@ -464,7 +464,7 @@ export const BRAND = {
       label: "English / Português",
       phone: "+385 95 8195 453",
       phoneRaw: "385958195453",
-      languages: ["GB", "PT"],
+      languages: ["GB", "BR"],
     },
   ] as Contact[],
 };

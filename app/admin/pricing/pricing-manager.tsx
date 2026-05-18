@@ -4,59 +4,138 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { PricingRow } from "@/lib/bike-pricing";
 
-type RowState = PricingRow & { draft: string; saving: boolean; saved: boolean; error: string | null };
+type TierKey = "day" | "weekend" | "week" | "month";
+
+type TierState = { value: number; draft: string };
+
+type RowState = {
+  bikeId: string;
+  bikeName: string;
+  tiers: Record<TierKey, TierState>;
+  saving: boolean;
+  saved: boolean;
+  error: string | null;
+};
 
 function toRowState(r: PricingRow): RowState {
-  return { ...r, draft: String(r.dayPrice), saving: false, saved: false, error: null };
+  return {
+    bikeId: r.bikeId,
+    bikeName: r.bikeName,
+    tiers: {
+      day: { value: r.dayPrice, draft: String(r.dayPrice) },
+      weekend: { value: r.weekendPrice, draft: String(r.weekendPrice) },
+      week: { value: r.weekPrice, draft: String(r.weekPrice) },
+      month: { value: r.monthPrice, draft: String(r.monthPrice) },
+    },
+    saving: false,
+    saved: false,
+    error: null,
+  };
 }
+
+const TIER_LABELS: Record<TierKey, string> = {
+  day: "Day",
+  weekend: "Weekend",
+  week: "Week",
+  month: "Month",
+};
 
 export function PricingManager({ initial }: { initial: PricingRow[] }) {
   const router = useRouter();
   const [rows, setRows] = useState<RowState[]>(() => initial.map(toRowState));
 
-  function update(bikeId: string, patch: Partial<RowState>) {
-    setRows((rs) => rs.map((r) => (r.bikeId === bikeId ? { ...r, ...patch } : r)));
+  function patch(bikeId: string, mut: (r: RowState) => RowState) {
+    setRows((rs) => rs.map((r) => (r.bikeId === bikeId ? mut(r) : r)));
+  }
+
+  function updateDraft(bikeId: string, key: TierKey, draft: string) {
+    patch(bikeId, (r) => ({
+      ...r,
+      tiers: { ...r.tiers, [key]: { ...r.tiers[key], draft } },
+      saved: false,
+      error: null,
+    }));
+  }
+
+  function dirtyTiers(r: RowState): TierKey[] {
+    return (Object.keys(r.tiers) as TierKey[]).filter(
+      (k) => r.tiers[k].draft !== String(r.tiers[k].value),
+    );
   }
 
   async function save(row: RowState) {
-    const parsed = parseInt(row.draft, 10);
-    if (!Number.isFinite(parsed) || parsed <= 0) {
-      update(row.bikeId, { error: "Enter a positive number", saved: false });
-      return;
+    const changed = dirtyTiers(row);
+    if (changed.length === 0) return;
+
+    // Validate + build the body. Only send dirty fields.
+    const body: Record<string, number | string> = { bikeId: row.bikeId };
+    const parsedByTier: Partial<Record<TierKey, number>> = {};
+    for (const key of changed) {
+      const n = parseInt(row.tiers[key].draft, 10);
+      if (!Number.isFinite(n) || n <= 0) {
+        patch(row.bikeId, (r) => ({
+          ...r,
+          error: `${TIER_LABELS[key]}: enter a positive number`,
+          saved: false,
+        }));
+        return;
+      }
+      parsedByTier[key] = n;
+      const apiKey =
+        key === "day"
+          ? "dayPrice"
+          : key === "weekend"
+            ? "weekendPrice"
+            : key === "week"
+              ? "weekPrice"
+              : "monthPrice";
+      body[apiKey] = n;
     }
-    update(row.bikeId, { saving: true, error: null, saved: false });
+
+    patch(row.bikeId, (r) => ({ ...r, saving: true, error: null, saved: false }));
     try {
       const res = await fetch("/api/admin/pricing", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bikeId: row.bikeId, dayPrice: parsed }),
+        body: JSON.stringify(body),
       });
-      const body = await res.json().catch(() => ({}));
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        update(row.bikeId, { saving: false, error: body?.error || "Save failed" });
+        patch(row.bikeId, (r) => ({ ...r, saving: false, error: data?.error || "Save failed" }));
         return;
       }
-      update(row.bikeId, {
-        saving: false,
-        saved: true,
-        hasOverride: true,
-        dayPrice: parsed,
+      patch(row.bikeId, (r) => {
+        const tiers = { ...r.tiers };
+        for (const k of changed) {
+          tiers[k] = { value: parsedByTier[k]!, draft: String(parsedByTier[k]) };
+        }
+        return { ...r, tiers, saving: false, saved: true };
       });
       router.refresh();
-      setTimeout(() => update(row.bikeId, { saved: false }), 2000);
+      setTimeout(() => patch(row.bikeId, (r) => ({ ...r, saved: false })), 2000);
     } catch {
-      update(row.bikeId, { saving: false, error: "Network error" });
+      patch(row.bikeId, (r) => ({ ...r, saving: false, error: "Network error" }));
     }
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
+      {/* Column header (desktop only — too tight on mobile, columns
+          self-explain via their labels). */}
+      <div className="hidden md:grid grid-cols-[1.5fr_repeat(4,minmax(0,1fr))_auto] gap-3 text-[10px] uppercase tracking-[0.15em] text-ink/50 font-bold px-4">
+        <span>Bike</span>
+        <span>Day €</span>
+        <span>Weekend €</span>
+        <span>Week €</span>
+        <span>Month €</span>
+        <span />
+      </div>
       {rows.map((r) => {
-        const dirty = r.draft !== String(r.dayPrice);
+        const dirty = dirtyTiers(r).length > 0;
         return (
           <div
             key={r.bikeId}
-            className="bg-white border border-ink/10 px-4 py-3 grid grid-cols-[1fr_auto_auto] items-center gap-3"
+            className="bg-white border border-ink/10 px-4 py-3 grid grid-cols-1 md:grid-cols-[1.5fr_repeat(4,minmax(0,1fr))_auto] items-start md:items-center gap-3"
           >
             <div className="min-w-0">
               <p className="font-semibold text-ink truncate">{r.bikeName}</p>
@@ -67,17 +146,18 @@ export function PricingManager({ initial }: { initial: PricingRow[] }) {
                 </p>
               )}
             </div>
-            <label className="flex items-center gap-1">
+            {(Object.keys(r.tiers) as TierKey[]).map((k) => (
               <input
+                key={k}
                 type="number"
                 inputMode="numeric"
                 min={1}
-                value={r.draft}
-                onChange={(e) => update(r.bikeId, { draft: e.target.value, saved: false, error: null })}
-                className="w-20 border border-ink/15 px-2 py-1.5 text-right text-sm font-bold"
+                value={r.tiers[k].draft}
+                onChange={(e) => updateDraft(r.bikeId, k, e.target.value)}
+                aria-label={`${r.bikeName} ${TIER_LABELS[k]} price`}
+                className="w-full border border-ink/15 px-2 py-1.5 text-right text-sm font-bold"
               />
-              <span className="text-sm text-muted">€/day</span>
-            </label>
+            ))}
             <button
               type="button"
               onClick={() => save(r)}
