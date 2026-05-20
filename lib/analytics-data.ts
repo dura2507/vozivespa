@@ -102,14 +102,44 @@ function dayKey(iso: string): string {
   return iso.slice(0, 10);
 }
 
+// Supabase's PostgREST API caps each query at 1000 rows by default.
+// We need every row in the 30-day window to compute unique visitors,
+// otherwise the dashboard freezes at "1000 views" the moment the
+// table crosses that size. Page through with .range() until we have
+// the lot. 200k row ceiling = safety net so a runaway loop can't run
+// forever on a misconfiguration.
+async function loadAllRows<T>(
+  supabase: ReturnType<typeof getServiceClient>,
+  since: string,
+): Promise<T[]> {
+  const PAGE = 1000;
+  const MAX_ROWS = 200_000;
+  const out: T[] = [];
+  for (let offset = 0; offset < MAX_ROWS; offset += PAGE) {
+    const { data, error } = await supabase
+      .from("page_views")
+      .select("path, locale, country, referrer, session_hash, created_at")
+      .gte("created_at", since)
+      .order("created_at", { ascending: true })
+      .range(offset, offset + PAGE - 1);
+    if (error) throw error;
+    if (!data || data.length === 0) break;
+    out.push(...(data as T[]));
+    if (data.length < PAGE) break;
+  }
+  return out;
+}
+
 export async function loadAnalytics(): Promise<AnalyticsSnapshot> {
   const supabase = getServiceClient();
   const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
-  const { data, error } = await supabase
-    .from("page_views")
-    .select("path, locale, country, referrer, session_hash, created_at")
-    .gte("created_at", since)
-    .order("created_at", { ascending: true });
+  let data: Row[] | null = null;
+  let error: Error | null = null;
+  try {
+    data = await loadAllRows<Row>(supabase, since);
+  } catch (e) {
+    error = e as Error;
+  }
   if (error) {
     console.error("[analytics] load error", error);
     return {
