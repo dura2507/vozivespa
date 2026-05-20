@@ -1,4 +1,5 @@
 import { loadAnalytics, countryLabel, type TopRow } from "@/lib/analytics-data";
+import { RefreshButton } from "./RefreshButton";
 
 export const dynamic = "force-dynamic";
 
@@ -72,16 +73,29 @@ function TopTable({
 export default async function AdminAnalyticsPage() {
   const data = await loadAnalytics();
   const maxDay = data.perDay.reduce((m, d) => Math.max(m, d.views), 0);
+  // Stamp the load time on the server so the user knows how fresh
+  // the snapshot they're looking at is. Rendered in Zagreb local time
+  // since that's the operator's timezone.
+  const loadedAt = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Zagreb",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(new Date());
 
   return (
     <div className="max-w-7xl mx-auto px-5 md:px-8 py-8">
-      <div className="flex items-baseline justify-between mb-6 flex-wrap gap-4">
+      <div className="flex items-baseline justify-between mb-2 flex-wrap gap-4">
         <h1 className="font-bold text-3xl text-ink">
           Visitors
         </h1>
         <p className="text-xs text-muted">
           Self-hosted hit counter . anonymous . no cookies
         </p>
+      </div>
+      <div className="mb-6">
+        <RefreshButton loadedAt={loadedAt} />
       </div>
 
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
