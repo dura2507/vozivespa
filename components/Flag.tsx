@@ -5,9 +5,10 @@ import type { Locale } from "@/lib/i18n/config";
 // rendered side-by-side. Detail-heavy crests and stripes are dropped
 // at this size — they'd just turn into pixel mud anyway.
 //
-// Codes are ISO 3166-1 alpha-2 country codes (DE, GB, PT...) rather
-// than language tags, so we can show e.g. PT for the Portuguese-
-// speaking contact without inventing a locale we don't translate to.
+// Codes are ISO 3166-1 alpha-2 country codes (DE, GB, BR...) rather
+// than language tags, so we can show e.g. BR for the Brazilian-
+// Portuguese-speaking contact without inventing a locale we don't
+// translate to.
 
 export type FlagCode =
   | "DE"
