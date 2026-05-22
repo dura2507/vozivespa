@@ -271,7 +271,7 @@ export default async function HomePage({
                     {t.fleet.viewDetails}
                   </Link>
                   <Link
-                    href={`/${lang}/fleet/${cat.id}`}
+                    href={`/${lang}/fleet/${cat.id}#book`}
                     className="inline-flex items-center justify-center gap-2 bg-red text-white font-bold text-xs tracking-[0.2em] uppercase py-3 px-3 hover:bg-red-dark hover:gap-3 transition-all"
                   >
                     {t.fleet.bookNow}
