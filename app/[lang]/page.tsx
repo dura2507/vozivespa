@@ -103,7 +103,7 @@ export default async function HomePage({
             {t.hero.eyebrow} · {BRAND.tagline}
           </p>
           <h1 className="font-barlow font-black uppercase text-white leading-[0.9] text-[clamp(3rem,12vw,9rem)] tracking-tight">
-            {t.hero.headline1}<br />{t.hero.headline2}
+            {t.hero.headline1}<br />{t.hero.headline2}<br />{t.hero.headline3}
           </h1>
           <p className="text-white/75 text-base md:text-lg mt-6 mb-8 leading-relaxed max-w-md">
             {t.hero.sub}

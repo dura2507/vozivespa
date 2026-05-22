@@ -24,7 +24,8 @@
     "hero": {
       "eyebrow": "Zadar, Kroatien",
       "headline1": "Ride the",
-      "headline2": "Croatian Coast",
+      "headline2": "Croatian",
+      "headline3": "Coast",
       "sub": "Roller und Motorradverleih in Zadar, 50ccm bis 390ccm. Helme und Basisversicherung inklusive. Küstenstraßen, Inseln, Freiheit.",
       "checkAvailability": "Verfügbarkeit prüfen",
       "fromPrice": "Ab {price}/Tag",
@@ -51,28 +52,69 @@
       "eyebrow": "Bei jedem Verleih",
       "title": "Inklusive",
       "items": {
-        "insurance": { "label": "Basisversicherung", "sub": "Diebstahl und Motorschaden" },
-        "helmets": { "label": "Helme", "sub": "Immer dabei" },
-        "unlimitedKm": { "label": "Unbegrenzte Kilometer", "sub": "Keine Streckenlimits" },
-        "roadside": { "label": "Pannenhilfe", "sub": "Bis 20km kostenlos, danach 50€ und mehr" },
-        "transparent": { "label": "Transparente Preise", "sub": "Was du siehst, zahlst du" },
-        "warranty": { "label": "Motorgarantie", "sub": "Motorschäden gehen auf uns" }
+        "insurance": {
+          "label": "Basisversicherung",
+          "sub": "Diebstahl und Motorschaden"
+        },
+        "helmets": {
+          "label": "Helme",
+          "sub": "Immer dabei"
+        },
+        "unlimitedKm": {
+          "label": "Unbegrenzte Kilometer",
+          "sub": "Keine Streckenlimits"
+        },
+        "roadside": {
+          "label": "Pannenhilfe",
+          "sub": "Bis 20km kostenlos, danach 50€ und mehr"
+        },
+        "transparent": {
+          "label": "Transparente Preise",
+          "sub": "Was du siehst, zahlst du"
+        },
+        "warranty": {
+          "label": "Motorgarantie",
+          "sub": "Motorschäden gehen auf uns"
+        }
       }
     },
     "goodToKnow": {
       "eyebrow": "Gut zu wissen",
       "title": "Wichtige Hinweise",
-      "deposit": { "label": "Kaution", "sub": "Pro Bike, wird nach unbeschadeter Rückgabe zurückerstattet." },
-      "phoneHolders": { "value": "Nein", "label": "Handyhalter", "sub": "Wir bieten keine Handyhalter an und du darfst auch keinen eigenen mitbringen. Keines unserer Bikes hat einen." },
-      "season": { "value": "Apr-Okt", "label": "Saison", "sub": "Wir vermieten von April bis Oktober. Mit vollem Tank raus, mit vollem Tank zurück." },
-      "languages": { "label": "Sprachen", "sub": "Wir sprechen Deutsch, Englisch und Portugiesisch. Schreib uns auf WhatsApp." }
+      "deposit": {
+        "label": "Kaution",
+        "sub": "Pro Bike, wird nach unbeschadeter Rückgabe zurückerstattet."
+      },
+      "phoneHolders": {
+        "value": "Nein",
+        "label": "Handyhalter",
+        "sub": "Wir bieten keine Handyhalter an und du darfst auch keinen eigenen mitbringen. Keines unserer Bikes hat einen."
+      },
+      "season": {
+        "value": "Apr-Okt",
+        "label": "Saison",
+        "sub": "Wir vermieten von April bis Oktober. Mit vollem Tank raus, mit vollem Tank zurück."
+      },
+      "languages": {
+        "label": "Sprachen",
+        "sub": "Wir sprechen Deutsch, Englisch und Portugiesisch. Schreib uns auf WhatsApp."
+      }
     },
     "howItWorks": {
       "eyebrow": "Einfacher Ablauf",
       "title": "So funktioniert's",
-      "step1": { "title": "Wähle dein Bike", "text": "Such dir deinen Roller oder dein Motorrad aus, vom 50ccm Stadtflitzer bis zur 390ccm Maschine für die Landstraße." },
-      "step2": { "title": "Termin anfragen", "text": "Schau im Kalender nach freien Tagen und schick uns eine kurze Anfrage. Abholung in unserem Shop in Zadar." },
-      "step3": { "title": "Wir bestätigen, du fährst los", "text": "Du bekommst innerhalb weniger Stunden eine Bestätigung per Email. Zahl die 20% Anzahlung, hol dein Bike ab und los gehts." },
+      "step1": {
+        "title": "Wähle dein Bike",
+        "text": "Such dir deinen Roller oder dein Motorrad aus, vom 50ccm Stadtflitzer bis zur 390ccm Maschine für die Landstraße."
+      },
+      "step2": {
+        "title": "Termin anfragen",
+        "text": "Schau im Kalender nach freien Tagen und schick uns eine kurze Anfrage. Abholung in unserem Shop in Zadar."
+      },
+      "step3": {
+        "title": "Wir bestätigen, du fährst los",
+        "text": "Du bekommst innerhalb weniger Stunden eine Bestätigung per Email. Zahl die 20% Anzahlung, hol dein Bike ab und los gehts."
+      },
       "cta": "Bike buchen"
     },
     "reviews": {

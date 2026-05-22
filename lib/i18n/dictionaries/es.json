@@ -24,7 +24,8 @@
     "hero": {
       "eyebrow": "Zadar, Croacia",
       "headline1": "Ride the",
-      "headline2": "Croatian Coast",
+      "headline2": "Croatian",
+      "headline3": "Coast",
       "sub": "Alquiler de scooters y motos en Zadar, de 50cc a 390cc. Casco y seguro básico incluidos. Carreteras costeras, islas, libertad.",
       "checkAvailability": "Ver disponibilidad",
       "fromPrice": "Desde {price}/día",
@@ -51,28 +52,69 @@
       "eyebrow": "En cada alquiler",
       "title": "Qué incluye",
       "items": {
-        "insurance": { "label": "Seguro básico", "sub": "Robo y daños al motor" },
-        "helmets": { "label": "Cascos", "sub": "Siempre incluidos" },
-        "unlimitedKm": { "label": "Km ilimitados", "sub": "Sin límite de distancia" },
-        "roadside": { "label": "Asistencia en carretera", "sub": "Gratis hasta 20km, luego 50€ y más" },
-        "transparent": { "label": "Precios transparentes", "sub": "Lo que ves, pagas" },
-        "warranty": { "label": "Garantía del motor", "sub": "Cubrimos averías de motor" }
+        "insurance": {
+          "label": "Seguro básico",
+          "sub": "Robo y daños al motor"
+        },
+        "helmets": {
+          "label": "Cascos",
+          "sub": "Siempre incluidos"
+        },
+        "unlimitedKm": {
+          "label": "Km ilimitados",
+          "sub": "Sin límite de distancia"
+        },
+        "roadside": {
+          "label": "Asistencia en carretera",
+          "sub": "Gratis hasta 20km, luego 50€ y más"
+        },
+        "transparent": {
+          "label": "Precios transparentes",
+          "sub": "Lo que ves, pagas"
+        },
+        "warranty": {
+          "label": "Garantía del motor",
+          "sub": "Cubrimos averías de motor"
+        }
       }
     },
     "goodToKnow": {
       "eyebrow": "Importante",
       "title": "Bueno saber",
-      "deposit": { "label": "Depósito", "sub": "Por moto, se devuelve tras la entrega si no hay daños." },
-      "phoneHolders": { "value": "No", "label": "Soportes de móvil", "sub": "No ofrecemos ni instalamos soportes de móvil y tampoco puedes traer el tuyo. Ninguna de nuestras motos tiene uno." },
-      "season": { "value": "Abr-Oct", "label": "Temporada", "sub": "Alquilamos de abril a octubre. Sale con depósito lleno, vuelve con depósito lleno." },
-      "languages": { "label": "Idiomas", "sub": "Hablamos alemán, inglés y portugués. Escríbenos por WhatsApp." }
+      "deposit": {
+        "label": "Depósito",
+        "sub": "Por moto, se devuelve tras la entrega si no hay daños."
+      },
+      "phoneHolders": {
+        "value": "No",
+        "label": "Soportes de móvil",
+        "sub": "No ofrecemos ni instalamos soportes de móvil y tampoco puedes traer el tuyo. Ninguna de nuestras motos tiene uno."
+      },
+      "season": {
+        "value": "Abr-Oct",
+        "label": "Temporada",
+        "sub": "Alquilamos de abril a octubre. Sale con depósito lleno, vuelve con depósito lleno."
+      },
+      "languages": {
+        "label": "Idiomas",
+        "sub": "Hablamos alemán, inglés y portugués. Escríbenos por WhatsApp."
+      }
     },
     "howItWorks": {
       "eyebrow": "Proceso sencillo",
       "title": "Cómo funciona",
-      "step1": { "title": "Elige tu vehículo", "text": "Elige tu scooter o moto, desde el 50cc urbano hasta la máquina de 390cc para carretera." },
-      "step2": { "title": "Solicita tus fechas", "text": "Consulta la disponibilidad en el calendario y envía una solicitud rápida. Recogida en nuestra tienda en Zadar." },
-      "step3": { "title": "Confirmamos y conduces", "text": "Enviamos confirmación por email en pocas horas. Paga el 20% de reserva, recoge tu moto y a rodar." },
+      "step1": {
+        "title": "Elige tu vehículo",
+        "text": "Elige tu scooter o moto, desde el 50cc urbano hasta la máquina de 390cc para carretera."
+      },
+      "step2": {
+        "title": "Solicita tus fechas",
+        "text": "Consulta la disponibilidad en el calendario y envía una solicitud rápida. Recogida en nuestra tienda en Zadar."
+      },
+      "step3": {
+        "title": "Confirmamos y conduces",
+        "text": "Enviamos confirmación por email en pocas horas. Paga el 20% de reserva, recoge tu moto y a rodar."
+      },
       "cta": "Reservar una moto"
     },
     "reviews": {

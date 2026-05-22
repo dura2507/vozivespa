@@ -24,7 +24,8 @@
     "hero": {
       "eyebrow": "Zara, Croazia",
       "headline1": "Ride the",
-      "headline2": "Croatian Coast",
+      "headline2": "Croatian",
+      "headline3": "Coast",
       "sub": "Noleggio scooter e moto a Zara, da 50cc a 390cc. Caschi e assicurazione base inclusi. Strade costiere, isole, libertà.",
       "checkAvailability": "Verifica disponibilità",
       "fromPrice": "Da {price}/giorno",
@@ -51,28 +52,69 @@
       "eyebrow": "Ogni noleggio",
       "title": "Cosa è incluso",
       "items": {
-        "insurance": { "label": "Assicurazione base", "sub": "Furto e danni al motore" },
-        "helmets": { "label": "Caschi", "sub": "Sempre forniti" },
-        "unlimitedKm": { "label": "Km illimitati", "sub": "Nessun limite di percorrenza" },
-        "roadside": { "label": "Soccorso stradale", "sub": "Gratis fino a 20km, poi 50€ e oltre" },
-        "transparent": { "label": "Prezzi trasparenti", "sub": "Quello che vedi è quello che paghi" },
-        "warranty": { "label": "Garanzia motore", "sub": "Copriamo i guasti al motore" }
+        "insurance": {
+          "label": "Assicurazione base",
+          "sub": "Furto e danni al motore"
+        },
+        "helmets": {
+          "label": "Caschi",
+          "sub": "Sempre forniti"
+        },
+        "unlimitedKm": {
+          "label": "Km illimitati",
+          "sub": "Nessun limite di percorrenza"
+        },
+        "roadside": {
+          "label": "Soccorso stradale",
+          "sub": "Gratis fino a 20km, poi 50€ e oltre"
+        },
+        "transparent": {
+          "label": "Prezzi trasparenti",
+          "sub": "Quello che vedi è quello che paghi"
+        },
+        "warranty": {
+          "label": "Garanzia motore",
+          "sub": "Copriamo i guasti al motore"
+        }
       }
     },
     "goodToKnow": {
       "eyebrow": "Da sapere",
       "title": "Buono a sapersi",
-      "deposit": { "label": "Cauzione", "sub": "Per moto, restituita dopo la riconsegna se non ci sono danni." },
-      "phoneHolders": { "value": "No", "label": "Supporti per telefono", "sub": "Non offriamo né installiamo supporti per telefono e non puoi nemmeno portare il tuo. Nessuna delle nostre moto ne ha uno." },
-      "season": { "value": "Apr-Ott", "label": "Stagione", "sub": "Noleggiamo da aprile a ottobre. Pieno alla partenza, pieno al ritorno." },
-      "languages": { "label": "Lingue", "sub": "Parliamo tedesco, inglese e portoghese. Scrivici su WhatsApp." }
+      "deposit": {
+        "label": "Cauzione",
+        "sub": "Per moto, restituita dopo la riconsegna se non ci sono danni."
+      },
+      "phoneHolders": {
+        "value": "No",
+        "label": "Supporti per telefono",
+        "sub": "Non offriamo né installiamo supporti per telefono e non puoi nemmeno portare il tuo. Nessuna delle nostre moto ne ha uno."
+      },
+      "season": {
+        "value": "Apr-Ott",
+        "label": "Stagione",
+        "sub": "Noleggiamo da aprile a ottobre. Pieno alla partenza, pieno al ritorno."
+      },
+      "languages": {
+        "label": "Lingue",
+        "sub": "Parliamo tedesco, inglese e portoghese. Scrivici su WhatsApp."
+      }
     },
     "howItWorks": {
       "eyebrow": "Processo semplice",
       "title": "Come funziona",
-      "step1": { "title": "Scegli il mezzo", "text": "Scegli il tuo scooter o la tua moto, dal 50cc cittadino fino alla 390cc da strada." },
-      "step2": { "title": "Richiedi le date", "text": "Controlla la disponibilità sul calendario e invia una richiesta rapida. Ritiro nel nostro negozio a Zara." },
-      "step3": { "title": "Confermiamo e parti", "text": "Confermiamo via email entro poche ore. Paga il 20% di caparra, ritira la moto e parti." },
+      "step1": {
+        "title": "Scegli il mezzo",
+        "text": "Scegli il tuo scooter o la tua moto, dal 50cc cittadino fino alla 390cc da strada."
+      },
+      "step2": {
+        "title": "Richiedi le date",
+        "text": "Controlla la disponibilità sul calendario e invia una richiesta rapida. Ritiro nel nostro negozio a Zara."
+      },
+      "step3": {
+        "title": "Confermiamo e parti",
+        "text": "Confermiamo via email entro poche ore. Paga il 20% di caparra, ritira la moto e parti."
+      },
       "cta": "Prenota una moto"
     },
     "reviews": {
