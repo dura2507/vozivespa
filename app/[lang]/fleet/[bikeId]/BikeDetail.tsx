@@ -703,6 +703,23 @@ export default function BikeDetail({
           <section id="book" ref={calendarRef} className="mb-16 scroll-mt-28">
             {bookingStep !== "done" && (
               <>
+                {/* Freestanding bike strip so the visitor sees exactly
+                    which bike's calendar they're about to lock. */}
+                <div className="flex items-center gap-4 sm:gap-6 mb-6">
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 overflow-hidden">
+                    <Image
+                      src={bike.image}
+                      alt={bike.name}
+                      fill
+                      sizes="80px"
+                      className="object-cover object-bottom"
+                    />
+                  </div>
+                  <p className="font-barlow font-black uppercase text-xl sm:text-3xl tracking-wide leading-tight text-ink">
+                    {bike.name}
+                  </p>
+                </div>
+
                 <div className="text-center mb-8">
                   <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">
                     {tF.calendar.eyebrow}
@@ -710,22 +727,6 @@ export default function BikeDetail({
                   <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3.5rem)] tracking-tight text-ink">
                     {tF.calendar.title}
                   </h2>
-                  {/* Tiny bike thumb + name so the visitor knows
-                      exactly which bike the calendar is locking. */}
-                  <div className="inline-flex items-center gap-4 mt-4">
-                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 overflow-hidden">
-                      <Image
-                        src={bike.image}
-                        alt={bike.name}
-                        fill
-                        sizes="96px"
-                        className="object-cover object-bottom"
-                      />
-                    </div>
-                    <span className="font-bold text-ink text-base sm:text-lg tracking-wide">
-                      {bike.name}
-                    </span>
-                  </div>
                 </div>
 
                 <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
