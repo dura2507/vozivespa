@@ -43,8 +43,8 @@
       "inStockHint": "En vadrouille entre amis ? Nous en avons {n}.",
       "availableNow": "Disponible maintenant",
       "availableNowCount": "{n} disponibles maintenant",
-      "notAvailableNow": "Toutes louées pour le moment",
-      "outOfService": "Actuellement en révision",
+      "notAvailableNow": "Toutes louées",
+      "outOfService": "En révision",
       "viewDetails": "Détails"
     },
     "included": {

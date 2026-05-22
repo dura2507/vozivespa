@@ -43,8 +43,8 @@
       "inStockHint": "Mit Freunden unterwegs? Wir haben {n} Stück davon.",
       "availableNow": "Jetzt verfügbar",
       "availableNowCount": "{n} jetzt verfügbar",
-      "notAvailableNow": "Aktuell alle vermietet",
-      "outOfService": "Gerade in Wartung",
+      "notAvailableNow": "Alle vermietet",
+      "outOfService": "In Wartung",
       "viewDetails": "Details"
     },
     "included": {

@@ -214,12 +214,12 @@ export default async function HomePage({
                   </h3>
                   {availState !== "unknown" && (
                     <p
-                      className={`inline-flex items-center justify-center gap-1.5 text-[10px] tracking-[0.15em] uppercase font-bold mb-2 ${
+                      className={`inline-flex self-center items-center gap-1.5 text-[11px] tracking-[0.1em] uppercase font-bold mb-3 px-2.5 py-1 ${
                         availState === "available"
-                          ? "text-emerald-600"
+                          ? "bg-emerald-100 text-emerald-700"
                           : availState === "service"
-                            ? "text-amber-600"
-                            : "text-ink/50"
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-ink/10 text-ink/70"
                       }`}
                     >
                       <span
@@ -228,7 +228,7 @@ export default async function HomePage({
                             ? "bg-emerald-500 animate-pulse"
                             : availState === "service"
                               ? "bg-amber-500"
-                              : "bg-ink/40"
+                              : "bg-ink/50"
                         }`}
                         aria-hidden
                       />

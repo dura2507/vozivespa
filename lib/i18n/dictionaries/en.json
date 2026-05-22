@@ -43,8 +43,8 @@
       "inStockHint": "Riding with friends? We have {n} of these.",
       "availableNow": "Available now",
       "availableNowCount": "{n} available now",
-      "notAvailableNow": "All out right now",
-      "outOfService": "Currently in service",
+      "notAvailableNow": "All rented out",
+      "outOfService": "In service",
       "viewDetails": "Details"
     },
     "included": {

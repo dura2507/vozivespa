@@ -43,8 +43,8 @@
       "inStockHint": "Idete s društvom? Imamo ih {n}.",
       "availableNow": "Dostupno odmah",
       "availableNowCount": "{n} dostupno odmah",
-      "notAvailableNow": "Trenutno svi iznajmljeni",
-      "outOfService": "Trenutno na servisu",
+      "notAvailableNow": "Sve iznajmljeno",
+      "outOfService": "Na servisu",
       "viewDetails": "Detalji"
     },
     "included": {

@@ -43,8 +43,8 @@
       "inStockHint": "In giro con amici? Ne abbiamo {n}.",
       "availableNow": "Disponibile ora",
       "availableNowCount": "{n} disponibili ora",
-      "notAvailableNow": "Tutte noleggiate ora",
-      "outOfService": "Attualmente in officina",
+      "notAvailableNow": "Tutte noleggiate",
+      "outOfService": "In officina",
       "viewDetails": "Dettagli"
     },
     "included": {
