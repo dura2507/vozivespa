@@ -198,29 +198,6 @@ export default async function HomePage({
                     className="object-cover object-bottom transition-transform duration-700 group-hover:scale-105"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   />
-                  {availState !== "unknown" && (
-                    <div
-                      className={`absolute top-3 left-3 sm:top-4 sm:left-4 inline-flex items-center gap-2 px-3 py-1.5 text-[10px] sm:text-[11px] font-bold tracking-[0.12em] uppercase shadow-lg ${
-                        availState === "available"
-                          ? "bg-emerald-500 text-white"
-                          : availState === "service"
-                            ? "bg-amber-500 text-white"
-                            : "bg-ink text-white"
-                      }`}
-                    >
-                      <span
-                        className={`w-2 h-2 rounded-full ${
-                          availState === "available" ? "bg-white animate-pulse" : "bg-white/70"
-                        }`}
-                        aria-hidden
-                      />
-                      {availState === "available"
-                        ? t.fleet.availableNow
-                        : availState === "service"
-                          ? t.fleet.outOfService
-                          : t.fleet.notAvailableNow}
-                    </div>
-                  )}
                   <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-red text-white px-3 py-1.5 sm:px-4 sm:py-2 shadow-lg">
                     <p className="font-barlow font-black text-xl sm:text-2xl leading-none">
                       {cat.priceFrom && (
@@ -235,6 +212,33 @@ export default async function HomePage({
                   <h3 className="font-barlow font-black text-ink text-2xl sm:text-3xl uppercase tracking-wide leading-none mb-2">
                     {cat.name}
                   </h3>
+                  {availState !== "unknown" && (
+                    <p
+                      className={`inline-flex items-center justify-center gap-1.5 text-[10px] tracking-[0.15em] uppercase font-bold mb-2 ${
+                        availState === "available"
+                          ? "text-emerald-600"
+                          : availState === "service"
+                            ? "text-amber-600"
+                            : "text-ink/50"
+                      }`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          availState === "available"
+                            ? "bg-emerald-500 animate-pulse"
+                            : availState === "service"
+                              ? "bg-amber-500"
+                              : "bg-ink/40"
+                        }`}
+                        aria-hidden
+                      />
+                      {availState === "available"
+                        ? t.fleet.availableNow
+                        : availState === "service"
+                          ? t.fleet.outOfService
+                          : t.fleet.notAvailableNow}
+                    </p>
+                  )}
                   {unitCounts[cat.id] > 1 && (
                     <p className="text-[10px] tracking-[0.2em] uppercase font-bold text-red mb-3">
                       {fmt(t.fleet.inStock, { n: unitCounts[cat.id] })}
