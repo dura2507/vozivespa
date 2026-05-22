@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { DM_Sans, Barlow_Condensed, Dancing_Script } from "next/font/google";
-import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import AnchorOffsetFix from "@/components/AnchorOffsetFix";
@@ -65,13 +64,6 @@ export default function RootLayout({
         <PageViewTracker />
         {children}
         <Analytics />
-        {/* Elfsight platform: powers the Google Reviews widget on the
-            homepage. lazyOnload so it only fetches once the user is
-            idle / has scrolled near the reviews section. */}
-        <Script
-          src="https://elfsightcdn.com/platform.js"
-          strategy="lazyOnload"
-        />
         {/* Cookie consent banner. Owns the Google Ads gtag so it
             only mounts after the visitor clicks Accept — the rest of
             the analytics stack (Vercel + our own page_views) is
