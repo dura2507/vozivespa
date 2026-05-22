@@ -712,26 +712,6 @@ export default function BikeDetail({
                   </h2>
                 </div>
 
-                {/* Mini bike-header so the visitor can sanity-check
-                    which bike they're about to lock the calendar
-                    against. Especially useful when a customer hits
-                    this section by scrolling fast or following a
-                    deep link from elsewhere. */}
-                <div className="bg-ink text-white flex items-center gap-4 sm:gap-6 px-4 py-3 sm:px-6 sm:py-4 mb-4">
-                  <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 overflow-hidden bg-sand">
-                    <Image
-                      src={bike.image}
-                      alt={bike.name}
-                      fill
-                      sizes="64px"
-                      className="object-cover object-bottom"
-                    />
-                  </div>
-                  <p className="font-barlow font-black uppercase text-lg sm:text-2xl tracking-wide leading-tight">
-                    {bike.name}
-                  </p>
-                </div>
-
                 <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
                   <DayPicker
                     mode="range"
