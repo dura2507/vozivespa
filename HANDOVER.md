@@ -1,9 +1,220 @@
 # SickMotos / Rent a Moto — Handover
 
-Last refreshed 2026-05-12, end of the i18n + email-localisation + SSL session.
-Earlier handover content on anchor scroll, pricing tiers, calendar UX,
-the original Riderly poller etc. is unchanged; this file rewrites the
-parts that drifted in the last sessions.
+Last refreshed **2026-05-22**, end of the post-launch iteration sessions
+(visitor analytics, DSGVO, walk-in fix, calendar UX, owner notifications).
+The 2026-05-12 base sections below stay current — this top section is
+the diff since then.
+
+---
+
+## Sessions 2026-05-13 → 2026-05-22 — what changed
+
+### Translations + i18n hardening
+
+- Added Polish (`pl`) + French (`fr`) full dictionaries → 7 locales total
+  in `LOCALES`. Order in the switcher: EN · DE · HR · IT · PL · FR · ES.
+- Geo-fallback (`proxy.ts` `COUNTRY_TO_LOCALE`) covers DE/AT/CH/LI,
+  IT/SM/VA, HR/BA/SI/ME/RS/MK, PL, FR/BE/LU/MC, ES. LatAm was tried,
+  reverted (owner said example only).
+- Fixed: "April to October" was hardcoded English in `mockData.ts`;
+  moved to per-locale `seasonValue` dict key.
+- Fixed: Spanish missing `¿` on questions, German "So funktionierts" →
+  "So funktioniert's", Italian "riders"/"pedalare", lots of small
+  copy issues caught via a translation-audit subagent.
+- Custom inline SVG flags (`components/Flag.tsx`) replace emoji flags
+  everywhere — Navbar switcher, homepage, footer, contact, bike detail.
+  Croatian flag has a hand-drawn coat-of-arms; Brazilian flag added
+  for the Portuguese-speaking contact (owner asked specifically).
+
+### DSGVO + cookie consent
+
+- **Cookie banner** (`components/CookieBanner.tsx`) gates the Google
+  Ads tag — gtag only mounts after Accept. Vercel Analytics +
+  `page_views` tracker stay on regardless (cookieless). 7 locales.
+- **Privacy policy** (`/datenschutz` + `/privacy`) and **Imprint**
+  (`/impressum`) pages exist with proper content in all 7 locales
+  (`lib/legal-content.tsx`).
+- Footer has three legal links: Datenschutz · Impressum · Cookie
+  settings (the last reopens the banner via custom window event).
+- Owner billed €250 for the DSGVO compliance package (banner +
+  privacy + imprint + cookie reopener). Documented for fee-talk
+  precedent.
+
+### Visitor analytics
+
+- New `page_views` table (`is_backup`-style migration). Tracked via
+  `components/PageViewTracker.tsx` — anonymous, cookieless, daily-
+  rotating session_hash. RLS on.
+- Admin panel page `/admin/analytics` with stat cards (7d/30d/avg/
+  pages-per-visit), 30-day chart, top pages/countries/referrers/
+  languages. "Last updated" timestamp + manual Refresh button on
+  the dashboard.
+- **Critical fix:** Supabase PostgREST caps queries at 1000 rows.
+  `lib/analytics-data.ts` now pages through with `.range()` up to
+  200k. Customer reported "counter steckt fest" — was this.
+- Same-host referrers filtered out (rentamotozadar.com showed up
+  as 19 referrers from internal nav).
+
+### Owner notifications (Telegram + Email)
+
+- **Booking fee line:** new "Booking fee: 21€ (20%)" line under
+  Total so Thomas can reconcile the deposit screenshot at a glance.
+- **Licence country / Notes split:** the DB still stores them in one
+  `notes` column ("Licence country: X\\n\\n{free text}") but the
+  Telegram + email rendering pulls the prefix out into its own row,
+  so a free-text note like "Mi servono due caschi" no longer mashes
+  with the metadata.
+- **Auto-translate** (`lib/translate.ts`): customer notes in
+  IT/HR/PL/FR/ES (anything ≠ DE/EN) get translated into German via
+  DeepL Free. Shown under the original as italic "↳ DE: ..." line.
+  **Needs `DEEPL_API_KEY` env var** to activate — without it, falls
+  through silently. Owner has been asked to set this up.
+- IMAP auto-archive (`lib/imap-mark.ts`) still in place: when
+  Telegram delivers, the parallel owner email is marked read so the
+  inbox stays clean. Side effect noted — iOS Gmail push notification
+  could be suppressed if the read-flag races with the push. Owner
+  acknowledged this is iPhone Focus mode, no fix needed.
+
+### Booking flow + admin
+
+- **Critical bug fixed:** walk-in form quantity > 1 picked the first
+  N unit IDs blindly from the model. If unit #1 was on an old
+  booking it failed with "1 of 2 unit(s) not free". Now the server
+  uses `findFreeUnits()` to pick any N free units across the fleet.
+  Thomas had to do 2× single walk-ins as a workaround before the
+  fix.
+- **Bike-model switch** on confirmed bookings: edit form's new "Bike
+  Model" dropdown lets owner swap Duke 125 → 390 etc. Server checks
+  `findFreeUnit()` on the new model's units for the booking window,
+  rejects if none free, otherwise atomically swaps `bike_id` +
+  `bike_unit_id`.
+- **Backup unit support:** new `bike_units.is_backup` column.
+  Backup units stay in the booking pool but don't count toward the
+  public "X in our fleet" number. Owner-spec'd use case: the 5th
+  Liberty 50 is invisible to customers but available when the four
+  visible units are all booked. Owner decides spontaneously whether
+  to release.
+  Migration applied 2026-05-22 + 5th Liberty50 unit inserted with
+  `is_backup=true` and label `Liberty50-5`.
+- **Today's pickups section** in admin dashboard — surfaces today's
+  pickups at the top, sorted by pickup time, separate from
+  "Upcoming confirmed".
+- **Revolut payment option** added (3rd between PayPal F&F and PayPal
+  Company). Uses `revolut.me/prisciuqys` link + QR code (qrcode.react).
+  Payment notes localised across all 7 locales. CTA reads "Tap to pay
+  via Revolut" / language equivalents.
+- **Calendar bug:** past bookings rendered with "booked" overlay even
+  though already disabled via `{before: new Date()}`. Filtered out
+  bookings whose end is before today before building markers.
+- **Calendar coloring:** future bookable days now soft emerald,
+  booked days red with strikethrough, half-day edges diagonal
+  green/red. Mini legend below the calendar.
+- **Calendar bounds:** `startMonth = now`, `endMonth = Dec next year`.
+  Was unbounded — owner could scroll to 2099.
+- **Timezone fix:** `lib/admin-data.ts` `toMs` now Zagreb-wallclock-
+  aware via `Intl.DateTimeFormat` probe. Vercel runs UTC so a
+  18:00-Zagreb pickup was being read as 18:00 UTC = 20:00 Zagreb,
+  showing "Picks up in 2h" instead of "in 3m" at 17:57 local.
+
+### Homepage + UX
+
+- **Live availability badge per bike card:** small pill above the
+  bike name with 3 states (green "Available now" / amber "In service"
+  / black "All rented out"). Logic in
+  `lib/bike-pricing.ts:getAvailableNowCounts()`. Backup units count
+  toward availability so the badge stays green when 4 normal +
+  1 backup are present and ≥1 is free.
+- **Google trust strip** between hero and fleet section — official
+  4-colour Google G + 5.0 + gold stars + "Read reviews" link to the
+  maps.app.goo.gl listing.
+- **Split CTAs** on bike cards: "Details" (sand secondary) +
+  "Book Now →" (red primary, jumps to `#book` anchor on the detail
+  page so the customer lands at the calendar).
+- **Mini bike chip** above the calendar on the detail page (small
+  bike photo + name, no background, left-aligned, below the eyebrow
+  + headline).
+- **WhatsApp dual-CTA section** directly under the fleet on the
+  homepage — shows both contact numbers with their language flags so
+  spontaneous visitors don't have to scroll to the footer.
+- **OG image** (`scripts/gen-og.mjs`): hero KTM-coast photo + real
+  SickMotos SVG logo overlay + "Rent a Moto / in Zadar" headline +
+  "Scooter & motorbike rental . 50cc to 390cc" subline. No Google
+  badge in the current version (tried, owner didn't like it).
+- **Mobile favicons:** `app/icon.png` (192×192) and
+  `app/apple-icon.png` (180×180) generated from `app/icon.svg`
+  (currently the "RENT A MOTO" mark on black) via
+  `scripts/gen-icons.mjs`.
+- **Locale switcher:** dropdown reorder, inline flag SVGs, smooth
+  drawer animation.
+
+### Riderly conversation (external — not code)
+
+Riderly (motorcycle-rental marketplace, London, CEO Carlos Nasillo)
+reached out to Thomas asking for an API integration. **Not an
+acquisition offer** — they want availability + bookings sync so
+Riderly-driven bookings flow into our system.
+
+Market research subagent run on 2026-05-15 found Riderly is small,
+no nameable funding, inconsistent metrics. The real giant in
+bike-rental marketplaces is BikesBooking.com, not Riderly. Means
+the space is **not saturated** but also not VC-sexy. Realistic
+play for Kristian (operator of this codebase): SaaS for individual
+rental shops with their own bookable website, not full
+marketplace. Boats considered but already consolidated (Click&Boat
+acquired, SamBoat acquired, Boataround struggling) — bike-only +
+regional Adria focus is the wedge.
+
+**Action items:** still open. No code built for Riderly yet. Thomas
+needs to do an intro call before any API work is committed. Code
+ownership / IP between Kristian and Thomas must be clarified before
+selling/licensing to anyone.
+
+### Cron + analytics infra
+
+- `cron-job.org` (external, free tier) polls
+  `/api/cron/poll-riderly` for incoming Riderly bookings. Currently
+  20-min interval (owner moved from 1h to 5min, then settled on
+  ~15-20min). Vercel Hobby function limit is ~1M invocations/month
+  — at any interval ≤1min we're under 5% of the limit.
+- Telegram bot `@krileo_monitoring_bot` (token in private chat with
+  Kristian, **NOT in repo**) used as a forwarding mailbox for
+  Thomas's WhatsApp feedback. Privacy mode OFF, can read group
+  messages. Two project groups — chat `-5054735540` is the **rental**
+  project (this codebase), chat `-5125741410` is the **Shop** (Thomas's
+  other project, unrelated). When polling, filter to rental chat
+  only.
+
+### Scope-creep concern (operator-only note)
+
+Original project was €4.000 for the booking site. Thomas keeps
+adding scope (Google Ads, cookie banner, multi-currency, walk-in
+flow, owner dashboard polish, translation auto, …). Some are bugs
+(walk-in quantity, calendar past), most are new features. Kristian
+billed €250 separately for the DSGVO package. Future asks should
+get pre-quoted at a flat per-feature price or shifted onto an
+hourly contract — see the "What you can tell Thomas" template in
+the chat history if needed.
+
+### Pending / outstanding
+
+- **`DEEPL_API_KEY`** in Vercel — owner needs to set it. Without
+  it, customer note translation is just disabled, no crash.
+- **Migrations** that may or may not have been run in Supabase
+  (mostly idempotent, safe to re-run):
+  - `2026-05-13_booking_locale_pl_fr.sql` (extends locale check)
+  - `2026-05-13_page_views.sql` (analytics table)
+  - `2026-05-13_payment_method_revolut.sql` (extends payment check)
+  - `2026-05-22_bike_units_backup_flag.sql` (DONE this session)
+- **Multi-bike booking** from public site (multiple bikes in one
+  cart, e.g. "I want 2 Liberty 50s and 1 Duke 125") — deferred.
+  Owner explicitly said skip for now.
+- **Final push** stuck on a missing keychain credential at the very
+  end of 2026-05-22 — last local commit `ce6a8b6` (calendar
+  coloring) sits ahead of `origin/main`. Owner needs to push from
+  his terminal once to re-cache GitHub PAT before automated pushes
+  work again.
+
+---
 
 ## What this is
 
