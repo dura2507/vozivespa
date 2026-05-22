@@ -392,9 +392,31 @@ export function groupBookingsForDisplay(rows: EnrichedBooking[]): BookingDisplay
 export type BookingBuckets = {
   out: EnrichedBooking[];
   pending: EnrichedBooking[];
+  // Confirmed bookings whose pickup is today (in Zagreb wall-clock).
+  // Owner explicitly asked for these to surface at the top, sorted
+  // by pickup time, so the morning starts with a clear list of who
+  // arrives when.
+  today: EnrichedBooking[];
   upcoming: EnrichedBooking[];
   past: EnrichedBooking[];
 };
+
+// Returns the UTC ms timestamp for 23:59:59 of "today" interpreted
+// in the Zagreb timezone. Pickups with pickupAt <= this value AND
+// >= start of Zagreb today belong to the today bucket.
+function zagrebDayBounds(nowMs: number): { startMs: number; endMs: number } {
+  const parts = tzFormatter
+    .formatToParts(new Date(nowMs))
+    .reduce((acc, p) => {
+      if (p.type !== "literal") acc[p.type] = p.value;
+      return acc;
+    }, {} as Record<string, string>);
+  const dateStr = `${parts.year}-${parts.month}-${parts.day}`;
+  return {
+    startMs: toMs(dateStr, "00:00:00"),
+    endMs: toMs(dateStr, "23:59:59"),
+  };
+}
 
 // Sort confirmed bookings into "currently in customer's hands",
 // "starts in the future", or "already returned". Pending stays its
@@ -402,8 +424,10 @@ export type BookingBuckets = {
 export function bucketBookings(bookings: EnrichedBooking[], nowMs: number): BookingBuckets {
   const out: EnrichedBooking[] = [];
   const pending: EnrichedBooking[] = [];
+  const today: EnrichedBooking[] = [];
   const upcoming: EnrichedBooking[] = [];
   const past: EnrichedBooking[] = [];
+  const { endMs: endOfTodayMs } = zagrebDayBounds(nowMs);
 
   for (const b of bookings) {
     if (b.status === "pending") {
@@ -411,9 +435,17 @@ export function bucketBookings(bookings: EnrichedBooking[], nowMs: number): Book
       continue;
     }
     if (b.status === "confirmed") {
-      if (b.pickupAt <= nowMs && b.returnAt >= nowMs) out.push(b);
-      else if (b.pickupAt > nowMs) upcoming.push(b);
-      else past.push(b);
+      if (b.pickupAt <= nowMs && b.returnAt >= nowMs) {
+        out.push(b);
+      } else if (b.pickupAt > nowMs) {
+        // Future pickup. If still on today's Zagreb calendar day,
+        // surface it in the "Today" bucket; otherwise it's a normal
+        // future booking.
+        if (b.pickupAt <= endOfTodayMs) today.push(b);
+        else upcoming.push(b);
+      } else {
+        past.push(b);
+      }
       continue;
     }
     past.push(b);
@@ -421,8 +453,9 @@ export function bucketBookings(bookings: EnrichedBooking[], nowMs: number): Book
 
   pending.sort((a, b) => a.pickupAt - b.pickupAt);
   out.sort((a, b) => a.returnAt - b.returnAt);
+  today.sort((a, b) => a.pickupAt - b.pickupAt);
   upcoming.sort((a, b) => a.pickupAt - b.pickupAt);
   past.sort((a, b) => b.returnAt - a.returnAt);
 
-  return { out, pending, upcoming, past };
+  return { out, pending, today, upcoming, past };
 }
