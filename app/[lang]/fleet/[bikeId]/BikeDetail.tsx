@@ -755,12 +755,17 @@ export default function BikeDetail({
                       bookedEnd: bookedEndDays,
                     }}
                     modifiersClassNames={{
+                      // Booked = red tint + strike so it reads as
+                      // "blocked, can't pick this". Selector targets
+                      // the disabled state explicitly so it beats
+                      // the past-date disabled:bg-transparent on
+                      // CSS specificity.
                       bookedFull:
-                        "[&_button]:!bg-ink/10 [&_button]:!text-ink/40 [&_button]:!line-through",
+                        "[&_button:disabled]:!bg-red-100 [&_button:disabled]:!text-red-700 [&_button:disabled]:!line-through",
                       bookedStart:
-                        "[&_button]:!bg-[linear-gradient(135deg,_transparent_50%,_rgba(26,26,26,0.15)_50%)]",
+                        "[&_button]:!bg-[linear-gradient(135deg,_rgba(16,185,129,0.25)_50%,_rgba(220,38,38,0.25)_50%)]",
                       bookedEnd:
-                        "[&_button]:!bg-[linear-gradient(135deg,_rgba(26,26,26,0.15)_50%,_transparent_50%)]",
+                        "[&_button]:!bg-[linear-gradient(135deg,_rgba(220,38,38,0.25)_50%,_rgba(16,185,129,0.25)_50%)]",
                     }}
                     classNames={{
                       root: "font-sans",
@@ -778,7 +783,7 @@ export default function BikeDetail({
                       week: "",
                       day: "text-center p-0.5",
                       day_button:
-                        "w-9 h-9 text-sm font-medium text-ink transition-colors hover:bg-red/10 cursor-pointer disabled:text-ink/20 disabled:cursor-not-allowed disabled:hover:bg-transparent",
+                        "w-9 h-9 text-sm font-medium text-ink transition-colors bg-emerald-50 hover:bg-emerald-100 cursor-pointer disabled:!bg-transparent disabled:text-ink/20 disabled:cursor-not-allowed disabled:hover:bg-transparent",
                       selected: "bg-red text-white hover:bg-red",
                       range_start: "bg-red text-white",
                       range_end: "bg-red text-white",
@@ -788,6 +793,20 @@ export default function BikeDetail({
                       hidden: "invisible",
                     }}
                   />
+                </div>
+
+                {/* Tiny legend so the green/red colouring is
+                    immediately obvious to a visitor scanning the
+                    calendar for the first time. */}
+                <div className="flex items-center justify-center gap-5 mt-3 text-[10px] tracking-[0.15em] uppercase font-bold text-ink/60">
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 bg-emerald-100 border border-emerald-300" aria-hidden />
+                    {tF.calendar.legendFree}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 bg-red-100 border border-red-300" aria-hidden />
+                    {tF.calendar.legendBooked}
+                  </span>
                 </div>
 
                 {effectiveRange?.from && effectiveRange?.to && (

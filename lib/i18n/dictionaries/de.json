@@ -293,6 +293,8 @@
     "calendar": {
       "title": "Dieses Bike buchen",
       "eyebrow": "Termine wählen",
+      "legendFree": "Verfügbar",
+      "legendBooked": "Gebucht",
       "pickupDate": "Abholdatum",
       "returnDate": "Rückgabedatum",
       "pickupTime": "Abholzeit",

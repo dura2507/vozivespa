@@ -293,6 +293,8 @@
     "calendar": {
       "title": "Rezerviraj ovaj motor",
       "eyebrow": "Odaberi termine",
+      "legendFree": "Dostupno",
+      "legendBooked": "Zauzeto",
       "pickupDate": "Datum preuzimanja",
       "returnDate": "Datum povrata",
       "pickupTime": "Vrijeme preuzimanja",

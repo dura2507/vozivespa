@@ -293,6 +293,8 @@
     "calendar": {
       "title": "Reservar esta moto",
       "eyebrow": "Elige las fechas",
+      "legendFree": "Disponible",
+      "legendBooked": "Reservado",
       "pickupDate": "Fecha de recogida",
       "returnDate": "Fecha de devolución",
       "pickupTime": "Hora de recogida",

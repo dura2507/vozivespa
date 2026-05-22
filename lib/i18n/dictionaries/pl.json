@@ -293,6 +293,8 @@
     "calendar": {
       "title": "Zarezerwuj ten pojazd",
       "eyebrow": "Wybierz daty",
+      "legendFree": "Dostępne",
+      "legendBooked": "Zarezerwowane",
       "pickupDate": "Data odbioru",
       "returnDate": "Data zwrotu",
       "pickupTime": "Godzina odbioru",
