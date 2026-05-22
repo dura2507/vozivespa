@@ -710,6 +710,22 @@ export default function BikeDetail({
                   <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3.5rem)] tracking-tight text-ink">
                     {tF.calendar.title}
                   </h2>
+                  {/* Tiny bike thumb + name so the visitor knows
+                      exactly which bike the calendar is locking. */}
+                  <div className="inline-flex items-center gap-3 mt-4 bg-sand px-4 py-2">
+                    <div className="relative w-10 h-10 shrink-0 overflow-hidden">
+                      <Image
+                        src={bike.image}
+                        alt={bike.name}
+                        fill
+                        sizes="40px"
+                        className="object-cover object-bottom"
+                      />
+                    </div>
+                    <span className="font-bold text-ink text-sm tracking-wide">
+                      {bike.name}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
