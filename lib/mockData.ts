@@ -252,6 +252,7 @@ export const REVIEWS: Review[] = [
     rating: 5,
     text: "Wir haben hier einen Roller gemietet und waren rundum zufrieden! Der Preis war absolut fair, alles wurde transparent erklärt und es gab keine versteckten Kosten. Besonders gut fanden wir, dass die Kaution deutlich geringer war als bei anderen Anbietern.",
     avatar: "/reviews/isabel-abed.jpg",
+    photos: ["/reviews/isabel-abed-photo-1.jpg"],
   },
   {
     id: "7",
@@ -260,6 +261,7 @@ export const REVIEWS: Review[] = [
     rating: 5,
     text: "Wir haben eine KTM gemietet für 2 Tage und waren total zufrieden! Der Ablauf war easy, die Maschine in top Zustand und die Empfehlungen für die Strecken haben uns einen mega schönen Tag beschert.",
     avatar: "/reviews/friederike-pagel.jpg",
+    photos: ["/reviews/friederike-pagel-photo-1.jpg"],
   },
   {
     id: "8",
@@ -268,6 +270,7 @@ export const REVIEWS: Review[] = [
     rating: 5,
     text: "Alles mega! Super freundliche Besitzer. War auch von Vorteil, dass man sich in der Nähe vom Hafen befindet, von dort aus kann man echt schöne Touren starten.",
     avatar: "/reviews/domi-weid.jpg",
+    photos: ["/reviews/domi-weid-photo-1.jpg"],
   },
   {
     id: "1",
