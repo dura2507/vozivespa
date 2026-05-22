@@ -89,6 +89,24 @@ function totalEur(booking: BookingRow): string {
     : "-";
 }
 
+function bookingFeeEur(booking: BookingRow): string | null {
+  if (!booking.total_price_cents) return null;
+  return `${Math.round(booking.total_price_cents * 0.2 / 100)}€`;
+}
+
+// Pull "Licence country: X" prefix out of the raw notes column so
+// the email can render it on its own row instead of mashed into the
+// notes block.
+function splitNotes(raw: string | null): { country: string | null; note: string | null } {
+  if (!raw) return { country: null, note: null };
+  const m = raw.match(/^Licence country:\s*([^\n]+)(?:\n+([\s\S]*))?$/);
+  if (!m) return { country: null, note: raw.trim() || null };
+  return {
+    country: m[1].trim(),
+    note: m[2]?.trim() || null,
+  };
+}
+
 function ownerWaLink(): string {
   return `https://wa.me/${BRAND.contacts[0].phoneRaw}`;
 }
@@ -224,17 +242,22 @@ export async function sendOwnerBookingEmail(
   const phoneDigits = booking.customer_phone.replace(/[^\d]/g, "");
   const waLink = phoneDigits ? `https://wa.me/${phoneDigits}` : null;
 
+  const fee = bookingFeeEur(booking);
+  const { country: licenceCountry, note: cleanNote } = splitNotes(booking.notes);
+
   const bodyHtml = `
     <p style="margin:0 0 14px;font-size:15px;line-height:1.6;">New booking request from <strong>${escape(booking.customer_name)}</strong>.</p>
     ${bookingSummaryHtml(booking)}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
       ${unitLabel ? `<tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Unit</td><td style="padding:4px 0;font-weight:600;">${escape(unitLabel)}</td></tr>` : ""}
-      <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Deposit via</td><td style="padding:4px 0;font-weight:600;">${escape(paymentLabel(booking.payment_method))}</td></tr>
+      ${fee ? `<tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Booking fee</td><td style="padding:4px 0;font-weight:600;">${escape(fee)} (20%)</td></tr>` : ""}
+      <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Paid via</td><td style="padding:4px 0;font-weight:600;">${escape(paymentLabel(booking.payment_method))}</td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Licence</td><td style="padding:4px 0;font-weight:600;">${escape(booking.drivers_licence ?? "-")}</td></tr>
+      ${licenceCountry ? `<tr><td style="padding:4px 0;color:#6b6b6b;">Licence country</td><td style="padding:4px 0;font-weight:600;">${escape(licenceCountry)}</td></tr>` : ""}
       <tr><td style="padding:4px 0;color:#6b6b6b;">Riding</td><td style="padding:4px 0;font-weight:600;">${escape(ridingStyleLabel(booking.riding_style))}</td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Email</td><td style="padding:4px 0;"><a href="mailto:${escape(booking.customer_email)}" style="color:#1a1a1a;">${escape(booking.customer_email)}</a></td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Phone</td><td style="padding:4px 0;">${escape(booking.customer_phone)}${waLink ? ` &middot; <a href="${waLink}" style="color:#25D366;text-decoration:none;font-weight:600;">WhatsApp →</a>` : ""}</td></tr>
-      ${booking.notes ? `<tr><td style="padding:4px 0;color:#6b6b6b;vertical-align:top;">Notes</td><td style="padding:4px 0;white-space:pre-wrap;">${escape(booking.notes)}</td></tr>` : ""}
+      ${cleanNote ? `<tr><td style="padding:4px 0;color:#6b6b6b;vertical-align:top;">Notes</td><td style="padding:4px 0;white-space:pre-wrap;">${escape(cleanNote)}</td></tr>` : ""}
     </table>
     ${
       receipt?.url
@@ -256,14 +279,14 @@ export async function sendOwnerBookingEmail(
 Bike: ${bikeName}${unitLabel ? ` (${unitLabel})` : ""}
 Pickup: ${fmtDate(booking.date_from)} ${fmtTimeOfDay(booking.pickup_time)}
 Return: ${fmtDate(booking.date_to)} ${fmtTimeOfDay(booking.return_time)}
-Total: ${totalEur(booking)}
-Deposit via: ${paymentLabel(booking.payment_method)}
-Licence: ${booking.drivers_licence ?? "-"}
+Total: ${totalEur(booking)}${fee ? `\nBooking fee: ${fee} (20%)` : ""}
+Paid via: ${paymentLabel(booking.payment_method)}
+Licence: ${booking.drivers_licence ?? "-"}${licenceCountry ? `\nLicence country: ${licenceCountry}` : ""}
 Riding: ${ridingStyleLabel(booking.riding_style)}
 
 Customer: ${booking.customer_name}
 Email: ${booking.customer_email}
-Phone: ${booking.customer_phone}${booking.notes ? `\nNotes: ${booking.notes}` : ""}
+Phone: ${booking.customer_phone}${cleanNote ? `\nNotes: ${cleanNote}` : ""}
 
 ${receipt?.url ? `Receipt attached. Direct link: ${receipt.url}` : "No deposit screenshot attached."}
 

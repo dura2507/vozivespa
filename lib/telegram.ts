@@ -108,6 +108,28 @@ function totalEur(booking: BookingRow): string {
     : "-";
 }
 
+// 20% of the total — what the customer just paid as the booking fee
+// (deposit screenshot landing on the next line is the proof of this).
+// Returns null when we have no total to derive it from.
+function bookingFeeEur(booking: BookingRow): string | null {
+  if (!booking.total_price_cents) return null;
+  return `${Math.round(booking.total_price_cents * 0.2 / 100)}€`;
+}
+
+// The DB `notes` column holds "Licence country: X" prepended to the
+// customer's free-text note. Split them back out so the Telegram
+// message can show them as two distinct fields instead of one
+// mashed-up block.
+function splitNotes(raw: string | null): { country: string | null; note: string | null } {
+  if (!raw) return { country: null, note: null };
+  const m = raw.match(/^Licence country:\s*([^\n]+)(?:\n+([\s\S]*))?$/);
+  if (!m) return { country: null, note: raw.trim() || null };
+  return {
+    country: m[1].trim(),
+    note: m[2]?.trim() || null,
+  };
+}
+
 function paymentLabel(id: BookingRow["payment_method"]): string {
   if (!id) return "-";
   return (
@@ -190,6 +212,9 @@ function buildText(booking: BookingRow, unitLabel?: string | null): string {
     ? `*Bike:* ${escapeMd(bikeName)} \\(${escapeMd(unitLabel)}\\)`
     : `*Bike:* ${escapeMd(bikeName)}`;
 
+  const fee = bookingFeeEur(booking);
+  const { country: licenceCountry, note: cleanNote } = splitNotes(booking.notes);
+
   const lines = [
     "*New booking request*",
     "",
@@ -197,17 +222,18 @@ function buildText(booking: BookingRow, unitLabel?: string | null): string {
     `*Pickup:* ${escapeMd(fmtDate(booking.date_from))}${pickup ? ` ${escapeMd(pickup)}` : ""}`,
     `*Return:* ${escapeMd(fmtDate(booking.date_to))}${ret ? ` ${escapeMd(ret)}` : ""} \\(${nights} ${nights === 1 ? "day" : "days"}\\)`,
     `*Total:* ${escapeMd(totalEur(booking))}`,
-    `*Deposit via:* ${escapeMd(paymentLabel(booking.payment_method))}`,
+    fee ? `*Booking fee:* ${escapeMd(fee)} \\(20%\\)` : null,
+    `*Paid via:* ${escapeMd(paymentLabel(booking.payment_method))}`,
     "",
     `*Name:* ${escapeMd(booking.customer_name)}`,
     `*Phone:* ${escapeMd(booking.customer_phone)}`,
     `*Email:* ${escapeMd(booking.customer_email)}`,
     `*Licence:* ${escapeMd(booking.drivers_licence ?? "-")}`,
+    licenceCountry ? `*Licence country:* ${escapeMd(licenceCountry)}` : null,
     `*Riding:* ${escapeMd(ridingStyleLabel(booking.riding_style))}`,
-  ];
-  if (booking.notes) {
-    lines.push(`*Notes:* ${escapeMd(booking.notes)}`);
-  }
+    cleanNote ? `*Notes:* ${escapeMd(cleanNote)}` : null,
+  ].filter((l): l is string => l !== null);
+
   return lines.join("\n") + statusBanner(booking);
 }
 
