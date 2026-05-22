@@ -49,6 +49,7 @@ export type Review = {
   rating: number;
   text: string;
   avatar?: string;
+  photos?: string[];
 };
 
 export const LICENCE_BADGE: Record<string, string> = {

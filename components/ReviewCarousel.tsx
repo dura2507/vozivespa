@@ -62,6 +62,27 @@ export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
             <p className="text-ink/70 text-sm leading-relaxed flex-1 line-clamp-4">
               {review.text}
             </p>
+
+            {review.photos && review.photos.length > 0 && (
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                {review.photos.slice(0, 3).map((src, i) => (
+                  <a
+                    key={i}
+                    href={src}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block aspect-square overflow-hidden rounded"
+                  >
+                    <img
+                      src={src}
+                      alt={`${review.name} photo ${i + 1}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform"
+                      loading="lazy"
+                    />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>
