@@ -135,6 +135,33 @@ export default async function HomePage({
 
       <main className="pb-20 md:pb-0">
 
+        {/* GOOGLE TRUST STRIP — visible Google rating right under the
+            hero so visitors get a social-proof signal before scrolling
+            into the fleet. Links straight to our Google Maps listing. */}
+        <section className="bg-white border-y border-ink/10 py-5 md:py-6">
+          <a
+            href={BRAND.reviewsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="max-w-5xl mx-auto px-5 md:px-12 flex flex-wrap items-center justify-center gap-4 sm:gap-6 group"
+          >
+            {/* Official Google G in its four brand colours. */}
+            <svg className="w-7 h-7 sm:w-8 sm:h-8 shrink-0" viewBox="0 0 24 24" aria-hidden>
+              <path d="M21.6 12.227c0-.709-.06-1.39-.17-2.045H12v3.866h5.382a4.6 4.6 0 0 1-2 3.018v2.51h3.232c1.892-1.745 2.986-4.314 2.986-7.349Z" fill="#4285F4"/>
+              <path d="M12 22c2.7 0 4.964-.895 6.618-2.424l-3.232-2.51c-.895.6-2.04.954-3.386.954-2.604 0-4.81-1.76-5.597-4.122H3.064v2.59A9.997 9.997 0 0 0 12 22Z" fill="#34A853"/>
+              <path d="M6.404 13.898a6.018 6.018 0 0 1 0-3.795V7.513H3.064a10.003 10.003 0 0 0 0 8.974l3.34-2.59Z" fill="#FBBC04"/>
+              <path d="M12 5.977c1.47 0 2.785.504 3.823 1.494l2.866-2.866C16.96 3.041 14.694 2 12 2A9.997 9.997 0 0 0 3.064 7.514l3.34 2.59C7.192 7.738 9.398 5.977 12 5.977Z" fill="#EA4335"/>
+            </svg>
+            <div className="flex items-baseline gap-2.5">
+              <span className="font-barlow font-black text-2xl sm:text-3xl text-ink leading-none tabular-nums">5.0</span>
+              <span className="text-amber-400 text-lg sm:text-xl leading-none tracking-[2px]">★★★★★</span>
+            </div>
+            <span className="text-xs sm:text-sm text-ink/60 group-hover:text-red transition-colors hidden sm:inline">
+              {t.reviews.leaveReview} →
+            </span>
+          </a>
+        </section>
+
         {/* FLEET */}
         <section id="fleet" className="px-5 md:px-12 pt-20 pb-16 max-w-7xl mx-auto scroll-mt-32">
           <div className="text-center mb-12">
