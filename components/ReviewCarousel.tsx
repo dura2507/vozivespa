@@ -32,10 +32,23 @@ export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
             key={review.id}
             className="bg-sand p-6 flex flex-col"
           >
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <p className="font-semibold text-ink text-sm">{review.name}</p>
-                <p className="text-muted text-xs mt-0.5">{review.date}</p>
+            <div className="flex items-center justify-between mb-4 gap-2">
+              <div className="flex items-center gap-3 min-w-0">
+                {review.avatar ? (
+                  <img
+                    src={review.avatar}
+                    alt={review.name}
+                    className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-ink/10 text-ink/60 flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                    {review.name.charAt(0)}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="font-semibold text-ink text-sm truncate">{review.name}</p>
+                  <p className="text-muted text-xs mt-0.5">{review.date}</p>
+                </div>
               </div>
               <GoogleIcon />
             </div>
