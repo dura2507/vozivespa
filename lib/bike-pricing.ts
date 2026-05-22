@@ -120,12 +120,17 @@ export async function listPricingRows(): Promise<PricingRow[]> {
 // public fleet cards / detail pages so customers see "we have 4 of
 // these" and know group bookings are possible. Falls back to an
 // empty map if the read fails so the page never breaks over this.
+//
+// Backup units (is_backup = true) are excluded from this count —
+// they exist in the booking pool but stay invisible to customers,
+// the owner decides spontaneously whether to release the spare.
 export async function getUnitCounts(): Promise<Record<string, number>> {
   const supabase = getServiceClient();
   const { data, error } = await supabase
     .from("bike_units")
     .select("bike_id")
-    .eq("active", true);
+    .eq("active", true)
+    .eq("is_backup", false);
   if (error) {
     console.error("[bike-pricing] getUnitCounts", error);
     return {};

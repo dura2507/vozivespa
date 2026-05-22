@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { EnrichedBooking } from "@/lib/admin-data";
 import { buildSlots, isValidSlot } from "@/lib/pricing";
+import { CATEGORIES } from "@/lib/mockData";
 
 type Decision = "confirmed" | "declined" | "cancelled";
 
@@ -30,6 +31,9 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
   const [info, setInfo] = useState<string | null>(null);
 
   const [editOpen, setEditOpen] = useState(false);
+  // Bike model (owner can swap a confirmed booking to a different
+  // bike e.g. Duke 125 → Duke 390 when customer changes mind).
+  const [bikeId, setBikeId] = useState(booking.bike_id);
   // Window fields
   const [dateFrom, setDateFrom] = useState(booking.date_from);
   const [dateTo, setDateTo] = useState(booking.date_to);
@@ -54,6 +58,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
 
   function resetEditState() {
     setEditOpen(false);
+    setBikeId(booking.bike_id);
     setDateFrom(booking.date_from);
     setDateTo(booking.date_to);
     setPickupTime(fmtTimeOfDay(booking.pickup_time));
@@ -117,6 +122,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          bikeId,
           dateFrom,
           dateTo,
           pickupTime,
@@ -225,6 +231,34 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
         </div>
         {editOpen && (
           <div className="space-y-5">
+            <div>
+              <p className="text-[10px] tracking-[0.15em] uppercase text-ink/40 font-bold mb-2">
+                Bike
+              </p>
+              <label className="block">
+                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                  Model
+                </span>
+                <select
+                  value={bikeId}
+                  onChange={(e) => setBikeId(e.target.value)}
+                  className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
+                >
+                  {CATEGORIES.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                {bikeId !== booking.bike_id && (
+                  <p className="text-[10px] text-amber-700 mt-1 leading-snug">
+                    Saving will swap the booking onto a free unit of the new
+                    model. Fails if none is available in this window.
+                  </p>
+                )}
+              </label>
+            </div>
+
             <div>
               <p className="text-[10px] tracking-[0.15em] uppercase text-ink/40 font-bold mb-2">
                 Window

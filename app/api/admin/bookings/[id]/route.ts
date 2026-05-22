@@ -25,6 +25,7 @@ export async function PATCH(
 ) {
   const { id } = await params;
   let body: {
+    bikeId?: unknown;
     dateFrom?: unknown;
     dateTo?: unknown;
     pickupTime?: unknown;
@@ -83,20 +84,51 @@ export async function PATCH(
     return NextResponse.json({ error: "Booking not found" }, { status: 404 });
   }
 
+  // Allow owner to swap the bike model on a booking (e.g. customer
+  // upgrades Duke 125 → Duke 390). Defaults to the current model so
+  // older clients that don't send the field stay backward-compatible.
+  // If unknown bike id is supplied, refuse rather than silently picking
+  // the original.
+  const targetBikeId =
+    typeof body.bikeId === "string" && body.bikeId.length > 0
+      ? body.bikeId
+      : booking.bike_id;
+  if (targetBikeId !== booking.bike_id) {
+    const { data: bikeRow, error: bikeErr } = await supabase
+      .from("bikes")
+      .select("id, active")
+      .eq("id", targetBikeId)
+      .maybeSingle();
+    if (bikeErr) {
+      console.error("[/api/admin/bookings] bike lookup", bikeErr);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+    if (!bikeRow || !bikeRow.active) {
+      return NextResponse.json({ error: "Target bike not available" }, { status: 400 });
+    }
+  }
+
   let assignedUnitId: string | null = booking.bike_unit_id;
   try {
     const availability = await findFreeUnit(supabase, {
-      bikeId: booking.bike_id,
+      bikeId: targetBikeId,
       dateFrom,
       dateTo,
       pickupTime,
       returnTime,
-      excludeBookingId: booking.id,
+      // Only exclude this booking from conflicts when the model isn't
+      // changing — otherwise the old unit (on the original model) was
+      // never going to overlap anyway, and excluding by booking id on
+      // the new model has no effect.
+      excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined,
     });
     if (!availability.unitId) {
       return NextResponse.json(
         {
-          error: "Time conflict",
+          error:
+            targetBikeId === booking.bike_id
+              ? "Time conflict"
+              : "No free unit on the new model for this window",
           detail: availability.conflict
             ? describeConflict(availability.conflict)
             : "no free unit",
@@ -104,9 +136,6 @@ export async function PATCH(
         { status: 409 },
       );
     }
-    // For confirmed bookings, lock in the new unit choice. For pending
-    // bookings we still update so the auto-assigned unit reflects the
-    // edited window.
     assignedUnitId = availability.unitId;
   } catch (err) {
     console.error("[/api/admin/bookings] availability", err);
@@ -119,6 +148,7 @@ export async function PATCH(
   // remove a wrong note / email; undefined leaves the column alone.
 
   const updateRow: Partial<BookingRow> = {
+    bike_id: targetBikeId,
     date_from: dateFrom,
     date_to: dateTo,
     pickup_time: pickupTime,
