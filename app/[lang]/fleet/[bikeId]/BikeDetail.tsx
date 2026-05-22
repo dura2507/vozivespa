@@ -712,17 +712,17 @@ export default function BikeDetail({
                   </h2>
                   {/* Tiny bike thumb + name so the visitor knows
                       exactly which bike the calendar is locking. */}
-                  <div className="inline-flex items-center gap-3 mt-4 bg-sand px-4 py-2">
-                    <div className="relative w-10 h-10 shrink-0 overflow-hidden">
+                  <div className="inline-flex items-center gap-4 mt-4">
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 overflow-hidden">
                       <Image
                         src={bike.image}
                         alt={bike.name}
                         fill
-                        sizes="40px"
+                        sizes="96px"
                         className="object-cover object-bottom"
                       />
                     </div>
-                    <span className="font-bold text-ink text-sm tracking-wide">
+                    <span className="font-bold text-ink text-base sm:text-lg tracking-wide">
                       {bike.name}
                     </span>
                   </div>
