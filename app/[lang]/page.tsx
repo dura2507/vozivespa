@@ -4,8 +4,7 @@ import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Flag, type FlagCode } from "@/components/Flag";
-import { GALLERY_IMAGES, BRAND, LICENCE_BADGE, REVIEWS } from "@/lib/mockData";
-import ReviewCarousel from "@/components/ReviewCarousel";
+import { GALLERY_IMAGES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
 import { getCategoriesWithPricing, getUnitCounts, getAvailableNowCounts } from "@/lib/bike-pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -154,7 +153,7 @@ export default async function HomePage({
               <path d="M12 5.977c1.47 0 2.785.504 3.823 1.494l2.866-2.866C16.96 3.041 14.694 2 12 2A9.997 9.997 0 0 0 3.064 7.514l3.34 2.59C7.192 7.738 9.398 5.977 12 5.977Z" fill="#EA4335"/>
             </svg>
             <div className="flex items-baseline gap-2.5">
-              <span className="font-barlow font-black text-2xl sm:text-3xl text-ink leading-none tabular-nums">5.0</span>
+              <span className="font-barlow font-black text-2xl sm:text-3xl text-ink leading-none tabular-nums">4.9</span>
               <span className="text-amber-400 text-lg sm:text-xl leading-none tracking-[2px]">★★★★★</span>
             </div>
             <span className="text-xs sm:text-sm text-ink/60 group-hover:text-red transition-colors hidden sm:inline">
@@ -415,33 +414,10 @@ export default async function HomePage({
           </div>
         </section>
 
-        {/* REVIEWS */}
-        <section className="px-5 md:px-12 py-20 max-w-7xl mx-auto text-center">
-          <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">
-            {t.reviews.eyebrow}
-          </p>
-          <h2 className="font-barlow font-black uppercase text-[clamp(2rem,6vw,4rem)] tracking-tight text-ink mb-12">
-            {t.reviews.title}
-          </h2>
-          {/* Hand-curated reviews copied from the Google Business
-              Profile. Free, no third-party widget, no view limits.
-              Update REVIEWS in lib/mockData.ts when a new great
-              review comes in (paste author + date + text). The
-              "Leave a review" link below routes to GBP for fresh
-              submissions. */}
-          <ReviewCarousel reviews={REVIEWS} />
-          <a
-            href={BRAND.reviewsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-red font-bold text-xs tracking-[0.2em] uppercase border-b-2 border-red pb-1 mt-10 hover:gap-3 transition-all"
-          >
-            {t.reviews.leaveReview}
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </a>
-        </section>
+        {/* Reviews section intentionally omitted — the Google trust
+            strip at the top of the page (4.9 ★ + link to GBP) is
+            the live social-proof. No widget = no 3rd-party cost or
+            sync drift. */}
 
         {/* GALLERY STRIP */}
         <section className="pb-20">
