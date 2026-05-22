@@ -40,7 +40,11 @@
       "experienceRequired": "Potrebno iskustvo",
       "bookNow": "Rezerviraj",
       "inStock": "{n} u našoj floti",
-      "inStockHint": "Idete s društvom? Imamo ih {n}."
+      "inStockHint": "Idete s društvom? Imamo ih {n}.",
+      "availableNow": "Dostupno odmah",
+      "availableNowCount": "{n} dostupno odmah",
+      "notAvailableNow": "Trenutno svi iznajmljeni",
+      "outOfService": "Trenutno na servisu"
     },
     "included": {
       "eyebrow": "Uz svaki najam",

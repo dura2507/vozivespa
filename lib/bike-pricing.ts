@@ -137,6 +137,131 @@ export async function getUnitCounts(): Promise<Record<string, number>> {
   return out;
 }
 
+// Zagreb-wallclock → UTC ms helper, scoped to this module so we
+// don't pull a hard dep on admin-data.ts. Used by the availability-
+// now calculation below.
+const ZAGREB_TZ = "Europe/Zagreb";
+const ZAGREB_FMT = new Intl.DateTimeFormat("en-US", {
+  timeZone: ZAGREB_TZ,
+  year: "numeric", month: "2-digit", day: "2-digit",
+  hour: "2-digit", minute: "2-digit", second: "2-digit",
+  hour12: false,
+});
+function zagrebWallToMs(date: string, time: string): number {
+  const t = time.length === 5 ? `${time}:00` : time;
+  const [y, m, d] = date.split("-").map(Number);
+  const [hh, mm, ss] = t.split(":").map(Number);
+  const asUtc = Date.UTC(y, m - 1, d, hh, mm, ss);
+  const parts = ZAGREB_FMT.formatToParts(new Date(asUtc)).reduce(
+    (acc, p) => {
+      if (p.type !== "literal") acc[p.type] = p.value;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+  const zagrebInterpretation = Date.UTC(
+    Number(parts.year), Number(parts.month) - 1, Number(parts.day),
+    Number(parts.hour === "24" ? "0" : parts.hour),
+    Number(parts.minute), Number(parts.second),
+  );
+  return asUtc - (zagrebInterpretation - asUtc);
+}
+
+function todayInZagreb(nowMs: number): string {
+  const parts = ZAGREB_FMT.formatToParts(new Date(nowMs)).reduce(
+    (acc, p) => {
+      if (p.type !== "literal") acc[p.type] = p.value;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
+// Per-bike availability snapshot for *right now*. Used on the public
+// homepage fleet cards so visitors get an instant green/red signal
+// instead of having to open the calendar. A unit counts as "available
+// now" if it's active AND not in a confirmed booking that covers
+// this moment AND not under a service block that covers this moment.
+// Whole-model service blocks lock every unit of that bike at once.
+export async function getAvailableNowCounts(): Promise<
+  Record<string, { total: number; available: number }>
+> {
+  const supabase = getServiceClient();
+  const nowMs = Date.now();
+  const today = todayInZagreb(nowMs);
+
+  const [unitsRes, bookingsRes, blocksRes] = await Promise.all([
+    supabase
+      .from("bike_units")
+      .select("id, bike_id")
+      .eq("active", true),
+    supabase
+      .from("bookings")
+      .select("bike_unit_id, date_from, date_to, pickup_time, return_time")
+      .eq("status", "confirmed")
+      .lte("date_from", today)
+      .gte("date_to", today),
+    supabase
+      .from("blocked_dates")
+      .select("bike_id, bike_unit_id, date_from, date_to, start_time, end_time")
+      .is("booking_id", null)
+      .lte("date_from", today)
+      .gte("date_to", today),
+  ]);
+
+  if (unitsRes.error) {
+    console.error("[bike-pricing] availability units", unitsRes.error);
+    return {};
+  }
+
+  type B = {
+    bike_unit_id: string | null;
+    date_from: string;
+    date_to: string;
+    pickup_time: string;
+    return_time: string;
+  };
+  type M = {
+    bike_id: string;
+    bike_unit_id: string | null;
+    date_from: string;
+    date_to: string;
+    start_time: string | null;
+    end_time: string | null;
+  };
+
+  const busyUnitIds = new Set<string>();
+  for (const b of ((bookingsRes.data ?? []) as B[])) {
+    if (!b.bike_unit_id) continue;
+    const start = zagrebWallToMs(b.date_from, b.pickup_time);
+    const end = zagrebWallToMs(b.date_to, b.return_time);
+    if (nowMs >= start && nowMs < end) busyUnitIds.add(b.bike_unit_id);
+  }
+
+  const modelBlocked = new Set<string>();
+  for (const m of ((blocksRes.data ?? []) as M[])) {
+    let coversNow = true;
+    if (m.start_time && m.end_time) {
+      const start = zagrebWallToMs(m.date_from, m.start_time);
+      const end = zagrebWallToMs(m.date_to, m.end_time);
+      coversNow = nowMs >= start && nowMs < end;
+    }
+    if (!coversNow) continue;
+    if (m.bike_unit_id) busyUnitIds.add(m.bike_unit_id);
+    else modelBlocked.add(m.bike_id);
+  }
+
+  const counts: Record<string, { total: number; available: number }> = {};
+  for (const u of ((unitsRes.data ?? []) as Array<{ id: string; bike_id: string }>)) {
+    if (!counts[u.bike_id]) counts[u.bike_id] = { total: 0, available: 0 };
+    counts[u.bike_id].total += 1;
+    if (modelBlocked.has(u.bike_id)) continue;
+    if (!busyUnitIds.has(u.id)) counts[u.bike_id].available += 1;
+  }
+  return counts;
+}
+
 // Upsert any subset of tier overrides for a bike. Values are bare
 // euro integers; we serialise them as "<n>€" to match the existing
 // db format. Pass null in a slot to mean "no override here" — that

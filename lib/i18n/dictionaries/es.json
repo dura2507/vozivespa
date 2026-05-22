@@ -40,7 +40,11 @@
       "experienceRequired": "Se requiere experiencia",
       "bookNow": "Reservar",
       "inStock": "{n} en nuestra flota",
-      "inStockHint": "¿Vas con amigos? Tenemos {n} de estas."
+      "inStockHint": "¿Vas con amigos? Tenemos {n} de estas.",
+      "availableNow": "Disponible ahora",
+      "availableNowCount": "{n} disponibles ahora",
+      "notAvailableNow": "Todas alquiladas ahora",
+      "outOfService": "Actualmente en taller"
     },
     "included": {
       "eyebrow": "En cada alquiler",

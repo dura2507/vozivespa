@@ -40,7 +40,11 @@
       "experienceRequired": "Richiesta esperienza",
       "bookNow": "Prenota",
       "inStock": "{n} nella nostra flotta",
-      "inStockHint": "In giro con amici? Ne abbiamo {n}."
+      "inStockHint": "In giro con amici? Ne abbiamo {n}.",
+      "availableNow": "Disponibile ora",
+      "availableNowCount": "{n} disponibili ora",
+      "notAvailableNow": "Tutte noleggiate ora",
+      "outOfService": "Attualmente in officina"
     },
     "included": {
       "eyebrow": "Ogni noleggio",

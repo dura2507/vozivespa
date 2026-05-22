@@ -40,7 +40,11 @@
       "experienceRequired": "Fahrerfahrung erforderlich",
       "bookNow": "Jetzt buchen",
       "inStock": "{n} in unserer Flotte",
-      "inStockHint": "Mit Freunden unterwegs? Wir haben {n} Stück davon."
+      "inStockHint": "Mit Freunden unterwegs? Wir haben {n} Stück davon.",
+      "availableNow": "Jetzt verfügbar",
+      "availableNowCount": "{n} jetzt verfügbar",
+      "notAvailableNow": "Aktuell alle vermietet",
+      "outOfService": "Gerade in Wartung"
     },
     "included": {
       "eyebrow": "Bei jedem Verleih",

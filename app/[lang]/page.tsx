@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Flag, type FlagCode } from "@/components/Flag";
 import { GALLERY_IMAGES, BRAND, LICENCE_BADGE } from "@/lib/mockData";
-import { getCategoriesWithPricing, getUnitCounts } from "@/lib/bike-pricing";
+import { getCategoriesWithPricing, getUnitCounts, getAvailableNowCounts } from "@/lib/bike-pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 
@@ -24,9 +24,10 @@ export default async function HomePage({
   if (!isLocale(lang)) notFound();
   const dict = await getDictionary(lang as Locale);
   const t = dict.home;
-  const [CATEGORIES, unitCounts] = await Promise.all([
+  const [CATEGORIES, unitCounts, availableNow] = await Promise.all([
     getCategoriesWithPricing(),
     getUnitCounts(),
+    getAvailableNowCounts(),
   ]);
 
   // Hero "from XX€" label tracks the cheapest day price across the
@@ -146,6 +147,17 @@ export default async function HomePage({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 max-w-7xl mx-auto">
             {CATEGORIES.map((cat) => {
               const bikeDict = dict.bikes[cat.id as keyof typeof dict.bikes];
+              const avail = availableNow[cat.id];
+              // Three states for the at-a-glance status pill:
+              //   green  → ≥1 unit free this very moment
+              //   yellow → no fleet data yet (don't lie, fall back silent)
+              //   red    → every unit currently rented or in service
+              const availState =
+                !avail || avail.total === 0
+                  ? "unknown"
+                  : avail.available > 0
+                    ? "available"
+                    : "out";
               return (
               <Link href={`/${lang}/fleet/${cat.id}`} key={cat.id} className="group flex flex-col bg-sand">
                 <div className="relative overflow-hidden aspect-square bg-sand">
@@ -156,6 +168,27 @@ export default async function HomePage({
                     className="object-cover object-bottom transition-transform duration-700 group-hover:scale-105"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   />
+                  {availState !== "unknown" && (
+                    <div
+                      className={`absolute top-3 left-3 sm:top-4 sm:left-4 inline-flex items-center gap-2 px-3 py-1.5 text-[10px] sm:text-[11px] font-bold tracking-[0.12em] uppercase shadow-lg ${
+                        availState === "available"
+                          ? "bg-emerald-500 text-white"
+                          : "bg-ink text-white"
+                      }`}
+                    >
+                      <span
+                        className={`w-2 h-2 rounded-full ${
+                          availState === "available" ? "bg-white animate-pulse" : "bg-white/70"
+                        }`}
+                        aria-hidden
+                      />
+                      {availState === "available"
+                        ? avail!.total > 1
+                          ? fmt(t.fleet.availableNowCount, { n: avail!.available })
+                          : t.fleet.availableNow
+                        : t.fleet.notAvailableNow}
+                    </div>
+                  )}
                   <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-red text-white px-3 py-1.5 sm:px-4 sm:py-2 shadow-lg">
                     <p className="font-barlow font-black text-xl sm:text-2xl leading-none">
                       {cat.priceFrom && (

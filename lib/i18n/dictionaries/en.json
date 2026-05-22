@@ -40,7 +40,11 @@
       "experienceRequired": "Experience required",
       "bookNow": "Book Now",
       "inStock": "{n} in our fleet",
-      "inStockHint": "Riding with friends? We have {n} of these."
+      "inStockHint": "Riding with friends? We have {n} of these.",
+      "availableNow": "Available now",
+      "availableNowCount": "{n} available now",
+      "notAvailableNow": "All out right now",
+      "outOfService": "Currently in service"
     },
     "included": {
       "eyebrow": "Every rental",

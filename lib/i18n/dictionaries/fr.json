@@ -40,7 +40,11 @@
       "experienceRequired": "Expérience requise",
       "bookNow": "Réserver",
       "inStock": "{n} dans notre flotte",
-      "inStockHint": "En vadrouille entre amis ? Nous en avons {n}."
+      "inStockHint": "En vadrouille entre amis ? Nous en avons {n}.",
+      "availableNow": "Disponible maintenant",
+      "availableNowCount": "{n} disponibles maintenant",
+      "notAvailableNow": "Toutes louées pour le moment",
+      "outOfService": "Actuellement en révision"
     },
     "included": {
       "eyebrow": "Pour chaque location",
