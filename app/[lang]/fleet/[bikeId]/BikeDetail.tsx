@@ -714,8 +714,8 @@ export default function BikeDetail({
 
                 {/* Freestanding bike strip so the visitor sees exactly
                     which bike's calendar they're about to lock. */}
-                <div className="flex items-center gap-4 sm:gap-6 mb-8">
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 overflow-hidden">
+                <div className="flex items-center gap-3 sm:gap-6 mb-8">
+                  <div className="relative w-14 h-14 sm:w-20 sm:h-20 shrink-0 overflow-hidden">
                     <Image
                       src={bike.image}
                       alt={bike.name}
@@ -724,7 +724,7 @@ export default function BikeDetail({
                       className="object-cover object-bottom"
                     />
                   </div>
-                  <p className="font-barlow font-black uppercase text-xl sm:text-3xl tracking-wide leading-tight text-ink">
+                  <p className="font-barlow font-black uppercase text-base sm:text-3xl tracking-wide leading-tight text-ink break-words">
                     {bike.name}
                   </p>
                 </div>
