@@ -5,6 +5,7 @@ import { billableDays } from "@/lib/pricing";
 import type { BookingRow } from "@/lib/supabase";
 import { getDictionary, type Dictionary } from "@/lib/i18n/dictionaries";
 import { type Locale, isLocale } from "@/lib/i18n/config";
+import { translate, needsTranslationForOwner } from "@/lib/translate";
 
 function fmt(template: string, vars: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/g, (_, key) => vars[key] ?? "");
@@ -245,6 +246,13 @@ export async function sendOwnerBookingEmail(
   const fee = bookingFeeEur(booking);
   const { country: licenceCountry, note: cleanNote } = splitNotes(booking.notes);
 
+  // Auto-translate non-DE/EN customer notes into German for the owner.
+  let translatedNote: string | null = null;
+  if (cleanNote && needsTranslationForOwner(booking.locale)) {
+    const tr = await translate(cleanNote, { from: booking.locale, to: "DE" });
+    if (tr) translatedNote = tr.text;
+  }
+
   const bodyHtml = `
     <p style="margin:0 0 14px;font-size:15px;line-height:1.6;">New booking request from <strong>${escape(booking.customer_name)}</strong>.</p>
     ${bookingSummaryHtml(booking)}
@@ -257,7 +265,7 @@ export async function sendOwnerBookingEmail(
       <tr><td style="padding:4px 0;color:#6b6b6b;">Riding</td><td style="padding:4px 0;font-weight:600;">${escape(ridingStyleLabel(booking.riding_style))}</td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Email</td><td style="padding:4px 0;"><a href="mailto:${escape(booking.customer_email)}" style="color:#1a1a1a;">${escape(booking.customer_email)}</a></td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Phone</td><td style="padding:4px 0;">${escape(booking.customer_phone)}${waLink ? ` &middot; <a href="${waLink}" style="color:#25D366;text-decoration:none;font-weight:600;">WhatsApp →</a>` : ""}</td></tr>
-      ${cleanNote ? `<tr><td style="padding:4px 0;color:#6b6b6b;vertical-align:top;">Notes</td><td style="padding:4px 0;white-space:pre-wrap;">${escape(cleanNote)}</td></tr>` : ""}
+      ${cleanNote ? `<tr><td style="padding:4px 0;color:#6b6b6b;vertical-align:top;">Notes</td><td style="padding:4px 0;white-space:pre-wrap;">${escape(cleanNote)}${translatedNote ? `<br><span style="color:#6b6b6b;font-style:italic;">↳ DE: ${escape(translatedNote)}</span>` : ""}</td></tr>` : ""}
     </table>
     ${
       receipt?.url
@@ -286,7 +294,7 @@ Riding: ${ridingStyleLabel(booking.riding_style)}
 
 Customer: ${booking.customer_name}
 Email: ${booking.customer_email}
-Phone: ${booking.customer_phone}${cleanNote ? `\nNotes: ${cleanNote}` : ""}
+Phone: ${booking.customer_phone}${cleanNote ? `\nNotes: ${cleanNote}` : ""}${translatedNote ? `\n  ↳ DE: ${translatedNote}` : ""}
 
 ${receipt?.url ? `Receipt attached. Direct link: ${receipt.url}` : "No deposit screenshot attached."}
 

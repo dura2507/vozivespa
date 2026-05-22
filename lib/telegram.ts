@@ -2,6 +2,7 @@ import { CATEGORIES } from "@/lib/mockData";
 import { retry } from "@/lib/retry";
 import { billableDays } from "@/lib/pricing";
 import type { BookingRow } from "@/lib/supabase";
+import { translate, needsTranslationForOwner } from "@/lib/translate";
 
 const TG_API = "https://api.telegram.org";
 
@@ -202,7 +203,11 @@ function buildKeyboard(booking: BookingRow): InlineKeyboard {
   return rows;
 }
 
-function buildText(booking: BookingRow, unitLabel?: string | null): string {
+function buildText(
+  booking: BookingRow,
+  unitLabel?: string | null,
+  translatedNote?: string | null,
+): string {
   const bikeName = bikeNameFor(booking);
   const nights = bookingDays(booking);
   const pickup = fmtTimeOfDay(booking.pickup_time);
@@ -232,6 +237,12 @@ function buildText(booking: BookingRow, unitLabel?: string | null): string {
     licenceCountry ? `*Licence country:* ${escapeMd(licenceCountry)}` : null,
     `*Riding:* ${escapeMd(ridingStyleLabel(booking.riding_style))}`,
     cleanNote ? `*Notes:* ${escapeMd(cleanNote)}` : null,
+    // When the customer wrote in a non-DE/EN language we drop the
+    // German translation right under their original note so the
+    // owner doesn't have to copy-paste into a translator.
+    translatedNote
+      ? `_${escapeMd("↳ DE:")} ${escapeMd(translatedNote)}_`
+      : null,
   ].filter((l): l is string => l !== null);
 
   return lines.join("\n") + statusBanner(booking);
@@ -250,6 +261,16 @@ export async function sendOwnerBookingTelegram(
     return [];
   }
 
+  // Translate the customer's note into German when they wrote in
+  // anything other than DE/EN. Best-effort: silently falls through
+  // if DeepL is down or the key isn't configured.
+  const { note: rawCustomerNote } = splitNotes(booking.notes);
+  let translatedNote: string | null = null;
+  if (rawCustomerNote && needsTranslationForOwner(booking.locale)) {
+    const tr = await translate(rawCustomerNote, { from: booking.locale, to: "DE" });
+    if (tr) translatedNote = tr.text;
+  }
+
   // Booking message first so the Confirm / Decline buttons land
   // before the receipt. Receipt then arrives as a reply to the
   // booking message . Telegram renders that as a quoted thread, so
@@ -263,7 +284,7 @@ export async function sendOwnerBookingTelegram(
     chatIds.map(async (chatId) => {
       const msgRes = await callTelegram<{ message_id: number }>("sendMessage", {
         chat_id: chatId,
-        text: buildText(booking, unitLabel),
+        text: buildText(booking, unitLabel, translatedNote),
         parse_mode: "MarkdownV2",
         reply_markup: { inline_keyboard: buildKeyboard(booking) },
       });
