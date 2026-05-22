@@ -276,6 +276,134 @@ export async function findUnitConflict(
   return null;
 }
 
+// Walks the fleet and returns up to `count` free unit IDs. Used by
+// the quantity-based walk-in path so the owner can say "book me 2
+// units" without picking which two — the server figures it out from
+// whichever units are actually free for the requested window.
+export async function findFreeUnits(
+  supabase: SupabaseClient,
+  w: BookingWindow,
+  count: number,
+): Promise<{ unitIds: string[]; totalFree: number; totalUnits: number; conflict: Conflict | null }> {
+  // Reuse the same conflict-collection logic as findFreeUnit, just
+  // keep walking past the first match.
+  const { data: manuals, error: manualErr } = await supabase
+    .from("blocked_dates")
+    .select("date_from, date_to, start_time, end_time, bike_unit_id")
+    .eq("bike_id", w.bikeId)
+    .is("booking_id", null)
+    .lte("date_from", w.dateTo)
+    .gte("date_to", w.dateFrom);
+  if (manualErr) throw new Error(`manual block lookup: ${manualErr.message}`);
+
+  const newStart = toMs(w.dateFrom, w.pickupTime);
+  const newEnd = toMs(w.dateTo, w.returnTime);
+
+  function overlapsManual(m: {
+    date_from: string;
+    date_to: string;
+    start_time: string | null;
+    end_time: string | null;
+  }): boolean {
+    if (!m.start_time || !m.end_time) return true;
+    const mStart = toMs(m.date_from, m.start_time);
+    const mEnd = toMs(m.date_to, m.end_time);
+    return newStart < mEnd && mStart < newEnd;
+  }
+
+  const blockedUnitIds = new Set<string>();
+  let modelWideBlock: { date_from: string; date_to: string } | null = null;
+  for (const m of (manuals ?? []) as Array<{
+    date_from: string;
+    date_to: string;
+    start_time: string | null;
+    end_time: string | null;
+    bike_unit_id: string | null;
+  }>) {
+    if (!overlapsManual(m)) continue;
+    if (m.bike_unit_id === null) {
+      modelWideBlock = { date_from: m.date_from, date_to: m.date_to };
+      break;
+    }
+    blockedUnitIds.add(m.bike_unit_id);
+  }
+
+  const { data: units, error: unitErr } = await supabase
+    .from("bike_units")
+    .select("id, label")
+    .eq("bike_id", w.bikeId)
+    .eq("active", true)
+    .order("label", { ascending: true });
+  if (unitErr) throw new Error(`unit lookup: ${unitErr.message}`);
+  const allUnits = (units ?? []) as Array<{ id: string; label: string }>;
+  if (allUnits.length === 0) {
+    return { unitIds: [], totalFree: 0, totalUnits: 0, conflict: { kind: "no_units" } };
+  }
+  if (modelWideBlock) {
+    return {
+      unitIds: [],
+      totalFree: 0,
+      totalUnits: allUnits.length,
+      conflict: { kind: "manual", from: modelWideBlock.date_from, to: modelWideBlock.date_to },
+    };
+  }
+
+  let q = supabase
+    .from("bookings")
+    .select("id, bike_unit_id, date_from, date_to, pickup_time, return_time, customer_name")
+    .eq("bike_id", w.bikeId)
+    .eq("status", "confirmed")
+    .lte("date_from", w.dateTo)
+    .gte("date_to", w.dateFrom);
+  if (w.excludeBookingId) q = q.neq("id", w.excludeBookingId);
+  const { data: candidates, error: bookErr } = await q;
+  if (bookErr) throw new Error(`booking overlap lookup: ${bookErr.message}`);
+
+  type Cand = {
+    id: string;
+    bike_unit_id: string | null;
+    date_from: string;
+    date_to: string;
+    pickup_time: string;
+    return_time: string;
+    customer_name: string;
+  };
+  const bufferMs = TURNAROUND_MINUTES * 60_000;
+  const occupied = new Set<string>();
+  let lastBookingConflict: Cand | null = null;
+  for (const c of ((candidates ?? []) as Cand[])) {
+    const cStart = toMs(c.date_from, c.pickup_time);
+    const cEnd = toMs(c.date_to, c.return_time);
+    if (newStart < cEnd + bufferMs && cStart - bufferMs < newEnd) {
+      if (c.bike_unit_id) occupied.add(c.bike_unit_id);
+      lastBookingConflict = c;
+    }
+  }
+
+  const freeUnits = allUnits.filter(
+    (u) => !occupied.has(u.id) && !blockedUnitIds.has(u.id),
+  );
+  const picked = freeUnits.slice(0, count).map((u) => u.id);
+  let conflict: Conflict | null = null;
+  if (picked.length < count && lastBookingConflict) {
+    conflict = {
+      kind: "booking",
+      id: lastBookingConflict.id,
+      customerName: lastBookingConflict.customer_name,
+      dateFrom: lastBookingConflict.date_from,
+      dateTo: lastBookingConflict.date_to,
+      pickupTime: lastBookingConflict.pickup_time,
+      returnTime: lastBookingConflict.return_time,
+    };
+  }
+  return {
+    unitIds: picked,
+    totalFree: freeUnits.length,
+    totalUnits: allUnits.length,
+    conflict,
+  };
+}
+
 // Human-readable reason for showing in toasts / error pages.
 export function describeConflict(c: Conflict): string {
   if (c.kind === "manual") return `manual owner block ${c.from} → ${c.to}`;

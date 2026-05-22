@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
-import { findFreeUnit, findUnitConflict, describeConflict } from "@/lib/availability";
+import { findFreeUnit, findFreeUnits, findUnitConflict, describeConflict } from "@/lib/availability";
 import { isValidSlot, parseTime } from "@/lib/pricing";
 
 export const runtime = "nodejs";
@@ -207,45 +207,28 @@ export async function POST(request: Request) {
   //     - undefined         → just the auto-picked free unit (single)
   const unitsToBook: string[] = [];
   if (requestedUnitIds && requestedUnitIds.length > 0) {
-    // Validate every id belongs to this bike + is active + is free.
-    const { data: ownedUnits, error: ownErr } = await supabase
-      .from("bike_units")
-      .select("id, bike_id, active")
-      .in("id", requestedUnitIds);
-    if (ownErr) {
-      console.error("[/api/admin/bookings/manual] units lookup", ownErr);
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
-    }
-    const valid = (ownedUnits ?? []) as Array<{ id: string; bike_id: string; active: boolean }>;
-    const bad = requestedUnitIds.find(
-      (id) => !valid.some((v) => v.id === id && v.bike_id === bikeId && v.active),
+    // Owner asked for N units of this model (the client picks N
+    // unit-ids from the front of the list, but those IDs are only
+    // a hint — the actual list of *free* units may not match if some
+    // are mid-rental or service-blocked). Treat the request as a
+    // quantity ask and pick whichever N units are actually free.
+    const wanted = requestedUnitIds.length;
+    const free = await findFreeUnits(
+      supabase,
+      { bikeId, dateFrom, dateTo, pickupTime, returnTime },
+      wanted,
     );
-    if (bad) {
-      return NextResponse.json(
-        { error: "One of the chosen units doesn't belong to this bike" },
-        { status: 400 },
-      );
-    }
-    const conflicts: string[] = [];
-    for (const uid of requestedUnitIds) {
-      const c = await findUnitConflict(supabase, {
-        bikeUnitId: uid,
-        dateFrom,
-        dateTo,
-        pickupTime,
-        returnTime,
-      });
-      if (c) conflicts.push(uid);
-    }
-    if (conflicts.length > 0) {
+    if (free.unitIds.length < wanted) {
+      const detail = free.conflict ? describeConflict(free.conflict) : undefined;
       return NextResponse.json(
         {
-          error: `Can't book — ${conflicts.length} of ${requestedUnitIds.length} unit(s) not free for this window`,
+          error: `Can't book — only ${free.unitIds.length} of ${wanted} requested units are free for this window (fleet has ${free.totalUnits} units, ${free.totalFree} currently free)`,
+          detail,
         },
         { status: 409 },
       );
     }
-    unitsToBook.push(...requestedUnitIds);
+    unitsToBook.push(...free.unitIds);
   } else if (requestedUnitId === "all") {
     const { data: allUnits, error: unitErr } = await supabase
       .from("bike_units")
