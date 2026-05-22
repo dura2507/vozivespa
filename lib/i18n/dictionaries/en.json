@@ -44,7 +44,8 @@
       "availableNow": "Available now",
       "availableNowCount": "{n} available now",
       "notAvailableNow": "All out right now",
-      "outOfService": "Currently in service"
+      "outOfService": "Currently in service",
+      "viewDetails": "Details"
     },
     "included": {
       "eyebrow": "Every rental",

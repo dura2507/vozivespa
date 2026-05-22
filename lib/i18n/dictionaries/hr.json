@@ -44,7 +44,8 @@
       "availableNow": "Dostupno odmah",
       "availableNowCount": "{n} dostupno odmah",
       "notAvailableNow": "Trenutno svi iznajmljeni",
-      "outOfService": "Trenutno na servisu"
+      "outOfService": "Trenutno na servisu",
+      "viewDetails": "Detalji"
     },
     "included": {
       "eyebrow": "Uz svaki najam",

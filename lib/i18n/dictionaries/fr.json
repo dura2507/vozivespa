@@ -44,7 +44,8 @@
       "availableNow": "Disponible maintenant",
       "availableNowCount": "{n} disponibles maintenant",
       "notAvailableNow": "Toutes louées pour le moment",
-      "outOfService": "Actuellement en révision"
+      "outOfService": "Actuellement en révision",
+      "viewDetails": "Détails"
     },
     "included": {
       "eyebrow": "Pour chaque location",

@@ -44,7 +44,8 @@
       "availableNow": "Jetzt verfügbar",
       "availableNowCount": "{n} jetzt verfügbar",
       "notAvailableNow": "Aktuell alle vermietet",
-      "outOfService": "Gerade in Wartung"
+      "outOfService": "Gerade in Wartung",
+      "viewDetails": "Details"
     },
     "included": {
       "eyebrow": "Bei jedem Verleih",

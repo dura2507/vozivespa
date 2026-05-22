@@ -186,8 +186,8 @@ export default async function HomePage({
                     ? "available"
                     : "out";
               return (
-              <Link href={`/${lang}/fleet/${cat.id}`} key={cat.id} className="group flex flex-col bg-sand">
-                <div className="relative overflow-hidden aspect-square bg-sand">
+              <div key={cat.id} className="group flex flex-col bg-sand">
+                <Link href={`/${lang}/fleet/${cat.id}`} className="relative overflow-hidden aspect-square bg-sand block">
                   <Image
                     src={cat.image}
                     alt={cat.name}
@@ -225,8 +225,8 @@ export default async function HomePage({
                       <span className="text-xs font-normal opacity-80 ml-0.5">{cat.priceUnit}</span>
                     </p>
                   </div>
-                </div>
-                <div className="px-5 pt-5 pb-5 sm:px-6 sm:pt-7 sm:pb-7 text-center flex flex-col flex-1">
+                </Link>
+                <Link href={`/${lang}/fleet/${cat.id}`} className="px-5 pt-5 pb-3 sm:px-6 sm:pt-7 sm:pb-4 text-center flex flex-col flex-1 block">
                   <h3 className="font-barlow font-black text-ink text-2xl sm:text-3xl uppercase tracking-wide leading-none mb-2">
                     {cat.name}
                   </h3>
@@ -257,14 +257,25 @@ export default async function HomePage({
                       {t.fleet.experienceRequired}
                     </p>
                   )}
-                  <span className="mt-auto inline-flex items-center justify-center gap-2 bg-red text-white font-bold text-xs tracking-[0.2em] uppercase py-3 px-4 group-hover:bg-red-dark group-hover:gap-3 transition-all">
+                </Link>
+                <div className="grid grid-cols-[1fr_1.4fr] gap-px bg-ink/10 mt-auto">
+                  <Link
+                    href={`/${lang}/fleet/${cat.id}`}
+                    className="bg-sand text-ink font-bold text-xs tracking-[0.2em] uppercase py-3 px-3 text-center hover:bg-off-white transition-colors"
+                  >
+                    {t.fleet.viewDetails}
+                  </Link>
+                  <Link
+                    href={`/${lang}/fleet/${cat.id}#book`}
+                    className="inline-flex items-center justify-center gap-2 bg-red text-white font-bold text-xs tracking-[0.2em] uppercase py-3 px-3 hover:bg-red-dark hover:gap-3 transition-all"
+                  >
                     {t.fleet.bookNow}
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
-                  </span>
+                  </Link>
                 </div>
-              </Link>
+              </div>
               );
             })}
           </div>

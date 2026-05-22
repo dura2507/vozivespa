@@ -700,7 +700,7 @@ export default function BikeDetail({
           </section>
 
           {/* Booking flow - calendar + form + success */}
-          <section ref={calendarRef} className="mb-16 scroll-mt-28">
+          <section id="book" ref={calendarRef} className="mb-16 scroll-mt-28">
             {bookingStep !== "done" && (
               <>
                 <div className="text-center mb-8">

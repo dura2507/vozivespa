@@ -44,7 +44,8 @@
       "availableNow": "Disponibile ora",
       "availableNowCount": "{n} disponibili ora",
       "notAvailableNow": "Tutte noleggiate ora",
-      "outOfService": "Attualmente in officina"
+      "outOfService": "Attualmente in officina",
+      "viewDetails": "Dettagli"
     },
     "included": {
       "eyebrow": "Ogni noleggio",

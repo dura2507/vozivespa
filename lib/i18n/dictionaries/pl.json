@@ -44,7 +44,8 @@
       "availableNow": "Dostępny teraz",
       "availableNowCount": "{n} dostępne teraz",
       "notAvailableNow": "Aktualnie wszystkie wynajęte",
-      "outOfService": "Obecnie w serwisie"
+      "outOfService": "Obecnie w serwisie",
+      "viewDetails": "Szczegóły"
     },
     "included": {
       "eyebrow": "Każdy wynajem",
