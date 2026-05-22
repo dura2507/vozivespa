@@ -185,7 +185,7 @@ function todayInZagreb(nowMs: number): string {
 // this moment AND not under a service block that covers this moment.
 // Whole-model service blocks lock every unit of that bike at once.
 export async function getAvailableNowCounts(): Promise<
-  Record<string, { total: number; available: number }>
+  Record<string, { total: number; available: number; cause: "service" | "rented" | null }>
 > {
   const supabase = getServiceClient();
   const nowMs = Date.now();
@@ -231,15 +231,19 @@ export async function getAvailableNowCounts(): Promise<
     end_time: string | null;
   };
 
-  const busyUnitIds = new Set<string>();
+  // Track WHY a unit is busy so we can distinguish "in service" from
+  // "rented out" on the public card — Beta with one service-blocked
+  // unit should read "In service", not the generic "All out".
+  const rentedUnitIds = new Set<string>();
   for (const b of ((bookingsRes.data ?? []) as B[])) {
     if (!b.bike_unit_id) continue;
     const start = zagrebWallToMs(b.date_from, b.pickup_time);
     const end = zagrebWallToMs(b.date_to, b.return_time);
-    if (nowMs >= start && nowMs < end) busyUnitIds.add(b.bike_unit_id);
+    if (nowMs >= start && nowMs < end) rentedUnitIds.add(b.bike_unit_id);
   }
 
-  const modelBlocked = new Set<string>();
+  const serviceUnitIds = new Set<string>();
+  const modelInService = new Set<string>();
   for (const m of ((blocksRes.data ?? []) as M[])) {
     let coversNow = true;
     if (m.start_time && m.end_time) {
@@ -248,18 +252,48 @@ export async function getAvailableNowCounts(): Promise<
       coversNow = nowMs >= start && nowMs < end;
     }
     if (!coversNow) continue;
-    if (m.bike_unit_id) busyUnitIds.add(m.bike_unit_id);
-    else modelBlocked.add(m.bike_id);
+    if (m.bike_unit_id) serviceUnitIds.add(m.bike_unit_id);
+    else modelInService.add(m.bike_id);
   }
 
-  const counts: Record<string, { total: number; available: number }> = {};
+  const counts: Record<
+    string,
+    { total: number; available: number; rented: number; service: number }
+  > = {};
   for (const u of ((unitsRes.data ?? []) as Array<{ id: string; bike_id: string }>)) {
-    if (!counts[u.bike_id]) counts[u.bike_id] = { total: 0, available: 0 };
-    counts[u.bike_id].total += 1;
-    if (modelBlocked.has(u.bike_id)) continue;
-    if (!busyUnitIds.has(u.id)) counts[u.bike_id].available += 1;
+    if (!counts[u.bike_id]) counts[u.bike_id] = { total: 0, available: 0, rented: 0, service: 0 };
+    const c = counts[u.bike_id];
+    c.total += 1;
+    if (modelInService.has(u.bike_id)) {
+      c.service += 1;
+      continue;
+    }
+    if (serviceUnitIds.has(u.id)) {
+      c.service += 1;
+      continue;
+    }
+    if (rentedUnitIds.has(u.id)) {
+      c.rented += 1;
+      continue;
+    }
+    c.available += 1;
   }
-  return counts;
+
+  // Reduce to the public shape: cause is "service" only when every
+  // unavailable unit is in service (no actual rental conflict),
+  // otherwise "rented" so the visitor knows it's a customer thing not
+  // a maintenance thing.
+  const out: Record<string, { total: number; available: number; cause: "service" | "rented" | null }> = {};
+  for (const [bikeId, c] of Object.entries(counts)) {
+    const cause: "service" | "rented" | null =
+      c.available === c.total
+        ? null
+        : c.rented === 0 && c.service > 0
+          ? "service"
+          : "rented";
+    out[bikeId] = { total: c.total, available: c.available, cause };
+  }
+  return out;
 }
 
 // Upsert any subset of tier overrides for a bike. Values are bare

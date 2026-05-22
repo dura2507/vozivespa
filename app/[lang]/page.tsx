@@ -175,16 +175,19 @@ export default async function HomePage({
             {CATEGORIES.map((cat) => {
               const bikeDict = dict.bikes[cat.id as keyof typeof dict.bikes];
               const avail = availableNow[cat.id];
-              // Three states for the at-a-glance status pill:
-              //   green  → ≥1 unit free this very moment
-              //   yellow → no fleet data yet (don't lie, fall back silent)
-              //   red    → every unit currently rented or in service
+              // Three rendered states for the at-a-glance status pill:
+              //   green   → ≥1 unit free this very moment
+              //   amber   → every unit currently in service (no rental)
+              //   neutral → unavailable for another reason (rented)
+              //   hidden  → no fleet data yet (don't show a lying badge)
               const availState =
                 !avail || avail.total === 0
                   ? "unknown"
                   : avail.available > 0
                     ? "available"
-                    : "out";
+                    : avail.cause === "service"
+                      ? "service"
+                      : "rented";
               return (
               <div key={cat.id} className="group flex flex-col bg-sand">
                 <Link href={`/${lang}/fleet/${cat.id}`} className="relative overflow-hidden aspect-square bg-sand block">
@@ -200,7 +203,9 @@ export default async function HomePage({
                       className={`absolute top-3 left-3 sm:top-4 sm:left-4 inline-flex items-center gap-2 px-3 py-1.5 text-[10px] sm:text-[11px] font-bold tracking-[0.12em] uppercase shadow-lg ${
                         availState === "available"
                           ? "bg-emerald-500 text-white"
-                          : "bg-ink text-white"
+                          : availState === "service"
+                            ? "bg-amber-500 text-white"
+                            : "bg-ink text-white"
                       }`}
                     >
                       <span
@@ -210,10 +215,10 @@ export default async function HomePage({
                         aria-hidden
                       />
                       {availState === "available"
-                        ? avail!.total > 1
-                          ? fmt(t.fleet.availableNowCount, { n: avail!.available })
-                          : t.fleet.availableNow
-                        : t.fleet.notAvailableNow}
+                        ? t.fleet.availableNow
+                        : availState === "service"
+                          ? t.fleet.outOfService
+                          : t.fleet.notAvailableNow}
                     </div>
                   )}
                   <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-red text-white px-3 py-1.5 sm:px-4 sm:py-2 shadow-lg">
