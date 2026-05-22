@@ -52,69 +52,28 @@
       "eyebrow": "Every rental",
       "title": "What's Included",
       "items": {
-        "insurance": {
-          "label": "Basic insurance",
-          "sub": "Theft + engine cover"
-        },
-        "helmets": {
-          "label": "Helmets",
-          "sub": "Always provided"
-        },
-        "unlimitedKm": {
-          "label": "Unlimited km",
-          "sub": "No driving limits"
-        },
-        "roadside": {
-          "label": "Roadside help",
-          "sub": "Free up to 20km, then 50€ plus"
-        },
-        "transparent": {
-          "label": "Transparent pricing",
-          "sub": "What you see, you pay"
-        },
-        "warranty": {
-          "label": "Engine warranty",
-          "sub": "We cover engine failure"
-        }
+        "insurance": { "label": "Basic insurance", "sub": "Theft + engine cover" },
+        "helmets": { "label": "Helmets", "sub": "Always provided" },
+        "unlimitedKm": { "label": "Unlimited km", "sub": "No driving limits" },
+        "roadside": { "label": "Roadside help", "sub": "Free up to 20km, then 50€ plus" },
+        "transparent": { "label": "Transparent pricing", "sub": "What you see, you pay" },
+        "warranty": { "label": "Engine warranty", "sub": "We cover engine failure" }
       }
     },
     "goodToKnow": {
       "eyebrow": "Heads up",
       "title": "Good to Know",
-      "deposit": {
-        "label": "Deposit",
-        "sub": "Per bike, refunded after drop-off if no damage."
-      },
-      "phoneHolders": {
-        "value": "No",
-        "label": "Phone holders",
-        "sub": "We don't offer or fit phone holders, and you can't bring your own. None of our bikes have one."
-      },
-      "season": {
-        "value": "Apr-Oct",
-        "label": "Riding season",
-        "sub": "We rent April through October. Full tank in, full tank out."
-      },
-      "languages": {
-        "label": "Languages",
-        "sub": "We speak German, English and Portuguese. Chat with us on WhatsApp."
-      }
+      "deposit": { "label": "Deposit", "sub": "Per bike, refunded after drop-off if no damage." },
+      "phoneHolders": { "value": "No", "label": "Phone holders", "sub": "We don't offer or fit phone holders, and you can't bring your own. None of our bikes have one." },
+      "season": { "value": "Apr-Oct", "label": "Riding season", "sub": "We rent April through October. Full tank in, full tank out." },
+      "languages": { "label": "Languages", "sub": "We speak German, English and Portuguese. Chat with us on WhatsApp." }
     },
     "howItWorks": {
       "eyebrow": "Simple process",
       "title": "How It Works",
-      "step1": {
-        "title": "Pick your ride",
-        "text": "Choose your scooter or motorbike, from the 50cc city cruiser up to the 390cc highway machine."
-      },
-      "step2": {
-        "title": "Request your dates",
-        "text": "Check availability on the calendar and send a quick request. Pickup at our shop in Zadar."
-      },
-      "step3": {
-        "title": "We confirm and you ride",
-        "text": "We email confirmation within a few hours. Pay the 20% booking fee, pick up your bike, and go."
-      },
+      "step1": { "title": "Pick your ride", "text": "Choose your scooter or motorbike, from the 50cc city cruiser up to the 390cc highway machine." },
+      "step2": { "title": "Request your dates", "text": "Check availability on the calendar and send a quick request. Pickup at our shop in Zadar." },
+      "step3": { "title": "We confirm and you ride", "text": "We email confirmation within a few hours. Pay the 20% booking fee, pick up your bike, and go." },
       "cta": "Book a Bike"
     },
     "reviews": {

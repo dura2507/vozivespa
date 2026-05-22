@@ -52,69 +52,28 @@
       "eyebrow": "Każdy wynajem",
       "title": "Co jest w cenie",
       "items": {
-        "insurance": {
-          "label": "Ubezpieczenie podstawowe",
-          "sub": "Kradzież + awaria silnika"
-        },
-        "helmets": {
-          "label": "Kaski",
-          "sub": "Zawsze w zestawie"
-        },
-        "unlimitedKm": {
-          "label": "Bez limitu km",
-          "sub": "Żadnych limitów"
-        },
-        "roadside": {
-          "label": "Pomoc drogowa",
-          "sub": "Bezpłatnie do 20km, potem od 50€"
-        },
-        "transparent": {
-          "label": "Przejrzyste ceny",
-          "sub": "Co widzisz, to płacisz"
-        },
-        "warranty": {
-          "label": "Gwarancja silnika",
-          "sub": "Awarie silnika na nas"
-        }
+        "insurance": { "label": "Ubezpieczenie podstawowe", "sub": "Kradzież + awaria silnika" },
+        "helmets": { "label": "Kaski", "sub": "Zawsze w zestawie" },
+        "unlimitedKm": { "label": "Bez limitu km", "sub": "Żadnych limitów" },
+        "roadside": { "label": "Pomoc drogowa", "sub": "Bezpłatnie do 20km, potem od 50€" },
+        "transparent": { "label": "Przejrzyste ceny", "sub": "Co widzisz, to płacisz" },
+        "warranty": { "label": "Gwarancja silnika", "sub": "Awarie silnika na nas" }
       }
     },
     "goodToKnow": {
       "eyebrow": "Warto wiedzieć",
       "title": "Dobrze wiedzieć",
-      "deposit": {
-        "label": "Kaucja",
-        "sub": "Za pojazd, zwracana po oddaniu bez uszkodzeń."
-      },
-      "phoneHolders": {
-        "value": "Nie",
-        "label": "Uchwyty na telefon",
-        "sub": "Nie oferujemy ani nie montujemy uchwytów na telefon, nie można też przywieźć własnego. Żaden z naszych pojazdów go nie ma."
-      },
-      "season": {
-        "value": "Kwi-Paź",
-        "label": "Sezon",
-        "sub": "Wynajmujemy od kwietnia do października. Pełen bak przy wydaniu, pełen bak przy zwrocie."
-      },
-      "languages": {
-        "label": "Języki",
-        "sub": "Mówimy po niemiecku, angielsku i portugalsku. Napisz do nas na WhatsApp."
-      }
+      "deposit": { "label": "Kaucja", "sub": "Za pojazd, zwracana po oddaniu bez uszkodzeń." },
+      "phoneHolders": { "value": "Nie", "label": "Uchwyty na telefon", "sub": "Nie oferujemy ani nie montujemy uchwytów na telefon, nie można też przywieźć własnego. Żaden z naszych pojazdów go nie ma." },
+      "season": { "value": "Kwi-Paź", "label": "Sezon", "sub": "Wynajmujemy od kwietnia do października. Pełen bak przy wydaniu, pełen bak przy zwrocie." },
+      "languages": { "label": "Języki", "sub": "Mówimy po niemiecku, angielsku i portugalsku. Napisz do nas na WhatsApp." }
     },
     "howItWorks": {
       "eyebrow": "Prosty proces",
       "title": "Jak to działa",
-      "step1": {
-        "title": "Wybierz pojazd",
-        "text": "Wybierz skuter lub motocykl, od miejskiego 50cc aż po szosową maszynę 390cc."
-      },
-      "step2": {
-        "title": "Wybierz terminy",
-        "text": "Sprawdź dostępność w kalendarzu i wyślij krótką prośbę. Odbiór w naszym salonie w Zadarze."
-      },
-      "step3": {
-        "title": "Potwierdzamy, ty ruszasz",
-        "text": "Potwierdzenie mailem otrzymasz w ciągu kilku godzin. Zapłać 20% zaliczki, odbierz pojazd i jedź."
-      },
+      "step1": { "title": "Wybierz pojazd", "text": "Wybierz skuter lub motocykl, od miejskiego 50cc aż po szosową maszynę 390cc." },
+      "step2": { "title": "Wybierz terminy", "text": "Sprawdź dostępność w kalendarzu i wyślij krótką prośbę. Odbiór w naszym salonie w Zadarze." },
+      "step3": { "title": "Potwierdzamy, ty ruszasz", "text": "Potwierdzenie mailem otrzymasz w ciągu kilku godzin. Zapłać 20% zaliczki, odbierz pojazd i jedź." },
       "cta": "Zarezerwuj pojazd"
     },
     "reviews": {

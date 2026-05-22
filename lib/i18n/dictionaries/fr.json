@@ -52,69 +52,28 @@
       "eyebrow": "Pour chaque location",
       "title": "Ce qui est inclus",
       "items": {
-        "insurance": {
-          "label": "Assurance de base",
-          "sub": "Vol et casse moteur"
-        },
-        "helmets": {
-          "label": "Casques",
-          "sub": "Toujours fournis"
-        },
-        "unlimitedKm": {
-          "label": "Kilométrage illimité",
-          "sub": "Aucune limite de distance"
-        },
-        "roadside": {
-          "label": "Assistance routière",
-          "sub": "Gratuite jusqu'à 20 km, puis 50 € et plus"
-        },
-        "transparent": {
-          "label": "Tarifs transparents",
-          "sub": "Ce que vous voyez, vous payez"
-        },
-        "warranty": {
-          "label": "Garantie moteur",
-          "sub": "Nous couvrons les pannes moteur"
-        }
+        "insurance": { "label": "Assurance de base", "sub": "Vol et casse moteur" },
+        "helmets": { "label": "Casques", "sub": "Toujours fournis" },
+        "unlimitedKm": { "label": "Kilométrage illimité", "sub": "Aucune limite de distance" },
+        "roadside": { "label": "Assistance routière", "sub": "Gratuite jusqu'à 20 km, puis 50 € et plus" },
+        "transparent": { "label": "Tarifs transparents", "sub": "Ce que vous voyez, vous payez" },
+        "warranty": { "label": "Garantie moteur", "sub": "Nous couvrons les pannes moteur" }
       }
     },
     "goodToKnow": {
       "eyebrow": "À savoir",
       "title": "Bon à savoir",
-      "deposit": {
-        "label": "Caution",
-        "sub": "Par moto, restituée après la restitution si aucun dommage."
-      },
-      "phoneHolders": {
-        "value": "Non",
-        "label": "Supports de téléphone",
-        "sub": "Nous ne proposons ni n'installons de supports de téléphone, et vous ne pouvez pas apporter le vôtre. Aucune de nos motos n'en a."
-      },
-      "season": {
-        "value": "Avr-Oct",
-        "label": "Saison",
-        "sub": "Nous louons d'avril à octobre. Plein au départ, plein au retour."
-      },
-      "languages": {
-        "label": "Langues",
-        "sub": "Nous parlons allemand, anglais et portugais. Écrivez-nous sur WhatsApp."
-      }
+      "deposit": { "label": "Caution", "sub": "Par moto, restituée après la restitution si aucun dommage." },
+      "phoneHolders": { "value": "Non", "label": "Supports de téléphone", "sub": "Nous ne proposons ni n'installons de supports de téléphone, et vous ne pouvez pas apporter le vôtre. Aucune de nos motos n'en a." },
+      "season": { "value": "Avr-Oct", "label": "Saison", "sub": "Nous louons d'avril à octobre. Plein au départ, plein au retour." },
+      "languages": { "label": "Langues", "sub": "Nous parlons allemand, anglais et portugais. Écrivez-nous sur WhatsApp." }
     },
     "howItWorks": {
       "eyebrow": "Processus simple",
       "title": "Comment ça marche",
-      "step1": {
-        "title": "Choisissez votre monture",
-        "text": "Choisissez votre scooter ou votre moto, du 50cc citadin jusqu'à la 390cc pour les routes ouvertes."
-      },
-      "step2": {
-        "title": "Demandez vos dates",
-        "text": "Vérifiez les disponibilités sur le calendrier et envoyez une demande rapide. Retrait à notre boutique à Zadar."
-      },
-      "step3": {
-        "title": "On confirme et vous roulez",
-        "text": "Nous confirmons par email en quelques heures. Réglez l'acompte de 20 %, récupérez votre moto et c'est parti."
-      },
+      "step1": { "title": "Choisissez votre monture", "text": "Choisissez votre scooter ou votre moto, du 50cc citadin jusqu'à la 390cc pour les routes ouvertes." },
+      "step2": { "title": "Demandez vos dates", "text": "Vérifiez les disponibilités sur le calendrier et envoyez une demande rapide. Retrait à notre boutique à Zadar." },
+      "step3": { "title": "On confirme et vous roulez", "text": "Nous confirmons par email en quelques heures. Réglez l'acompte de 20 %, récupérez votre moto et c'est parti." },
       "cta": "Réserver une moto"
     },
     "reviews": {
