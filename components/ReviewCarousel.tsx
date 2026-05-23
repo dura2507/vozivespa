@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Review } from "@/lib/mockData";
 
 const GoogleIcon = () => (
@@ -20,25 +20,9 @@ const StarIcon = () => (
 
 export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
   const [page, setPage] = useState(0);
-  const [lightbox, setLightbox] = useState<string | null>(null);
   const perPage = 3;
   const totalPages = Math.ceil(reviews.length / perPage);
   const visible = reviews.slice(page * perPage, page * perPage + perPage);
-
-  // ESC to close lightbox + lock body scroll while open
-  useEffect(() => {
-    if (!lightbox) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setLightbox(null);
-    };
-    document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [lightbox]);
 
   return (
     <div>
@@ -82,52 +66,19 @@ export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
             {review.photos && review.photos.length > 0 && (
               <div className="mt-4 space-y-2">
                 {review.photos.map((src, i) => (
-                  <button
+                  <img
                     key={i}
-                    type="button"
-                    onClick={() => setLightbox(src)}
-                    className="block w-full cursor-zoom-in"
-                  >
-                    <img
-                      src={src}
-                      alt={`${review.name} photo ${i + 1}`}
-                      className="block w-full h-auto"
-                      loading="lazy"
-                    />
-                  </button>
+                    src={src}
+                    alt={`${review.name} photo ${i + 1}`}
+                    className="block w-full h-auto"
+                    loading="lazy"
+                  />
                 ))}
               </div>
             )}
           </div>
         ))}
       </div>
-
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-zoom-out"
-          onClick={() => setLightbox(null)}
-        >
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setLightbox(null);
-            }}
-            aria-label="Close"
-            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white/80 hover:text-white bg-black/40 hover:bg-black/60 rounded-full transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          <img
-            src={lightbox}
-            alt="Review photo"
-            className="max-w-full max-h-full object-contain"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
 
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-4 mt-8">
