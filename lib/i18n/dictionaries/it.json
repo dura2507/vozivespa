@@ -45,7 +45,8 @@
       "availableNow": "Disponibile ora",
       "availableNowCount": "{n} disponibili ora",
       "notAvailableNow": "Tutte noleggiate",
-      "bookedUntil": "Tutto prenotato fino a {time}",
+      "bookedUntil": "Tutto prenotato fino al {date}",
+      "bookedUntilToday": "Tutto prenotato fino a oggi {time}",
       "outOfService": "In officina",
       "viewDetails": "Dettagli"
     },

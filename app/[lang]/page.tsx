@@ -16,31 +16,42 @@ function fmt(template: string, vars: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, key) => String(vars[key] ?? ""));
 }
 
-// Render the next free moment for the pill. Same-day returns just the
-// time ("16:30"), other day returns just the date ("28/05") — the time
-// is noise when the visitor's already shifting to a different day.
-function formatBookedUntil(targetMs: number, nowMs: number): string {
-  const tz = "Europe/Zagreb";
-  const dayKey = (ms: number) =>
-    new Intl.DateTimeFormat("en-CA", {
-      timeZone: tz,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(new Date(ms));
-  if (dayKey(targetMs) === dayKey(nowMs)) {
-    return new Intl.DateTimeFormat("en-GB", {
-      timeZone: tz,
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }).format(new Date(targetMs));
-  }
-  return new Intl.DateTimeFormat("en-GB", {
-    timeZone: tz,
-    day: "2-digit",
+// Slice a Zagreb-local timestamp into its calendar parts so we can
+// pick a same-day vs cross-day pill template + render DD.MM ourselves
+// without Intl's locale-dependent separator.
+function zagrebParts(ms: number) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Zagreb",
+    year: "numeric",
     month: "2-digit",
-  }).format(new Date(targetMs));
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date(ms));
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+  return {
+    year: get("year"),
+    month: get("month"),
+    day: get("day"),
+    hour: get("hour") === "24" ? "00" : get("hour"),
+    minute: get("minute"),
+  };
+}
+
+// { sameDay: true, time } when the bike opens up again the same calendar
+// day in Zagreb, otherwise { sameDay: false, date } so the card can pick
+// the right i18n template ("…bis heute 16:30" vs "…bis 28.05").
+function bookedUntilInfo(
+  targetMs: number,
+  nowMs: number,
+): { sameDay: true; time: string } | { sameDay: false; date: string } {
+  const t = zagrebParts(targetMs);
+  const n = zagrebParts(nowMs);
+  if (t.year === n.year && t.month === n.month && t.day === n.day) {
+    return { sameDay: true, time: `${t.hour}:${t.minute}` };
+  }
+  return { sameDay: false, date: `${t.day}.${t.month}` };
 }
 
 export default async function HomePage({
@@ -261,15 +272,17 @@ export default async function HomePage({
                         }`}
                         aria-hidden
                       />
-                      {availState === "available"
-                        ? t.fleet.availableNow
-                        : availState === "service"
-                          ? t.fleet.outOfService
-                          : avail?.availableFromMs && avail.availableFromMs > nowMs
-                            ? fmt(t.fleet.bookedUntil, {
-                                time: formatBookedUntil(avail.availableFromMs, nowMs),
-                              })
-                            : t.fleet.notAvailableNow}
+                      {(() => {
+                        if (availState === "available") return t.fleet.availableNow;
+                        if (availState === "service") return t.fleet.outOfService;
+                        if (!avail?.availableFromMs || avail.availableFromMs <= nowMs) {
+                          return t.fleet.notAvailableNow;
+                        }
+                        const info = bookedUntilInfo(avail.availableFromMs, nowMs);
+                        return info.sameDay
+                          ? fmt(t.fleet.bookedUntilToday, { time: info.time })
+                          : fmt(t.fleet.bookedUntil, { date: info.date });
+                      })()}
                     </p>
                   )}
                   {unitCounts[cat.id] > 1 && (

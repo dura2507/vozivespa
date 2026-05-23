@@ -45,7 +45,8 @@
       "availableNow": "Dostępny teraz",
       "availableNowCount": "{n} dostępne teraz",
       "notAvailableNow": "Wszystkie wynajęte",
-      "bookedUntil": "Wszystko zarezerwowane do {time}",
+      "bookedUntil": "Wszystko zarezerwowane do {date}",
+      "bookedUntilToday": "Wszystko zarezerwowane do dzisiaj {time}",
       "outOfService": "W serwisie",
       "viewDetails": "Szczegóły"
     },
