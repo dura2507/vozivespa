@@ -1,5 +1,6 @@
 import { CATEGORIES, type Category } from "@/lib/mockData";
 import { getServiceClient } from "@/lib/supabase";
+import { TURNAROUND_MINUTES } from "@/lib/pricing";
 
 // Owner-editable price overrides live in the bike_price_overrides
 // table. Day rate has always been editable; weekend / week / month
@@ -189,8 +190,21 @@ function todayInZagreb(nowMs: number): string {
 // now" if it's active AND not in a confirmed booking that covers
 // this moment AND not under a service block that covers this moment.
 // Whole-model service blocks lock every unit of that bike at once.
+//
+// When every unit is busy, we also surface availableFromMs — the
+// earliest UTC ms timestamp at which any unit becomes free again.
+// The card uses it to render "Booked out until 11:30" instead of a
+// dead-end "All rented out" that makes visitors bounce.
 export async function getAvailableNowCounts(): Promise<
-  Record<string, { total: number; available: number; cause: "service" | "rented" | null }>
+  Record<
+    string,
+    {
+      total: number;
+      available: number;
+      cause: "service" | "rented" | null;
+      availableFromMs: number | null;
+    }
+  >
 > {
   const supabase = getServiceClient();
   const nowMs = Date.now();
@@ -236,15 +250,47 @@ export async function getAvailableNowCounts(): Promise<
     end_time: string | null;
   };
 
-  // Track WHY a unit is busy so we can distinguish "in service" from
-  // "rented out" on the public card — Beta with one service-blocked
-  // unit should read "In service", not the generic "All out".
+  // Bucket every confirmed booking by its unit so we can both flag
+  // currently-rented units AND look ahead to compute when a busy unit
+  // next becomes free (chained through back-to-back bookings).
+  const turnaroundMs = TURNAROUND_MINUTES * 60_000;
+  const unitBookings = new Map<string, Array<{ start: number; end: number }>>();
   const rentedUnitIds = new Set<string>();
   for (const b of ((bookingsRes.data ?? []) as B[])) {
     if (!b.bike_unit_id) continue;
     const start = zagrebWallToMs(b.date_from, b.pickup_time);
     const end = zagrebWallToMs(b.date_to, b.return_time);
+    let arr = unitBookings.get(b.bike_unit_id);
+    if (!arr) {
+      arr = [];
+      unitBookings.set(b.bike_unit_id, arr);
+    }
+    arr.push({ start, end });
     if (nowMs >= start && nowMs < end) rentedUnitIds.add(b.bike_unit_id);
+  }
+
+  // For a unit that's busy right now, walk forward through its own
+  // future bookings — if the next one starts within turnaround minutes
+  // of the current end, the unit stays busy through that one too. Stop
+  // at the first real gap.
+  function unitFreeAt(unitId: string): number | null {
+    const arr = unitBookings.get(unitId);
+    if (!arr || arr.length === 0) return null;
+    const sorted = [...arr].sort((a, b) => a.start - b.start);
+    const current = sorted.find((iv) => nowMs >= iv.start && nowMs < iv.end);
+    if (!current) return null;
+    let freeAt = current.end;
+    let extended = true;
+    while (extended) {
+      extended = false;
+      for (const iv of sorted) {
+        if (iv.start <= freeAt + turnaroundMs && iv.end > freeAt) {
+          freeAt = iv.end;
+          extended = true;
+        }
+      }
+    }
+    return freeAt + turnaroundMs;
   }
 
   const serviceUnitIds = new Set<string>();
@@ -263,10 +309,21 @@ export async function getAvailableNowCounts(): Promise<
 
   const counts: Record<
     string,
-    { total: number; available: number; rented: number; service: number }
+    {
+      total: number;
+      available: number;
+      rented: number;
+      service: number;
+      // Earliest moment any rented unit on this bike becomes free
+      // again. Used only when no unit is available right now — the
+      // card surfaces it as "Booked out until 11:30".
+      earliestFreeMs: number | null;
+    }
   > = {};
   for (const u of ((unitsRes.data ?? []) as Array<{ id: string; bike_id: string }>)) {
-    if (!counts[u.bike_id]) counts[u.bike_id] = { total: 0, available: 0, rented: 0, service: 0 };
+    if (!counts[u.bike_id]) {
+      counts[u.bike_id] = { total: 0, available: 0, rented: 0, service: 0, earliestFreeMs: null };
+    }
     const c = counts[u.bike_id];
     c.total += 1;
     if (modelInService.has(u.bike_id)) {
@@ -279,6 +336,10 @@ export async function getAvailableNowCounts(): Promise<
     }
     if (rentedUnitIds.has(u.id)) {
       c.rented += 1;
+      const freeAt = unitFreeAt(u.id);
+      if (freeAt !== null) {
+        c.earliestFreeMs = c.earliestFreeMs === null ? freeAt : Math.min(c.earliestFreeMs, freeAt);
+      }
       continue;
     }
     c.available += 1;
@@ -288,7 +349,10 @@ export async function getAvailableNowCounts(): Promise<
   // unavailable unit is in service (no actual rental conflict),
   // otherwise "rented" so the visitor knows it's a customer thing not
   // a maintenance thing.
-  const out: Record<string, { total: number; available: number; cause: "service" | "rented" | null }> = {};
+  const out: Record<
+    string,
+    { total: number; available: number; cause: "service" | "rented" | null; availableFromMs: number | null }
+  > = {};
   for (const [bikeId, c] of Object.entries(counts)) {
     const cause: "service" | "rented" | null =
       c.available === c.total
@@ -296,7 +360,10 @@ export async function getAvailableNowCounts(): Promise<
         : c.rented === 0 && c.service > 0
           ? "service"
           : "rented";
-    out[bikeId] = { total: c.total, available: c.available, cause };
+    // Only surface a "from" timestamp when the bike is completely out;
+    // having one unit free already means the green pill wins.
+    const availableFromMs = c.available === 0 && cause === "rented" ? c.earliestFreeMs : null;
+    out[bikeId] = { total: c.total, available: c.available, cause, availableFromMs };
   }
   return out;
 }
