@@ -47,6 +47,7 @@
       "notAvailableNow": "Sve iznajmljeno",
       "bookedUntil": "Sve zauzeto do {date}",
       "bookedUntilToday": "Sve zauzeto do danas {time}",
+      "bookedUntilTomorrow": "Sve zauzeto do sutra {time}",
       "availableFrom": "Dostupno od {time}",
       "outOfService": "Na servisu",
       "viewDetails": "Detalji"

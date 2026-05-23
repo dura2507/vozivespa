@@ -39,19 +39,30 @@ function zagrebParts(ms: number) {
   };
 }
 
-// { sameDay: true, time } when the bike opens up again the same calendar
-// day in Zagreb, otherwise { sameDay: false, date } so the card can pick
-// the right i18n template ("…bis heute 16:30" vs "…bis 28.05").
+// Pick one of three pill templates so the visitor sees relative time
+// for today/tomorrow ("heute 16:30" / "morgen 09:00") and a plain date
+// for anything further out — full timestamp on a far-off day is noise.
 function bookedUntilInfo(
   targetMs: number,
   nowMs: number,
-): { sameDay: true; time: string } | { sameDay: false; date: string } {
+):
+  | { kind: "today"; time: string }
+  | { kind: "tomorrow"; time: string }
+  | { kind: "later"; date: string } {
   const t = zagrebParts(targetMs);
   const n = zagrebParts(nowMs);
+  const tomorrow = zagrebParts(nowMs + 86_400_000);
   if (t.year === n.year && t.month === n.month && t.day === n.day) {
-    return { sameDay: true, time: `${t.hour}:${t.minute}` };
+    return { kind: "today", time: `${t.hour}:${t.minute}` };
   }
-  return { sameDay: false, date: `${t.day}.${t.month}` };
+  if (
+    t.year === tomorrow.year &&
+    t.month === tomorrow.month &&
+    t.day === tomorrow.day
+  ) {
+    return { kind: "tomorrow", time: `${t.hour}:${t.minute}` };
+  }
+  return { kind: "later", date: `${t.day}.${t.month}` };
 }
 
 export default async function HomePage({
@@ -287,7 +298,7 @@ export default async function HomePage({
                         if (availState === "service") return t.fleet.outOfService;
                         if (availState === "availableLater" && avail?.availableFromMs) {
                           const info = bookedUntilInfo(avail.availableFromMs, nowMs);
-                          if (info.sameDay) {
+                          if (info.kind === "today") {
                             return fmt(t.fleet.availableFrom, { time: info.time });
                           }
                         }
@@ -295,9 +306,13 @@ export default async function HomePage({
                           return t.fleet.notAvailableNow;
                         }
                         const info = bookedUntilInfo(avail.availableFromMs, nowMs);
-                        return info.sameDay
-                          ? fmt(t.fleet.bookedUntilToday, { time: info.time })
-                          : fmt(t.fleet.bookedUntil, { date: info.date });
+                        if (info.kind === "today") {
+                          return fmt(t.fleet.bookedUntilToday, { time: info.time });
+                        }
+                        if (info.kind === "tomorrow") {
+                          return fmt(t.fleet.bookedUntilTomorrow, { time: info.time });
+                        }
+                        return fmt(t.fleet.bookedUntil, { date: info.date });
                       })()}
                     </p>
                   )}

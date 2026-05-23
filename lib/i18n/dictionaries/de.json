@@ -47,6 +47,7 @@
       "notAvailableNow": "Alle vermietet",
       "bookedUntil": "Ausgebucht bis {date}",
       "bookedUntilToday": "Ausgebucht bis heute {time}",
+      "bookedUntilTomorrow": "Ausgebucht bis morgen {time}",
       "availableFrom": "Verfügbar ab {time}",
       "outOfService": "In Wartung",
       "viewDetails": "Details"
