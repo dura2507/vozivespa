@@ -1,6 +1,7 @@
 import { CATEGORIES, type Category } from "@/lib/mockData";
 import { getServiceClient } from "@/lib/supabase";
-import { TURNAROUND_MINUTES } from "@/lib/pricing";
+import { SHOP_CLOSE_HOUR, SHOP_OPEN_HOUR, SLOT_MINUTES, TURNAROUND_MINUTES } from "@/lib/pricing";
+import { SEASON_END_ISO } from "@/lib/season";
 
 // Owner-editable price overrides live in the bike_price_overrides
 // table. Day rate has always been editable; weekend / week / month
@@ -184,6 +185,27 @@ function todayInZagreb(nowMs: number): string {
   return `${parts.year}-${parts.month}-${parts.day}`;
 }
 
+// Slice a UTC ms timestamp into its Zagreb-wallclock parts so we can
+// snap candidate pickup moments to shop hours / next opening.
+function zagrebTimeParts(ms: number): {
+  isoDate: string;
+  hour: number;
+  minute: number;
+} {
+  const parts = ZAGREB_FMT.formatToParts(new Date(ms)).reduce(
+    (acc, p) => {
+      if (p.type !== "literal") acc[p.type] = p.value;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+  return {
+    isoDate: `${parts.year}-${parts.month}-${parts.day}`,
+    hour: Number(parts.hour === "24" ? "0" : parts.hour),
+    minute: Number(parts.minute),
+  };
+}
+
 // Per-bike availability snapshot for *right now*. Used on the public
 // homepage fleet cards so visitors get an instant green/red signal
 // instead of having to open the calendar. A unit counts as "available
@@ -269,28 +291,50 @@ export async function getAvailableNowCounts(): Promise<
     if (nowMs >= start && nowMs < end) rentedUnitIds.add(b.bike_unit_id);
   }
 
-  // For a unit that's busy right now, walk forward through its own
-  // future bookings — if the next one starts within turnaround minutes
-  // of the current end, the unit stays busy through that one too. Stop
-  // at the first real gap.
+  // Pickup is only useful if it falls inside shop hours AND leaves a
+  // 30-min slot before close. Anything past 18:30 Zagreb bumps to the
+  // next day 09:00, then we re-check booking conflicts on that day.
+  // Returns null when no slot before SEASON_END_ISO can fit.
+  const lastPickupMin = (SHOP_CLOSE_HOUR - 1) * 60 + (60 - SLOT_MINUTES);
+  const openLabel = `${String(SHOP_OPEN_HOUR).padStart(2, "0")}:00`;
+  const seasonCutoffMs = zagrebWallToMs(SEASON_END_ISO, "23:59");
+  function nextPickupableMoment(
+    sortedBookings: Array<{ start: number; end: number }>,
+    startFromMs: number,
+  ): number | null {
+    let candidate = startFromMs;
+    for (let guard = 0; guard < 400; guard++) {
+      if (candidate > seasonCutoffMs) return null;
+      const parts = zagrebTimeParts(candidate);
+      const minOfDay = parts.hour * 60 + parts.minute;
+      if (minOfDay < SHOP_OPEN_HOUR * 60) {
+        candidate = zagrebWallToMs(parts.isoDate, openLabel);
+        continue;
+      }
+      if (minOfDay > lastPickupMin) {
+        // Push to next calendar day at 09:00 Zagreb
+        const nextDay = zagrebTimeParts(candidate + 86_400_000);
+        candidate = zagrebWallToMs(nextDay.isoDate, openLabel);
+        continue;
+      }
+      // Inside business hours — does any booking block this candidate
+      // (taking turnaround into account)?
+      const conflict = sortedBookings.find(
+        (iv) => candidate >= iv.start - turnaroundMs && candidate < iv.end + turnaroundMs,
+      );
+      if (!conflict) return candidate;
+      candidate = conflict.end + turnaroundMs;
+    }
+    return null;
+  }
+
   function unitFreeAt(unitId: string): number | null {
     const arr = unitBookings.get(unitId);
     if (!arr || arr.length === 0) return null;
     const sorted = [...arr].sort((a, b) => a.start - b.start);
     const current = sorted.find((iv) => nowMs >= iv.start && nowMs < iv.end);
     if (!current) return null;
-    let freeAt = current.end;
-    let extended = true;
-    while (extended) {
-      extended = false;
-      for (const iv of sorted) {
-        if (iv.start <= freeAt + turnaroundMs && iv.end > freeAt) {
-          freeAt = iv.end;
-          extended = true;
-        }
-      }
-    }
-    return freeAt + turnaroundMs;
+    return nextPickupableMoment(sorted, current.end + turnaroundMs);
   }
 
   const serviceUnitIds = new Set<string>();
