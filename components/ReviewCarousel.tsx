@@ -1,7 +1,68 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Review } from "@/lib/mockData";
+
+// Inline mini-slider for multi-photo reviews. Uses native CSS scroll-snap
+// so mobile gets free swipe gestures; we mirror the scroll position into
+// React state for the dot indicators + tap-to-jump. Single-photo reviews
+// skip this and render the bare image to keep things lean.
+function PhotoSlider({
+  photos,
+  name,
+}: {
+  photos: string[];
+  name: string;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [active, setActive] = useState(0);
+
+  const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const w = e.currentTarget.clientWidth;
+    if (w === 0) return;
+    setActive(Math.round(e.currentTarget.scrollLeft / w));
+  };
+
+  const jump = (i: number) => {
+    const el = ref.current;
+    if (!el) return;
+    const child = el.children[i] as HTMLElement | undefined;
+    child?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+  };
+
+  return (
+    <div className="relative">
+      <div
+        ref={ref}
+        onScroll={onScroll}
+        className="flex overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {photos.map((src, i) => (
+          <img
+            key={i}
+            src={src}
+            alt={`${name} photo ${i + 1}`}
+            className="w-full flex-shrink-0 snap-center block h-auto"
+            loading="lazy"
+          />
+        ))}
+      </div>
+      <div className="flex justify-center gap-1.5 mt-2">
+        {photos.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => jump(i)}
+            aria-label={`Show photo ${i + 1}`}
+            className={`h-1.5 rounded-full transition-all ${
+              i === active ? "bg-red w-4" : "bg-ink/20 w-1.5 hover:bg-ink/40"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -64,16 +125,17 @@ export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
             </p>
 
             {review.photos && review.photos.length > 0 && (
-              <div className="mt-4 space-y-2">
-                {review.photos.map((src, i) => (
+              <div className="mt-4">
+                {review.photos.length === 1 ? (
                   <img
-                    key={i}
-                    src={src}
-                    alt={`${review.name} photo ${i + 1}`}
+                    src={review.photos[0]}
+                    alt={`${review.name} photo`}
                     className="block w-full h-auto"
                     loading="lazy"
                   />
-                ))}
+                ) : (
+                  <PhotoSlider photos={review.photos} name={review.name} />
+                )}
               </div>
             )}
           </div>
