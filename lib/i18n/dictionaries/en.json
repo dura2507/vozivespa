@@ -47,6 +47,7 @@
       "notAvailableNow": "All rented out",
       "bookedUntil": "Fully booked until {date}",
       "bookedUntilToday": "Fully booked until today {time}",
+      "availableFrom": "Available from {time}",
       "outOfService": "In service",
       "viewDetails": "Details"
     },

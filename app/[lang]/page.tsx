@@ -215,11 +215,19 @@ export default async function HomePage({
             {CATEGORIES.map((cat) => {
               const bikeDict = dict.bikes[cat.id as keyof typeof dict.bikes];
               const avail = availableNow[cat.id];
-              // Three rendered states for the at-a-glance status pill:
-              //   green   → ≥1 unit free this very moment
-              //   amber   → every unit currently in service (no rental)
-              //   neutral → unavailable for another reason (rented)
-              //   hidden  → no fleet data yet (don't show a lying badge)
+              // Four rendered states for the at-a-glance status pill:
+              //   green-now   → ≥1 unit free this very moment
+              //   green-soon  → all out now BUT a unit reopens later TODAY
+              //                 (mirrors the calendar — today is still
+              //                 a green/selectable day for the visitor)
+              //   amber       → every unit currently in service
+              //   neutral     → unavailable, next slot tomorrow or later
+              //   hidden      → no fleet data yet (don't show a lying badge)
+              const sameDayAsNow =
+                avail?.availableFromMs &&
+                zagrebParts(avail.availableFromMs).day === zagrebParts(nowMs).day &&
+                zagrebParts(avail.availableFromMs).month === zagrebParts(nowMs).month &&
+                zagrebParts(avail.availableFromMs).year === zagrebParts(nowMs).year;
               const availState =
                 !avail || avail.total === 0
                   ? "unknown"
@@ -227,7 +235,9 @@ export default async function HomePage({
                     ? "available"
                     : avail.cause === "service"
                       ? "service"
-                      : "rented";
+                      : sameDayAsNow
+                        ? "availableLater"
+                        : "rented";
               return (
               <div key={cat.id} className="group flex flex-col bg-sand">
                 <Link href={`/${lang}/fleet/${cat.id}`} className="relative overflow-hidden aspect-square bg-sand block">
@@ -255,7 +265,7 @@ export default async function HomePage({
                   {availState !== "unknown" && (
                     <p
                       className={`inline-flex self-center items-center gap-1.5 text-[11px] tracking-[0.1em] uppercase font-bold mb-3 px-2.5 py-1 ${
-                        availState === "available"
+                        availState === "available" || availState === "availableLater"
                           ? "bg-emerald-100 text-emerald-700"
                           : availState === "service"
                             ? "bg-amber-100 text-amber-700"
@@ -264,7 +274,7 @@ export default async function HomePage({
                     >
                       <span
                         className={`w-1.5 h-1.5 rounded-full ${
-                          availState === "available"
+                          availState === "available" || availState === "availableLater"
                             ? "bg-emerald-500 animate-pulse"
                             : availState === "service"
                               ? "bg-amber-500"
@@ -275,6 +285,12 @@ export default async function HomePage({
                       {(() => {
                         if (availState === "available") return t.fleet.availableNow;
                         if (availState === "service") return t.fleet.outOfService;
+                        if (availState === "availableLater" && avail?.availableFromMs) {
+                          const info = bookedUntilInfo(avail.availableFromMs, nowMs);
+                          if (info.sameDay) {
+                            return fmt(t.fleet.availableFrom, { time: info.time });
+                          }
+                        }
                         if (!avail?.availableFromMs || avail.availableFromMs <= nowMs) {
                           return t.fleet.notAvailableNow;
                         }

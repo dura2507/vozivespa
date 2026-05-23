@@ -47,6 +47,7 @@
       "notAvailableNow": "Todas alquiladas",
       "bookedUntil": "Todo reservado hasta el {date}",
       "bookedUntilToday": "Todo reservado hasta hoy {time}",
+      "availableFrom": "Disponible desde {time}",
       "outOfService": "En taller",
       "viewDetails": "Detalles"
     },
