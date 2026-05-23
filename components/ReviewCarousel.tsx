@@ -1,68 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Review } from "@/lib/mockData";
-
-// Inline mini-slider for multi-photo reviews. Uses native CSS scroll-snap
-// so mobile gets free swipe gestures; we mirror the scroll position into
-// React state for the dot indicators + tap-to-jump. Single-photo reviews
-// skip this and render the bare image to keep things lean.
-function PhotoSlider({
-  photos,
-  name,
-}: {
-  photos: string[];
-  name: string;
-}) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [active, setActive] = useState(0);
-
-  const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const w = e.currentTarget.clientWidth;
-    if (w === 0) return;
-    setActive(Math.round(e.currentTarget.scrollLeft / w));
-  };
-
-  const jump = (i: number) => {
-    const el = ref.current;
-    if (!el) return;
-    const child = el.children[i] as HTMLElement | undefined;
-    child?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
-  };
-
-  return (
-    <div className="relative">
-      <div
-        ref={ref}
-        onScroll={onScroll}
-        className="flex overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {photos.map((src, i) => (
-          <img
-            key={i}
-            src={src}
-            alt={`${name} photo ${i + 1}`}
-            className="w-full flex-shrink-0 snap-center block h-auto"
-            loading="lazy"
-          />
-        ))}
-      </div>
-      <div className="flex justify-center gap-1.5 mt-2">
-        {photos.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => jump(i)}
-            aria-label={`Show photo ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all ${
-              i === active ? "bg-red w-4" : "bg-ink/20 w-1.5 hover:bg-ink/40"
-            }`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -79,20 +18,53 @@ const StarIcon = () => (
   </svg>
 );
 
+type LightboxState = { photos: string[]; index: number; name: string };
+
 export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
   const [page, setPage] = useState(0);
+  const [lightbox, setLightbox] = useState<LightboxState | null>(null);
   const perPage = 3;
   const totalPages = Math.ceil(reviews.length / perPage);
   const visible = reviews.slice(page * perPage, page * perPage + perPage);
+
+  // ESC closes, arrows step through the current review's photos. Body
+  // scroll is locked while open so the page underneath doesn't jump.
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightbox(null);
+      else if (e.key === "ArrowLeft") {
+        setLightbox((l) => (l ? { ...l, index: Math.max(0, l.index - 1) } : null));
+      } else if (e.key === "ArrowRight") {
+        setLightbox((l) =>
+          l ? { ...l, index: Math.min(l.photos.length - 1, l.index + 1) } : null,
+        );
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [lightbox]);
+
+  const openLightbox = (review: Review, startIndex: number) => {
+    if (!review.photos || review.photos.length === 0) return;
+    setLightbox({ photos: review.photos, index: startIndex, name: review.name });
+  };
+  const close = () => setLightbox(null);
+  const step = (delta: number) =>
+    setLightbox((l) =>
+      l ? { ...l, index: Math.max(0, Math.min(l.photos.length - 1, l.index + delta)) } : null,
+    );
 
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
         {visible.map((review) => (
-          <div
-            key={review.id}
-            className="bg-sand p-6"
-          >
+          <div key={review.id} className="bg-sand p-6">
             <div className="flex items-center justify-between mb-4 gap-2">
               <div className="flex items-center gap-3 min-w-0">
                 {review.avatar ? (
@@ -120,22 +92,34 @@ export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
               ))}
             </div>
 
-            <p className="text-ink/70 text-sm leading-relaxed">
-              {review.text}
-            </p>
+            <p className="text-ink/70 text-sm leading-relaxed">{review.text}</p>
 
             {review.photos && review.photos.length > 0 && (
-              <div className="mt-4">
-                {review.photos.length === 1 ? (
-                  <img
-                    src={review.photos[0]}
-                    alt={`${review.name} photo`}
-                    className="block w-full h-auto"
-                    loading="lazy"
-                  />
-                ) : (
-                  <PhotoSlider photos={review.photos} name={review.name} />
-                )}
+              <div className="mt-4 flex gap-2">
+                {review.photos.slice(0, 3).map((src, i) => {
+                  const showOverflow = i === 2 && review.photos!.length > 3;
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => openLightbox(review, i)}
+                      className="relative w-16 h-16 sm:w-[72px] sm:h-[72px] overflow-hidden flex-shrink-0 group"
+                      aria-label={`Open photo ${i + 1}`}
+                    >
+                      <img
+                        src={src}
+                        alt=""
+                        className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      {showOverflow && (
+                        <span className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-sm font-bold">
+                          +{review.photos!.length - 3}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -175,6 +159,72 @@ export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
+        </div>
+      )}
+
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 sm:p-8"
+          onClick={close}
+        >
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              close();
+            }}
+            aria-label="Close"
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {lightbox.index > 0 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                step(-1);
+              }}
+              aria-label="Previous photo"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
+
+          {lightbox.index < lightbox.photos.length - 1 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                step(1);
+              }}
+              aria-label="Next photo"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          )}
+
+          <img
+            src={lightbox.photos[lightbox.index]}
+            alt={`${lightbox.name} photo ${lightbox.index + 1}`}
+            className="max-w-full max-h-full object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          {lightbox.photos.length > 1 && (
+            <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/70 text-xs tracking-widest font-medium">
+              {lightbox.index + 1} / {lightbox.photos.length}
+            </p>
+          )}
         </div>
       )}
     </div>
