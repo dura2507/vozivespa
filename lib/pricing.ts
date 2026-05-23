@@ -135,46 +135,71 @@ export function validReturnSlots(
   );
 }
 
-// Set of ISO dates that are fully blocked: every active unit has at
-// least one booking covering shop-open through shop-close for that
-// date. Same-day turnaround (e.g. a booking that returns at 11:00) no
-// longer marks the date as fully booked because the unit is free in
-// the afternoon — the time-slot picker handles the morning conflict.
+// Set of ISO dates that are fully blocked: for every active unit, its
+// bookings (with turnaround buffer applied) jointly cover shop-open
+// through shop-close. A single mid-day return is no longer a blocker;
+// only when back-to-back rentals on the same unit also seal the day.
 export function fullyBookedDates(
   bookings: ConfirmedBooking[],
   totalUnits: number,
 ): string[] {
   if (totalUnits <= 0) return [];
-  const occupancy = new Map<string, Set<string>>();
   const openLabel = `${String(SHOP_OPEN_HOUR).padStart(2, "0")}:00`;
   const closeLabel = `${String(SHOP_CLOSE_HOUR).padStart(2, "0")}:00`;
+  const bufferMs = TURNAROUND_MINUTES * 60_000;
+
+  // Bucket bookings per unit, and collect every ISO date any booking
+  // touches so we only check the days that could plausibly be full.
+  const perUnit = new Map<string, ConfirmedBooking[]>();
+  const candidateDates = new Set<string>();
   for (const b of bookings) {
     if (!b.unitId) continue;
-    const bStart = combineDateTime(new Date(`${b.from}T00:00:00`), b.pickupTime).getTime();
-    const bEnd = combineDateTime(new Date(`${b.to}T00:00:00`), b.returnTime).getTime();
+    let arr = perUnit.get(b.unitId);
+    if (!arr) {
+      arr = [];
+      perUnit.set(b.unitId, arr);
+    }
+    arr.push(b);
     let cursor = new Date(`${b.from}T00:00:00`);
     const last = new Date(`${b.to}T00:00:00`);
     while (cursor.getTime() <= last.getTime()) {
-      const dayOpen = combineDateTime(cursor, openLabel).getTime();
-      const dayClose = combineDateTime(cursor, closeLabel).getTime();
-      // Unit blocks this day fully only when the booking spans shop-
-      // open to shop-close. Partial coverage (e.g. morning-only return
-      // or evening-only pickup) leaves the day selectable.
-      if (bStart <= dayOpen && bEnd >= dayClose) {
-        const iso = toIsoDate(cursor);
-        let set = occupancy.get(iso);
-        if (!set) {
-          set = new Set();
-          occupancy.set(iso, set);
-        }
-        set.add(b.unitId);
-      }
+      candidateDates.add(toIsoDate(cursor));
       cursor = new Date(cursor.getTime() + 86_400_000);
     }
   }
+
+  function unitCoversDay(unitBookings: ConfirmedBooking[], day: Date): boolean {
+    const dayOpen = combineDateTime(day, openLabel).getTime();
+    const dayClose = combineDateTime(day, closeLabel).getTime();
+    // Project each booking onto the shop-hours window of this day,
+    // applying the turnaround buffer on both sides.
+    const intervals: [number, number][] = [];
+    for (const b of unitBookings) {
+      const bStart = combineDateTime(new Date(`${b.from}T00:00:00`), b.pickupTime).getTime() - bufferMs;
+      const bEnd = combineDateTime(new Date(`${b.to}T00:00:00`), b.returnTime).getTime() + bufferMs;
+      const start = Math.max(bStart, dayOpen);
+      const end = Math.min(bEnd, dayClose);
+      if (start < end) intervals.push([start, end]);
+    }
+    if (intervals.length === 0) return false;
+    intervals.sort((a, b) => a[0] - b[0]);
+    let covered = dayOpen;
+    for (const [s, e] of intervals) {
+      if (s > covered) return false; // gap inside shop hours
+      if (e > covered) covered = e;
+      if (covered >= dayClose) return true;
+    }
+    return covered >= dayClose;
+  }
+
   const out: string[] = [];
-  for (const [iso, units] of occupancy) {
-    if (units.size >= totalUnits) out.push(iso);
+  for (const iso of candidateDates) {
+    const day = new Date(`${iso}T00:00:00`);
+    let unitsCovering = 0;
+    for (const unitBookings of perUnit.values()) {
+      if (unitCoversDay(unitBookings, day)) unitsCovering++;
+    }
+    if (unitsCovering >= totalUnits) out.push(iso);
   }
   return out;
 }
