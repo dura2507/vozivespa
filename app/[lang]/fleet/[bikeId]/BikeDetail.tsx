@@ -26,6 +26,7 @@ import {
   validReturnSlots,
   type ConfirmedBooking,
 } from "@/lib/pricing";
+import { SEASON_END_DATE } from "@/lib/season";
 
 type CustomerForm = {
   name: string;
@@ -741,9 +742,10 @@ export default function BikeDetail({
                     // jumping past next year's season either. Anyone
                     // booking >18 months ahead should use WhatsApp.
                     startMonth={new Date()}
-                    endMonth={new Date(new Date().getFullYear() + 1, 11, 1)}
+                    endMonth={SEASON_END_DATE}
                     disabled={[
                       { before: new Date() },
+                      { after: SEASON_END_DATE },
                       ...bookedFullDays,
                       ...bookedMiddleRanges,
                     ]}

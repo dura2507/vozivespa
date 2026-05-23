@@ -246,6 +246,49 @@ export const CATEGORIES: Category[] = [
 
 export const REVIEWS: Review[] = [
   {
+    id: "9",
+    name: "Hecore",
+    date: "Aug 2025",
+    rating: 5,
+    text: "Der Service ist erstklassig, hatte ein kleines Problem, innerhalb von 30min war er vor Ort und hat alles behoben. Ein sehr zuverlässiger Vermieter, hilfsbereit, freundlich und weis wovon er redet. Definitiv zu empfehlen. Vielen Dank Thomas.",
+    avatar: "/reviews/hecore-avatar.jpg",
+    photos: [
+      "/reviews/hecore-photo-1.jpg",
+      "/reviews/hecore-photo-2.jpg",
+      "/reviews/hecore-photo-3.jpg",
+    ],
+  },
+  {
+    id: "10",
+    name: "Moritz Biel",
+    date: "Aug 2025",
+    rating: 5,
+    text: "Super Verleih! Mega faire Preise, gefühlt die einzigen Motorräder zum mieten weit und breit und alles super gewartet und gepflegt! Ich bin Mega froh so einen tollen Verleih gefunden zu haben! Unbedingt hier mieten.",
+    avatar: "/reviews/moritz-biel-avatar.jpg",
+    photos: [
+      "/reviews/moritz-biel-photo-1.jpg",
+      "/reviews/moritz-biel-photo-2.jpg",
+    ],
+  },
+  {
+    id: "11",
+    name: "Monwadi Sitthikun",
+    date: "Aug 2025",
+    rating: 5,
+    text: "SickMotos ist ein Profiverleih mit viel Fachwissen! Wärmstens zu empfehlen, wenn ihr Roller oder Motorrad in Zadar leihen wollt. Die Besitzer sind freundlich, sehr hilfsbereit und super zu erreichen. Sie hatten tolle Tipps zu local Spots auf Lager.",
+    avatar: "/reviews/monwadi-sitthikun-avatar.jpg",
+    photos: ["/reviews/monwadi-sitthikun-photo-1.jpg"],
+  },
+  {
+    id: "12",
+    name: "Christian Brandhorst",
+    date: "Aug 2025",
+    rating: 5,
+    text: "Top Besitzer, sehr cool drauf! Hat gute Ratschläge (Local Tipps etc.) parat. Unser Roller war in einwandfreiem Zustand, wir konnten dadurch viel sehen und hatten eine großartige Zeit. Vielen Dank, bis zum nächsten Mal!",
+    avatar: "/reviews/christian-brandhorst-avatar.jpg",
+    photos: ["/reviews/christian-brandhorst-photo-1.jpg"],
+  },
+  {
     id: "6",
     name: "Isabel Abed",
     date: "Oct 2025",

@@ -4,6 +4,7 @@ import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail, sendOwnerBookingEmail } from "@/lib/email";
 import { markEmailReadByHeader } from "@/lib/imap-mark";
 import { isValidSlot, parseTime } from "@/lib/pricing";
+import { isBookingInSeason, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
 import { describeConflict, findFreeUnit, getBikeUnitLabel } from "@/lib/availability";
 import {
   isAllowedReceiptMime,
@@ -128,6 +129,14 @@ export async function POST(request: Request) {
   if (!phone) return NextResponse.json({ error: "Phone is required" }, { status: 400 });
   if (!from || !to) return NextResponse.json({ error: "Valid dates are required" }, { status: 400 });
   if (from > to) return NextResponse.json({ error: "from must be on or before to" }, { status: 400 });
+  if (!isBookingInSeason(from, to)) {
+    return NextResponse.json(
+      {
+        error: `Bookings are only available within our season (${SEASON_START_ISO} to ${SEASON_END_ISO}). Reach out via WhatsApp for off-season inquiries.`,
+      },
+      { status: 400 },
+    );
+  }
   if (!pickupTime || !returnTime) {
     return NextResponse.json(
       { error: "Pickup and return times must be 09:00-19:00 in 30-minute slots" },

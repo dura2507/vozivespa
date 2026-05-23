@@ -136,26 +136,39 @@ export function validReturnSlots(
 }
 
 // Set of ISO dates that are fully blocked: every active unit has at
-// least one booking covering that date. Used to disable dates in the
-// calendar so customers can't pick a window that has zero chance.
+// least one booking covering shop-open through shop-close for that
+// date. Same-day turnaround (e.g. a booking that returns at 11:00) no
+// longer marks the date as fully booked because the unit is free in
+// the afternoon — the time-slot picker handles the morning conflict.
 export function fullyBookedDates(
   bookings: ConfirmedBooking[],
   totalUnits: number,
 ): string[] {
   if (totalUnits <= 0) return [];
   const occupancy = new Map<string, Set<string>>();
+  const openLabel = `${String(SHOP_OPEN_HOUR).padStart(2, "0")}:00`;
+  const closeLabel = `${String(SHOP_CLOSE_HOUR).padStart(2, "0")}:00`;
   for (const b of bookings) {
     if (!b.unitId) continue;
+    const bStart = combineDateTime(new Date(`${b.from}T00:00:00`), b.pickupTime).getTime();
+    const bEnd = combineDateTime(new Date(`${b.to}T00:00:00`), b.returnTime).getTime();
     let cursor = new Date(`${b.from}T00:00:00`);
-    const end = new Date(`${b.to}T00:00:00`);
-    while (cursor.getTime() <= end.getTime()) {
-      const iso = toIsoDate(cursor);
-      let set = occupancy.get(iso);
-      if (!set) {
-        set = new Set();
-        occupancy.set(iso, set);
+    const last = new Date(`${b.to}T00:00:00`);
+    while (cursor.getTime() <= last.getTime()) {
+      const dayOpen = combineDateTime(cursor, openLabel).getTime();
+      const dayClose = combineDateTime(cursor, closeLabel).getTime();
+      // Unit blocks this day fully only when the booking spans shop-
+      // open to shop-close. Partial coverage (e.g. morning-only return
+      // or evening-only pickup) leaves the day selectable.
+      if (bStart <= dayOpen && bEnd >= dayClose) {
+        const iso = toIsoDate(cursor);
+        let set = occupancy.get(iso);
+        if (!set) {
+          set = new Set();
+          occupancy.set(iso, set);
+        }
+        set.add(b.unitId);
       }
-      set.add(b.unitId);
       cursor = new Date(cursor.getTime() + 86_400_000);
     }
   }
