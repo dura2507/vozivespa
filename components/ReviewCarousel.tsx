@@ -1,7 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Review } from "@/lib/mockData";
+
+// Minimum horizontal travel in pixels before we treat a touch as a swipe.
+// Below this the gesture is just tap-jitter and shouldn't change photos.
+const SWIPE_THRESHOLD_PX = 50;
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -59,6 +63,22 @@ export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
     setLightbox((l) =>
       l ? { ...l, index: Math.max(0, Math.min(l.photos.length - 1, l.index + delta)) } : null,
     );
+
+  // Touch swipe inside the lightbox. We just record startX on touchstart
+  // and decide on touchend — no need for live tracking; the user gets
+  // the snap behaviour they expect from any gallery app.
+  const touchStartX = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0]?.clientX ?? null;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const endX = e.changedTouches[0]?.clientX ?? touchStartX.current;
+    const dx = endX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(dx) < SWIPE_THRESHOLD_PX) return;
+    step(dx < 0 ? 1 : -1);
+  };
 
   return (
     <div>
@@ -164,8 +184,10 @@ export default function ReviewCarousel({ reviews }: { reviews: Review[] }) {
 
       {lightbox && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 sm:p-8"
+          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 sm:p-8 touch-pan-y"
           onClick={close}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
         >
           <button
             type="button"
