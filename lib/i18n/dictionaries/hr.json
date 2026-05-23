@@ -45,7 +45,7 @@
       "availableNow": "Dostupno odmah",
       "availableNowCount": "{n} dostupno odmah",
       "notAvailableNow": "Sve iznajmljeno",
-      "bookedUntil": "Zauzeto do {time}",
+      "bookedUntil": "Sve zauzeto do {time}",
       "outOfService": "Na servisu",
       "viewDetails": "Detalji"
     },

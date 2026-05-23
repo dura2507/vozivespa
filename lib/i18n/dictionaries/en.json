@@ -45,7 +45,7 @@
       "availableNow": "Available now",
       "availableNowCount": "{n} available now",
       "notAvailableNow": "All rented out",
-      "bookedUntil": "Booked until {time}",
+      "bookedUntil": "Fully booked until {time}",
       "outOfService": "In service",
       "viewDetails": "Details"
     },
