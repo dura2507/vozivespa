@@ -16,10 +16,10 @@ function fmt(template: string, vars: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, key) => String(vars[key] ?? ""));
 }
 
-// Render the next free moment as a Zagreb-local HH:MM. Returns null if
-// the next free slot is on a later day — then the card falls back to
-// the generic "fully rented out" line so the pill stays short.
-function formatBookedUntilToday(targetMs: number, nowMs: number): string | null {
+// Render the next free moment for the pill. Same-day returns just the
+// time ("16:30"), other day returns just the date ("28/05") — the time
+// is noise when the visitor's already shifting to a different day.
+function formatBookedUntil(targetMs: number, nowMs: number): string {
   const tz = "Europe/Zagreb";
   const dayKey = (ms: number) =>
     new Intl.DateTimeFormat("en-CA", {
@@ -28,12 +28,18 @@ function formatBookedUntilToday(targetMs: number, nowMs: number): string | null 
       month: "2-digit",
       day: "2-digit",
     }).format(new Date(ms));
-  if (dayKey(targetMs) !== dayKey(nowMs)) return null;
+  if (dayKey(targetMs) === dayKey(nowMs)) {
+    return new Intl.DateTimeFormat("en-GB", {
+      timeZone: tz,
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).format(new Date(targetMs));
+  }
   return new Intl.DateTimeFormat("en-GB", {
     timeZone: tz,
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
+    day: "2-digit",
+    month: "2-digit",
   }).format(new Date(targetMs));
 }
 
@@ -255,17 +261,15 @@ export default async function HomePage({
                         }`}
                         aria-hidden
                       />
-                      {(() => {
-                        if (availState === "available") return t.fleet.availableNow;
-                        if (availState === "service") return t.fleet.outOfService;
-                        const todayTime =
-                          avail?.availableFromMs && avail.availableFromMs > nowMs
-                            ? formatBookedUntilToday(avail.availableFromMs, nowMs)
-                            : null;
-                        return todayTime
-                          ? fmt(t.fleet.bookedUntil, { time: todayTime })
-                          : t.fleet.notAvailableNow;
-                      })()}
+                      {availState === "available"
+                        ? t.fleet.availableNow
+                        : availState === "service"
+                          ? t.fleet.outOfService
+                          : avail?.availableFromMs && avail.availableFromMs > nowMs
+                            ? fmt(t.fleet.bookedUntil, {
+                                time: formatBookedUntil(avail.availableFromMs, nowMs),
+                              })
+                            : t.fleet.notAvailableNow}
                     </p>
                   )}
                   {unitCounts[cat.id] > 1 && (
