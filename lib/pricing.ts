@@ -10,6 +10,14 @@ const GRACE_MINUTES = 15;
 // renter. Applied as a buffer in the time-aware overlap check.
 export const TURNAROUND_MINUTES = 30;
 
+// Shortest rental window we treat as a "real" rental on the public
+// site. A pickup slot that only buys the customer a 30-min ride before
+// the unit's next booking is technically free, but offering it leads
+// to confusion + overbooking risk (Thomas's report: bike 10:00 reserved
+// but 09:00 still shows as bookable). Used as a forward lookahead in
+// the slot picker AND the homepage availability badge.
+export const MIN_USEFUL_RENTAL_MINUTES = 120;
+
 export type AppliedTier =
   | "day"
   | "weekend"
@@ -83,12 +91,14 @@ function toIsoDate(d: Date): string {
 }
 
 // Number of physical units busy at a given moment. A unit is "busy" if
-// any of its bookings overlaps the moment within the 1h turnaround
-// buffer (so we can't reuse it yet).
+// any of its bookings overlaps the moment within the turnaround buffer,
+// or — when lookaheadMs > 0 — if the unit's next booking starts within
+// that lookahead window (no useful rental fits in the remaining gap).
 function countBusyUnitsAt(
   date: Date,
   time: string,
   bookings: ConfirmedBooking[],
+  lookaheadMs = 0,
 ): number {
   const slotMs = combineDateTime(date, time).getTime();
   const bufferMs = TURNAROUND_MINUTES * 60_000;
@@ -99,31 +109,38 @@ function countBusyUnitsAt(
     const bEnd = combineDateTime(new Date(`${b.to}T00:00:00`), b.returnTime).getTime();
     if (bStart - bufferMs <= slotMs && slotMs < bEnd + bufferMs) {
       occupied.add(b.unitId);
+      continue;
+    }
+    if (
+      lookaheadMs > 0 &&
+      bStart > slotMs &&
+      bStart - bufferMs - slotMs < lookaheadMs
+    ) {
+      occupied.add(b.unitId);
     }
   }
   return occupied.size;
 }
 
 // Slots a customer may pick as their pickup time on `pickupDate`. A
-// slot is bookable as long as at least one physical unit of the bike
-// model is free at that moment (with the turnaround buffer applied).
-// Multi-unit bikes therefore stay bookable even when one or two of
-// their units are mid-rental.
+// slot is bookable when at least one unit is free for the next useful
+// rental window (no booking conflict + no upcoming booking within
+// MIN_USEFUL_RENTAL_MINUTES). Prevents the "09:00 looks free but the
+// unit has a 10:00 reservation" trap.
 export function validPickupSlots(
   pickupDate: Date,
   bookings: ConfirmedBooking[],
   totalUnits: number,
 ): string[] {
   if (totalUnits <= 0) return buildSlots();
+  const lookaheadMs = MIN_USEFUL_RENTAL_MINUTES * 60_000;
   return buildSlots().filter(
-    (s) => countBusyUnitsAt(pickupDate, s, bookings) < totalUnits,
+    (s) => countBusyUnitsAt(pickupDate, s, bookings, lookaheadMs) < totalUnits,
   );
 }
 
-// Same logic as validPickupSlots . at any candidate time T on the
-// return date, we need at least one unit to be free so the customer
-// can drop off without colliding with another booking that starts on
-// that unit within the turnaround window.
+// Return slots only need the moment itself to be conflict-free — the
+// rental ends there, so there's no forward-looking requirement.
 export function validReturnSlots(
   returnDate: Date,
   bookings: ConfirmedBooking[],

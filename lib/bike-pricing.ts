@@ -1,6 +1,12 @@
 import { CATEGORIES, type Category } from "@/lib/mockData";
 import { getServiceClient } from "@/lib/supabase";
-import { SHOP_CLOSE_HOUR, SHOP_OPEN_HOUR, SLOT_MINUTES, TURNAROUND_MINUTES } from "@/lib/pricing";
+import {
+  MIN_USEFUL_RENTAL_MINUTES,
+  SHOP_CLOSE_HOUR,
+  SHOP_OPEN_HOUR,
+  SLOT_MINUTES,
+  TURNAROUND_MINUTES,
+} from "@/lib/pricing";
 import { SEASON_END_ISO } from "@/lib/season";
 
 // Owner-editable price overrides live in the bike_price_overrides
@@ -276,6 +282,7 @@ export async function getAvailableNowCounts(): Promise<
   // currently-rented units AND look ahead to compute when a busy unit
   // next becomes free (chained through back-to-back bookings).
   const turnaroundMs = TURNAROUND_MINUTES * 60_000;
+  const usefulRentalMs = MIN_USEFUL_RENTAL_MINUTES * 60_000;
   const unitBookings = new Map<string, Array<{ start: number; end: number }>>();
   const rentedUnitIds = new Set<string>();
   for (const b of ((bookingsRes.data ?? []) as B[])) {
@@ -288,7 +295,15 @@ export async function getAvailableNowCounts(): Promise<
       unitBookings.set(b.bike_unit_id, arr);
     }
     arr.push({ start, end });
-    if (nowMs >= start && nowMs < end) rentedUnitIds.add(b.bike_unit_id);
+    // Currently inside the rental window?
+    if (nowMs >= start && nowMs < end) {
+      rentedUnitIds.add(b.bike_unit_id);
+      continue;
+    }
+    // Or upcoming so soon that no useful rental fits in the gap?
+    if (start > nowMs && start - turnaroundMs - nowMs < usefulRentalMs) {
+      rentedUnitIds.add(b.bike_unit_id);
+    }
   }
 
   // Pickup is only useful if it falls inside shop hours AND leaves a
@@ -333,8 +348,20 @@ export async function getAvailableNowCounts(): Promise<
     if (!arr || arr.length === 0) return null;
     const sorted = [...arr].sort((a, b) => a.start - b.start);
     const current = sorted.find((iv) => nowMs >= iv.start && nowMs < iv.end);
-    if (!current) return null;
-    return nextPickupableMoment(sorted, current.end + turnaroundMs);
+    if (current) {
+      return nextPickupableMoment(sorted, current.end + turnaroundMs);
+    }
+    // Unit is free right now — but if the next booking starts within
+    // the useful-rental window we treat it as "rented now" (see the
+    // earlier add to rentedUnitIds) and need to surface when the unit
+    // becomes useful again, i.e. after that imminent booking ends.
+    const imminent = sorted.find(
+      (iv) => iv.start > nowMs && iv.start - turnaroundMs - nowMs < usefulRentalMs,
+    );
+    if (imminent) {
+      return nextPickupableMoment(sorted, imminent.end + turnaroundMs);
+    }
+    return null;
   }
 
   const serviceUnitIds = new Set<string>();
