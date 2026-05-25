@@ -11,12 +11,12 @@ const GRACE_MINUTES = 15;
 export const TURNAROUND_MINUTES = 30;
 
 // Shortest rental window we treat as a "real" rental on the public
-// site. A pickup slot that only buys the customer a 30-min ride before
-// the unit's next booking is technically free, but offering it leads
-// to confusion + overbooking risk (Thomas's report: bike 10:00 reserved
-// but 09:00 still shows as bookable). Used as a forward lookahead in
-// the slot picker AND the homepage availability badge.
-export const MIN_USEFUL_RENTAL_MINUTES = 120;
+// site. Owner policy (Thomas): standard rentals are 24h, walk-ins
+// between two reservations only get offered if there's at least 8h of
+// daylight between the slot and the next booking — anything shorter
+// isn't worth the turnaround for either side. Used as a forward
+// lookahead in the slot picker AND the homepage availability badge.
+export const MIN_USEFUL_RENTAL_MINUTES = 8 * 60;
 
 export type AppliedTier =
   | "day"

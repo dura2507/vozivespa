@@ -242,7 +242,13 @@ export async function getAvailableNowCounts(): Promise<
     supabase
       .from("bike_units")
       .select("id, bike_id")
-      .eq("active", true),
+      .eq("active", true)
+      // Backup / reserve units are off-the-books for public counts —
+      // they exist physically but Thomas hands them out at his
+      // discretion. Including them here made the card lie when the
+      // whole fleet was actually out (4 of 5 50cc rented, badge still
+      // said "Available now" because the reserve was technically idle).
+      .eq("is_backup", false),
     supabase
       .from("bookings")
       .select("bike_unit_id, date_from, date_to, pickup_time, return_time")
