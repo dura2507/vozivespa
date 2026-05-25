@@ -51,8 +51,8 @@ export async function POST(request: Request) {
 
   after(async () => {
     const [tgResult, emailResult] = await Promise.allSettled([
-      sendOwnerContactMessage(payload),
-      sendOwnerContactEmail(payload),
+      sendOwnerContactMessage({ ...payload, locale }),
+      sendOwnerContactEmail({ ...payload, locale }),
       sendCustomerContactReceivedEmail({ ...payload, locale }),
     ]);
     // If Telegram delivered the ping, archive the parallel owner

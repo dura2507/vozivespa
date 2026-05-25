@@ -246,10 +246,10 @@ export async function sendOwnerBookingEmail(
   const fee = bookingFeeEur(booking);
   const { country: licenceCountry, note: cleanNote } = splitNotes(booking.notes);
 
-  // Auto-translate non-DE/EN customer notes into German for the owner.
+  // Auto-translate non-DE/EN customer notes into English for the owner.
   let translatedNote: string | null = null;
   if (cleanNote && needsTranslationForOwner(booking.locale)) {
-    const tr = await translate(cleanNote, { from: booking.locale, to: "DE" });
+    const tr = await translate(cleanNote, { from: booking.locale, to: "EN-GB" });
     if (tr) translatedNote = tr.text;
   }
 
@@ -265,7 +265,7 @@ export async function sendOwnerBookingEmail(
       <tr><td style="padding:4px 0;color:#6b6b6b;">Riding</td><td style="padding:4px 0;font-weight:600;">${escape(ridingStyleLabel(booking.riding_style))}</td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Email</td><td style="padding:4px 0;"><a href="mailto:${escape(booking.customer_email)}" style="color:#1a1a1a;">${escape(booking.customer_email)}</a></td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Phone</td><td style="padding:4px 0;">${escape(booking.customer_phone)}${waLink ? ` &middot; <a href="${waLink}" style="color:#25D366;text-decoration:none;font-weight:600;">WhatsApp →</a>` : ""}</td></tr>
-      ${cleanNote ? `<tr><td style="padding:4px 0;color:#6b6b6b;vertical-align:top;">Notes</td><td style="padding:4px 0;white-space:pre-wrap;">${escape(cleanNote)}${translatedNote ? `<br><span style="color:#6b6b6b;font-style:italic;">↳ DE: ${escape(translatedNote)}</span>` : ""}</td></tr>` : ""}
+      ${cleanNote ? `<tr><td style="padding:4px 0;color:#6b6b6b;vertical-align:top;">Notes</td><td style="padding:4px 0;white-space:pre-wrap;">${escape(cleanNote)}${translatedNote ? `<br><span style="color:#6b6b6b;font-style:italic;">↳ EN: ${escape(translatedNote)}</span>` : ""}</td></tr>` : ""}
     </table>
     ${
       receipt?.url
@@ -294,7 +294,7 @@ Riding: ${ridingStyleLabel(booking.riding_style)}
 
 Customer: ${booking.customer_name}
 Email: ${booking.customer_email}
-Phone: ${booking.customer_phone}${cleanNote ? `\nNotes: ${cleanNote}` : ""}${translatedNote ? `\n  ↳ DE: ${translatedNote}` : ""}
+Phone: ${booking.customer_phone}${cleanNote ? `\nNotes: ${cleanNote}` : ""}${translatedNote ? `\n  ↳ EN: ${translatedNote}` : ""}
 
 ${receipt?.url ? `Receipt attached. Direct link: ${receipt.url}` : "No deposit screenshot attached."}
 
@@ -647,6 +647,7 @@ export async function sendOwnerContactEmail(input: {
   email: string;
   phone?: string | null;
   message: string;
+  locale?: string | null;
 }): Promise<string | null> {
   const ownerEmail = process.env.OWNER_EMAIL?.trim();
   if (!ownerEmail) {
@@ -654,7 +655,22 @@ export async function sendOwnerContactEmail(input: {
     return null;
   }
 
+  // Auto-translate the contact message into English when the visitor
+  // wrote in a language other than DE/EN. Same convention as booking
+  // notes — Thomas gets the original above the translation.
+  let translatedMessage: string | null = null;
+  if (input.message && needsTranslationForOwner(input.locale)) {
+    const tr = await translate(input.message, {
+      from: input.locale ?? undefined,
+      to: "EN-GB",
+    });
+    if (tr) translatedMessage = tr.text;
+  }
+
   const messageHtml = escape(input.message).replace(/\n/g, "<br/>");
+  const translatedHtml = translatedMessage
+    ? `<div style="margin-top:10px;background:#f6f5f1;padding:14px 18px;font-size:13px;line-height:1.6;font-style:italic;color:#6b6b6b;border-left:3px solid #b6b3a8;">↳ EN: ${escape(translatedMessage).replace(/\n/g, "<br/>")}</div>`
+    : "";
   const phoneDigits = input.phone ? input.phone.replace(/[^\d]/g, "") : "";
 
   const phoneRowHtml = input.phone
@@ -670,6 +686,7 @@ export async function sendOwnerContactEmail(input: {
     <p style="margin:0 0 8px;font-size:14px;line-height:1.6;"><a href="mailto:${escape(input.email)}?subject=${encodeURIComponent("Re: your message to SickMotos")}" style="color:#B61F36;text-decoration:none;font-weight:600;">${escape(input.email)}</a></p>
     ${phoneRowHtml}
     <div style="background:#f6f5f1;padding:18px;font-size:14px;line-height:1.6;border-left:3px solid #B61F36;">${messageHtml}</div>
+    ${translatedHtml}
     <p style="margin:24px 0 0;padding-top:16px;border-top:1px solid #e6e4dd;font-size:13px;color:#6b6b6b;line-height:1.6;">Hit <strong>Reply</strong> in your email client to answer ${escape(input.name)} directly - their address is set as the reply-to so it goes straight to them.</p>
   `;
 
@@ -684,7 +701,7 @@ export async function sendOwnerContactEmail(input: {
 
 From: ${input.name} <${input.email}>${input.phone ? `\nPhone: ${input.phone}` : ""}
 
-${input.message}
+${input.message}${translatedMessage ? `\n\n  ↳ EN: ${translatedMessage}` : ""}
 
 Reply to ${input.email} to respond.`;
 

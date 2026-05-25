@@ -241,7 +241,7 @@ function buildText(
     // German translation right under their original note so the
     // owner doesn't have to copy-paste into a translator.
     translatedNote
-      ? `_${escapeMd("↳ DE:")} ${escapeMd(translatedNote)}_`
+      ? `_${escapeMd("↳ EN:")} ${escapeMd(translatedNote)}_`
       : null,
   ].filter((l): l is string => l !== null);
 
@@ -261,13 +261,13 @@ export async function sendOwnerBookingTelegram(
     return [];
   }
 
-  // Translate the customer's note into German when they wrote in
+  // Translate the customer's note into English when they wrote in
   // anything other than DE/EN. Best-effort: silently falls through
   // if DeepL is down or the key isn't configured.
   const { note: rawCustomerNote } = splitNotes(booking.notes);
   let translatedNote: string | null = null;
   if (rawCustomerNote && needsTranslationForOwner(booking.locale)) {
-    const tr = await translate(rawCustomerNote, { from: booking.locale, to: "DE" });
+    const tr = await translate(rawCustomerNote, { from: booking.locale, to: "EN-GB" });
     if (tr) translatedNote = tr.text;
   }
 
@@ -342,11 +342,21 @@ export async function sendOwnerContactMessage(input: {
   email: string;
   phone?: string | null;
   message: string;
+  locale?: string | null;
 }): Promise<void> {
   const chatIds = ownerChatIds();
   if (chatIds.length === 0) {
     console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping contact notification");
     return;
+  }
+
+  // Same EN-target translation as the booking notes — Thomas wanted a
+  // single language to glance at, no matter what locale the visitor
+  // wrote in.
+  let translatedMessage: string | null = null;
+  if (input.message && needsTranslationForOwner(input.locale)) {
+    const tr = await translate(input.message, { from: input.locale ?? undefined, to: "EN-GB" });
+    if (tr) translatedMessage = tr.text;
   }
 
   const lines = [
@@ -358,7 +368,11 @@ export async function sendOwnerContactMessage(input: {
   if (input.phone) {
     lines.push(`*Phone:* \`${escapeMd(input.phone)}\``);
   }
-  lines.push("", escapeMd(input.message), "", "_Reply to the email I just sent you to answer this message\\._");
+  lines.push("", escapeMd(input.message));
+  if (translatedMessage) {
+    lines.push("", `_${escapeMd("↳ EN:")} ${escapeMd(translatedMessage)}_`);
+  }
+  lines.push("", "_Reply to the email I just sent you to answer this message\\._");
 
   type InlineKeyboardButton = { text: string; url: string };
   const phoneDigits = input.phone ? input.phone.replace(/[^\d]/g, "") : "";

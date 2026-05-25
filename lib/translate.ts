@@ -1,8 +1,8 @@
 // Minimal DeepL Free wrapper. Used to translate customer-language
-// fields (currently the free-text notes) into German for the owner
-// notifications. Activates only when DEEPL_API_KEY is set; without
-// the env var we silently fall back to the original text so the
-// notification still goes out.
+// fields (booking notes + contact-form messages) into English for the
+// owner notifications. Activates only when DEEPL_API_KEY is set;
+// without the env var we silently fall back to the original text so
+// the notification still goes out.
 //
 // DeepL Free covers 500_000 characters/month at no cost — plenty
 // for a small rental's booking volume. API docs:
@@ -41,7 +41,7 @@ export async function translate(
   if (!key) return null;
   if (!text.trim()) return null;
 
-  const targetLang = options.to ?? "DE";
+  const targetLang = options.to ?? "EN-GB";
   const sourceLang = options.from ? TO_DEEPL[options.from] : undefined;
 
   // If the source equals the target, skip the round-trip.
