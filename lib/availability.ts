@@ -98,12 +98,15 @@ export async function findFreeUnit(
     blockedUnitIds.add(m.bike_unit_id);
   }
 
-  // 2. Active units for this bike model.
+  // 2. Active units for this bike model. Backup / reserve units are
+  // excluded from the pool — Thomas hands them out as a walk-in joker,
+  // never via the public booking flow.
   const { data: units, error: unitErr } = await supabase
     .from("bike_units")
     .select("id, label")
     .eq("bike_id", w.bikeId)
     .eq("active", true)
+    .eq("is_backup", false)
     .order("label", { ascending: true });
   if (unitErr) throw new Error(`unit lookup: ${unitErr.message}`);
   if (!units || units.length === 0) {
@@ -119,7 +122,7 @@ export async function findFreeUnit(
     .from("bookings")
     .select("id, bike_unit_id, date_from, date_to, pickup_time, return_time, customer_name")
     .eq("bike_id", w.bikeId)
-    .eq("status", "confirmed")
+    .in("status", ["confirmed", "pending"])
     .lte("date_from", w.dateTo)
     .gte("date_to", w.dateFrom);
   if (w.excludeBookingId) q = q.neq("id", w.excludeBookingId);
@@ -217,7 +220,7 @@ export async function findUnitConflict(
   let bq = supabase
     .from("bookings")
     .select("id, customer_name, date_from, date_to, pickup_time, return_time")
-    .eq("status", "confirmed")
+    .in("status", ["confirmed", "pending"])
     .eq("bike_unit_id", args.bikeUnitId)
     .lte("date_from", args.dateTo)
     .gte("date_to", args.dateFrom);
@@ -333,6 +336,7 @@ export async function findFreeUnits(
     .select("id, label")
     .eq("bike_id", w.bikeId)
     .eq("active", true)
+    .eq("is_backup", false)
     .order("label", { ascending: true });
   if (unitErr) throw new Error(`unit lookup: ${unitErr.message}`);
   const allUnits = (units ?? []) as Array<{ id: string; label: string }>;
@@ -352,7 +356,7 @@ export async function findFreeUnits(
     .from("bookings")
     .select("id, bike_unit_id, date_from, date_to, pickup_time, return_time, customer_name")
     .eq("bike_id", w.bikeId)
-    .eq("status", "confirmed")
+    .in("status", ["confirmed", "pending"])
     .lte("date_from", w.dateTo)
     .gte("date_to", w.dateFrom);
   if (w.excludeBookingId) q = q.neq("id", w.excludeBookingId);

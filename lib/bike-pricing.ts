@@ -252,7 +252,7 @@ export async function getAvailableNowCounts(): Promise<
     supabase
       .from("bookings")
       .select("bike_unit_id, date_from, date_to, pickup_time, return_time")
-      .eq("status", "confirmed")
+      .in("status", ["confirmed", "pending"])
       .lte("date_from", today)
       .gte("date_to", today),
     supabase

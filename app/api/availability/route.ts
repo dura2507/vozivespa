@@ -38,13 +38,20 @@ export async function GET(request: Request) {
       .from("bookings")
       .select("date_from, date_to, pickup_time, return_time, bike_unit_id")
       .eq("bike_id", bikeId)
-      .eq("status", "confirmed")
+      // Pending bookings hold a slot until Thomas confirms or declines —
+      // ignoring them led to "09:00 is free" while a pending booking
+      // sat on the same window. Both states block public availability.
+      .in("status", ["confirmed", "pending"])
       .order("date_from", { ascending: true }),
     supabase
       .from("bike_units")
       .select("id")
       .eq("bike_id", bikeId)
-      .eq("active", true),
+      .eq("active", true)
+      // Reserve / backup units are off-the-books online (Thomas's
+      // walk-in joker). They don't count toward fleet size, calendar
+      // capacity, or slot availability anywhere on the public site.
+      .eq("is_backup", false),
   ]);
 
   if (manualRes.error) {
