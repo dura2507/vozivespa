@@ -57,7 +57,11 @@ export async function POST(request: Request) {
     await setPriceOverrides(bikeId, prices);
   } catch (err) {
     console.error("[/api/admin/pricing] save", err);
-    return NextResponse.json({ error: "Could not save" }, { status: 500 });
+    // Surface the actual error message so the admin form shows
+    // something useful instead of a blanket "Could not save" — makes
+    // FK / RLS / validation failures debuggable from the UI itself.
+    const message = err instanceof Error ? err.message : "Could not save";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });
