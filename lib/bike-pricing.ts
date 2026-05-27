@@ -253,7 +253,12 @@ export async function getAvailableNowCounts(): Promise<
       .from("bookings")
       .select("bike_unit_id, date_from, date_to, pickup_time, return_time")
       .in("status", ["confirmed", "pending"])
-      .lte("date_from", today)
+      // Pull every booking from today onwards, not just the ones
+      // currently covering today. The unitFreeAt chain walks forward
+      // through back-to-back bookings to find the next real opening
+      // — if we only loaded today-overlapping rows it would jump over
+      // tomorrow's reservations and the pill would lie ("Ausgebucht
+      // bis 29.05" while the calendar still shows 29 + 30 red).
       .gte("date_to", today),
     supabase
       .from("blocked_dates")
