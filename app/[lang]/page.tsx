@@ -226,11 +226,15 @@ export default async function HomePage({
             {CATEGORIES.map((cat) => {
               const bikeDict = dict.bikes[cat.id as keyof typeof dict.bikes];
               const avail = availableNow[cat.id];
-              // Three rendered states for the at-a-glance status pill:
-              //   green   → ≥1 unit free this very moment
-              //   amber   → every unit currently in service (no rental)
-              //   neutral → unavailable for another reason (rented)
-              //   hidden  → no fleet data yet (don't show a lying badge)
+              // Pill states. By owner request, "rented out" is shown
+              // with the SAME amber "in service / In Wartung" wording
+              // AND colour as a genuine maintenance block, so an outside
+              // observer (e.g. a friend) can't read off the rental
+              // utilisation / revenue from the public badges. Only the
+              // green "available" state and the timing detail differ.
+              //   green → ≥1 unit free this very moment
+              //   amber → unavailable (rented OR in service, indistinct)
+              //   hidden → no fleet data yet (don't show a lying badge)
               const availState =
                 !avail || avail.total === 0
                   ? "unknown"
@@ -268,18 +272,14 @@ export default async function HomePage({
                       className={`inline-flex self-center items-center gap-1.5 text-[11px] tracking-[0.1em] uppercase font-bold mb-3 px-2.5 py-1 ${
                         availState === "available"
                           ? "bg-emerald-100 text-emerald-700"
-                          : availState === "service"
-                            ? "bg-amber-100 text-amber-700"
-                            : "bg-ink/10 text-ink/70"
+                          : "bg-amber-100 text-amber-700"
                       }`}
                     >
                       <span
                         className={`w-1.5 h-1.5 rounded-full ${
                           availState === "available"
                             ? "bg-emerald-500 animate-pulse"
-                            : availState === "service"
-                              ? "bg-amber-500"
-                              : "bg-ink/50"
+                            : "bg-amber-500"
                         }`}
                         aria-hidden
                       />
