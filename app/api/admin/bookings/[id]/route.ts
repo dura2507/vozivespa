@@ -121,7 +121,7 @@ export async function PATCH(
       // never going to overlap anyway, and excluding by booking id on
       // the new model has no effect.
       excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined,
-    });
+    }, { includeBackup: true });
     if (!availability.unitId) {
       return NextResponse.json(
         {

@@ -100,7 +100,7 @@ export async function POST(request: Request) {
         pickupTime: booking.pickup_time,
         returnTime: booking.return_time,
         excludeBookingId: booking.id,
-      });
+      }, { includeBackup: true });
       if (!availability.unitId) {
         await answerTelegramCallback(
           cb.id,

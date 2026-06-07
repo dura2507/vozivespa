@@ -65,7 +65,7 @@ export async function POST(
         pickupTime: booking.pickup_time,
         returnTime: booking.return_time,
         excludeBookingId: booking.id,
-      });
+      }, { includeBackup: true });
       if (!availability.unitId) {
         return NextResponse.json(
           {

@@ -181,7 +181,7 @@ export async function POST(request: Request) {
       dateTo,
       pickupTime,
       returnTime,
-    });
+    }, { includeBackup: true });
   } catch (err) {
     console.error("[/api/admin/bookings/manual] availability lookup", err);
     return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
@@ -217,6 +217,7 @@ export async function POST(request: Request) {
       supabase,
       { bikeId, dateFrom, dateTo, pickupTime, returnTime },
       wanted,
+      { includeBackup: true },
     );
     if (free.unitIds.length < wanted) {
       const detail = free.conflict ? describeConflict(free.conflict) : undefined;

@@ -46,6 +46,11 @@ function toMs(date: string, time: string): number {
 export async function findFreeUnit(
   supabase: SupabaseClient,
   w: BookingWindow,
+  // Admin-only escape hatch. The public flow keeps backup units hidden
+  // (Thomas's reserve joker), but manual owner actions — model switch,
+  // manual booking — may deliberately reach for the reserve when the
+  // regular fleet is full.
+  opts: { includeBackup?: boolean } = {},
 ): Promise<AvailabilityResult> {
   // 1. Manual owner blocks. A row with bike_unit_id = null still
   //    shuts down the whole model (legacy + saison-pause use cases).
@@ -99,15 +104,18 @@ export async function findFreeUnit(
   }
 
   // 2. Active units for this bike model. Backup / reserve units are
-  // excluded from the pool — Thomas hands them out as a walk-in joker,
-  // never via the public booking flow.
-  const { data: units, error: unitErr } = await supabase
+  // excluded from the pool by default — Thomas hands them out as a
+  // walk-in joker, never via the public booking flow — unless an admin
+  // action explicitly opts in via includeBackup.
+  let unitQuery = supabase
     .from("bike_units")
     .select("id, label")
     .eq("bike_id", w.bikeId)
-    .eq("active", true)
-    .eq("is_backup", false)
-    .order("label", { ascending: true });
+    .eq("active", true);
+  if (!opts.includeBackup) unitQuery = unitQuery.eq("is_backup", false);
+  const { data: units, error: unitErr } = await unitQuery.order("label", {
+    ascending: true,
+  });
   if (unitErr) throw new Error(`unit lookup: ${unitErr.message}`);
   if (!units || units.length === 0) {
     // No physical fleet defined yet . refuse rather than guessing.
@@ -287,6 +295,7 @@ export async function findFreeUnits(
   supabase: SupabaseClient,
   w: BookingWindow,
   count: number,
+  opts: { includeBackup?: boolean } = {},
 ): Promise<{ unitIds: string[]; totalFree: number; totalUnits: number; conflict: Conflict | null }> {
   // Reuse the same conflict-collection logic as findFreeUnit, just
   // keep walking past the first match.
@@ -331,13 +340,15 @@ export async function findFreeUnits(
     blockedUnitIds.add(m.bike_unit_id);
   }
 
-  const { data: units, error: unitErr } = await supabase
+  let unitQuery = supabase
     .from("bike_units")
     .select("id, label")
     .eq("bike_id", w.bikeId)
-    .eq("active", true)
-    .eq("is_backup", false)
-    .order("label", { ascending: true });
+    .eq("active", true);
+  if (!opts.includeBackup) unitQuery = unitQuery.eq("is_backup", false);
+  const { data: units, error: unitErr } = await unitQuery.order("label", {
+    ascending: true,
+  });
   if (unitErr) throw new Error(`unit lookup: ${unitErr.message}`);
   const allUnits = (units ?? []) as Array<{ id: string; label: string }>;
   if (allUnits.length === 0) {
