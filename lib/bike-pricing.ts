@@ -348,8 +348,24 @@ export async function getAvailableNowCounts(): Promise<
       const conflict = sortedBookings.find(
         (iv) => candidate >= iv.start - turnaroundMs && candidate < iv.end + turnaroundMs,
       );
-      if (!conflict) return candidate;
-      candidate = conflict.end + turnaroundMs;
+      if (conflict) {
+        candidate = conflict.end + turnaroundMs;
+        continue;
+      }
+      // Not in a conflict — but the booking system won't OFFER this
+      // slot unless it leaves a useful rental window before the unit's
+      // next booking (the same 8h lookahead validPickupSlots applies).
+      // Without this, the pill would advertise "frei 15:30" for a unit
+      // that re-rents at 19:00 while the booking form rejects every
+      // slot that day — exactly the pill-vs-system mismatch Thomas hit.
+      const upcoming = sortedBookings.find(
+        (iv) => iv.start > candidate && iv.start - turnaroundMs - candidate < usefulRentalMs,
+      );
+      if (upcoming) {
+        candidate = upcoming.end + turnaroundMs;
+        continue;
+      }
+      return candidate;
     }
     return null;
   }
