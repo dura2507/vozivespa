@@ -267,6 +267,7 @@
     "priceBox": {
       "perDay": "/ Tag",
       "unlimitedLine": "Unbegrenzte Kilometer · Basisversicherung · {deposit} Kaution",
+        "helmetsIncluded": "Helme inklusive",
       "licenceEyebrow": "Benötigter Führerschein",
       "bringLicence": "Bring deinen gültigen Führerschein zur Abholung mit. Kein Führerschein, keine Fahrt.",
       "dayBadge": "24h",

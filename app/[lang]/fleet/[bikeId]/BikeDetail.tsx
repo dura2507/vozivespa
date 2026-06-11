@@ -529,6 +529,14 @@ export default function BikeDetail({
                 <p className="text-white/60 text-xs tracking-wider uppercase">
                   {tF.priceBox.unlimitedLine.replace("{deposit}", BRAND.deposit)}
                 </p>
+                {/* Helmets are the #1 thing customers ask about — surface
+                    it as a bold badge on every model so nobody has to ask. */}
+                <p className="mt-2.5 inline-flex items-center gap-1.5 bg-emerald-500/15 text-emerald-300 text-xs font-bold tracking-wide uppercase px-2.5 py-1 rounded">
+                  <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {tF.priceBox.helmetsIncluded}
+                </p>
 
                 <div className="mt-3 pt-3 border-t border-white/10 flex items-start gap-3">
                   <div className="bg-red text-white font-barlow font-black text-lg leading-none px-2.5 py-1.5 shrink-0">

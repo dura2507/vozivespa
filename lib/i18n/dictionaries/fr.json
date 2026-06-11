@@ -267,6 +267,7 @@
     "priceBox": {
       "perDay": "/ jour",
       "unlimitedLine": "Kilométrage illimité · Assurance de base · Caution {deposit}",
+        "helmetsIncluded": "Casques inclus",
       "licenceEyebrow": "Permis requis",
       "bringLicence": "Apportez votre permis valide au retrait. Pas de permis, pas de location.",
       "dayBadge": "24h",

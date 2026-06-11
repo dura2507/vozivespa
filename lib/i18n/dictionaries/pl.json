@@ -267,6 +267,7 @@
     "priceBox": {
       "perDay": "/ dzień",
       "unlimitedLine": "Bez limitu km · Ubezpieczenie podstawowe · {deposit} kaucji",
+        "helmetsIncluded": "Kaski w zestawie",
       "licenceEyebrow": "Wymagane prawo jazdy",
       "bringLicence": "Przywieź ważne prawo jazdy do odbioru. Bez prawa jazdy nie ma jazdy.",
       "dayBadge": "24h",

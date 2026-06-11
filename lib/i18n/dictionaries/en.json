@@ -267,6 +267,7 @@
     "priceBox": {
       "perDay": "/ day",
       "unlimitedLine": "Unlimited km · Basic insurance · {deposit} deposit",
+        "helmetsIncluded": "Helmets included",
       "licenceEyebrow": "Required licence",
       "bringLicence": "Bring your valid licence to pickup. No licence, no ride.",
       "dayBadge": "24h",

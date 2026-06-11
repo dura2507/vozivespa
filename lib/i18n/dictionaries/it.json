@@ -267,6 +267,7 @@
     "priceBox": {
       "perDay": "/ giorno",
       "unlimitedLine": "Km illimitati · Assicurazione base · Cauzione {deposit}",
+        "helmetsIncluded": "Caschi inclusi",
       "licenceEyebrow": "Patente richiesta",
       "bringLicence": "Porta la tua patente valida al ritiro. Niente patente, niente moto.",
       "dayBadge": "24h",

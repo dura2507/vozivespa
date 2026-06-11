@@ -267,6 +267,7 @@
     "priceBox": {
       "perDay": "/ día",
       "unlimitedLine": "Km ilimitados · Seguro básico · Depósito {deposit}",
+        "helmetsIncluded": "Cascos incluidos",
       "licenceEyebrow": "Carnet requerido",
       "bringLicence": "Trae tu carnet válido en la recogida. Sin carnet, no hay ruta.",
       "dayBadge": "24h",

@@ -276,6 +276,7 @@
     "priceBox": {
       "perDay": "/ dan",
       "unlimitedLine": "Neograničeni km · Osnovno osiguranje · {deposit} polog",
+        "helmetsIncluded": "Kacige uključene",
       "licenceEyebrow": "Potrebna vozačka",
       "bringLicence": "Donesi važeću vozačku pri preuzimanju. Nema vozačke, nema vožnje.",
       "dayBadge": "24h",
