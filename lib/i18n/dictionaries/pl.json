@@ -50,6 +50,7 @@
       "bookedUntilTomorrow": "W serwisie do jutra {time}",
       "availableFrom": "Dostępne od {time}",
       "outOfService": "W serwisie",
+      "helmetsIncluded": "Kaski w zestawie",
       "viewDetails": "Szczegóły"
     },
     "included": {

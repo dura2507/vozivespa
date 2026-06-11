@@ -306,6 +306,14 @@ export default async function HomePage({
                     </p>
                   )}
                   <p className="text-xs sm:text-sm text-muted leading-relaxed mb-3">{bikeDict?.description ?? cat.description}</p>
+                  {/* Helmets-included is the #1 customer question — flag it
+                      on every fleet card too, not just the detail page. */}
+                  <p className="inline-flex self-center items-center gap-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold tracking-[0.1em] uppercase px-2 py-0.5 mb-3">
+                    <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {t.fleet.helmetsIncluded}
+                  </p>
                   <div className="flex flex-row items-center justify-center gap-4 mb-3 sm:flex-col sm:gap-1">
                     <Image
                       src={LICENCE_BADGE[cat.licenceCode]}

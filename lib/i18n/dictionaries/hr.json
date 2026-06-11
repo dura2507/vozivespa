@@ -50,6 +50,7 @@
       "bookedUntilTomorrow": "Na servisu do sutra {time}",
       "availableFrom": "Dostupno od {time}",
       "outOfService": "Na servisu",
+      "helmetsIncluded": "Kacige uključene",
       "viewDetails": "Detalji"
     },
     "included": {

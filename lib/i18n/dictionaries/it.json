@@ -50,6 +50,7 @@
       "bookedUntilTomorrow": "In officina fino a domani {time}",
       "availableFrom": "Disponibile da {time}",
       "outOfService": "In officina",
+      "helmetsIncluded": "Caschi inclusi",
       "viewDetails": "Dettagli"
     },
     "included": {

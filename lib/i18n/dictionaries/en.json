@@ -50,6 +50,7 @@
       "bookedUntilTomorrow": "In service until tomorrow {time}",
       "availableFrom": "Available from {time}",
       "outOfService": "In service",
+      "helmetsIncluded": "Helmets included",
       "viewDetails": "Details"
     },
     "included": {

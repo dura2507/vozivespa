@@ -50,6 +50,7 @@
       "bookedUntilTomorrow": "In Wartung bis morgen {time}",
       "availableFrom": "Verfügbar ab {time}",
       "outOfService": "In Wartung",
+      "helmetsIncluded": "Helme inklusive",
       "viewDetails": "Details"
     },
     "included": {

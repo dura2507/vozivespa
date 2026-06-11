@@ -50,6 +50,7 @@
       "bookedUntilTomorrow": "En révision jusqu'à demain {time}",
       "availableFrom": "Disponible à partir de {time}",
       "outOfService": "En révision",
+      "helmetsIncluded": "Casques inclus",
       "viewDetails": "Détails"
     },
     "included": {
