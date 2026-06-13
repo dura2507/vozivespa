@@ -81,11 +81,14 @@ function BookingRow({
     0,
   );
   const totalLabel = totalCents > 0 ? `${(totalCents / 100).toFixed(0)}€` : "-";
+  const overdue = highlight === "pickup" && group.pickupAt < nowMs;
   const subtitle =
     highlight === "return"
       ? `Returns ${fmtCountdown(group.returnAt, nowMs)}`
       : highlight === "pickup"
-        ? `Picks up ${fmtCountdown(group.pickupAt, nowMs)}`
+        ? overdue
+          ? `Overdue ${Math.round((nowMs - group.pickupAt) / 60_000)}m`
+          : `Picks up ${fmtCountdown(group.pickupAt, nowMs)}`
         : null;
   return (
     <Link

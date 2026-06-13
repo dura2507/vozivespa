@@ -421,6 +421,11 @@ function zagrebDayBounds(nowMs: number): { startMs: number; endMs: number } {
 // Sort confirmed bookings into "currently in customer's hands",
 // "starts in the future", or "already returned". Pending stays its
 // own bucket regardless of dates so the owner sees them first.
+// How long an overdue pickup stays pinned in "Today's pickups" (shown
+// as overdue) before we assume the customer collected the bike and move
+// it to "Currently out".
+const PICKUP_GRACE_MS = 60 * 60_000;
+
 export function bucketBookings(bookings: EnrichedBooking[], nowMs: number): BookingBuckets {
   const out: EnrichedBooking[] = [];
   const pending: EnrichedBooking[] = [];
@@ -435,16 +440,24 @@ export function bucketBookings(bookings: EnrichedBooking[], nowMs: number): Book
       continue;
     }
     if (b.status === "confirmed") {
-      if (b.pickupAt <= nowMs && b.returnAt >= nowMs) {
-        out.push(b);
+      if (b.returnAt < nowMs) {
+        past.push(b);
       } else if (b.pickupAt > nowMs) {
         // Future pickup. If still on today's Zagreb calendar day,
         // surface it in the "Today" bucket; otherwise it's a normal
         // future booking.
         if (b.pickupAt <= endOfTodayMs) today.push(b);
         else upcoming.push(b);
+      } else if (nowMs - b.pickupAt < PICKUP_GRACE_MS) {
+        // Pickup time has passed but the customer may just be running
+        // late. Keep the booking in "Today's pickups" (it sorts to the
+        // top and shows as overdue) for a grace window instead of
+        // silently moving it to "Currently out" — owner asked to not
+        // lose sight of a delayed pickup.
+        today.push(b);
       } else {
-        past.push(b);
+        // Past the grace window — assume collected, it's now out.
+        out.push(b);
       }
       continue;
     }
