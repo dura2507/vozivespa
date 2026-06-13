@@ -397,6 +397,9 @@ export type BookingBuckets = {
   // by pickup time, so the morning starts with a clear list of who
   // arrives when.
   today: EnrichedBooking[];
+  // Confirmed bookings currently out whose RETURN is today (Zagreb).
+  // Mirror of `today` for the back-half of the day's ops.
+  todayReturns: EnrichedBooking[];
   upcoming: EnrichedBooking[];
   past: EnrichedBooking[];
 };
@@ -430,6 +433,7 @@ export function bucketBookings(bookings: EnrichedBooking[], nowMs: number): Book
   const out: EnrichedBooking[] = [];
   const pending: EnrichedBooking[] = [];
   const today: EnrichedBooking[] = [];
+  const todayReturns: EnrichedBooking[] = [];
   const upcoming: EnrichedBooking[] = [];
   const past: EnrichedBooking[] = [];
   const { endMs: endOfTodayMs } = zagrebDayBounds(nowMs);
@@ -455,8 +459,11 @@ export function bucketBookings(bookings: EnrichedBooking[], nowMs: number): Book
         // silently moving it to "Currently out" — owner asked to not
         // lose sight of a delayed pickup.
         today.push(b);
+      } else if (b.returnAt <= endOfTodayMs) {
+        // Out with a customer and due back today → today's returns.
+        todayReturns.push(b);
       } else {
-        // Past the grace window — assume collected, it's now out.
+        // Out, returning on a later day (multi-day rental still running).
         out.push(b);
       }
       continue;
@@ -467,8 +474,9 @@ export function bucketBookings(bookings: EnrichedBooking[], nowMs: number): Book
   pending.sort((a, b) => a.pickupAt - b.pickupAt);
   out.sort((a, b) => a.returnAt - b.returnAt);
   today.sort((a, b) => a.pickupAt - b.pickupAt);
+  todayReturns.sort((a, b) => a.returnAt - b.returnAt);
   upcoming.sort((a, b) => a.pickupAt - b.pickupAt);
   past.sort((a, b) => b.returnAt - a.returnAt);
 
-  return { out, pending, today, upcoming, past };
+  return { out, pending, today, todayReturns, upcoming, past };
 }

@@ -339,6 +339,16 @@ export default async function AdminDashboard({
       </Section>
 
       <Section
+        title="Today's returns"
+        count={groupBookingsForDisplay(buckets.todayReturns).length}
+        empty="No bikes due back today."
+      >
+        {groupBookingsForDisplay(buckets.todayReturns).map((g) => (
+          <BookingRow key={g.key} group={g} nowMs={nowMs} highlight="return" />
+        ))}
+      </Section>
+
+      <Section
         title="Currently out"
         count={groupBookingsForDisplay(buckets.out).length + blocksActive.length}
         empty="No bikes are currently with a customer or in service."
