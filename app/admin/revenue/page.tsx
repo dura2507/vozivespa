@@ -56,11 +56,9 @@ export default async function RevenuePage({
   const maxRevenue = Math.max(1, ...a.models.map((m) => m.revenueCents));
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-7xl mx-auto px-5 md:px-8 py-8 space-y-8">
       <div>
-        <h1 className="font-barlow font-black uppercase text-4xl tracking-tight text-ink">
-          Revenue
-        </h1>
+        <h1 className="font-bold text-3xl text-ink">Revenue</h1>
         <p className="text-sm text-muted mt-1">
           Confirmed bookings with pickup between {from} and {to}.
         </p>
