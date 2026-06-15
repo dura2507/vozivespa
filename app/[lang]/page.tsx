@@ -359,40 +359,11 @@ export default async function HomePage({
           </div>
         </section>
 
-        {/* WhatsApp dual-contact CTA — placed directly below the fleet
-            so visitors who skimmed the bikes can immediately reach out
-            in their preferred language. Owner explicitly asked for both
-            numbers here. */}
-        <section className="bg-ink text-white px-5 md:px-12 py-12 md:py-16">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-8">
-            <div>
-              <p className="text-white/60 text-xs tracking-widest uppercase mb-2">
-                {dict.faq.eyebrow}
-              </p>
-              <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3rem)] leading-[0.95] tracking-tight">
-                WhatsApp
-              </h2>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-              {BRAND.contacts.map((contact) => (
-                <a
-                  key={contact.phoneRaw}
-                  href={`https://wa.me/${contact.phoneRaw}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-3 bg-red text-white font-bold text-sm tracking-widest uppercase px-6 py-4 hover:bg-red-dark transition-colors"
-                >
-                  <span className="flex gap-1">
-                    {contact.languages.map((c) => (
-                      <Flag key={c} code={c as FlagCode} className="w-4 h-3" />
-                    ))}
-                  </span>
-                  {contact.phone} →
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* WhatsApp contact intentionally removed from the homepage /
+            first layer (owner request): visitors should engage with the
+            bikes + FAQ first instead of firing off "is the helmet
+            included?" questions. WhatsApp stays only inside the booking
+            flow on the bike detail page, framed as booking questions. */}
 
         {/* INCLUDED */}
         <section className="bg-sand px-5 md:px-12 py-20">
