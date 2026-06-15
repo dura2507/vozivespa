@@ -7,11 +7,23 @@ import { buildSlots, isValidSlot } from "@/lib/pricing";
 import { CATEGORIES } from "@/lib/mockData";
 
 type Decision = "confirmed" | "declined" | "cancelled";
+type Fulfillment = "pickup" | "undo_pickup" | "return" | "undo_return";
 
 const SLOTS = buildSlots();
 
 function fmtTimeOfDay(t: string | null | undefined): string {
   return t ? t.slice(0, 5) : "";
+}
+
+function fmtTimestamp(iso: string | null): string {
+  if (!iso) return "-";
+  return new Date(iso).toLocaleString("de-DE", {
+    timeZone: "Europe/Zagreb",
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function extractLicenceCountry(notes: string | null): string {
@@ -26,7 +38,7 @@ function stripLicenceCountry(notes: string | null): string {
 
 export function BookingActions({ booking }: { booking: EnrichedBooking }) {
   const router = useRouter();
-  const [busy, setBusy] = useState<Decision | "edit" | null>(null);
+  const [busy, setBusy] = useState<Decision | "edit" | Fulfillment | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
 
@@ -93,6 +105,30 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
         return;
       }
       setInfo(`Status set to ${status}.`);
+      router.refresh();
+    } catch {
+      setError("Network error");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function fulfill(action: Fulfillment) {
+    setError(null);
+    setInfo(null);
+    setBusy(action);
+    try {
+      const res = await fetch(`/api/admin/bookings/${booking.id}/fulfillment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(body?.error || "Update failed");
+        setBusy(null);
+        return;
+      }
       router.refresh();
     } catch {
       setError("Network error");
@@ -213,6 +249,59 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
         </div>
         <p className="text-xs text-muted mt-2">{helpText[status]}</p>
       </div>
+
+      {status === "confirmed" && (
+        <div>
+          <p className="text-[10px] tracking-[0.2em] uppercase text-ink/40 font-bold mb-3">
+            Fulfillment
+          </p>
+          <div className="flex gap-2 flex-wrap">
+            {!booking.picked_up_at && !booking.returned_at && (
+              <ActionButton
+                label="Mark picked up"
+                tone="green"
+                onClick={() => fulfill("pickup")}
+                disabled={busy !== null}
+                pending={busy === "pickup"}
+              />
+            )}
+            {booking.picked_up_at && !booking.returned_at && (
+              <>
+                <ActionButton
+                  label="Mark returned"
+                  tone="green"
+                  onClick={() => fulfill("return")}
+                  disabled={busy !== null}
+                  pending={busy === "return"}
+                />
+                <ActionButton
+                  label="Undo pickup"
+                  tone="ink"
+                  onClick={() => fulfill("undo_pickup")}
+                  disabled={busy !== null}
+                  pending={busy === "undo_pickup"}
+                />
+              </>
+            )}
+            {booking.returned_at && (
+              <ActionButton
+                label="Undo return"
+                tone="ink"
+                onClick={() => fulfill("undo_return")}
+                disabled={busy !== null}
+                pending={busy === "undo_return"}
+              />
+            )}
+          </div>
+          <p className="text-xs text-muted mt-2">
+            {booking.returned_at
+              ? `Returned ${fmtTimestamp(booking.returned_at)}.`
+              : booking.picked_up_at
+                ? `Picked up ${fmtTimestamp(booking.picked_up_at)}. Mark returned when the bike comes back.`
+                : "Confirm pickup when the customer collects the bike. Auto-assumed after 24h if you forget."}
+          </p>
+        </div>
+      )}
 
       <div>
         <div className="flex items-center justify-between mb-3">

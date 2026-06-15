@@ -56,6 +56,12 @@ export type BookingRow = {
   secret_token: string;
   created_at: string;
   decided_at: string | null;
+  // Owner-set fulfillment timestamps. picked_up_at = bike actually
+  // collected; returned_at = bike came back. Null until the owner clicks
+  // the button (or the 24h auto-fallback kicks in). Drive the pickup /
+  // return dashboard buckets instead of the clock alone.
+  picked_up_at: string | null;
+  returned_at: string | null;
 };
 
 export type BlockedDateRow = {

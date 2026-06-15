@@ -424,10 +424,11 @@ function zagrebDayBounds(nowMs: number): { startMs: number; endMs: number } {
 // Sort confirmed bookings into "currently in customer's hands",
 // "starts in the future", or "already returned". Pending stays its
 // own bucket regardless of dates so the owner sees them first.
-// How long an overdue pickup stays pinned in "Today's pickups" (shown
-// as overdue) before we assume the customer collected the bike and move
-// it to "Currently out".
-const PICKUP_GRACE_MS = 60 * 60_000;
+// Auto-fallback window: if the owner forgets to click "picked up" /
+// "returned", we assume it happened 24h after the scheduled time so the
+// dashboard doesn't pile up stale rows forever. Manual clicks
+// (picked_up_at / returned_at) always take precedence.
+const AUTO_FALLBACK_MS = 24 * 60 * 60_000;
 
 export function bucketBookings(bookings: EnrichedBooking[], nowMs: number): BookingBuckets {
   const out: EnrichedBooking[] = [];
@@ -444,27 +445,32 @@ export function bucketBookings(bookings: EnrichedBooking[], nowMs: number): Book
       continue;
     }
     if (b.status === "confirmed") {
-      if (b.returnAt < nowMs) {
+      // Fulfillment state: a manual click always wins; otherwise the
+      // 24h auto-fallback assumes it happened so rows don't pile up.
+      const isReturned =
+        b.returned_at != null || nowMs > b.returnAt + AUTO_FALLBACK_MS;
+      const isPickedUp =
+        b.picked_up_at != null ||
+        isReturned ||
+        nowMs > b.pickupAt + AUTO_FALLBACK_MS;
+
+      if (isReturned) {
         past.push(b);
+      } else if (isPickedUp) {
+        // Collected and still out. Due back today → today's returns,
+        // otherwise it's a multi-day rental still running.
+        if (b.returnAt <= endOfTodayMs) todayReturns.push(b);
+        else out.push(b);
       } else if (b.pickupAt > nowMs) {
-        // Future pickup. If still on today's Zagreb calendar day,
-        // surface it in the "Today" bucket; otherwise it's a normal
-        // future booking.
+        // Not collected yet, pickup still ahead. Today's Zagreb day →
+        // "Today's pickups"; otherwise a normal future booking.
         if (b.pickupAt <= endOfTodayMs) today.push(b);
         else upcoming.push(b);
-      } else if (nowMs - b.pickupAt < PICKUP_GRACE_MS) {
-        // Pickup time has passed but the customer may just be running
-        // late. Keep the booking in "Today's pickups" (it sorts to the
-        // top and shows as overdue) for a grace window instead of
-        // silently moving it to "Currently out" — owner asked to not
-        // lose sight of a delayed pickup.
-        today.push(b);
-      } else if (b.returnAt <= endOfTodayMs) {
-        // Out with a customer and due back today → today's returns.
-        todayReturns.push(b);
       } else {
-        // Out, returning on a later day (multi-day rental still running).
-        out.push(b);
+        // Pickup time passed but not yet marked collected — keep it in
+        // "Today's pickups" as overdue (sorts to the top) until the
+        // owner confirms or the 24h fallback flips it to picked-up.
+        today.push(b);
       }
       continue;
     }
