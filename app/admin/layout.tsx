@@ -7,6 +7,7 @@ export const metadata = { title: "Admin · SickMotos" };
 
 const NAV = [
   { label: "Dashboard", href: "/admin" },
+  { label: "Revenue", href: "/admin/revenue" },
   { label: "Blocks & walk-ins", href: "/admin/blocks" },
   { label: "Pricing", href: "/admin/pricing" },
   { label: "Visitors", href: "/admin/analytics" },

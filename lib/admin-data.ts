@@ -486,3 +486,85 @@ export function bucketBookings(bookings: EnrichedBooking[], nowMs: number): Book
 
   return { out, pending, today, todayReturns, upcoming, past };
 }
+
+// ---- Business analytics ---------------------------------------------------
+
+export type ModelStats = {
+  bikeId: string;
+  bikeName: string;
+  bookings: number; // how often this model was rented in the range
+  rentalDays: number; // total billed days across those bookings
+  revenueCents: number; // sum of booking totals (null prices count as 0)
+};
+
+export type BusinessAnalytics = {
+  from: string;
+  to: string;
+  totalBookings: number;
+  totalRevenueCents: number;
+  totalRentalDays: number;
+  models: ModelStats[]; // sorted by revenue desc
+};
+
+// Aggregate confirmed bookings whose pickup date falls inside [from, to]
+// (inclusive) into per-model counts, rental-day sums and revenue. Powers
+// the owner's business dashboard: which model earns, how often it's out,
+// for how long — over any chosen period.
+export async function getBusinessAnalytics(
+  from: string,
+  to: string,
+): Promise<BusinessAnalytics> {
+  const supabase = getServiceClient();
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("bike_id, date_from, date_to, total_price_cents, status")
+    .eq("status", "confirmed")
+    .gte("date_from", from)
+    .lte("date_from", to);
+  if (error) throw new Error(error.message);
+
+  const rows = (data ?? []) as Array<
+    Pick<BookingRow, "bike_id" | "date_from" | "date_to" | "total_price_cents">
+  >;
+
+  const byModel = new Map<string, ModelStats>();
+  let totalRevenueCents = 0;
+  let totalRentalDays = 0;
+
+  for (const r of rows) {
+    const start = new Date(`${r.date_from}T00:00:00`).getTime();
+    const end = new Date(`${r.date_to}T00:00:00`).getTime();
+    const days = Math.max(1, Math.round((end - start) / 86_400_000) || 1);
+    const cents = r.total_price_cents ?? 0;
+
+    let m = byModel.get(r.bike_id);
+    if (!m) {
+      m = {
+        bikeId: r.bike_id,
+        bikeName: bikeName(r.bike_id),
+        bookings: 0,
+        rentalDays: 0,
+        revenueCents: 0,
+      };
+      byModel.set(r.bike_id, m);
+    }
+    m.bookings += 1;
+    m.rentalDays += days;
+    m.revenueCents += cents;
+    totalRevenueCents += cents;
+    totalRentalDays += days;
+  }
+
+  const models = [...byModel.values()].sort(
+    (a, b) => b.revenueCents - a.revenueCents,
+  );
+
+  return {
+    from,
+    to,
+    totalBookings: rows.length,
+    totalRevenueCents,
+    totalRentalDays,
+    models,
+  };
+}
