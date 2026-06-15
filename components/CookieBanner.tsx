@@ -149,7 +149,11 @@ export function CookieBanner({ googleAdsId }: { googleAdsId?: string }) {
     setDecision(value);
   }
 
-  if (!hydrated) return null;
+  // The consent banner + Google Ads gtag are for the public marketing
+  // site only. The admin panel is an internal tool — no cookie banner,
+  // no ad scripts there.
+  const isAdmin = pathname?.startsWith("/admin") ?? false;
+  if (!hydrated || isAdmin) return null;
 
   return (
     <>
