@@ -132,8 +132,66 @@ export default async function HomePage({
     { n: "03", title: t.howItWorks.step3.title, text: t.howItWorks.step3.text },
   ];
 
+  // Structured data so search engines AND AI assistants (ChatGPT,
+  // Perplexity, Google AI) understand exactly what this is: a motorbike
+  // & scooter rental in Zadar, with location, hours, rating and the
+  // bikes on offer. This is what gets cited when someone asks an LLM to
+  // "rent a motorbike in Zadar".
+  const reviewCount = REVIEWS.length;
+  const avgRating = (
+    REVIEWS.reduce((s, r) => s + r.rating, 0) / Math.max(reviewCount, 1)
+  ).toFixed(1);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://rentamotozadar.com/#business",
+    name: "SickMotos · Rent a Moto Zadar",
+    description:
+      "Motorbike and scooter rental in Zadar, Croatia. 50cc to 390cc, helmets and basic insurance included. Coastal roads, islands, freedom.",
+    url: `https://rentamotozadar.com/${lang}`,
+    telephone: BRAND.phone,
+    email: BRAND.email,
+    image: "https://rentamotozadar.com/bikes/hero.jpg",
+    priceRange: "€€",
+    currenciesAccepted: "EUR",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Velebitska Ulica 2",
+      addressLocality: "Zadar",
+      postalCode: "23000",
+      addressCountry: "HR",
+    },
+    geo: { "@type": "GeoCoordinates", latitude: 44.115973, longitude: 15.2319945 },
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      opens: "09:00",
+      closes: "19:00",
+    },
+    areaServed: { "@type": "City", name: "Zadar" },
+    sameAs: [BRAND.instagramUrl],
+    knowsLanguage: ["en", "de", "hr", "it", "pl", "fr", "es"],
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: avgRating,
+      reviewCount: String(reviewCount),
+      bestRating: "5",
+    },
+    makesOffer: CATEGORIES.map((cat) => ({
+      "@type": "Offer",
+      itemOffered: { "@type": "Product", name: cat.name, category: "Motorcycle rental" },
+      price: String(cat.price).replace(/[^\d]/g, ""),
+      priceCurrency: "EUR",
+      availability: "https://schema.org/InStock",
+    })),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar lang={lang as Locale} t={dict.nav} />
 
       {/* HERO */}
