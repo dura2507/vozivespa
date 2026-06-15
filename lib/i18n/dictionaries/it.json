@@ -339,7 +339,7 @@
       "ridingStylePlaceholder": "Scegli un'opzione",
       "soloOnly": "Questa moto è monoposto. Solo conducente.",
       "maxRiders": "Fino a {n} persone consentite.",
-      "experienceWarning": "Esperienza richiesta. Sii onesto sulla tua esperienza al momento della prenotazione.",
+      "experienceWarning": "È richiesta esperienza di guida. Dichiarazioni false comportano la trattenuta della tassa di prenotazione e il rifiuto del noleggio.",
       "submit": "Invia richiesta",
       "submitting": "Invio in corso...",
       "reviewLine": "Esamineremo il tuo screenshot di pagamento e confermeremo via email, di solito entro poche ore. Inviando accetti i nostri",

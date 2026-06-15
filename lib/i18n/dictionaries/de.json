@@ -339,7 +339,7 @@
       "ridingStylePlaceholder": "Stil wählen",
       "soloOnly": "Dieses Bike ist ein Einsitzer. Nur alleine fahren.",
       "maxRiders": "Bis zu {n} Personen erlaubt.",
-      "experienceWarning": "Fahrerfahrung wird vorausgesetzt. Bitte sei ehrlich bezüglich deiner Fahrerfahrung bei der Buchung.",
+      "experienceWarning": "Fahrerfahrung wird vorausgesetzt. Bei falschen Angaben wird die Reservierungsgebühr einbehalten und die Anmietung verweigert.",
       "submit": "Anfrage senden",
       "submitting": "Senden...",
       "reviewLine": "Wir prüfen deinen Screenshot der Anzahlung und bestätigen per Email, normalerweise innerhalb weniger Stunden. Mit dem Absenden akzeptierst du unsere",

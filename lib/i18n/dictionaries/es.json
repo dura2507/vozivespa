@@ -339,7 +339,7 @@
       "ridingStylePlaceholder": "Elige una opción",
       "soloOnly": "Esta moto es de una plaza. Solo conductor.",
       "maxRiders": "Hasta {n} personas permitidas.",
-      "experienceWarning": "Se requiere experiencia. Sé honesto sobre tu historial al reservar.",
+      "experienceWarning": "Se requiere experiencia de conducción. La información falsa supone la retención de la tasa de reserva y la denegación del alquiler.",
       "submit": "Enviar solicitud",
       "submitting": "Enviando...",
       "reviewLine": "Revisaremos tu screenshot de pago y confirmaremos por email, normalmente en pocas horas. Al enviar aceptas nuestros",

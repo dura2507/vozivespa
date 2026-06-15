@@ -339,7 +339,7 @@
       "ridingStylePlaceholder": "Pick a style",
       "soloOnly": "This bike is a single-seater. Solo only.",
       "maxRiders": "Up to {n} riders allowed.",
-      "experienceWarning": "Riding experience required. Please be honest about your riding history when booking.",
+      "experienceWarning": "Riding experience is required. False information means the reservation fee is kept and the rental is refused.",
       "submit": "Send Request",
       "submitting": "Sending...",
       "reviewLine": "We'll review your reservation screenshot and confirm by email, usually within a few hours. By sending you agree to our",

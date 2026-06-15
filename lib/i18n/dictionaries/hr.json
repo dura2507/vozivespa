@@ -339,7 +339,7 @@
       "ridingStylePlaceholder": "Odaberi opciju",
       "soloOnly": "Ovaj motor je jednosjed. Samo vožnja bez putnika.",
       "maxRiders": "Dopušteno do {n} osoba.",
-      "experienceWarning": "Potrebno je iskustvo. Budi iskren oko svog iskustva pri rezervaciji.",
+      "experienceWarning": "Potrebno je vozačko iskustvo. Lažni podaci znače zadržavanje rezervacijske naknade i odbijanje najma.",
       "submit": "Pošalji zahtjev",
       "submitting": "Šaljem...",
       "reviewLine": "Pregledat ćemo tvoju snimku predujma i potvrditi mailom, obično u roku nekoliko sati. Slanjem prihvaćaš naše",

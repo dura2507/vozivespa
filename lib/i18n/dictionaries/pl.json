@@ -339,7 +339,7 @@
       "ridingStylePlaceholder": "Wybierz styl",
       "soloOnly": "Ten pojazd jest jednoosobowy. Tylko solo.",
       "maxRiders": "Dozwolone do {n} osób.",
-      "experienceWarning": "Wymagane doświadczenie w jeździe. Prosimy o szczerość co do twojego doświadczenia przy rezerwacji.",
+      "experienceWarning": "Wymagane jest doświadczenie w jeździe. Podanie nieprawdziwych informacji oznacza zatrzymanie opłaty rezerwacyjnej i odmowę wynajmu.",
       "submit": "Wyślij zgłoszenie",
       "submitting": "Wysyłanie...",
       "reviewLine": "Sprawdzimy zrzut ekranu twojej rezerwacji i potwierdzimy mailem, zwykle w ciągu kilku godzin. Wysyłając akceptujesz nasz",

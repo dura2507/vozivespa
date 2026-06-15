@@ -1074,6 +1074,11 @@ export default function BikeDetail({
                           ? tF.form.soloOnly
                           : tF.form.maxRiders.replace("{n}", String(bike.seats))}
                       </p>
+                      {/* Owner warning: lying about riding experience
+                          forfeits the deposit and the rental is refused. */}
+                      <p className="text-red text-xs font-semibold mt-1.5 leading-snug">
+                        * {tF.form.experienceWarning}
+                      </p>
                     </label>
                   </div>
 

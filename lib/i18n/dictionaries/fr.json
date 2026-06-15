@@ -339,7 +339,7 @@
       "ridingStylePlaceholder": "Choisissez une option",
       "soloOnly": "Cette moto est monoplace. Conducteur uniquement.",
       "maxRiders": "Jusqu'à {n} personnes autorisées.",
-      "experienceWarning": "Expérience requise. Merci d'être honnête sur votre expérience de conduite lors de la réservation.",
+      "experienceWarning": "Une expérience de conduite est requise. Toute fausse déclaration entraîne la retenue des frais de réservation et le refus de la location.",
       "submit": "Envoyer la demande",
       "submitting": "Envoi en cours...",
       "reviewLine": "Nous vérifions votre capture d'écran de paiement et confirmons par email, généralement en quelques heures. En envoyant, vous acceptez nos",
