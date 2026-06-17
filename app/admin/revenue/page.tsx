@@ -48,12 +48,17 @@ export default async function RevenuePage({
   searchParams: Promise<{ from?: string; to?: string }>;
 }) {
   const sp = await searchParams;
-  const to = sp.to && /^\d{4}-\d{2}-\d{2}$/.test(sp.to) ? sp.to : todayZagreb();
+  const today = todayZagreb();
+  const to = sp.to && /^\d{4}-\d{2}-\d{2}$/.test(sp.to) ? sp.to : today;
+  // Default to the running season (Apr 1 → today) so the month-by-month
+  // view is meaningful out of the box — that's what Thomas wants to see.
+  const seasonStart = `${today.slice(0, 4)}-04-01`;
   const from =
-    sp.from && /^\d{4}-\d{2}-\d{2}$/.test(sp.from) ? sp.from : daysAgoZagreb(30);
+    sp.from && /^\d{4}-\d{2}-\d{2}$/.test(sp.from) ? sp.from : seasonStart;
 
   const a = await getBusinessAnalytics(from, to);
   const maxRevenue = Math.max(1, ...a.models.map((m) => m.revenueCents));
+  const maxMonthRevenue = Math.max(1, ...a.months.map((m) => m.revenueCents));
 
   return (
     <div className="max-w-7xl mx-auto px-5 md:px-8 py-8 space-y-8">
@@ -124,7 +129,44 @@ export default async function RevenuePage({
         <StatCard label="Rental days" value={String(a.totalRentalDays)} sub="billed days total" />
       </div>
 
-      {/* Per-model breakdown */}
+      {/* By month — when was business busiest */}
+      <div>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-ink/40 font-bold mb-3">
+          By month
+        </p>
+        {a.months.length === 0 ? (
+          <p className="text-sm text-muted">No confirmed bookings in this period.</p>
+        ) : (
+          <div className="space-y-2">
+            {a.months.map((mo) => (
+              <div key={mo.month} className="bg-white border border-ink/10 p-4">
+                <div className="flex items-baseline justify-between gap-3 mb-2">
+                  <span className="font-semibold text-ink">{mo.label}</span>
+                  <span className="font-bold text-ink tabular-nums">{eur(mo.revenueCents)}</span>
+                </div>
+                <div className="h-1.5 bg-ink/10 rounded-full overflow-hidden mb-2">
+                  <div
+                    className="h-full bg-ink rounded-full"
+                    style={{ width: `${(mo.revenueCents / maxMonthRevenue) * 100}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted">
+                  {mo.bookings}× rented
+                  {mo.topBikeName && (
+                    <>
+                      {" · "}
+                      <span className="text-ink/70 font-semibold">Top: {mo.topBikeName}</span>{" "}
+                      ({mo.topBikeCount}×)
+                    </>
+                  )}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Per-model breakdown with each model's busiest month */}
       <div>
         <p className="text-[10px] tracking-[0.2em] uppercase text-ink/40 font-bold mb-3">
           By model
@@ -147,6 +189,15 @@ export default async function RevenuePage({
                 </div>
                 <p className="text-xs text-muted">
                   {m.bookings}× rented · {m.rentalDays} rental days
+                  {m.peakMonthLabel && (
+                    <>
+                      {" · "}
+                      <span className="text-ink/70 font-semibold">
+                        Busiest: {m.peakMonthLabel}
+                      </span>{" "}
+                      ({m.peakMonthCount}×)
+                    </>
+                  )}
                 </p>
               </div>
             ))}

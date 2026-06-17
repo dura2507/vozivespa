@@ -495,6 +495,18 @@ export type ModelStats = {
   bookings: number; // how often this model was rented in the range
   rentalDays: number; // total billed days across those bookings
   revenueCents: number; // sum of booking totals (null prices count as 0)
+  peakMonth: string | null; // "YYYY-MM" the model was rented most
+  peakMonthLabel: string | null; // e.g. "Jul 2026"
+  peakMonthCount: number; // rentals in that peak month
+};
+
+export type MonthStats = {
+  month: string; // "YYYY-MM"
+  label: string; // "Jun 2026"
+  bookings: number;
+  revenueCents: number;
+  topBikeName: string | null; // most-rented model that month
+  topBikeCount: number;
 };
 
 export type BusinessAnalytics = {
@@ -504,7 +516,17 @@ export type BusinessAnalytics = {
   totalRevenueCents: number;
   totalRentalDays: number;
   models: ModelStats[]; // sorted by revenue desc
+  months: MonthStats[]; // chronological — "when was business busiest"
 };
+
+const MONTH_NAMES = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+function monthLabel(key: string): string {
+  const [y, m] = key.split("-");
+  return `${MONTH_NAMES[Number(m) - 1] ?? m} ${y}`;
+}
 
 // Aggregate confirmed bookings whose pickup date falls inside [from, to]
 // (inclusive) into per-model counts, rental-day sums and revenue. Powers
@@ -528,6 +550,13 @@ export async function getBusinessAnalytics(
   >;
 
   const byModel = new Map<string, ModelStats>();
+  // model → (month → count), to find each model's busiest month.
+  const modelMonth = new Map<string, Map<string, number>>();
+  // month → aggregate stats across all models.
+  const monthAgg = new Map<
+    string,
+    { bookings: number; revenueCents: number; byBike: Map<string, number> }
+  >();
   let totalRevenueCents = 0;
   let totalRentalDays = 0;
 
@@ -536,6 +565,7 @@ export async function getBusinessAnalytics(
     const end = new Date(`${r.date_to}T00:00:00`).getTime();
     const days = Math.max(1, Math.round((end - start) / 86_400_000) || 1);
     const cents = r.total_price_cents ?? 0;
+    const monthKey = r.date_from.slice(0, 7); // YYYY-MM
 
     let m = byModel.get(r.bike_id);
     if (!m) {
@@ -545,6 +575,9 @@ export async function getBusinessAnalytics(
         bookings: 0,
         rentalDays: 0,
         revenueCents: 0,
+        peakMonth: null,
+        peakMonthLabel: null,
+        peakMonthCount: 0,
       };
       byModel.set(r.bike_id, m);
     }
@@ -553,7 +586,63 @@ export async function getBusinessAnalytics(
     m.revenueCents += cents;
     totalRevenueCents += cents;
     totalRentalDays += days;
+
+    // per-model month counts
+    let mm = modelMonth.get(r.bike_id);
+    if (!mm) {
+      mm = new Map();
+      modelMonth.set(r.bike_id, mm);
+    }
+    mm.set(monthKey, (mm.get(monthKey) ?? 0) + 1);
+
+    // overall month aggregate
+    let ma = monthAgg.get(monthKey);
+    if (!ma) {
+      ma = { bookings: 0, revenueCents: 0, byBike: new Map() };
+      monthAgg.set(monthKey, ma);
+    }
+    ma.bookings += 1;
+    ma.revenueCents += cents;
+    ma.byBike.set(m.bikeName, (ma.byBike.get(m.bikeName) ?? 0) + 1);
   }
+
+  // Resolve each model's peak month.
+  for (const [bikeId, mm] of modelMonth) {
+    const stat = byModel.get(bikeId);
+    if (!stat) continue;
+    let bestKey: string | null = null;
+    let bestCount = 0;
+    for (const [k, c] of mm) {
+      if (c > bestCount) {
+        bestCount = c;
+        bestKey = k;
+      }
+    }
+    stat.peakMonth = bestKey;
+    stat.peakMonthLabel = bestKey ? monthLabel(bestKey) : null;
+    stat.peakMonthCount = bestCount;
+  }
+
+  const months: MonthStats[] = [...monthAgg.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([month, agg]) => {
+      let topBikeName: string | null = null;
+      let topBikeCount = 0;
+      for (const [name, c] of agg.byBike) {
+        if (c > topBikeCount) {
+          topBikeCount = c;
+          topBikeName = name;
+        }
+      }
+      return {
+        month,
+        label: monthLabel(month),
+        bookings: agg.bookings,
+        revenueCents: agg.revenueCents,
+        topBikeName,
+        topBikeCount,
+      };
+    });
 
   const models = [...byModel.values()].sort(
     (a, b) => b.revenueCents - a.revenueCents,
@@ -566,5 +655,6 @@ export async function getBusinessAnalytics(
     totalRevenueCents,
     totalRentalDays,
     models,
+    months,
   };
 }
