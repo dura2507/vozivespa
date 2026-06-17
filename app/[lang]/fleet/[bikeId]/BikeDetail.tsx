@@ -253,19 +253,26 @@ export default function BikeDetail({
 
   // If the active selection got invalidated by a date change, snap to
   // the closest valid slot rather than sending an unbookable request.
+  // When a day has NO valid slots (e.g. today too late for the 8h
+  // window), clear the time so the summary doesn't show a stale 09:00
+  // and the Continue button can't fire on an unbookable selection.
   useEffect(() => {
-    if (pickupSlots.length > 0 && !pickupSlots.includes(pickupTime)) {
+    if (pickupSlots.length === 0) {
+      if (pickupTime !== "") setPickupTime("");
+    } else if (!pickupSlots.includes(pickupTime)) {
       setPickupTime(pickupSlots[0]);
     }
   }, [pickupSlots, pickupTime]);
   useEffect(() => {
-    if (returnSlots.length > 0 && !returnSlots.includes(returnTime)) {
+    if (returnSlots.length === 0) {
+      if (returnTime !== "") setReturnTime("");
+    } else if (!returnSlots.includes(returnTime)) {
       setReturnTime(returnSlots[returnSlots.length - 1]);
     }
   }, [returnSlots, returnTime]);
 
   const priceResult =
-    effectiveRange?.from && effectiveRange?.to
+    effectiveRange?.from && effectiveRange?.to && pickupTime && returnTime
       ? calculatePrice(effectiveRange.from, effectiveRange.to, pickupTime, returnTime, bike.pricing)
       : null;
   const totalPrice = priceResult?.totalPrice ?? 0;
@@ -901,7 +908,15 @@ export default function BikeDetail({
                 {bookingStep === "dates" && (
                   <div className="mt-5 flex justify-end">
                     <button
-                      disabled={!effectiveRange?.from || !effectiveRange?.to || totalPrice === 0}
+                      disabled={
+                        !effectiveRange?.from ||
+                        !effectiveRange?.to ||
+                        pickupSlots.length === 0 ||
+                        returnSlots.length === 0 ||
+                        !pickupTime ||
+                        !returnTime ||
+                        totalPrice === 0
+                      }
                       onClick={handleContinueToForm}
                       className="bg-red text-white font-bold text-xs tracking-widest uppercase px-8 py-4 hover:bg-red-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
