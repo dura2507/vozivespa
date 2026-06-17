@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LocaleFlag } from "@/components/Flag";
 import {
   bucketBookings,
   groupBookingsForDisplay,
@@ -35,12 +36,6 @@ function fmtCountdown(ms: number, nowMs: number): string {
   else text = `${days}d`;
   return diff >= 0 ? `in ${text}` : `${text} ago`;
 }
-
-// Flag for the language the customer booked in, shown next to their
-// name so Thomas knows which language to greet them in.
-const LOCALE_FLAG: Record<string, string> = {
-  de: "🇩🇪", en: "🇬🇧", es: "🇪🇸", it: "🇮🇹", hr: "🇭🇷", pl: "🇵🇱", fr: "🇫🇷",
-};
 
 function statusColor(status: string): string {
   return (
@@ -103,8 +98,8 @@ function BookingRow({
     >
       <div className="flex items-center justify-between gap-3 mb-1">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
-          <span className="font-semibold text-ink truncate">
-            {LOCALE_FLAG[head.locale] ? `${LOCALE_FLAG[head.locale]} ` : ""}
+          <span className="font-semibold text-ink truncate inline-flex items-center gap-1.5">
+            <LocaleFlag locale={head.locale} className="w-4 h-3 shrink-0" />
             {group.customerName}
           </span>
           <span

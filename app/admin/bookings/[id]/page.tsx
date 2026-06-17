@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { LocaleFlag } from "@/components/Flag";
 import { CATEGORIES } from "@/lib/mockData";
 import { getBookingById } from "@/lib/admin-data";
 import { BookingActions } from "./booking-actions";
@@ -35,15 +36,15 @@ const PAYMENT_LABEL: Record<string, string> = {
 };
 
 // Language the customer booked in — so Thomas knows which language to
-// reply / hand over in. Flag + name for an at-a-glance read.
-const LOCALE_LABEL: Record<string, string> = {
-  de: "🇩🇪 Deutsch",
-  en: "🇬🇧 English",
-  es: "🇪🇸 Español",
-  it: "🇮🇹 Italiano",
-  hr: "🇭🇷 Hrvatski",
-  pl: "🇵🇱 Polski",
-  fr: "🇫🇷 Français",
+// reply / hand over in.
+const LOCALE_NAME: Record<string, string> = {
+  de: "Deutsch",
+  en: "English",
+  es: "Español",
+  it: "Italiano",
+  hr: "Hrvatski",
+  pl: "Polski",
+  fr: "Français",
 };
 
 export default async function AdminBookingDetail({
@@ -128,7 +129,10 @@ export default async function AdminBookingDetail({
               : "-"}
           </Field>
           <Field label="Language">
-            {LOCALE_LABEL[b.locale] ?? b.locale}
+            <span className="inline-flex items-center gap-2">
+              <LocaleFlag locale={b.locale} className="w-5 h-3.5 shrink-0" />
+              {LOCALE_NAME[b.locale] ?? b.locale}
+            </span>
           </Field>
           <Field label="Email">
             <a href={`mailto:${b.customer_email}`} className="text-red">
