@@ -42,6 +42,9 @@ export async function GET(request: Request) {
       // ignoring them led to "09:00 is free" while a pending booking
       // sat on the same window. Both states block public availability.
       .in("status", ["confirmed", "pending"])
+      // A booking marked returned (bike physically back) frees the unit
+      // immediately, even if its scheduled return time is still ahead.
+      .is("returned_at", null)
       .order("date_from", { ascending: true }),
     supabase
       .from("bike_units")

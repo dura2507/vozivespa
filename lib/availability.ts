@@ -131,6 +131,8 @@ export async function findFreeUnit(
     .select("id, bike_unit_id, date_from, date_to, pickup_time, return_time, customer_name")
     .eq("bike_id", w.bikeId)
     .in("status", ["confirmed", "pending"])
+    // Returned bikes are free again immediately, ignore them.
+    .is("returned_at", null)
     .lte("date_from", w.dateTo)
     .gte("date_to", w.dateFrom);
   if (w.excludeBookingId) q = q.neq("id", w.excludeBookingId);
@@ -368,6 +370,8 @@ export async function findFreeUnits(
     .select("id, bike_unit_id, date_from, date_to, pickup_time, return_time, customer_name")
     .eq("bike_id", w.bikeId)
     .in("status", ["confirmed", "pending"])
+    // Returned bikes are free again immediately, ignore them.
+    .is("returned_at", null)
     .lte("date_from", w.dateTo)
     .gte("date_to", w.dateFrom);
   if (w.excludeBookingId) q = q.neq("id", w.excludeBookingId);

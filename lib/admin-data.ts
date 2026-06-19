@@ -159,7 +159,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     supabase.from("bike_units").select("id, bike_id").eq("active", true),
     supabase
       .from("bookings")
-      .select("bike_id, bike_unit_id, status, date_from, date_to, pickup_time, return_time"),
+      .select("bike_id, bike_unit_id, status, date_from, date_to, pickup_time, return_time, returned_at"),
     supabase
       .from("blocked_dates")
       .select("bike_id, bike_unit_id, date_from, date_to, start_time, end_time")
@@ -183,6 +183,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     date_to: string;
     pickup_time: string;
     return_time: string;
+    returned_at: string | null;
   }>) {
     const entry =
       out.get(b.bike_id) ??
@@ -193,6 +194,8 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       })();
     if (b.status === "pending") entry.pending++;
     if (b.status === "confirmed") {
+      // Returned early → unit is free again, don't count it as out.
+      if (b.returned_at) continue;
       const start = toMs(b.date_from, b.pickup_time);
       const end = toMs(b.date_to, b.return_time);
       if (start <= nowMs && end >= nowMs) {

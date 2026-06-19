@@ -259,7 +259,10 @@ export async function getAvailableNowCounts(): Promise<
       // — if we only loaded today-overlapping rows it would jump over
       // tomorrow's reservations and the pill would lie ("Ausgebucht
       // bis 29.05" while the calendar still shows 29 + 30 red).
-      .gte("date_to", today),
+      .gte("date_to", today)
+      // A returned bike frees its unit immediately, even if the
+      // scheduled return time is still ahead — don't count it as out.
+      .is("returned_at", null),
     supabase
       .from("blocked_dates")
       .select("bike_id, bike_unit_id, date_from, date_to, start_time, end_time")
