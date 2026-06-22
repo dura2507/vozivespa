@@ -246,6 +246,40 @@ export const CATEGORIES: Category[] = [
 
 export const REVIEWS: Review[] = [
   {
+    id: "13",
+    name: "Robin",
+    date: "Jun 2026",
+    rating: 5,
+    text: "Falls ihr euren Urlaub weiterhin genießen wollt, stressfrei, unkompliziert und dabei noch Zadar erkunden wollt, dann mietet euch unbedingt einen Roller hier. So einfach und unkompliziert habe ich noch nirgendwo einen Roller gemietet.",
+    avatar: "/reviews/robin-avatar.jpg",
+    photos: ["/reviews/robin-photo-1.jpg"],
+  },
+  {
+    id: "14",
+    name: "Reinhard Griephan",
+    date: "Jun 2026",
+    rating: 5,
+    text: "Bester Verleih in Zadar. Gute Beratung, gute Tipps und gute Empfehlungen für Touren.",
+    avatar: "/reviews/reinhard-griephan-avatar.jpg",
+    photos: ["/reviews/reinhard-griephan-photo-1.jpg"],
+  },
+  {
+    id: "15",
+    name: "Eike",
+    date: "May 2026",
+    rating: 5,
+    text: "Ich habe einen Roller für einen Tag gemietet und es hat alles wunderbar funktioniert. Ich habe über die Website reserviert und musste sowohl die Abholzeit als auch die Zeit zum Abgeben nochmal kurzfristig um eine halbe Stunde verlegen.",
+    avatar: "/reviews/eike-avatar.jpg",
+  },
+  {
+    id: "16",
+    name: "Davorin Barić",
+    date: "Apr 2026",
+    rating: 5,
+    text: "Absolutes Muss. Das Wasser noch zu kalt, aber mehr als genug anzuschauen. Easy Ablauf, WhatsApp Nachricht, mit Karte oder Cash zahlen. Unterweisung und Helm. Rückgabe schnell und effizient. Geht für mich nicht besser. Easy Rent Zadar. Danke!",
+    avatar: "/reviews/davorin-baric-avatar.jpg",
+  },
+  {
     id: "9",
     name: "Hecore",
     date: "Aug 2025",
