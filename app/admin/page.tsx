@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LocaleFlag } from "@/components/Flag";
+import { FulfillButton } from "./fulfill-button";
 import {
   bucketBookings,
   groupBookingsForDisplay,
@@ -71,10 +72,13 @@ function BookingRow({
   group,
   nowMs,
   highlight,
+  quickFulfill,
 }: {
   group: BookingDisplay;
   nowMs: number;
   highlight?: "return" | "pickup";
+  // When set, render a one-tap pickup/return button on the card.
+  quickFulfill?: "pickup" | "return";
 }) {
   const head = group.bookings[0];
   const totalCents = group.bookings.reduce(
@@ -91,10 +95,17 @@ function BookingRow({
           ? `Overdue ${Math.round((nowMs - group.pickupAt) / 60_000)}m`
           : `Picks up ${fmtCountdown(group.pickupAt, nowMs)}`
         : null;
+  // Show the one-tap button only on confirmed bookings; for a pickup
+  // action hide it once already collected.
+  const showQuick =
+    quickFulfill &&
+    group.status === "confirmed" &&
+    !(quickFulfill === "pickup" && head.picked_up_at);
   return (
+    <div className="bg-white border border-ink/10 hover:border-red transition-colors">
     <Link
       href={`/admin/bookings/${group.primaryId}`}
-      className="block bg-white border border-ink/10 px-4 py-3 hover:border-red transition-colors"
+      className="block px-4 py-3"
     >
       <div className="flex items-center justify-between gap-3 mb-1">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
@@ -142,6 +153,10 @@ function BookingRow({
         </p>
       )}
     </Link>
+      {showQuick && (
+        <FulfillButton ids={group.bookings.map((b) => b.id)} action={quickFulfill} />
+      )}
+    </div>
   );
 }
 
@@ -336,7 +351,7 @@ export default async function AdminDashboard({
         empty="No more pickups scheduled for today."
       >
         {groupBookingsForDisplay(buckets.today).map((g) => (
-          <BookingRow key={g.key} group={g} nowMs={nowMs} highlight="pickup" />
+          <BookingRow key={g.key} group={g} nowMs={nowMs} highlight="pickup" quickFulfill="pickup" />
         ))}
       </Section>
 
@@ -346,7 +361,7 @@ export default async function AdminDashboard({
         empty="No bikes due back today."
       >
         {groupBookingsForDisplay(buckets.todayReturns).map((g) => (
-          <BookingRow key={g.key} group={g} nowMs={nowMs} highlight="return" />
+          <BookingRow key={g.key} group={g} nowMs={nowMs} highlight="return" quickFulfill="return" />
         ))}
       </Section>
 
@@ -356,7 +371,7 @@ export default async function AdminDashboard({
         empty="No bikes are currently with a customer or in service."
       >
         {groupBookingsForDisplay(buckets.out).map((g) => (
-          <BookingRow key={g.key} group={g} nowMs={nowMs} highlight="return" />
+          <BookingRow key={g.key} group={g} nowMs={nowMs} highlight="return" quickFulfill="return" />
         ))}
         {blocksActive.map((b) => (
           <ServiceBlockRow key={b.id} block={b} nowMs={nowMs} highlight="return" />
