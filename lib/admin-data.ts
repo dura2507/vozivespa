@@ -106,21 +106,19 @@ export async function listAllBookings(): Promise<EnrichedBooking[]> {
   if (bookingsRes.error) throw new Error(bookingsRes.error.message);
 
   const rows = (bookingsRes.data ?? []) as BookingRow[];
-  const urls = await Promise.all(
-    rows.map((b) =>
-      b.deposit_screenshot_path
-        ? signedReceiptUrl(b.deposit_screenshot_path).catch(() => null)
-        : Promise.resolve<string | null>(null),
-    ),
-  );
 
-  return rows.map((b, i) => ({
+  // The dashboard list only needs to know a receipt EXISTS
+  // (deposit_screenshot_path), never the signed URL — so we don't mint
+  // one signed Storage URL per booking here. That was ~85 storage round
+  // trips on every dashboard load. The booking detail page mints the one
+  // URL it actually shows via getBookingById.
+  return rows.map((b) => ({
     ...b,
     bikeName: bikeName(b.bike_id),
     unitLabel: b.bike_unit_id ? unitLabels.get(b.bike_unit_id) ?? null : null,
     pickupAt: toMs(b.date_from, b.pickup_time),
     returnAt: toMs(b.date_to, b.return_time),
-    receiptUrl: urls[i],
+    receiptUrl: null,
   }));
 }
 
