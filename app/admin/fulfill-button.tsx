@@ -35,17 +35,14 @@ export function FulfillButton({
     }
   }
 
-  const label = action === "pickup" ? "Mark picked up" : "Mark returned";
+  const label = action === "pickup" ? "Mark as picked up" : "Mark as returned";
   return (
     <button
       type="button"
       onClick={run}
       disabled={busy}
-      className="w-full border-t border-ink/10 px-4 py-3 text-xs font-bold tracking-[0.15em] uppercase text-emerald-700 active:bg-emerald-50 disabled:opacity-40 transition-colors flex items-center justify-center gap-1.5"
+      className="shrink-0 w-28 sm:w-32 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold tracking-[0.1em] uppercase leading-tight text-center px-3 disabled:opacity-50 transition-colors flex items-center justify-center"
     >
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-      </svg>
       {busy ? "…" : label}
     </button>
   );

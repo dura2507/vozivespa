@@ -102,10 +102,10 @@ function BookingRow({
     group.status === "confirmed" &&
     !(quickFulfill === "pickup" && head.picked_up_at);
   return (
-    <div className="bg-white border border-ink/10 hover:border-red transition-colors">
+    <div className="bg-white border border-ink/10 hover:border-red transition-colors flex items-stretch overflow-hidden">
     <Link
       href={`/admin/bookings/${group.primaryId}`}
-      className="block px-4 py-3"
+      className="block flex-1 min-w-0 px-4 py-3"
     >
       <div className="flex items-center justify-between gap-3 mb-1">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
