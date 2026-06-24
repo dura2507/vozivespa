@@ -262,11 +262,10 @@ function buildText(
     licenceCountry ? `*Licence country:* ${escapeMd(licenceCountry)}` : null,
     `*Riding:* ${escapeMd(ridingStyleLabel(booking.riding_style))}`,
     cleanNote ? `*Notes:* ${escapeMd(cleanNote)}` : null,
-    // When the customer wrote in a non-DE/EN language we drop the
-    // German translation right under their original note so the
-    // owner doesn't have to copy-paste into a translator.
+    // English translation set clearly apart from the original note with
+    // a blank line + flag header, so it doesn't read as one block.
     translatedNote
-      ? `_${escapeMd("↳ EN:")} ${escapeMd(translatedNote)}_`
+      ? `\n🇬🇧 *English translation*\n${escapeMd(translatedNote)}`
       : null,
   ].filter((l): l is string => l !== null);
 
@@ -389,7 +388,7 @@ export async function sendOwnerContactMessage(input: {
   }
   lines.push("", escapeMd(input.message));
   if (translatedMessage) {
-    lines.push("", `_${escapeMd("↳ EN:")} ${escapeMd(translatedMessage)}_`);
+    lines.push("", "🇬🇧 *English translation*", escapeMd(translatedMessage));
   }
   lines.push("", "_Reply to the email I just sent you to answer this message\\._");
 
