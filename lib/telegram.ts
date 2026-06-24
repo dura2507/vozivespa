@@ -123,6 +123,11 @@ function escapeMd(s: string): string {
   return s.replace(/([_*\[\]()~`>#+\-=|{}.!\\])/g, "\\$1");
 }
 
+// Visual divider between sections so each notification reads as a clearly
+// bounded card. Box-drawing line (not an em/en dash) and not a MarkdownV2
+// reserved char, so it needs no escaping.
+const DIVIDER = "━━━━━━━━━━━━";
+
 function bikeNameFor(booking: BookingRow): string {
   const bike = CATEGORIES.find((c) => c.id === booking.bike_id);
   return bike?.model ?? booking.bike_id;
@@ -194,11 +199,11 @@ function statusBanner(booking: BookingRow): string {
   // in place the moment the owner taps Confirm / Decline.
   switch (booking.status) {
     case "confirmed":
-      return `\n\n*Confirmed*`;
+      return `\n${DIVIDER}\n*✅ Confirmed*`;
     case "declined":
-      return `\n\n*Declined*`;
+      return `\n${DIVIDER}\n*❌ Declined*`;
     case "cancelled":
-      return `\n\n*Cancelled*`;
+      return `\n${DIVIDER}\n*🚫 Cancelled*`;
     default:
       return "";
   }
@@ -247,14 +252,14 @@ function buildText(
 
   const lines = [
     "*New booking request*",
-    "",
+    DIVIDER,
     bikeLine,
     `*Pickup:* ${escapeMd(fmtDate(booking.date_from))}${pickup ? ` ${escapeMd(pickup)}` : ""}`,
     `*Return:* ${escapeMd(fmtDate(booking.date_to))}${ret ? ` ${escapeMd(ret)}` : ""} \\(${nights} ${nights === 1 ? "day" : "days"}\\)`,
     `*Total:* ${escapeMd(totalEur(booking))}`,
     fee ? `*Booking fee:* ${escapeMd(fee)} \\(20%\\)` : null,
     `*Paid via:* ${escapeMd(paymentLabel(booking.payment_method))}`,
-    "",
+    DIVIDER,
     `*Name:* ${escapeMd(booking.customer_name)}`,
     `*Phone:* ${escapeMd(booking.customer_phone)}`,
     `*Email:* ${escapeMd(booking.customer_email)}`,
@@ -379,14 +384,14 @@ export async function sendOwnerContactMessage(input: {
 
   const lines = [
     "*New contact message*",
-    "",
+    DIVIDER,
     `*From:* ${escapeMd(input.name)}`,
     `*Email:* \`${escapeMd(input.email)}\``,
   ];
   if (input.phone) {
     lines.push(`*Phone:* \`${escapeMd(input.phone)}\``);
   }
-  lines.push("", escapeMd(input.message));
+  lines.push(DIVIDER, escapeMd(input.message));
   if (translatedMessage) {
     lines.push("", "🇬🇧 *English translation*", escapeMd(translatedMessage));
   }
