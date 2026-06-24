@@ -110,10 +110,17 @@ export default async function AdminBookingDetail({
           </Field>
           <Field label="Total">
             <span className="font-bold text-red">
-              {b.total_price_cents
-                ? `${(b.total_price_cents / 100).toFixed(0)}€`
+              {b.groupTotalCents != null
+                ? `${(b.groupTotalCents / 100).toFixed(0)}€`
                 : "-"}
             </span>
+            {b.groupSize > 1 && (
+              <span className="block text-xs text-muted font-normal mt-0.5">
+                whole booking · {b.groupSize} bikes
+                {b.total_price_cents != null &&
+                  ` · this bike ${(b.total_price_cents / 100).toFixed(0)}€`}
+              </span>
+            )}
           </Field>
           <Field label="Deposit via">
             {b.payment_method ? PAYMENT_LABEL[b.payment_method] ?? b.payment_method : "-"}

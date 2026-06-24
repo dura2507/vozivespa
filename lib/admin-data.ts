@@ -13,6 +13,12 @@ export type EnrichedBooking = BookingRow & {
   pickupAt: number; // ms
   returnAt: number;
   receiptUrl: string | null;
+  // For a group (walk-in with several bikes): the whole booking's total
+  // and how many bikes it spans, so every view can show the SAME "what
+  // the customer paid" figure plus a breakdown. For a solo booking these
+  // equal this row's own price / 1.
+  groupTotalCents: number | null;
+  groupSize: number;
 };
 
 export type EnrichedBlock = BlockedDateRow & {
@@ -107,19 +113,35 @@ export async function listAllBookings(): Promise<EnrichedBooking[]> {
 
   const rows = (bookingsRes.data ?? []) as BookingRow[];
 
+  // Group totals (sum + count) so every view shows the same whole-booking
+  // figure for walk-in groups.
+  const groupTotals = new Map<string, { sum: number; count: number }>();
+  for (const b of rows) {
+    if (!b.booking_group_id) continue;
+    const g = groupTotals.get(b.booking_group_id) ?? { sum: 0, count: 0 };
+    g.sum += b.total_price_cents ?? 0;
+    g.count += 1;
+    groupTotals.set(b.booking_group_id, g);
+  }
+
   // The dashboard list only needs to know a receipt EXISTS
   // (deposit_screenshot_path), never the signed URL — so we don't mint
   // one signed Storage URL per booking here. That was ~85 storage round
   // trips on every dashboard load. The booking detail page mints the one
   // URL it actually shows via getBookingById.
-  return rows.map((b) => ({
-    ...b,
-    bikeName: bikeName(b.bike_id),
-    unitLabel: b.bike_unit_id ? unitLabels.get(b.bike_unit_id) ?? null : null,
-    pickupAt: toMs(b.date_from, b.pickup_time),
-    returnAt: toMs(b.date_to, b.return_time),
-    receiptUrl: null,
-  }));
+  return rows.map((b) => {
+    const g = b.booking_group_id ? groupTotals.get(b.booking_group_id) : null;
+    return {
+      ...b,
+      bikeName: bikeName(b.bike_id),
+      unitLabel: b.bike_unit_id ? unitLabels.get(b.bike_unit_id) ?? null : null,
+      pickupAt: toMs(b.date_from, b.pickup_time),
+      returnAt: toMs(b.date_to, b.return_time),
+      receiptUrl: null,
+      groupTotalCents: g ? g.sum : b.total_price_cents,
+      groupSize: g ? g.count : 1,
+    };
+  });
 }
 
 export async function getBookingById(id: string): Promise<EnrichedBooking | null> {
@@ -131,12 +153,24 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
     .maybeSingle<BookingRow>();
   if (error) throw new Error(error.message);
   if (!data) return null;
-  const [url, unitLabels] = await Promise.all([
+  const [url, unitLabels, group] = await Promise.all([
     data.deposit_screenshot_path
       ? signedReceiptUrl(data.deposit_screenshot_path).catch(() => null)
       : Promise.resolve<string | null>(null),
     listUnitLabelMap(),
+    // Pull the group siblings so we can show the whole-booking total.
+    data.booking_group_id
+      ? supabase
+          .from("bookings")
+          .select("total_price_cents")
+          .eq("booking_group_id", data.booking_group_id)
+      : Promise.resolve({ data: null }),
   ]);
+  const siblings = (group as { data: { total_price_cents: number | null }[] | null }).data;
+  const groupSize = siblings?.length ?? 1;
+  const groupTotalCents = siblings
+    ? siblings.reduce((s, b) => s + (b.total_price_cents ?? 0), 0)
+    : data.total_price_cents;
   return {
     ...data,
     bikeName: bikeName(data.bike_id),
@@ -144,6 +178,8 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
     pickupAt: toMs(data.date_from, data.pickup_time),
     returnAt: toMs(data.date_to, data.return_time),
     receiptUrl: url,
+    groupTotalCents,
+    groupSize,
   };
 }
 
@@ -322,14 +358,27 @@ export async function listWalkInBookings(): Promise<EnrichedBooking[]> {
   ]);
   if (error) throw new Error(error.message);
   const rows = (data ?? []) as BookingRow[];
-  return rows.map((b) => ({
-    ...b,
-    bikeName: bikeName(b.bike_id),
-    unitLabel: b.bike_unit_id ? unitLabels.get(b.bike_unit_id) ?? null : null,
-    pickupAt: toMs(b.date_from, b.pickup_time),
-    returnAt: toMs(b.date_to, b.return_time),
-    receiptUrl: null, // walk-ins never carry a receipt
-  }));
+  const groupTotals = new Map<string, { sum: number; count: number }>();
+  for (const b of rows) {
+    if (!b.booking_group_id) continue;
+    const g = groupTotals.get(b.booking_group_id) ?? { sum: 0, count: 0 };
+    g.sum += b.total_price_cents ?? 0;
+    g.count += 1;
+    groupTotals.set(b.booking_group_id, g);
+  }
+  return rows.map((b) => {
+    const g = b.booking_group_id ? groupTotals.get(b.booking_group_id) : null;
+    return {
+      ...b,
+      bikeName: bikeName(b.bike_id),
+      unitLabel: b.bike_unit_id ? unitLabels.get(b.bike_unit_id) ?? null : null,
+      pickupAt: toMs(b.date_from, b.pickup_time),
+      returnAt: toMs(b.date_to, b.return_time),
+      receiptUrl: null, // walk-ins never carry a receipt
+      groupTotalCents: g ? g.sum : b.total_price_cents,
+      groupSize: g ? g.count : 1,
+    };
+  });
 }
 
 // A walk-in group rendered as one row: customer + the N booking
