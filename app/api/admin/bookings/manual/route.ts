@@ -312,7 +312,14 @@ export async function POST(request: Request) {
   //    dashboard can collapse them into a single customer entry.
   const nowIso = new Date().toISOString();
   const groupId = unitsToBook.length > 1 ? crypto.randomUUID() : null;
-  const rows = unitsToBook.map((unitId) => ({
+  // The form's "Total price" is the price for the WHOLE booking. For a
+  // group (N units) we split it evenly across the rows so the dashboard
+  // (which sums the group) shows exactly what was entered — not N× it.
+  // Remainder cents land on the first row so the sum is exact.
+  const n = unitsToBook.length;
+  const perUnitBase = totalPriceCents == null ? null : Math.floor(totalPriceCents / n);
+  const remainderCents = totalPriceCents == null ? 0 : totalPriceCents - perUnitBase! * n;
+  const rows = unitsToBook.map((unitId, i) => ({
     bike_id: bikeId,
     customer_name: customerName,
     customer_email: customerEmail ?? "",
@@ -322,7 +329,8 @@ export async function POST(request: Request) {
     date_to: dateTo,
     pickup_time: pickupTime,
     return_time: returnTime,
-    total_price_cents: totalPriceCents,
+    total_price_cents:
+      perUnitBase == null ? null : perUnitBase + (i === 0 ? remainderCents : 0),
     payment_method: paymentMethod,
     bike_unit_id: unitId,
     booking_group_id: groupId,
