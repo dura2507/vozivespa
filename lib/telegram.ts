@@ -261,9 +261,9 @@ export async function sendOwnerBookingTelegram(
     return [];
   }
 
-  // Translate the customer's note into English when they wrote in
-  // anything other than DE/EN. Best-effort: silently falls through
-  // if DeepL is down or the key isn't configured.
+  // Translate the customer's note into English whenever it isn't already
+  // English (German included). Best-effort: DeepL if a key is set, else
+  // a keyless fallback; silently shows just the original on any failure.
   const { note: rawCustomerNote } = splitNotes(booking.notes);
   let translatedNote: string | null = null;
   if (rawCustomerNote && needsTranslationForOwner(booking.locale)) {
