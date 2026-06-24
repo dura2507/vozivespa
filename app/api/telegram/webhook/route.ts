@@ -148,10 +148,22 @@ export async function POST(request: Request) {
 
   // Heavy work after the response - Vercel keeps the function alive for these.
   after(async () => {
-    await editTelegramMessageForBooking(
-      cb.message!.chat.id,
-      cb.message!.message_id,
-      updated,
+    // Sync EVERY copy of this booking's message (group topic + any other
+    // chats it was posted to), not just the one that was tapped — so the
+    // confirmed/declined state is consistent everywhere. Always include
+    // the tapped message in case the stored refs are missing/stale.
+    const edits = new Map<string, { chatId: string | number; messageId: number }>();
+    edits.set(`${cb.message!.chat.id}:${cb.message!.message_id}`, {
+      chatId: cb.message!.chat.id,
+      messageId: cb.message!.message_id,
+    });
+    for (const ref of updated.telegram_message_refs ?? []) {
+      if (ref?.messageId) edits.set(`${ref.chatId}:${ref.messageId}`, ref);
+    }
+    await Promise.allSettled(
+      [...edits.values()].map((e) =>
+        editTelegramMessageForBooking(e.chatId, e.messageId, updated),
+      ),
     );
     if (wasFromPending) {
       await sendCustomerBookingDecidedEmail(updated, newStatus);
