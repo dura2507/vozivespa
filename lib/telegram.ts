@@ -53,6 +53,31 @@ function ownerChatIds(): string[] {
     .filter((s) => s.length > 0);
 }
 
+// The "Rent Amoto" supergroup with topics. Bookings go to the "Booking
+// Requests" topic, contact-form messages to the "Contact form" topic.
+// Kept here (not secret) so the routing is explicit. The old per-person
+// DM chat IDs in TELEGRAM_OWNER_CHAT_ID still get a copy during the
+// transition — clear that env var to drop them once the group is proven.
+const GROUP_CHAT_ID = "-1004305871084";
+const TOPIC_BOOKINGS = 2;
+const TOPIC_CONTACT = 3;
+
+type NotifyTarget = { chatId: string; threadId?: number };
+
+function bookingTargets(): NotifyTarget[] {
+  return [
+    ...ownerChatIds().map((chatId) => ({ chatId }) as NotifyTarget),
+    { chatId: GROUP_CHAT_ID, threadId: TOPIC_BOOKINGS },
+  ];
+}
+
+function contactTargets(): NotifyTarget[] {
+  return [
+    ...ownerChatIds().map((chatId) => ({ chatId }) as NotifyTarget),
+    { chatId: GROUP_CHAT_ID, threadId: TOPIC_CONTACT },
+  ];
+}
+
 function fmtDate(iso: string): string {
   const [y, m, d] = iso.split("-");
   return `${d}.${m}.${y}`;
@@ -255,11 +280,7 @@ export async function sendOwnerBookingTelegram(
   receipt?: { url: string; mime: string },
   unitLabel?: string | null,
 ): Promise<Array<{ chatId: string; messageId: number }>> {
-  const chatIds = ownerChatIds();
-  if (chatIds.length === 0) {
-    console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping owner notification");
-    return [];
-  }
+  const targets = bookingTargets();
 
   // Translate the customer's note into English whenever it isn't already
   // English (German included). Best-effort: DeepL if a key is set, else
@@ -281,9 +302,10 @@ export async function sendOwnerBookingTelegram(
   // the caller can persist them on the booking and let the admin
   // panel edit those exact messages on status change.
   const results = await Promise.allSettled(
-    chatIds.map(async (chatId) => {
+    targets.map(async ({ chatId, threadId }) => {
       const msgRes = await callTelegram<{ message_id: number }>("sendMessage", {
         chat_id: chatId,
+        ...(threadId ? { message_thread_id: threadId } : {}),
         text: buildText(booking, unitLabel, translatedNote),
         parse_mode: "MarkdownV2",
         reply_markup: { inline_keyboard: buildKeyboard(booking) },
@@ -295,6 +317,7 @@ export async function sendOwnerBookingTelegram(
         const caption = `Deposit receipt · ${escapeMd(bikeNameFor(booking))} · ${escapeMd(booking.customer_name)}`;
         await callTelegram(isPhoto ? "sendPhoto" : "sendDocument", {
           chat_id: chatId,
+          ...(threadId ? { message_thread_id: threadId } : {}),
           [isPhoto ? "photo" : "document"]: receipt.url,
           caption,
           parse_mode: "MarkdownV2",
@@ -344,11 +367,7 @@ export async function sendOwnerContactMessage(input: {
   message: string;
   locale?: string | null;
 }): Promise<void> {
-  const chatIds = ownerChatIds();
-  if (chatIds.length === 0) {
-    console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping contact notification");
-    return;
-  }
+  const targets = contactTargets();
 
   // Same EN-target translation as the booking notes — Thomas wanted a
   // single language to glance at, no matter what locale the visitor
@@ -385,9 +404,10 @@ export async function sendOwnerContactMessage(input: {
   // so we put the email inside a code-span (tap to copy) and tell the owner
   // to reply to the parallel email.
   await Promise.allSettled(
-    chatIds.map((chatId) =>
+    targets.map(({ chatId, threadId }) =>
       callTelegram("sendMessage", {
         chat_id: chatId,
+        ...(threadId ? { message_thread_id: threadId } : {}),
         text: lines.join("\n"),
         parse_mode: "MarkdownV2",
         ...(buttons.length > 0
@@ -404,11 +424,7 @@ export async function sendOwnerContactMessage(input: {
  * may already be far up the chat, so we send a fresh one.
  */
 export async function sendOwnerCancellationTelegram(booking: BookingRow): Promise<void> {
-  const chatIds = ownerChatIds();
-  if (chatIds.length === 0) {
-    console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping cancellation notification");
-    return;
-  }
+  const targets = bookingTargets();
 
   const bikeName = bikeNameFor(booking);
   const pickup = fmtTimeOfDay(booking.pickup_time);
@@ -435,9 +451,10 @@ export async function sendOwnerCancellationTelegram(booking: BookingRow): Promis
     : undefined;
 
   await Promise.allSettled(
-    chatIds.map((chatId) =>
+    targets.map(({ chatId, threadId }) =>
       callTelegram("sendMessage", {
         chat_id: chatId,
+        ...(threadId ? { message_thread_id: threadId } : {}),
         text: lines.join("\n"),
         parse_mode: "MarkdownV2",
         ...(reply_markup ? { reply_markup } : {}),
@@ -492,11 +509,7 @@ function formatReceived(d: Date | null): string {
 // inline buttons . owner taps Accept directly, Riderly's API processes
 // the response, no portal switch.
 export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<void> {
-  const chatIds = ownerChatIds();
-  if (chatIds.length === 0) {
-    console.warn("[telegram] TELEGRAM_OWNER_CHAT_ID not set - skipping riderly forward");
-    return;
-  }
+  const targets = bookingTargets();
 
   if (email.kind === "booking") {
     const b = email.booking;
@@ -541,9 +554,10 @@ export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<v
     if (row2.length) keyboard.push(row2);
 
     await Promise.allSettled(
-      chatIds.map((chatId) =>
+      targets.map(({ chatId, threadId }) =>
         callTelegram("sendMessage", {
           chat_id: chatId,
+          ...(threadId ? { message_thread_id: threadId } : {}),
           text: lines.join("\n"),
           parse_mode: "MarkdownV2",
           disable_web_page_preview: true,
@@ -568,9 +582,10 @@ export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<v
   ].filter(Boolean);
   const url = email.riderlyUrl ?? "https://riderly.com";
   await Promise.allSettled(
-    chatIds.map((chatId) =>
+    targets.map(({ chatId, threadId }) =>
       callTelegram("sendMessage", {
         chat_id: chatId,
+        ...(threadId ? { message_thread_id: threadId } : {}),
         text: lines.join("\n"),
         parse_mode: "MarkdownV2",
         disable_web_page_preview: true,
