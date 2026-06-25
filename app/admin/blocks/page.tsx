@@ -1,4 +1,4 @@
-import { CATEGORIES } from "@/lib/mockData";
+import { getCategoriesWithPricing } from "@/lib/bike-pricing";
 import { listManualBlocks, listWalkInBookings } from "@/lib/admin-data";
 import { getServiceClient } from "@/lib/supabase";
 import { BlocksManager } from "./blocks-manager";
@@ -19,12 +19,20 @@ async function listAllUnits(): Promise<BikeUnitRow[]> {
 }
 
 export default async function AdminBlocksPage() {
-  const [blocks, walkIns, units] = await Promise.all([
+  const [blocks, walkIns, units, categories] = await Promise.all([
     listManualBlocks(),
     listWalkInBookings(),
     listAllUnits(),
+    getCategoriesWithPricing(),
   ]);
-  const bikes = CATEGORIES.map((c) => ({ id: c.id, name: c.shortName ?? c.model }));
+  // Pass each model's effective pricing (DB overrides + mockData
+  // fallback) so the walk-in form can pre-fill the total the same way
+  // the public site charges.
+  const bikes = categories.map((c) => ({
+    id: c.id,
+    name: c.shortName ?? c.model,
+    pricing: c.pricing,
+  }));
   // Pre-group units by bike so the client doesn't have to filter on
   // every render. Friendlier label "#1, #2, …" derived per bike from
   // the sort order; the DB id stays the source of truth.

@@ -41,6 +41,9 @@ export async function POST(request: Request) {
     driversLicence?: unknown;
     ridingStyle?: unknown;
     licenceCountry?: unknown;
+    // Language the owner speaks with this walk-in. Defaults to English
+    // when missing / unknown so older clients keep working.
+    locale?: unknown;
   };
   try {
     body = await request.json();
@@ -117,6 +120,14 @@ export async function POST(request: Request) {
     typeof body.licenceCountry === "string" && body.licenceCountry.trim().length > 0
       ? body.licenceCountry.trim()
       : null;
+  // Spoken language for this walk-in. Mirrors the locales the public
+  // site ships; anything unexpected falls back to English.
+  const SPOKEN_LOCALES = ["en", "de", "hr", "it", "es", "fr", "pl"] as const;
+  const locale =
+    typeof body.locale === "string" &&
+    (SPOKEN_LOCALES as readonly string[]).includes(body.locale)
+      ? (body.locale as (typeof SPOKEN_LOCALES)[number])
+      : "en";
   // Mirror the public booking flow: licenceCountry isn't its own
   // column, it lives prepended to notes so owner sees it in Telegram
   // / email / detail view without a schema change.
@@ -336,7 +347,7 @@ export async function POST(request: Request) {
     booking_group_id: groupId,
     drivers_licence: driversLicence,
     riding_style: ridingStyle,
-    locale: "en" as const,
+    locale,
     status: "confirmed" as const,
     decided_at: nowIso,
   }));

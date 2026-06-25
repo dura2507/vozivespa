@@ -1,14 +1,28 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { buildSlots } from "@/lib/pricing";
+import { buildSlots, calculatePrice } from "@/lib/pricing";
 import { groupBookingsForDisplay } from "@/lib/admin-data";
 import type { EnrichedBlock, EnrichedBooking } from "@/lib/admin-data";
+import type { PricingTiers } from "@/lib/mockData";
 
-type Bike = { id: string; name: string };
+type Bike = { id: string; name: string; pricing: PricingTiers };
 type Unit = { id: string; label: string };
+
+// Languages the owner can mark a walk-in as being spoken in — mirrors
+// the locales the public site ships. Drives the flag shown in the
+// dashboard so Thomas knows which language to greet the customer in.
+const SPOKEN_LANGUAGES: Array<{ code: string; label: string }> = [
+  { code: "en", label: "English" },
+  { code: "de", label: "Deutsch" },
+  { code: "hr", label: "Hrvatski" },
+  { code: "it", label: "Italiano" },
+  { code: "es", label: "Español" },
+  { code: "fr", label: "Français" },
+  { code: "pl", label: "Polski" },
+];
 
 function fmtDate(iso: string): string {
   const [y, m, d] = iso.split("-");
@@ -56,6 +70,11 @@ export function BlocksManager({
   const [driversLicence, setDriversLicence] = useState("");
   const [licenceCountry, setLicenceCountry] = useState("");
   const [ridingStyle, setRidingStyle] = useState("");
+  // Spoken language for the walk-in (point 8). Defaults to English.
+  const [spokenLocale, setSpokenLocale] = useState("en");
+  // Whether the owner has hand-edited the total. Once true we stop
+  // overwriting it with the auto-computed suggestion.
+  const [priceEdited, setPriceEdited] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,6 +91,46 @@ export function BlocksManager({
   const isAllUnits = quantity === "all";
   const numericQuantity = quantity === "all" ? fleetSize : quantity;
 
+  // Auto-price preview (point 7): same tier logic the public site uses,
+  // scaled by the number of bikes. Pre-fills the Total price field so
+  // Thomas doesn't type it by hand (the manual typo was the root cause
+  // of the doubling bug). Stays fully overridable — see priceEdited.
+  const selectedBike = useMemo(
+    () => bikes.find((b) => b.id === bikeId) ?? null,
+    [bikes, bikeId],
+  );
+  const pricePreview = useMemo(() => {
+    if (!hasCustomerInfo || !dateFrom || !dateTo || dateFrom > dateTo) return null;
+    if (!selectedBike) return null;
+    const result = calculatePrice(
+      new Date(`${dateFrom}T00:00:00`),
+      new Date(`${dateTo}T00:00:00`),
+      pickupTime,
+      returnTime,
+      selectedBike.pricing,
+    );
+    if (!result) return null;
+    const units = Math.max(numericQuantity, 1);
+    return { total: result.totalPrice * units, days: result.billableDays, units };
+  }, [
+    hasCustomerInfo,
+    dateFrom,
+    dateTo,
+    selectedBike,
+    pickupTime,
+    returnTime,
+    numericQuantity,
+  ]);
+
+  // Keep the Total price field in sync with the suggestion until the
+  // owner overrides it. After an override (priceEdited) we leave their
+  // value untouched; resetFields clears the flag so the next entry
+  // auto-fills again.
+  useEffect(() => {
+    if (priceEdited) return;
+    setTotalPriceEuros(pricePreview ? String(pricePreview.total) : "");
+  }, [pricePreview, priceEdited]);
+
   function resetFields() {
     setDateFrom("");
     setDateTo("");
@@ -85,10 +144,12 @@ export function BlocksManager({
     setAllDay(true);
     setQuantity(1);
     setTotalPriceEuros("");
+    setPriceEdited(false);
     setPaymentMethod("");
     setDriversLicence("");
     setLicenceCountry("");
     setRidingStyle("");
+    setSpokenLocale("en");
     setDetailsOpen(false);
   }
 
@@ -136,6 +197,7 @@ export function BlocksManager({
           driversLicence: driversLicence || undefined,
           ridingStyle: ridingStyle || undefined,
           licenceCountry: licenceCountry.trim() || undefined,
+          locale: spokenLocale,
         };
         if (isAllUnits) payload.bikeUnitId = "all";
         else if (targetIds.length > 0) payload.bikeUnitIds = targetIds;
@@ -477,6 +539,25 @@ export function BlocksManager({
           </label>
 
           {hasCustomerInfo && (
+            <label className="block mt-3 sm:max-w-xs">
+              <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                Spoken language
+              </span>
+              <select
+                value={spokenLocale}
+                onChange={(e) => setSpokenLocale(e.target.value)}
+                className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
+              >
+                {SPOKEN_LANGUAGES.map((l) => (
+                  <option key={l.code} value={l.code}>
+                    {l.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+
+          {hasCustomerInfo && (
             <div className="mt-4">
               <button
                 type="button"
@@ -495,10 +576,16 @@ export function BlocksManager({
                       type="text"
                       inputMode="decimal"
                       value={totalPriceEuros}
-                      onChange={(e) => setTotalPriceEuros(e.target.value)}
+                      onChange={(e) => {
+                        setTotalPriceEuros(e.target.value);
+                        setPriceEdited(true);
+                      }}
                       placeholder="e.g. 70"
                       className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
                     />
+                    <span className="mt-1 block text-[11px] text-muted">
+                      Auto aus Tarif × Tage × Bikes · tippen zum Überschreiben
+                    </span>
                   </label>
                   <label className="block">
                     <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
@@ -564,6 +651,20 @@ export function BlocksManager({
             </div>
           )}
         </div>
+
+        {hasCustomerInfo && pricePreview && (
+          <div className="flex items-center gap-2 text-sm bg-sand border border-ink/10 px-3 py-2">
+            <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+              Auto-Preis
+            </span>
+            <span className="font-bold text-ink">{pricePreview.total}€</span>
+            <span className="text-xs text-muted">
+              {pricePreview.days} {pricePreview.days === 1 ? "Tag" : "Tage"}
+              {pricePreview.units > 1 ? ` × ${pricePreview.units} Bikes` : ""}
+              {priceEdited ? " · überschrieben" : " · überschreibbar"}
+            </span>
+          </div>
+        )}
 
         <div className="flex items-center justify-end gap-4 pt-2">
           <button

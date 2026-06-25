@@ -13,18 +13,6 @@ Stand der noch offenen Themen. Erledigtes steht im Git-Log / HANDOVER.md.
 
 ## Kleinere offene Punkte
 
-### Walk-in: Auto-Preis-Vorschau im Formular
-Aktuell tippt Thomas den Gesamtpreis von Hand → Tippfehler möglich (war Ursache
-vom Verdopplungs-Bug). Lösung: Formular füllt den Preis automatisch vor
-(Tarif × Tage × Anzahl Bikes), Thomas kann überschreiben. Verhindert die
-Fehlerklasse komplett.
-
-### Walk-in: gesprochene Sprache auswählbar
-Manuelle Buchungen bekommen aktuell fix `locale: "en"` → die Flagge im Admin ist
-bei Walk-ins immer englisch (irreführend). Thomas soll die gesprochene Sprache
-beim Eintragen selbst wählen können, damit er weiß welche Sprache er mit dem
-Kunden spricht.
-
 ### Tage-Berechnung bei knapp über 24h + Nachzahlung bei verspäteter Rückgabe
 Zwei zusammenhängende Punkte, beide mit Thomas zu klären (Preis-Policy):
 
