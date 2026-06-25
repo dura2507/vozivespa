@@ -7,15 +7,24 @@ import type { DateRange } from "react-day-picker";
 import { enUS, de, es, it, hr } from "date-fns/locale";
 import type { Locale as DateFnsLocale } from "date-fns";
 import "react-day-picker/style.css";
+import { QRCodeSVG } from "qrcode.react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import type { Category } from "@/lib/mockData";
+import { BRAND, type Category, type PaymentMethod } from "@/lib/mockData";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { buildSlots, calculatePrice } from "@/lib/pricing";
 import { SEASON_END_DATE } from "@/lib/season";
 
 const SLOTS = buildSlots();
+
+const LICENCE_OPTIONS = [
+  { value: "AM", label: "AM (moped / 50cc)" },
+  { value: "A1", label: "A1 (up to 125cc)" },
+  { value: "A2", label: "A2 (up to 35 kW)" },
+  { value: "A", label: "A (unrestricted)" },
+  { value: "B", label: "B (car licence, covers AM/50cc)" },
+] as const;
 
 const DATE_FNS_LOCALES: Partial<Record<Locale, DateFnsLocale>> = {
   en: enUS,
@@ -55,7 +64,21 @@ export default function GroupBooking({
   const [avail, setAvail] = useState<Record<string, FleetAvail> | null>(null);
   const [loadingAvail, setLoadingAvail] = useState(false);
   const [cart, setCart] = useState<Record<string, number>>({});
-  const [step, setStep] = useState<"select" | "details">("select");
+  const [step, setStep] = useState<"select" | "details" | "done">("select");
+
+  // Details / deposit step state (mirrors the single-bike flow).
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [notes, setNotes] = useState("");
+  const [driversLicence, setDriversLicence] = useState<string>("");
+  const [licenceCountry, setLicenceCountry] = useState("");
+  const [ridingStyle, setRidingStyle] = useState<string>("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod["id"]>("paypal_ff");
+  const [receipt, setReceipt] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
 
   const from = range?.from ? toIsoDate(range.from) : null;
   const to = range?.to ? toIsoDate(range.to) : null;
@@ -121,6 +144,80 @@ export default function GroupBooking({
     setRange({ from: new Date(`${next.from}T00:00:00`), to: new Date(`${next.to}T00:00:00`) });
   }
 
+  // 20% booking fee secures the dates, rest paid on arrival (same as the
+  // single-bike flow), here computed off the whole-group total.
+  const bookingFee = Math.round(cartTotal * 0.2 * 100) / 100;
+
+  function copyValue(text: string, key: string) {
+    navigator.clipboard?.writeText(text).then(
+      () => {
+        setCopied(key);
+        setTimeout(() => setCopied((c) => (c === key ? null : c)), 1500);
+      },
+      () => {},
+    );
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!from || !to) return;
+    if (!name.trim() || !phone.trim() || !email.trim()) {
+      setSubmitError("Name, email and phone are required.");
+      return;
+    }
+    if (!driversLicence) {
+      setSubmitError("Pick your driver's licence category.");
+      return;
+    }
+    if (!ridingStyle) {
+      setSubmitError("Pick a riding style.");
+      return;
+    }
+    if (!receipt) {
+      setSubmitError("Upload your deposit screenshot.");
+      return;
+    }
+    const items = bikes
+      .filter((b) => (cart[b.id] ?? 0) > 0)
+      .map((b) => ({ bikeId: b.id, quantity: cart[b.id] }));
+    if (items.length === 0) return;
+
+    setSubmitError(null);
+    setSubmitting(true);
+    try {
+      const fd = new FormData();
+      fd.set("items", JSON.stringify(items));
+      fd.set("name", name.trim());
+      fd.set("email", email.trim());
+      fd.set("phone", phone.trim());
+      if (notes.trim()) fd.set("notes", notes.trim());
+      if (licenceCountry.trim()) fd.set("licenceCountry", licenceCountry.trim());
+      fd.set("from", from);
+      fd.set("to", to);
+      fd.set("pickupTime", pickupTime);
+      fd.set("returnTime", returnTime);
+      fd.set("paymentMethod", paymentMethod);
+      fd.set("driversLicence", driversLicence);
+      fd.set("ridingStyle", ridingStyle);
+      fd.set("locale", lang);
+      fd.set("receipt", receipt);
+
+      const res = await fetch("/api/bookings/group", { method: "POST", body: fd });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setSubmitError(typeof body?.error === "string" ? body.error : "Could not submit booking.");
+        setSubmitting(false);
+        return;
+      }
+      setStep("done");
+    } catch (err) {
+      console.error("group booking submit failed", err);
+      setSubmitError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const dfLocale = DATE_FNS_LOCALES[lang] ?? enUS;
@@ -138,6 +235,17 @@ export default function GroupBooking({
           can see what is free and when.
         </p>
 
+        {step === "done" ? (
+          <div className="bg-white border border-ink/10 p-6">
+            <p className="text-2xl font-bold text-ink mb-2">Booking received</p>
+            <p className="text-sm text-muted max-w-prose">
+              Thanks {name}! We got your request for {cartCount} bikes and your
+              deposit screenshot. We will confirm by email shortly. If you do not
+              hear back within a few hours, message us on WhatsApp.
+            </p>
+          </div>
+        ) : (
+        <>
         {/* Step 1: shared date window */}
         <div className="bg-white border border-ink/10 p-5 mb-6">
           <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mb-3">
@@ -310,12 +418,132 @@ export default function GroupBooking({
             </div>
 
             {step === "details" && (
-              <div className="mt-6 border border-dashed border-ink/20 p-5 text-sm text-muted">
-                Customer details + deposit step coming next (stage 2b-ii).
-                Selected: {cartCount} bikes, total {cartTotal}€.
-              </div>
+              <form onSubmit={handleSubmit} className="mt-6 bg-white border border-ink/10 p-5 space-y-5">
+                <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                  Your details
+                </p>
+                <div className="grid sm:grid-cols-3 gap-3">
+                  <label className="block">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Name *</span>
+                    <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
+                  </label>
+                  <label className="block">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Phone *</span>
+                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
+                  </label>
+                  <label className="block">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Email *</span>
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
+                  </label>
+                </div>
+                <div className="grid sm:grid-cols-3 gap-3">
+                  <label className="block">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Driver licence *</span>
+                    <select value={driversLicence} onChange={(e) => setDriversLicence(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white">
+                      <option value="">—</option>
+                      {LICENCE_OPTIONS.map((l) => (
+                        <option key={l.value} value={l.value}>{l.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Licence country</span>
+                    <input value={licenceCountry} onChange={(e) => setLicenceCountry(e.target.value)} placeholder="e.g. Germany" className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
+                  </label>
+                  <label className="block">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Riding style *</span>
+                    <select value={ridingStyle} onChange={(e) => setRidingStyle(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white">
+                      <option value="">—</option>
+                      <option value="solo">Solo</option>
+                      <option value="with_passenger">With passenger</option>
+                    </select>
+                  </label>
+                </div>
+                <label className="block">
+                  <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Notes</span>
+                  <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
+                </label>
+
+                <div className="border-t border-ink/10 pt-4">
+                  <p className="text-sm text-ink mb-1">
+                    Pay <span className="font-bold text-red">{bookingFee}€</span> now to secure your dates
+                    {" "}(20% of {cartTotal}€). The rest ({Math.round((cartTotal - bookingFee) * 100) / 100}€) is paid on arrival.
+                  </p>
+                  <p className="text-xs text-muted mb-4">After paying, upload a screenshot below. Security deposit {BRAND.deposit} on pickup.</p>
+
+                  <div className="space-y-2.5">
+                    {(BRAND.payment as PaymentMethod[]).map((p) => {
+                      const selected = paymentMethod === p.id;
+                      return (
+                        <label key={p.id} className={`block border ${selected ? "border-red bg-red/5" : "border-ink/15 bg-white hover:border-ink/30"} px-4 py-3 cursor-pointer transition-colors`}>
+                          <div className="flex items-start gap-3">
+                            <input type="radio" name="paymentMethod" value={p.id} checked={selected} onChange={() => setPaymentMethod(p.id)} className="mt-1 accent-red" />
+                            <div className="flex-1 min-w-0">
+                              <span className="font-semibold text-ink text-sm">{p.label}</span>
+                              {selected && (
+                                <div className="mt-2 space-y-3">
+                                  {p.link && (
+                                    <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                                      <a href={p.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center justify-center bg-ink text-white text-[11px] font-bold tracking-widest uppercase px-4 py-2.5 hover:bg-red transition-colors">
+                                        Pay {bookingFee}€ with {p.label.split(" · ")[0]}
+                                      </a>
+                                      <div className="bg-white border border-ink/10 p-2 inline-block shrink-0 self-start sm:self-center">
+                                        <QRCodeSVG value={p.link} size={96} level="M" />
+                                      </div>
+                                    </div>
+                                  )}
+                                  {p.value && (
+                                    <div>
+                                      {p.valueLabel && <p className="text-[10px] tracking-[0.15em] uppercase text-muted mb-0.5">{p.valueLabel}</p>}
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        <code className="text-ink text-sm font-mono break-all">{p.value}</code>
+                                        <button type="button" onClick={(e) => { e.preventDefault(); copyValue(p.valueCopy ?? p.value!, `${p.id}-value`); }} className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red px-2 py-1 border border-ink/15 hover:border-red">
+                                          {copied === `${p.id}-value` ? "✓ Copied" : "Copy"}
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )}
+                                  {p.subValue && (
+                                    <div>
+                                      {p.subValueLabel && <p className="text-[10px] tracking-[0.15em] uppercase text-muted mb-0.5">{p.subValueLabel}</p>}
+                                      <code className="text-ink text-sm font-mono break-all">{p.subValue}</code>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </div>
+
+                  <label className="block mt-4">
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Deposit screenshot *</span>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf"
+                      onChange={(e) => setReceipt(e.target.files?.[0] ?? null)}
+                      className="mt-1 w-full text-sm"
+                    />
+                  </label>
+                </div>
+
+                {submitError && <p className="text-red text-sm font-semibold">{submitError}</p>}
+
+                <div className="flex items-center justify-between gap-4 pt-2 flex-wrap">
+                  <button type="button" onClick={() => setStep("select")} className="text-xs font-bold tracking-widest uppercase text-ink/50 hover:text-red">
+                    ← Back to bikes
+                  </button>
+                  <button type="submit" disabled={submitting} className="bg-red text-white font-bold text-xs tracking-widest uppercase px-6 py-3 hover:bg-red-dark disabled:opacity-50">
+                    {submitting ? "Submitting…" : `Submit booking · ${cartCount} bikes`}
+                  </button>
+                </div>
+              </form>
             )}
           </>
+        )}
+        </>
         )}
       </main>
       <Footer lang={lang} t={dict.footer} nav={dict.nav} />
