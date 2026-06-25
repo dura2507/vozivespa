@@ -7,14 +7,17 @@ import { buildSlots, calculatePrice } from "@/lib/pricing";
 import { groupBookingsForDisplay } from "@/lib/admin-data";
 import type { EnrichedBlock, EnrichedBooking } from "@/lib/admin-data";
 import type { PricingTiers } from "@/lib/mockData";
+import { LocaleFlag } from "@/components/Flag";
+import type { Locale } from "@/lib/i18n/config";
 
 type Bike = { id: string; name: string; pricing: PricingTiers };
 type Unit = { id: string; label: string };
+type Mode = "walkin" | "service";
 
 // Languages the owner can mark a walk-in as being spoken in — mirrors
 // the locales the public site ships. Drives the flag shown in the
 // dashboard so Thomas knows which language to greet the customer in.
-const SPOKEN_LANGUAGES: Array<{ code: string; label: string }> = [
+const SPOKEN_LANGUAGES: Array<{ code: Locale; label: string }> = [
   { code: "en", label: "English" },
   { code: "de", label: "Deutsch" },
   { code: "hr", label: "Hrvatski" },
@@ -43,6 +46,10 @@ export function BlocksManager({
   unitsByBike: Record<string, Unit[]>;
 }) {
   const router = useRouter();
+  // Explicit mode toggle: a paying walk-in vs a service/repair block.
+  // Used to be inferred from whether a customer name was typed, which
+  // mixed the two flows in one long form. The toggle keeps them apart.
+  const [mode, setMode] = useState<Mode>("walkin");
   const [bikeId, setBikeId] = useState(bikes[0]?.id ?? "");
   // How many bikes of this model the action covers. Quantity-based
   // is the owner's mental model — "I have 4, I'm using 2 for this
@@ -71,7 +78,7 @@ export function BlocksManager({
   const [licenceCountry, setLicenceCountry] = useState("");
   const [ridingStyle, setRidingStyle] = useState("");
   // Spoken language for the walk-in (point 8). Defaults to English.
-  const [spokenLocale, setSpokenLocale] = useState("en");
+  const [spokenLocale, setSpokenLocale] = useState<Locale>("en");
   // Whether the owner has hand-edited the total. Once true we stop
   // overwriting it with the auto-computed suggestion.
   const [priceEdited, setPriceEdited] = useState(false);
@@ -85,8 +92,7 @@ export function BlocksManager({
     [unitsByBike, bikeId],
   );
 
-  // Customer name = "this is a walk-in booking"; empty = "service block"
-  const hasCustomerInfo = customerName.trim().length > 0;
+  const isWalkIn = mode === "walkin";
   const fleetSize = availableUnits.length;
   const isAllUnits = quantity === "all";
   const numericQuantity = quantity === "all" ? fleetSize : quantity;
@@ -100,7 +106,7 @@ export function BlocksManager({
     [bikes, bikeId],
   );
   const pricePreview = useMemo(() => {
-    if (!hasCustomerInfo || !dateFrom || !dateTo || dateFrom > dateTo) return null;
+    if (!isWalkIn || !dateFrom || !dateTo || dateFrom > dateTo) return null;
     if (!selectedBike) return null;
     const result = calculatePrice(
       new Date(`${dateFrom}T00:00:00`),
@@ -113,7 +119,7 @@ export function BlocksManager({
     const units = Math.max(numericQuantity, 1);
     return { total: result.totalPrice * units, days: result.billableDays, units };
   }, [
-    hasCustomerInfo,
+    isWalkIn,
     dateFrom,
     dateTo,
     selectedBike,
@@ -173,10 +179,15 @@ export function BlocksManager({
           ? availableUnits.slice(0, numericQuantity).map((u) => u.id)
           : [];
 
-      if (hasCustomerInfo) {
-        // Walk-ins need a phone — if something goes wrong with the
+      if (isWalkIn) {
+        // Walk-ins need a name + phone — if something goes wrong with the
         // rental the owner has to be able to reach the customer.
         // Email stays optional (lots of walk-ins skip it).
+        if (customerName.trim().length === 0) {
+          setError("Name is required for walk-in bookings.");
+          setBusy(false);
+          return;
+        }
         if (customerPhone.trim().length === 0) {
           setError("Phone is required for walk-in bookings.");
           setBusy(false);
@@ -293,12 +304,50 @@ export function BlocksManager({
     }
   }
 
+  // Mode-driven accents — green for a paying walk-in, amber for a
+  // service block — matching the badges in the list below.
+  const accentBtn = (active: boolean, tone: "green" | "amber") =>
+    active
+      ? tone === "green"
+        ? "bg-green-700 text-white border-green-700"
+        : "bg-amber-500 text-white border-amber-500"
+      : "bg-white text-ink/70 border-ink/15 hover:border-ink/30";
+
   return (
     <>
       <form
         onSubmit={submit}
         className="bg-white border border-ink/10 p-5 mb-8 space-y-5"
       >
+        {/* Mode toggle — what am I entering? */}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => setMode("walkin")}
+            className={`block px-4 py-3 border text-left transition-colors ${accentBtn(isWalkIn, "green")}`}
+          >
+            <span className="block text-sm font-bold tracking-[0.08em] uppercase">
+              Walk-in Buchung
+            </span>
+            <span className={`block text-xs ${isWalkIn ? "text-white/80" : "text-muted"}`}>
+              zahlender Kunde
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("service")}
+            className={`block px-4 py-3 border text-left transition-colors ${accentBtn(!isWalkIn, "amber")}`}
+          >
+            <span className="block text-sm font-bold tracking-[0.08em] uppercase">
+              Service / Reparatur
+            </span>
+            <span className={`block text-xs ${!isWalkIn ? "text-white/80" : "text-muted"}`}>
+              Bike sperren
+            </span>
+          </button>
+        </div>
+
+        {/* Shared: which model + how many + dates */}
         <label className="block">
           <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
             Bike model
@@ -358,7 +407,7 @@ export function BlocksManager({
           <p className="text-xs text-muted pt-2">
             {fleetSize === 0
               ? "No active units for this model."
-              : hasCustomerInfo
+              : isWalkIn
                 ? isAllUnits
                   ? `Group booking on all ${fleetSize} bikes.`
                   : numericQuantity === 1
@@ -399,194 +448,167 @@ export function BlocksManager({
           </label>
         </div>
 
-        {!hasCustomerInfo && (
-          <label className="flex items-center gap-2 select-none cursor-pointer">
-            <input
-              type="checkbox"
-              checked={allDay}
-              onChange={(e) => setAllDay(e.target.checked)}
-              className="w-4 h-4 accent-red"
-            />
-            <span className="text-xs font-bold tracking-[0.1em] uppercase text-ink/70">
-              All day
-            </span>
-            <span className="text-xs text-muted">
-              · uncheck for a time-bounded service block
-            </span>
-          </label>
-        )}
+        {/* Mode-specific card */}
+        {isWalkIn ? (
+          <div className="border border-ink/10 border-l-4 border-l-green-700 bg-green-50/50 p-5 space-y-4">
+            <p className="text-[11px] tracking-[0.15em] uppercase text-green-800 font-bold">
+              Walk-in Details
+            </p>
 
-        <div
-          className={`grid sm:grid-cols-2 gap-3 transition-opacity ${
-            hasCustomerInfo || !allDay ? "opacity-100" : "opacity-50"
-          }`}
-        >
-          <label className="block">
-            <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-              {hasCustomerInfo ? "Pickup time" : "Start time"}
-            </span>
-            <select
-              value={pickupTime}
-              onChange={(e) => setPickupTime(e.target.value)}
-              disabled={!hasCustomerInfo && allDay}
-              className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white disabled:bg-ink/5"
-            >
-              {SLOTS.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block">
-            <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-              {hasCustomerInfo ? "Return time" : "End time"}
-            </span>
-            <select
-              value={returnTime}
-              onChange={(e) => setReturnTime(e.target.value)}
-              disabled={!hasCustomerInfo && allDay}
-              className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white disabled:bg-ink/5"
-            >
-              {SLOTS.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <label className="block">
+                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                  Pickup time
+                </span>
+                <select
+                  value={pickupTime}
+                  onChange={(e) => setPickupTime(e.target.value)}
+                  className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
+                >
+                  {SLOTS.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block">
+                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                  Return time
+                </span>
+                <select
+                  value={returnTime}
+                  onChange={(e) => setReturnTime(e.target.value)}
+                  className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
+                >
+                  {SLOTS.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
 
-        <div className="pt-2 border-t border-ink/8">
-          <p className="text-[10px] tracking-[0.15em] uppercase text-ink/40 font-bold mb-3">
-            Service block (no customer)
-          </p>
-          <label className="block">
-            <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-              Reason
-            </span>
-            <input
-              type="text"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              placeholder="z.B. Bremse reparieren, Service, privat"
-              className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
-            />
-          </label>
-        </div>
+            <div className="grid sm:grid-cols-3 gap-3">
+              <label className="block">
+                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                  Customer name <span className="text-red">*</span>
+                </span>
+                <input
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  placeholder="—"
+                  className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="block">
+                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                  Phone <span className="text-red">*</span>
+                </span>
+                <input
+                  type="tel"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  placeholder="+385 …"
+                  className={`mt-1 w-full border px-3 py-2 text-sm ${
+                    customerPhone.trim().length === 0 ? "border-red/40" : "border-ink/15"
+                  }`}
+                />
+              </label>
+              <label className="block">
+                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                  Email
+                </span>
+                <input
+                  type="email"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  placeholder="—"
+                  className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
+                />
+              </label>
+            </div>
 
-        <div className="pt-2 border-t border-ink/8">
-          <p className="text-[10px] tracking-[0.15em] uppercase text-ink/40 font-bold mb-3">
-            Walk-in booking (optional)
-          </p>
-          <p className="text-xs text-muted mb-4 max-w-prose">
-            Fill in name + phone to record this as a real booking
-            (shows up in the dashboard). Leave empty for a service block.
-          </p>
-          <div className="grid sm:grid-cols-3 gap-3">
-            <label className="block">
-              <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                Customer name {hasCustomerInfo && <span className="text-red">*</span>}
-              </span>
-              <input
-                type="text"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="—"
-                className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
-              />
-            </label>
-            <label className="block">
-              <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                Phone {hasCustomerInfo && <span className="text-red">*</span>}
-              </span>
-              <input
-                type="tel"
-                value={customerPhone}
-                onChange={(e) => setCustomerPhone(e.target.value)}
-                placeholder={hasCustomerInfo ? "+385 …" : "—"}
-                className={`mt-1 w-full border px-3 py-2 text-sm ${
-                  hasCustomerInfo && customerPhone.trim().length === 0
-                    ? "border-red/40"
-                    : "border-ink/15"
-                }`}
-              />
-            </label>
-            <label className="block">
-              <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                Email
-              </span>
-              <input
-                type="email"
-                value={customerEmail}
-                onChange={(e) => setCustomerEmail(e.target.value)}
-                placeholder="—"
-                className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
-              />
-            </label>
-          </div>
-          <label className="block mt-3">
-            <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-              Notes
-            </span>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={2}
-              placeholder="—"
-              className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
-            />
-          </label>
-
-          {hasCustomerInfo && (
-            <label className="block mt-3 sm:max-w-xs">
+            <label className="block sm:max-w-xs">
               <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
                 Spoken language
               </span>
-              <select
-                value={spokenLocale}
-                onChange={(e) => setSpokenLocale(e.target.value)}
-                className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
-              >
-                {SPOKEN_LANGUAGES.map((l) => (
-                  <option key={l.code} value={l.code}>
-                    {l.label}
-                  </option>
-                ))}
-              </select>
+              <div className="mt-1 flex items-center gap-2">
+                <LocaleFlag locale={spokenLocale} className="w-6 h-4 shrink-0" />
+                <select
+                  value={spokenLocale}
+                  onChange={(e) => setSpokenLocale(e.target.value as Locale)}
+                  className="flex-1 border border-ink/15 px-3 py-2 text-sm bg-white"
+                >
+                  {SPOKEN_LANGUAGES.map((l) => (
+                    <option key={l.code} value={l.code}>
+                      {l.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </label>
-          )}
 
-          {hasCustomerInfo && (
-            <div className="mt-4">
+            {/* Auto-price panel — front and centre, editable */}
+            <div className="bg-sand border border-ink/10 px-4 py-3 flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                  Auto-Preis
+                </span>
+                <div className="text-2xl font-bold text-red leading-tight">
+                  {pricePreview ? `${pricePreview.total}€` : "—"}
+                </div>
+                <span className="text-xs text-muted">
+                  {pricePreview
+                    ? `${pricePreview.days} ${pricePreview.days === 1 ? "Tag" : "Tage"}${
+                        pricePreview.units > 1 ? ` × ${pricePreview.units} Bikes` : ""
+                      }${priceEdited ? " · überschrieben" : ""}`
+                    : "Bike + Zeitraum wählen für Vorschlag"}
+                </span>
+              </div>
+              <label className="block text-right">
+                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                  Überschreiben (€)
+                </span>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={totalPriceEuros}
+                  onChange={(e) => {
+                    setTotalPriceEuros(e.target.value);
+                    setPriceEdited(true);
+                  }}
+                  placeholder="e.g. 70"
+                  className="mt-1 w-28 border border-ink/15 px-3 py-2 text-sm text-right bg-white"
+                />
+              </label>
+            </div>
+
+            <label className="block">
+              <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                Notes
+              </span>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={2}
+                placeholder="—"
+                className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
+              />
+            </label>
+
+            <div>
               <button
                 type="button"
                 onClick={() => setDetailsOpen((o) => !o)}
                 className="text-xs font-bold tracking-[0.15em] uppercase text-ink/50 hover:text-red flex items-center gap-1"
               >
-                {detailsOpen ? "−" : "+"} Optional details (price · licence · payment)
+                {detailsOpen ? "−" : "+"} Mehr Details (Führerschein · Zahlung)
               </button>
               {detailsOpen && (
                 <div className="mt-3 grid sm:grid-cols-2 gap-3">
-                  <label className="block">
-                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                      Total price (€)
-                    </span>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      value={totalPriceEuros}
-                      onChange={(e) => {
-                        setTotalPriceEuros(e.target.value);
-                        setPriceEdited(true);
-                      }}
-                      placeholder="e.g. 70"
-                      className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
-                    />
-                    <span className="mt-1 block text-[11px] text-muted">
-                      Auto aus Tarif × Tage × Bikes · tippen zum Überschreiben
-                    </span>
-                  </label>
                   <label className="block">
                     <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
                       Deposit via
@@ -632,7 +654,7 @@ export function BlocksManager({
                       className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
                     />
                   </label>
-                  <label className="block sm:col-span-2">
+                  <label className="block">
                     <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
                       Riding style
                     </span>
@@ -649,20 +671,77 @@ export function BlocksManager({
                 </div>
               )}
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="border border-ink/10 border-l-4 border-l-amber-400 bg-amber-50/60 p-5 space-y-4">
+            <p className="text-[11px] tracking-[0.15em] uppercase text-amber-700 font-bold">
+              Service-Block
+            </p>
 
-        {hasCustomerInfo && pricePreview && (
-          <div className="flex items-center gap-2 text-sm bg-sand border border-ink/10 px-3 py-2">
-            <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-              Auto-Preis
-            </span>
-            <span className="font-bold text-ink">{pricePreview.total}€</span>
-            <span className="text-xs text-muted">
-              {pricePreview.days} {pricePreview.days === 1 ? "Tag" : "Tage"}
-              {pricePreview.units > 1 ? ` × ${pricePreview.units} Bikes` : ""}
-              {priceEdited ? " · überschrieben" : " · überschreibbar"}
-            </span>
+            <label className="flex items-center gap-2 select-none cursor-pointer">
+              <input
+                type="checkbox"
+                checked={allDay}
+                onChange={(e) => setAllDay(e.target.checked)}
+                className="w-4 h-4 accent-red"
+              />
+              <span className="text-xs font-bold tracking-[0.1em] uppercase text-ink/70">
+                All day
+              </span>
+              <span className="text-xs text-muted">
+                · uncheck for a time-bounded block
+              </span>
+            </label>
+
+            <div className={`grid sm:grid-cols-2 gap-3 ${allDay ? "opacity-50" : "opacity-100"}`}>
+              <label className="block">
+                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                  Start time
+                </span>
+                <select
+                  value={pickupTime}
+                  onChange={(e) => setPickupTime(e.target.value)}
+                  disabled={allDay}
+                  className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white disabled:bg-ink/5"
+                >
+                  {SLOTS.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block">
+                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                  End time
+                </span>
+                <select
+                  value={returnTime}
+                  onChange={(e) => setReturnTime(e.target.value)}
+                  disabled={allDay}
+                  className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white disabled:bg-ink/5"
+                >
+                  {SLOTS.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <label className="block">
+              <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                Reason
+              </span>
+              <input
+                type="text"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="z.B. Bremse reparieren, Service, privat"
+                className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
+              />
+            </label>
           </div>
         )}
 
@@ -672,7 +751,7 @@ export function BlocksManager({
             disabled={busy || fleetSize === 0}
             className="bg-red text-white font-bold text-xs tracking-widest uppercase px-5 py-2.5 hover:bg-red-dark disabled:opacity-50"
           >
-            {busy ? "Saving…" : hasCustomerInfo ? "Save booking" : "Add block"}
+            {busy ? "Saving…" : isWalkIn ? "Buchung speichern" : "Block hinzufügen"}
           </button>
         </div>
       </form>

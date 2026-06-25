@@ -3,7 +3,11 @@ import type { PricingTiers } from "@/lib/mockData";
 export const SHOP_OPEN_HOUR = 9;
 export const SHOP_CLOSE_HOUR = 19;
 export const SLOT_MINUTES = 30;
-const GRACE_MINUTES = 15;
+// Owner policy (Thomas, 2026-06-25): a rental gets one full hour of
+// grace past the 24h mark before the second day is billed. So anything
+// up to 25h counts as one day; from 25h onward it's two. Applies to
+// website price calc only (walk-ins are typed in by hand).
+const GRACE_MINUTES = 60;
 
 // Owner needs this much time between two bookings on the same bike to
 // receive the returning bike, check it, refuel and prep for the next
@@ -234,7 +238,7 @@ function calendarDaysBetween(a: Date, b: Date): number {
   return Math.round((bMid - aMid) / 86_400_000);
 }
 
-// Convert pickup/return to billable 24h units. 15-minute grace, min 1.
+// Convert pickup/return to billable 24h units. 1-hour grace, min 1.
 export function billableDays(
   fromDate: Date,
   toDate: Date,

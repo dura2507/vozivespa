@@ -14,15 +14,13 @@ Stand der noch offenen Themen. Erledigtes steht im Git-Log / HANDOVER.md.
 ## Kleinere offene Punkte
 
 ### Tage-Berechnung bei knapp über 24h + Nachzahlung bei verspäteter Rückgabe
-Zwei zusammenhängende Punkte, beide mit Thomas zu klären (Preis-Policy):
+Beide mit Thomas geklärt (2026-06-25):
 
-1. **Ab wann zählt der 2. Tag?** Aktuell: 24h + 15 Min Kulanz, danach voller
-   2. Tag. D.h. wer 16 Min über 24h zurückgibt, zahlt (auf der Website,
-   nicht bei Walk-ins) 2 Tage. Frage: wie viel Kulanz will Thomas (z.B. 1 Std)?
-   Betrifft nur Website-Buchungen (System rechnet); Walk-ins tippt Thomas eh selbst.
+1. **Ab wann zählt der 2. Tag? → ERLEDIGT.** Kulanz ist jetzt 1 Std: bis 25h =
+   1 Tag, ab 25h = 2. Tag. Umgesetzt in `lib/pricing.ts` (GRACE_MINUTES = 60).
+   Betrifft nur Website-Buchungen; Walk-ins tippt Thomas eh selbst.
 
-2. **Nachträglich kassieren wenn Kunde zu spät zurückgibt.** Wenn ein Kunde
-   länger bleibt als gebucht → wie trägt Thomas das nachträglich im System ein
-   und berechnet die Differenz? Aktuell gibt's dafür keinen Weg. Bräuchte:
-   Rückgabezeit/Tage nachträglich anpassen → Preis neu rechnen → Differenz
-   ausweisen ("Kunde muss X € nachzahlen").
+2. **Verspätete Rückgabe → Policy entschieden:** die Differenz wird einfach von
+   der Kaution abgezogen, kein eigener System-Flow nötig. Thomas regelt das vor
+   Ort über die Kaution. (Offen nur falls er später doch eine Protokoll-Notiz
+   im System will, z.B. "X € von Kaution einbehalten" am Buchungs-Detail.)
