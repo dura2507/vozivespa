@@ -430,6 +430,33 @@ export function describeConflict(c: Conflict): string {
   return `${c.customerName} (${c.dateFrom} ${c.pickupTime} → ${c.dateTo} ${c.returnTime})`;
 }
 
+function addDaysIso(iso: string, days: number): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+// Smart suggestion: when a bike is fully booked for the requested
+// window, find the nearest LATER window of the SAME duration (same
+// pickup/return times, shifted by whole days) where at least one unit
+// is free. Lets the customer re-plan instead of just seeing "sold out".
+// Steps one day at a time up to `horizonDays`; stops at the season end.
+export async function nextFreeWindow(
+  supabase: SupabaseClient,
+  w: BookingWindow,
+  opts: { horizonDays?: number; seasonEndIso?: string } = {},
+): Promise<{ dateFrom: string; dateTo: string } | null> {
+  const horizon = opts.horizonDays ?? 14;
+  for (let shift = 1; shift <= horizon; shift++) {
+    const dateFrom = addDaysIso(w.dateFrom, shift);
+    const dateTo = addDaysIso(w.dateTo, shift);
+    if (opts.seasonEndIso && dateTo > opts.seasonEndIso) break;
+    const res = await findFreeUnits(supabase, { ...w, dateFrom, dateTo }, 1);
+    if (res.unitIds.length >= 1) return { dateFrom, dateTo };
+  }
+  return null;
+}
+
 // Look up the human-friendly label for a unit ID (e.g. "Liberty50-2").
 // Returns null if the unit can't be resolved . caller decides how to
 // surface that.
