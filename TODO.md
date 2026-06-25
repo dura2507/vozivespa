@@ -2,14 +2,18 @@
 
 Stand der noch offenen Themen. Erledigtes steht im Git-Log / HANDOVER.md.
 
-## Kostenpflichtige Features (warten auf Thomas' OK)
+## Kostenpflichtige Features (FREIGEGEBEN - Thomas geclosed auf 1000-1500 € für alle 4, 2026-06-25)
 
-| Feature | Freundschaftspreis | Aufwand | Status |
+Reihenfolge zum Bauen (Vorschlag): 1 Multi-Buchung → 2 Chatbot → 3 Apple Pay → 4 Aufpreis.
+
+| # | Feature | Aufwand | Status |
 |---|---|---|---|
-| KI-Chatbot (6 Top-Fragen, mehrsprachig) | 500 € + 20 €/Mon | 2-3 Tage | offen |
-| Apple Pay / Online-Zahlung | 500 € | 3-5 Tage | offen (Provider: Mollie/Viva statt Stripe prüfen) |
-| Multi-Buchung (eigene Seite, Bikes aus ganzer Flotte wählen, Kalender-Abgleich + Smart-Vorschläge) | 1000 € | 6-8 Tage | offen |
-| Aufpreis außerhalb Geschäftszeiten (7-9 / 19-22 Uhr) | gratis als Bonus | 1-2 Tage | offen |
+| 1 | Multi-Buchung (eigene Seite, Bikes aus ganzer Flotte wählen, Kalender-Abgleich + Smart-Vorschläge) | 6-8 Tage | freigegeben, noch nicht begonnen |
+| 2 | KI-Chatbot (6 Top-Fragen, mehrsprachig) | 2-3 Tage | freigegeben. Laufende LLM-Kosten via 20 €/Mon decken (günstiges Modell + Caching) |
+| 3 | Apple Pay / Online-Zahlung | 3-5 Tage | freigegeben. Provider Mollie/Viva statt Stripe; eigener Meilenstein (Risiko-Stück) |
+| 4 | Aufpreis außerhalb Geschäftszeiten (7-9 / 19-22 Uhr) | 1-2 Tage | freigegeben |
+
+Hinweis Preis: alle 4 = grob 12-18 Tage Aufwand; 1000-1500 € ist deutlich unter dem alten Freundschaftspreis (2000 € + 20 €/Mon). Bei Folge-Features nicht weiter runter.
 
 ## Kleinere offene Punkte
 
