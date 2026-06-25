@@ -372,10 +372,10 @@ export function BlocksManager({
             className={`block px-4 py-3 border text-left transition-colors ${accentBtn(isWalkIn, "green")}`}
           >
             <span className="block text-sm font-bold tracking-[0.08em] uppercase">
-              Walk-in Buchung
+              Walk-in booking
             </span>
             <span className={`block text-xs ${isWalkIn ? "text-white/80" : "text-muted"}`}>
-              zahlender Kunde
+              paying customer
             </span>
           </button>
           <button
@@ -384,10 +384,10 @@ export function BlocksManager({
             className={`block px-4 py-3 border text-left transition-colors ${accentBtn(!isWalkIn, "amber")}`}
           >
             <span className="block text-sm font-bold tracking-[0.08em] uppercase">
-              Service / Reparatur
+              Service / repair
             </span>
             <span className={`block text-xs ${!isWalkIn ? "text-white/80" : "text-muted"}`}>
-              Bike sperren
+              block a bike
             </span>
           </button>
         </div>
@@ -581,7 +581,7 @@ export function BlocksManager({
                 Spoken language
                 {phoneLocale && !langEdited && (
                   <span className="ml-2 text-muted font-normal normal-case tracking-normal">
-                    · aus Vorwahl
+                    · from dial code
                   </span>
                 )}
               </span>
@@ -608,22 +608,22 @@ export function BlocksManager({
             <div className="bg-sand border border-ink/10 px-4 py-3 flex items-center justify-between gap-4 flex-wrap">
               <div>
                 <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                  Auto-Preis
+                  Auto price
                 </span>
                 <div className="text-2xl font-bold text-red leading-tight">
                   {pricePreview ? `${pricePreview.total}€` : "—"}
                 </div>
                 <span className="text-xs text-muted">
                   {pricePreview
-                    ? `${pricePreview.days} ${pricePreview.days === 1 ? "Tag" : "Tage"}${
-                        pricePreview.units > 1 ? ` × ${pricePreview.units} Bikes` : ""
-                      }${priceEdited ? " · überschrieben" : ""}`
-                    : "Bike + Zeitraum wählen für Vorschlag"}
+                    ? `${pricePreview.days} ${pricePreview.days === 1 ? "day" : "days"}${
+                        pricePreview.units > 1 ? ` × ${pricePreview.units} bikes` : ""
+                      }${priceEdited ? " · overridden" : ""}`
+                    : "Pick bike + dates for a suggestion"}
                 </span>
               </div>
               <label className="block text-right">
                 <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                  Überschreiben (€)
+                  Override (€)
                 </span>
                 <input
                   type="text"
@@ -658,7 +658,7 @@ export function BlocksManager({
                 onClick={() => setDetailsOpen((o) => !o)}
                 className="text-xs font-bold tracking-[0.15em] uppercase text-ink/50 hover:text-red flex items-center gap-1"
               >
-                {detailsOpen ? "−" : "+"} Mehr Details (Führerschein · Zahlung)
+                {detailsOpen ? "−" : "+"} More details (licence · payment)
               </button>
               {detailsOpen && (
                 <div className="mt-3 grid sm:grid-cols-2 gap-3">
@@ -728,7 +728,7 @@ export function BlocksManager({
         ) : (
           <div className="border border-ink/10 border-l-4 border-l-amber-400 bg-amber-50/60 p-5 space-y-4">
             <p className="text-[11px] tracking-[0.15em] uppercase text-amber-700 font-bold">
-              Service-Block
+              Service block
             </p>
 
             <label className="flex items-center gap-2 select-none cursor-pointer">
@@ -791,7 +791,7 @@ export function BlocksManager({
                 type="text"
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                placeholder="z.B. Bremse reparieren, Service, privat"
+                placeholder="e.g. brake repair, service, private"
                 className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm"
               />
             </label>
@@ -804,7 +804,7 @@ export function BlocksManager({
             disabled={busy || fleetSize === 0}
             className="bg-red text-white font-bold text-xs tracking-widest uppercase px-5 py-2.5 hover:bg-red-dark disabled:opacity-50"
           >
-            {busy ? "Saving…" : isWalkIn ? "Buchung speichern" : "Block hinzufügen"}
+            {busy ? "Saving…" : isWalkIn ? "Save booking" : "Add block"}
           </button>
         </div>
       </form>
