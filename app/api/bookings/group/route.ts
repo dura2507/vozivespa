@@ -1,12 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { isValidSlot, parseTime, calculatePrice } from "@/lib/pricing";
 import { isBookingInSeason, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
 import { findFreeUnits } from "@/lib/availability";
 import { getBikeWithPricing } from "@/lib/bike-pricing";
+import { sendOwnerGroupBookingTelegram } from "@/lib/telegram";
+import { sendCustomerBookingReceivedEmail } from "@/lib/email";
 import {
   isAllowedReceiptMime,
   MAX_RECEIPT_BYTES,
+  signedReceiptUrl,
   uploadReceipt,
 } from "@/lib/storage";
 
@@ -240,10 +243,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not save booking" }, { status: 500 });
   }
 
-  // TODO stage 3: one consolidated owner Telegram + email for the whole
-  // group (all bikes in a single card) + customer acknowledgement email.
-  // Deferred until the notification builder can summarise a mixed-bike
-  // group; this endpoint isn't wired to any UI yet.
+  // Notifications after the response: one consolidated owner Telegram
+  // (all bikes in a single card) with the shared receipt, plus the
+  // customer acknowledgement email. Best-effort; a notify failure must
+  // not fail the booking that's already saved.
+  const groupRows = inserted as BookingRow[];
+  const receiptMime = receipt.type;
+  after(async () => {
+    let receiptUrl: string | null = null;
+    try {
+      receiptUrl = await signedReceiptUrl(receiptPath);
+    } catch (err) {
+      console.error("[/api/bookings/group] signed url failed", err);
+    }
+    const receiptForTg = receiptUrl ? { url: receiptUrl, mime: receiptMime } : undefined;
+    const [tgRefs] = await Promise.allSettled([
+      sendOwnerGroupBookingTelegram(groupRows, receiptForTg),
+      sendCustomerBookingReceivedEmail(groupRows[0]),
+    ]);
+    if (tgRefs.status === "fulfilled" && tgRefs.value.length > 0) {
+      await supabase
+        .from("bookings")
+        .update({ telegram_message_refs: tgRefs.value })
+        .eq("booking_group_id", groupId);
+    }
+  });
 
   return NextResponse.json(
     {

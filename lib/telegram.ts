@@ -338,6 +338,106 @@ export async function sendOwnerBookingTelegram(
     .filter((r) => r.messageId > 0);
 }
 
+// Multi-bike group booking: one consolidated card listing every bike,
+// the shared window, and the group total — instead of N separate
+// notifications. Info-only for now (owner manages in the dashboard);
+// per-group Confirm/Decline buttons land with the admin group view.
+function buildGroupText(bookings: BookingRow[], translatedNote?: string | null): string {
+  const primary = bookings[0];
+  const pickup = fmtTimeOfDay(primary.pickup_time);
+  const ret = fmtTimeOfDay(primary.return_time);
+  const nights = bookingDays(primary);
+
+  const counts = new Map<string, number>();
+  for (const b of bookings) {
+    const name = bikeNameFor(b);
+    counts.set(name, (counts.get(name) ?? 0) + 1);
+  }
+  const bikeLines = [...counts.entries()].map(
+    ([name, n]) => `*Bike:* ${escapeMd(name)} \\(×${n}\\)`,
+  );
+
+  const totalCents = bookings.reduce((s, b) => s + (b.total_price_cents ?? 0), 0);
+  const feeStr = totalCents ? `${Math.round((totalCents * 0.2) / 100)}€` : null;
+  const { country: licenceCountry, note: cleanNote } = splitNotes(primary.notes);
+
+  const lines = [
+    `*New group booking request* \\(${bookings.length} bikes\\)`,
+    DIVIDER,
+    ...bikeLines,
+    DIVIDER,
+    `*Pickup:* ${escapeMd(fmtDate(primary.date_from))}${pickup ? ` ${escapeMd(pickup)}` : ""}`,
+    `*Return:* ${escapeMd(fmtDate(primary.date_to))}${ret ? ` ${escapeMd(ret)}` : ""} \\(${nights} ${nights === 1 ? "day" : "days"}\\)`,
+    `*Total:* ${escapeMd(`${Math.round(totalCents / 100)}€`)}`,
+    feeStr ? `*Booking fee:* ${escapeMd(feeStr)} \\(20%\\)` : null,
+    `*Paid via:* ${escapeMd(paymentLabel(primary.payment_method))}`,
+    DIVIDER,
+    `*Name:* ${escapeMd(primary.customer_name)}`,
+    `*Phone:* ${escapeMd(primary.customer_phone)}`,
+    `*Email:* ${escapeMd(primary.customer_email)}`,
+    `*Licence:* ${escapeMd(primary.drivers_licence ?? "-")}`,
+    licenceCountry ? `*Licence country:* ${escapeMd(licenceCountry)}` : null,
+    `*Riding:* ${escapeMd(ridingStyleLabel(primary.riding_style))}`,
+    cleanNote ? `*Notes:* ${escapeMd(cleanNote)}` : null,
+    translatedNote ? `\n🇬🇧 *English translation*\n${escapeMd(translatedNote)}` : null,
+    `\n${DIVIDER}\n_Manage in the admin dashboard_`,
+  ].filter((l): l is string => l !== null);
+
+  return lines.join("\n");
+}
+
+export async function sendOwnerGroupBookingTelegram(
+  bookings: BookingRow[],
+  receipt?: { url: string; mime: string },
+): Promise<Array<{ chatId: string; messageId: number }>> {
+  if (bookings.length === 0) return [];
+  const primary = bookings[0];
+  const targets = bookingTargets();
+
+  const { note: rawNote } = splitNotes(primary.notes);
+  let translatedNote: string | null = null;
+  if (rawNote && needsTranslationForOwner(primary.locale)) {
+    const tr = await translate(rawNote, { from: primary.locale, to: "EN-GB" });
+    if (tr) translatedNote = tr.text;
+  }
+
+  const text = buildGroupText(bookings, translatedNote);
+  const phoneDigits = primary.customer_phone.replace(/[^\d]/g, "");
+  const keyboard: InlineKeyboard = phoneDigits
+    ? [[{ text: "WhatsApp Customer", url: `https://wa.me/${phoneDigits}` }]]
+    : [];
+
+  const results = await Promise.allSettled(
+    targets.map(async ({ chatId, threadId }) => {
+      const msgRes = await callTelegram<{ message_id: number }>("sendMessage", {
+        chat_id: chatId,
+        ...(threadId ? { message_thread_id: threadId } : {}),
+        text,
+        parse_mode: "MarkdownV2",
+        ...(keyboard.length ? { reply_markup: { inline_keyboard: keyboard } } : {}),
+      });
+      const replyToId = msgRes.result?.message_id;
+      if (receipt?.url) {
+        const isPhoto = PHOTO_MIMES.has(receipt.mime);
+        const caption = `Deposit receipt · ${escapeMd(primary.customer_name)} · group`;
+        await callTelegram(isPhoto ? "sendPhoto" : "sendDocument", {
+          chat_id: chatId,
+          ...(threadId ? { message_thread_id: threadId } : {}),
+          [isPhoto ? "photo" : "document"]: receipt.url,
+          caption,
+          parse_mode: "MarkdownV2",
+          ...(replyToId ? { reply_to_message_id: replyToId } : {}),
+        });
+      }
+      return { chatId, messageId: replyToId ?? 0 };
+    }),
+  );
+  return results
+    .filter((r): r is PromiseFulfilledResult<{ chatId: string; messageId: number }> => r.status === "fulfilled")
+    .map((r) => r.value)
+    .filter((r) => r.messageId > 0);
+}
+
 export async function editTelegramMessageForBooking(
   chatId: number | string,
   messageId: number,
