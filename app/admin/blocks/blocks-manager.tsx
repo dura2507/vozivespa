@@ -27,6 +27,40 @@ const SPOKEN_LANGUAGES: Array<{ code: Locale; label: string }> = [
   { code: "pl", label: "Polski" },
 ];
 
+// Map a phone's country dial code to the most likely spoken language.
+// More accurate than a fixed default: a +49 number is almost certainly
+// a German speaker. Ordered longest-first so +385 matches before +3.
+const DIAL_TO_LOCALE: Array<[string, Locale]> = [
+  ["385", "hr"], // Croatia
+  ["423", "de"], // Liechtenstein
+  ["378", "it"], // San Marino
+  ["353", "en"], // Ireland
+  ["49", "de"], // Germany
+  ["43", "de"], // Austria
+  ["41", "de"], // Switzerland (default to German)
+  ["39", "it"], // Italy
+  ["34", "es"], // Spain
+  ["33", "fr"], // France
+  ["48", "pl"], // Poland
+  ["44", "en"], // UK
+  ["1", "en"], // US / Canada
+];
+
+// Returns the language implied by the phone's country code, or null when
+// there's no international prefix to read (then we leave the current
+// pick alone). A recognised but unmapped country falls back to English.
+function localeFromPhone(raw: string): Locale | null {
+  let s = raw.trim().replace(/[\s\-()./]/g, "");
+  if (s.startsWith("+")) s = s.slice(1);
+  else if (s.startsWith("00")) s = s.slice(2);
+  else return null;
+  if (!/^\d/.test(s)) return null;
+  for (const [code, loc] of DIAL_TO_LOCALE) {
+    if (s.startsWith(code)) return loc;
+  }
+  return "en";
+}
+
 function fmtDate(iso: string): string {
   const [y, m, d] = iso.split("-");
   return `${d}.${m}.${y}`;
@@ -82,6 +116,9 @@ export function BlocksManager({
   // Whether the owner has hand-edited the total. Once true we stop
   // overwriting it with the auto-computed suggestion.
   const [priceEdited, setPriceEdited] = useState(false);
+  // Same idea for the language: auto-derive from the phone's dial code
+  // until the owner picks one by hand.
+  const [langEdited, setLangEdited] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -137,6 +174,13 @@ export function BlocksManager({
     setTotalPriceEuros(pricePreview ? String(pricePreview.total) : "");
   }, [pricePreview, priceEdited]);
 
+  // Phone dial code → spoken language, until the owner overrides it.
+  const phoneLocale = localeFromPhone(customerPhone);
+  useEffect(() => {
+    if (langEdited) return;
+    if (phoneLocale) setSpokenLocale(phoneLocale);
+  }, [phoneLocale, langEdited]);
+
   function resetFields() {
     setDateFrom("");
     setDateTo("");
@@ -156,6 +200,7 @@ export function BlocksManager({
     setLicenceCountry("");
     setRidingStyle("");
     setSpokenLocale("en");
+    setLangEdited(false);
     setDetailsOpen(false);
   }
 
@@ -534,12 +579,20 @@ export function BlocksManager({
             <label className="block sm:max-w-xs">
               <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
                 Spoken language
+                {phoneLocale && !langEdited && (
+                  <span className="ml-2 text-muted font-normal normal-case tracking-normal">
+                    · aus Vorwahl
+                  </span>
+                )}
               </span>
               <div className="mt-1 flex items-center gap-2">
                 <LocaleFlag locale={spokenLocale} className="w-6 h-4 shrink-0" />
                 <select
                   value={spokenLocale}
-                  onChange={(e) => setSpokenLocale(e.target.value as Locale)}
+                  onChange={(e) => {
+                    setSpokenLocale(e.target.value as Locale);
+                    setLangEdited(true);
+                  }}
                   className="flex-1 border border-ink/15 px-3 py-2 text-sm bg-white"
                 >
                   {SPOKEN_LANGUAGES.map((l) => (
