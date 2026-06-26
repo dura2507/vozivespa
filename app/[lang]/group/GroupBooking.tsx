@@ -11,7 +11,7 @@ import "react-day-picker/style.css";
 import { QRCodeSVG } from "qrcode.react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { BRAND, type Category, type PaymentMethod } from "@/lib/mockData";
+import { BRAND, LICENCE_BADGE, type Category, type PaymentMethod } from "@/lib/mockData";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { buildSlots, calculatePrice } from "@/lib/pricing";
@@ -425,46 +425,51 @@ export default function GroupBooking({
                       href={`/${lang}/fleet/${bike.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="relative w-24 h-24 shrink-0 self-start bg-sand overflow-hidden block"
+                      className="relative w-28 h-28 sm:w-32 sm:h-32 shrink-0 self-start bg-sand overflow-hidden block"
                     >
                       {bike.image && (
-                        <Image src={bike.image} alt={bike.model} fill className="object-cover" sizes="96px" />
+                        <Image src={bike.image} alt={bike.model} fill className="object-cover" sizes="128px" />
+                      )}
+                      {LICENCE_BADGE[bike.licenceCode] && (
+                        <Image
+                          src={LICENCE_BADGE[bike.licenceCode]}
+                          alt={`${bike.licenceCode} licence required`}
+                          width={96}
+                          height={96}
+                          quality={100}
+                          className="absolute bottom-1 right-1 w-11 h-11 drop-shadow"
+                        />
                       )}
                     </a>
                     <div className="flex flex-col flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <a
-                          href={`/${lang}/fleet/${bike.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-semibold text-ink text-sm leading-tight hover:text-red"
-                        >
-                          {bike.model}
-                        </a>
-                        <span className="text-[9px] font-bold tracking-[0.08em] uppercase bg-red/10 text-red px-1.5 py-0.5">
-                          {bike.licenceCode}
-                        </span>
-                      </div>
-                      <div className="text-[11px] text-muted mt-0.5">
+                      <a
+                        href={`/${lang}/fleet/${bike.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-ink text-base leading-tight hover:text-red"
+                      >
+                        {bike.model}
+                      </a>
+                      <div className="text-xs text-muted mt-1">
                         {price != null ? `${price}€ · period` : `from ${bike.pricing.day}/day`} · {bike.maxSpeed} ·{" "}
                         {bike.seats} {bike.seats > 1 ? "seats" : "seat"}
                       </div>
-                      <div className="flex items-center gap-2 flex-wrap mt-1">
-                        <span className="inline-flex items-center gap-0.5 text-[10px] text-emerald-700 font-medium">
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <div className="flex items-center gap-2.5 flex-wrap mt-1.5">
+                        <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
                           {dict.home.fleet.helmetsIncluded}
                         </span>
                         {bike.experienceNote && (
-                          <span className="text-[9px] tracking-[0.08em] uppercase text-red font-bold">
+                          <span className="text-[10px] tracking-[0.08em] uppercase text-red font-bold">
                             {dict.home.fleet.experienceRequired}
                           </span>
                         )}
                       </div>
 
-                      <div className="mt-auto pt-2 flex items-center justify-between gap-2">
-                        <div className="text-[11px] min-w-0 leading-tight">
+                      <div className="mt-auto pt-3 flex items-center justify-between gap-2">
+                        <div className="text-xs min-w-0 leading-tight">
                           {!rangeReady ? (
                             <span className="text-ink/40 uppercase tracking-[0.08em]">Pick dates ↑</span>
                           ) : !a ? (
@@ -483,21 +488,21 @@ export default function GroupBooking({
                           )}
                         </div>
                         {rangeReady && !soldOut && a && (
-                          <div className="flex items-center gap-1.5 shrink-0">
+                          <div className="flex items-center gap-2 shrink-0">
                             <button
                               type="button"
                               onClick={() => setQty(bike.id, qty - 1)}
                               disabled={qty <= 0}
-                              className="w-7 h-7 border border-ink/20 text-base leading-none disabled:opacity-30"
+                              className="w-8 h-8 border border-ink/20 text-lg leading-none disabled:opacity-30"
                             >
                               −
                             </button>
-                            <span className="font-bold text-sm min-w-4 text-center">{qty}</span>
+                            <span className="font-bold text-sm min-w-5 text-center">{qty}</span>
                             <button
                               type="button"
                               onClick={() => setQty(bike.id, qty + 1)}
                               disabled={qty >= free}
-                              className="w-7 h-7 border border-ink/20 text-base leading-none disabled:opacity-30"
+                              className="w-8 h-8 border border-ink/20 text-lg leading-none disabled:opacity-30"
                             >
                               +
                             </button>
@@ -510,32 +515,33 @@ export default function GroupBooking({
               })}
             </div>
 
-            {/* Global good-to-know box — detail-page styling (every rental) */}
-            <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mb-3">
-              Good to know · every rental
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-ink/10 border border-ink/10 mb-8">
-              {[
-                { label: dict.home.included.items.helmets.label, text: dict.home.included.items.helmets.sub, d: "M5 13l4 4L19 7", sw: 3 },
-                { label: dict.home.included.items.insurance.label, text: dict.home.included.items.insurance.sub, d: "M5 13l4 4L19 7", sw: 3 },
-                { label: dict.home.included.items.unlimitedKm.label, text: dict.home.included.items.unlimitedKm.sub, d: "M5 13l4 4L19 7", sw: 3 },
-                { label: dict.fleet.specsSection.depositLabel, text: dict.fleet.specsSection.depositText.replace("{deposit}", BRAND.deposit), d: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z", sw: 1.5 },
-                { label: dict.fleet.specsSection.seasonLabel, text: dict.fleet.specsSection.seasonText.replace("{season}", dict.fleet.specsSection.seasonValue), d: "M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z", sw: 1.5 },
-                { label: dict.fleet.specsSection.fuelLabel, text: dict.fleet.specsSection.fuelText, d: "M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25", sw: 1.5 },
-                { label: dict.fleet.specsSection.noPhoneHoldersLabel, text: dict.fleet.specsSection.noPhoneHoldersText, d: "M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z", sw: 1.5 },
-                { label: "Pickup", text: BRAND.address, d: "M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 9.75c0 7.142-7.5 11.25-7.5 11.25S4.5 16.892 4.5 9.75a7.5 7.5 0 1115 0z", sw: 1.5 },
-              ].map((it, i) => (
-                <div key={i} className="bg-off-white px-4 py-4 flex items-start gap-3">
-                  <svg className="w-5 h-5 text-red shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={it.sw}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d={it.d} />
-                  </svg>
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-muted mb-1">{it.label}</p>
-                    <p className="text-ink text-xs leading-snug">{it.text}</p>
+            {/* Global good-to-know — dark feature block like the detail page */}
+            <section className="mb-8 bg-ink text-white p-6 md:p-8">
+              <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-white/40 mb-6 text-center">
+                Good to know · every rental
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 border border-white/10">
+                {[
+                  { label: "Helmets", value: "Included", sub: "Always provided", d: "M5 13l4 4L19 7", sw: 3 },
+                  { label: "Insurance", value: "Basic, incl.", sub: "Theft + engine cover", d: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z", sw: 1.5 },
+                  { label: "Distance", value: "Unlimited km", sub: "No driving limit", d: "M5 13l4 4L19 7", sw: 3 },
+                  { label: "Deposit", value: BRAND.deposit, sub: "Refunded if no damage", d: "M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z", sw: 1.5 },
+                  { label: "Season", value: "Apr–Oct", sub: "Full tank in & out", d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5", sw: 1.5 },
+                  { label: "Fuel", value: "Full → full", sub: "Or we charge the diff", d: "M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25", sw: 1.5 },
+                  { label: "Phone holders", value: "Not available", sub: "Can't bring your own", d: "M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z", sw: 1.5 },
+                  { label: "Pickup", value: "Our Zadar shop", sub: BRAND.address, d: "M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 9.75c0 7.142-7.5 11.25-7.5 11.25S4.5 16.892 4.5 9.75a7.5 7.5 0 1115 0z", sw: 1.5 },
+                ].map((it, i) => (
+                  <div key={i} className="bg-ink px-4 py-6 text-center">
+                    <svg className="w-6 h-6 mx-auto mb-3 text-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={it.sw}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d={it.d} />
+                    </svg>
+                    <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/50 mb-1.5">{it.label}</p>
+                    <p className="text-white font-semibold text-sm leading-tight">{it.value}</p>
+                    <p className="text-white/40 text-[10px] mt-1 leading-snug">{it.sub}</p>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </section>
 
             {/* Cart bar */}
             <div className="bg-sand border border-ink/10 p-4 flex items-center justify-between gap-4 flex-wrap sticky bottom-4">
