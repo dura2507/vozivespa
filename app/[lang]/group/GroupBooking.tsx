@@ -400,13 +400,12 @@ export default function GroupBooking({
           </div>
         </div>
 
-        {/* Step 2: fleet picker */}
-        {!rangeReady ? (
-          <p className="text-sm text-muted">Pick a start and end date to see the fleet.</p>
-        ) : (
-          <>
+        {/* Step 2: fleet picker — always visible so licence + specs show */}
+        <>
             <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mb-3">
-              Pick your bikes{loadingAvail ? " · checking availability…" : ""}
+              {rangeReady
+                ? `Pick your bikes${loadingAvail ? " · checking availability…" : ""}`
+                : "The fleet · pick dates above to check availability"}
             </p>
             <div className="space-y-2 mb-8">
               {bikes.map((bike) => {
@@ -428,40 +427,47 @@ export default function GroupBooking({
                       )}
                     </div>
                     <div className="min-w-[160px] flex-1">
-                      <div className="font-semibold text-ink">{bike.model}</div>
-                      <div className="text-xs text-muted">
-                        {price != null ? `${price}€ for this period` : `${bike.pricing.day}/day`}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-ink">{bike.model}</span>
+                        <span className="text-[10px] font-bold tracking-[0.1em] uppercase bg-red/10 text-red px-1.5 py-0.5">
+                          Licence {bike.licenceCode}
+                        </span>
                       </div>
-                      <div className="text-[11px] text-ink/50 mt-0.5">
-                        Licence {bike.licenceCode}
+                      <div className="text-xs text-muted mt-1">
+                        {price != null ? `${price}€ for this period` : `from ${bike.pricing.day}/day`}
+                        {" · "}{bike.maxSpeed}
+                        {" · "}{bike.seats} {bike.seats > 1 ? "seats" : "seat"}
                         {" · "}
                         <a
                           href={`/${lang}/fleet/${bike.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-red hover:underline"
+                          className="text-red font-medium hover:underline"
                         >
-                          details
+                          full details
                         </a>
                       </div>
-                      {!a ? (
-                        <div className="text-xs text-muted mt-0.5">checking…</div>
-                      ) : soldOut ? (
-                        <div className="text-xs text-red font-medium mt-0.5">
-                          Booked out for these dates
-                          {a.nextFree && (
-                            <span className="text-ink/60 font-normal">
-                              {" "}· available from {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="text-xs text-emerald-700 font-medium mt-0.5">
-                          {free} available for these dates
-                        </div>
-                      )}
+                      {rangeReady &&
+                        (!a ? (
+                          <div className="text-xs text-muted mt-1">checking…</div>
+                        ) : soldOut ? (
+                          <div className="text-xs text-red font-medium mt-1">
+                            Booked out for these dates
+                            {a.nextFree && (
+                              <span className="text-ink/60 font-normal">
+                                {" "}· available from {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="text-xs text-emerald-700 font-medium mt-1">
+                            {free} available for these dates
+                          </div>
+                        ))}
                     </div>
-                    {soldOut ? (
+                    {!rangeReady ? (
+                      <span className="text-xs text-ink/40 uppercase tracking-[0.08em]">Pick dates ↑</span>
+                    ) : soldOut ? (
                       <span className="text-xs text-muted uppercase tracking-[0.08em]">Unavailable</span>
                     ) : (
                       <div className="flex items-center gap-3">
@@ -715,8 +721,7 @@ export default function GroupBooking({
                 </div>
               </form>
             )}
-          </>
-        )}
+        </>
         </>
         )}
         </div>
