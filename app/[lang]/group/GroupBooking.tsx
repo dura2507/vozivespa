@@ -268,13 +268,39 @@ export default function GroupBooking({
         </p>
 
         {step === "done" ? (
-          <div className="bg-white border border-ink/10 p-6">
-            <p className="text-2xl font-bold text-ink mb-2">Booking received</p>
-            <p className="text-sm text-muted max-w-prose">
-              Thanks {name}! We got your request for {cartCount} bikes and your
-              deposit screenshot. We will confirm by email shortly. If you do not
-              hear back within a few hours, message us on WhatsApp.
+          <div className="text-center max-w-xl mx-auto py-6">
+            <div className="success-pop inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-500 mb-6">
+              <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path className="success-draw" strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </div>
+            <h2 className="font-barlow font-black uppercase text-3xl md:text-4xl tracking-tight text-ink mb-3">
+              Booking received
+            </h2>
+            <p className="text-ink text-base leading-relaxed mb-6">
+              {name && `${name}, `}we got your group request and your deposit
+              screenshot. We will confirm by email shortly. If you do not hear
+              back within a few hours, message us on WhatsApp.
             </p>
+            <div className="bg-sand px-5 py-4 mb-8 text-left text-sm">
+              {bikes
+                .filter((b) => qtyOf(b.id) > 0)
+                .map((b) => (
+                  <p key={b.id} className="text-ink">
+                    {b.model} <span className="text-muted">× {qtyOf(b.id)}</span>
+                  </p>
+                ))}
+              <p className="text-ink mt-2 pt-2 border-t border-ink/10">
+                <span className="text-muted">Total: </span>
+                {cartTotal}€ · {cartCount} bikes · {helmetCount} helmets
+              </p>
+            </div>
+            <a
+              href={`/${lang}/#fleet`}
+              className="bg-ink text-white font-bold text-xs tracking-widest uppercase px-7 py-3 hover:bg-red transition-colors inline-block"
+            >
+              Back to fleet
+            </a>
           </div>
         ) : (
         <>
