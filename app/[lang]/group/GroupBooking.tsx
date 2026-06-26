@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
+import { format } from "date-fns";
 import { enUS, de, es, it, hr } from "date-fns/locale";
 import type { Locale as DateFnsLocale } from "date-fns";
 import "react-day-picker/style.css";
@@ -226,7 +227,7 @@ export default function GroupBooking({
     <>
       <Navbar lang={lang} t={dict.nav} />
       <main className="max-w-5xl mx-auto px-5 md:px-8 py-10">
-        <h1 className="font-bold text-3xl md:text-4xl text-ink mb-2">
+        <h1 className="font-barlow font-bold text-3xl md:text-4xl text-ink uppercase tracking-wide mb-2">
           Book multiple bikes
         </h1>
         <p className="text-sm text-muted mb-8 max-w-prose">
@@ -247,28 +248,57 @@ export default function GroupBooking({
         ) : (
         <>
         {/* Step 1: shared date window */}
-        <div className="bg-white border border-ink/10 p-5 mb-6">
+        <div className="mb-8">
           <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mb-3">
             Your rental period
           </p>
-          <div className="grid md:grid-cols-[auto_1fr] gap-6">
+          <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
             <DayPicker
               mode="range"
+              locale={dfLocale}
               selected={range}
               onSelect={setRange}
-              locale={dfLocale}
-              disabled={[{ before: today }, { after: SEASON_END_DATE }]}
+              weekStartsOn={1}
               numberOfMonths={1}
+              startMonth={new Date()}
+              endMonth={SEASON_END_DATE}
+              disabled={[{ before: today }, { after: SEASON_END_DATE }]}
+              min={1}
+              classNames={{
+                root: "font-sans",
+                months: "flex flex-col sm:flex-row gap-6",
+                month_caption: "flex items-center justify-center mb-4",
+                caption_label: "font-barlow font-bold uppercase tracking-wide text-ink text-base",
+                nav: "flex items-center gap-1",
+                button_previous: "w-8 h-8 flex items-center justify-center text-ink/40 hover:text-red transition-colors",
+                button_next: "w-8 h-8 flex items-center justify-center text-ink/40 hover:text-red transition-colors",
+                month_grid: "w-full border-collapse",
+                weekdays: "mb-2",
+                weekday: "text-[10px] font-bold tracking-widest text-ink/30 text-center py-1 w-9 uppercase",
+                day: "text-center p-0.5",
+                day_button:
+                  "w-9 h-9 text-sm font-medium text-ink transition-colors bg-emerald-50 hover:bg-emerald-100 cursor-pointer disabled:!bg-transparent disabled:text-ink/20 disabled:cursor-not-allowed disabled:hover:bg-transparent",
+                selected: "bg-red text-white hover:bg-red",
+                range_start: "bg-red text-white",
+                range_end: "bg-red text-white",
+                range_middle: "bg-red/15 text-ink",
+                today: "font-bold text-red",
+                outside: "text-ink/20",
+                hidden: "invisible",
+              }}
             />
-            <div className="space-y-3">
+          </div>
+
+          {rangeReady && (
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block">
-                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                  Pickup time
+                <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
+                  Pickup time · {range?.from && format(range.from, "EEE dd MMM", { locale: dfLocale })}
                 </span>
                 <select
                   value={pickupTime}
                   onChange={(e) => setPickupTime(e.target.value)}
-                  className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
+                  className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all"
                 >
                   {SLOTS.map((s) => (
                     <option key={s} value={s}>{s}</option>
@@ -276,26 +306,21 @@ export default function GroupBooking({
                 </select>
               </label>
               <label className="block">
-                <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                  Return time
+                <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
+                  Return time · {range?.to && format(range.to, "EEE dd MMM", { locale: dfLocale })}
                 </span>
                 <select
                   value={returnTime}
                   onChange={(e) => setReturnTime(e.target.value)}
-                  className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
+                  className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all"
                 >
                   {SLOTS.map((s) => (
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
               </label>
-              {rangeReady && (
-                <p className="text-sm text-ink pt-1">
-                  {fmtDay(from!)} {pickupTime} → {fmtDay(to!)} {returnTime}
-                </p>
-              )}
             </div>
-          </div>
+          )}
         </div>
 
         {/* Step 2: fleet picker */}
@@ -316,8 +341,8 @@ export default function GroupBooking({
                 return (
                   <div
                     key={bike.id}
-                    className={`border border-ink/10 border-l-[3px] p-4 flex items-center gap-4 flex-wrap ${
-                      soldOut ? "border-l-red bg-red/[0.03]" : "border-l-green-700"
+                    className={`bg-white border p-4 flex items-center gap-4 flex-wrap transition-colors ${
+                      qty > 0 ? "border-red" : "border-ink/10"
                     }`}
                   >
                     <div className="relative w-20 h-14 shrink-0 bg-sand overflow-hidden">
@@ -342,7 +367,7 @@ export default function GroupBooking({
                           )}
                         </div>
                       ) : (
-                        <div className="text-xs text-green-800 font-medium mt-0.5">
+                        <div className="text-xs text-emerald-700 font-medium mt-0.5">
                           {free} available for these dates
                         </div>
                       )}
