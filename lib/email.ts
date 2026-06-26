@@ -223,6 +223,46 @@ function bookingSummaryHtml(booking: BookingRow, sum?: Dictionary["emails"]["sum
   </table>`;
 }
 
+// Multi-bike group: one summary table listing every bike (model + rider
+// config), the shared window, helmet total and the group price. Shared
+// by the customer + owner group emails.
+function groupSummaryHtml(bookings: BookingRow[], sum?: Dictionary["emails"]["summary"]): string {
+  const primary = bookings[0];
+  const nights = bookingDays(primary);
+  const pickup = fmtTimeOfDay(primary.pickup_time);
+  const ret = fmtTimeOfDay(primary.return_time);
+  const lBike = sum?.bike ?? "Bike";
+  const lPickup = sum?.pickup ?? "Pickup";
+  const lReturn = sum?.return ?? "Return";
+  const lTotal = sum?.total ?? "Total";
+  const lDays = sum?.days ?? "days";
+  const lDay = sum?.day ?? "day";
+
+  const counts = new Map<string, number>();
+  for (const b of bookings) {
+    counts.set(`${bikeNameFor(b)}|${b.riding_style ?? ""}`, (counts.get(`${bikeNameFor(b)}|${b.riding_style ?? ""}`) ?? 0) + 1);
+  }
+  const bikeRows = [...counts.entries()]
+    .map(([key, n]) => {
+      const sep = key.lastIndexOf("|");
+      const name = key.slice(0, sep);
+      const ride = key.slice(sep + 1) === "with_passenger" ? "with passenger" : "solo";
+      return `<tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">${lBike}</td><td style="padding:4px 0;font-weight:600;">${escape(name)} <span style="color:#6b6b6b;font-weight:400;">&times; ${n} &middot; ${ride}</span></td></tr>`;
+    })
+    .join("");
+
+  const totalCents = bookings.reduce((s, b) => s + (b.total_price_cents ?? 0), 0);
+  const helmets = bookings.reduce((s, b) => s + (b.riding_style === "with_passenger" ? 2 : 1), 0);
+
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
+    ${bikeRows}
+    <tr><td style="padding:4px 0;color:#6b6b6b;">${lPickup}</td><td style="padding:4px 0;font-weight:600;">${fmtDate(primary.date_from)}${pickup ? ` &middot; ${pickup}` : ""}</td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;">${lReturn}</td><td style="padding:4px 0;font-weight:600;">${fmtDate(primary.date_to)}${ret ? ` &middot; ${ret}` : ""} <span style="color:#6b6b6b;font-weight:400;">(${nights} ${nights === 1 ? lDay : lDays})</span></td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;">Helmets</td><td style="padding:4px 0;font-weight:600;">${helmets}</td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;">${lTotal}</td><td style="padding:4px 0;font-weight:600;color:#B61F36;">${Math.round(totalCents / 100)}€</td></tr>
+  </table>`;
+}
+
 // ---------- Owner: new booking request --------------------------------------
 
 // Mirror of the Telegram alert, with the receipt screenshot attached as
@@ -633,6 +673,125 @@ ${BRAND.name}`;
     html,
     text,
     replyTo: BRAND.email,
+  });
+}
+
+// ---------- Multi-bike group emails -----------------------------------------
+
+// Customer "we got your group request" — same template as the single
+// version but the summary lists every bike + helmets + the group total.
+export async function sendCustomerGroupBookingReceivedEmail(bookings: BookingRow[]): Promise<void> {
+  const primary = bookings[0];
+  if (!primary?.customer_email || !primary.customer_email.includes("@")) return;
+  const dict = await getDictionary(bookingLocale(primary));
+  const t = dict.emails.bookingReceived;
+  const vars = {
+    name: primary.customer_name,
+    bike: `${bookings.length} bikes`,
+    from: fmtDate(primary.date_from),
+    to: fmtDate(primary.date_to),
+  };
+  const bodyHtml = `
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${escape(fmt(t.greeting, vars))}</p>
+    <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(t.intro)}</p>
+    ${groupSummaryHtml(bookings, dict.emails.summary)}
+    <p style="margin:24px 0 8px;font-size:14px;color:#6b6b6b;line-height:1.6;">${escape(t.urgentLine)}</p>
+    ${contactButtonsHtml()}
+    <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">${escape(t.signoff)}</p>
+  `;
+  const html = htmlLayout({ preheader: fmt(t.preheader, vars), headline: t.headline, accent: "ink", bodyHtml });
+  await sendWithRetry("customerGroupReceived", {
+    from: fromAddress(),
+    to: primary.customer_email,
+    subject: fmt(t.subject, vars),
+    html,
+    text: `${fmt(t.greeting, vars)}\n\n${t.intro}\n\n${t.urgentLine} WhatsApp: ${ownerWaLink()}\n\n${t.signoff}\n${BRAND.name}`,
+    replyTo: BRAND.email,
+  });
+}
+
+// Customer confirmed / declined for the whole group.
+export async function sendCustomerGroupBookingDecidedEmail(
+  bookings: BookingRow[],
+  decision: "confirmed" | "declined",
+): Promise<void> {
+  const primary = bookings[0];
+  if (!primary?.customer_email || !primary.customer_email.includes("@")) return;
+  const isConfirmed = decision === "confirmed";
+  const dict = await getDictionary(bookingLocale(primary));
+  const t = isConfirmed ? dict.emails.bookingConfirmed : dict.emails.bookingDeclined;
+  const vars = {
+    name: primary.customer_name,
+    bike: `${bookings.length} bikes`,
+    from: fmtDate(primary.date_from),
+    to: fmtDate(primary.date_to),
+    pickupTime: fmtTimeOfDay(primary.pickup_time),
+    returnTime: fmtTimeOfDay(primary.return_time),
+    deposit: BRAND.deposit,
+  };
+  const bodyHtml = isConfirmed
+    ? `
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${escape(fmt(t.greeting, vars))}</p>
+      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(fmt(t.intro, vars))}</p>
+      ${groupSummaryHtml(bookings, dict.emails.summary)}
+      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).pickupHeader)}</h3>
+      <p style="margin:0 0 4px;font-size:14px;line-height:1.6;font-weight:600;">${escape(BRAND.address)}</p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).openHoursLabel)} ${escape(BRAND.hours)}</p>
+      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringHeader)}</h3>
+      <ul style="margin:0 0 16px;padding-left:18px;font-size:14px;line-height:1.7;">
+        <li>${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringLicence)}</li>
+        <li>${escape(fmt((t as Dictionary["emails"]["bookingConfirmed"]).bringDeposit, vars))}</li>
+        <li>${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringTank)}</li>
+      </ul>
+      ${contactButtonsHtml()}
+    `
+    : `
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${escape(fmt(t.greeting, vars))}</p>
+      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(fmt(t.intro, vars))}</p>
+      ${groupSummaryHtml(bookings, dict.emails.summary)}
+      <p style="margin:24px 0 8px;font-size:14px;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingDeclined"]).tryOther)}</p>
+      ${contactButtonsHtml()}
+    `;
+  const html = htmlLayout({ preheader: fmt(t.preheader, vars), headline: t.headline, accent: isConfirmed ? "green" : "ink", bodyHtml });
+  await sendWithRetry(`customerGroup${isConfirmed ? "Confirmed" : "Declined"}`, {
+    from: fromAddress(),
+    to: primary.customer_email,
+    subject: fmt(t.subject, vars),
+    html,
+    text: `${fmt(t.greeting, vars)}\n\n${fmt(t.intro, vars)}\n\nWhatsApp: ${ownerWaLink()}\n\n${BRAND.name}`,
+    replyTo: BRAND.email,
+  });
+}
+
+// Owner email mirror of the group Telegram card (full list + helmets).
+export async function sendOwnerGroupBookingEmail(bookings: BookingRow[]): Promise<void> {
+  const ownerEmail = process.env.OWNER_EMAIL?.trim();
+  if (!ownerEmail || bookings.length === 0) return;
+  const primary = bookings[0];
+  const dict = await getDictionary("en");
+  const phoneDigits = primary.customer_phone.replace(/[^\d]/g, "");
+  const bodyHtml = `
+    <p style="margin:0 0 14px;font-size:15px;line-height:1.6;"><strong>${escape(primary.customer_name)}</strong> &middot; ${bookings.length} bikes</p>
+    ${groupSummaryHtml(bookings, dict.emails.summary)}
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
+      <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Phone</td><td style="padding:4px 0;font-weight:600;">${escape(primary.customer_phone)}</td></tr>
+      <tr><td style="padding:4px 0;color:#6b6b6b;">Email</td><td style="padding:4px 0;font-weight:600;">${escape(primary.customer_email)}</td></tr>
+    </table>
+    ${phoneDigits ? `<p style="margin:16px 0 0;font-size:13px;"><a href="https://wa.me/${phoneDigits}" style="color:#B61F36;">WhatsApp customer</a></p>` : ""}
+  `;
+  const html = htmlLayout({
+    preheader: `New group booking: ${bookings.length} bikes ${fmtDate(primary.date_from)} → ${fmtDate(primary.date_to)}`,
+    headline: "New group booking",
+    accent: "ink",
+    bodyHtml,
+  });
+  await sendWithRetry("ownerGroupBooking", {
+    from: fromAddress(),
+    to: ownerEmail,
+    subject: `New group booking · ${primary.customer_name} · ${bookings.length} bikes · ${fmtDate(primary.date_from)} → ${fmtDate(primary.date_to)}`,
+    html,
+    text: `New group booking from ${primary.customer_name} (${bookings.length} bikes)\n${fmtDate(primary.date_from)} → ${fmtDate(primary.date_to)}\nPhone: ${primary.customer_phone}\nEmail: ${primary.customer_email}`,
+    replyTo: primary.customer_email,
   });
 }
 

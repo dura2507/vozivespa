@@ -1,6 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { sendCustomerBookingDecidedEmail } from "@/lib/email";
+import { sendCustomerBookingDecidedEmail, sendCustomerGroupBookingDecidedEmail } from "@/lib/email";
 import {
   answerTelegramCallback,
   editTelegramMessageForBooking,
@@ -162,7 +162,7 @@ export async function POST(request: Request) {
         [...edits.values()].map((e) => editTelegramMessageForGroup(e.chatId, e.messageId, updatedRows)),
       );
       if (wasPending) {
-        await sendCustomerBookingDecidedEmail(updatedRows[0], groupStatus);
+        await sendCustomerGroupBookingDecidedEmail(updatedRows, groupStatus);
       }
     });
 

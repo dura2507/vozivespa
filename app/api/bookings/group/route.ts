@@ -5,7 +5,7 @@ import { isBookingInSeason, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/seaso
 import { findFreeUnits } from "@/lib/availability";
 import { getBikeWithPricing } from "@/lib/bike-pricing";
 import { sendOwnerGroupBookingTelegram } from "@/lib/telegram";
-import { sendCustomerBookingReceivedEmail } from "@/lib/email";
+import { sendCustomerGroupBookingReceivedEmail, sendOwnerGroupBookingEmail } from "@/lib/email";
 import {
   isAllowedReceiptMime,
   MAX_RECEIPT_BYTES,
@@ -274,7 +274,8 @@ export async function POST(request: Request) {
     const receiptForTg = receiptUrl ? { url: receiptUrl, mime: receiptMime } : undefined;
     const [tgRefs] = await Promise.allSettled([
       sendOwnerGroupBookingTelegram(groupRows, receiptForTg),
-      sendCustomerBookingReceivedEmail(groupRows[0]),
+      sendCustomerGroupBookingReceivedEmail(groupRows),
+      sendOwnerGroupBookingEmail(groupRows),
     ]);
     if (tgRefs.status === "fulfilled" && tgRefs.value.length > 0) {
       await supabase
