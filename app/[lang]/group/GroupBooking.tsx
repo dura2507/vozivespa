@@ -260,6 +260,8 @@ export default function GroupBooking({
           <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mb-3">
             Your rental period
           </p>
+          <div className="grid lg:grid-cols-[1fr_minmax(220px,280px)] gap-5 items-start">
+          <div>
           <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
             <DayPicker
               mode="range"
@@ -329,6 +331,33 @@ export default function GroupBooking({
               </label>
             </div>
           )}
+          </div>
+
+          <aside className="bg-white border border-ink/10 p-5 lg:sticky lg:top-28">
+            <p className="font-barlow font-bold uppercase tracking-wide text-ink text-sm mb-3">
+              How it works
+            </p>
+            <ol className="space-y-2.5 text-sm text-ink/80">
+              <li className="flex gap-2.5">
+                <span className="font-bold text-red">1</span> Pick one date window for the whole group
+              </li>
+              <li className="flex gap-2.5">
+                <span className="font-bold text-red">2</span> Add any bikes from the fleet that are free
+              </li>
+              <li className="flex gap-2.5">
+                <span className="font-bold text-red">3</span> One deposit, one booking, sorted
+              </li>
+            </ol>
+            <div className="border-t border-ink/10 mt-4 pt-4 space-y-2 text-xs text-muted">
+              <p className="flex items-center gap-2">
+                <span className="w-3 h-3 bg-emerald-100 border border-emerald-300 inline-block shrink-0" aria-hidden />
+                Green days are available
+              </p>
+              <p>20% now to reserve, the rest on arrival.</p>
+              <p>{BRAND.deposit} security deposit on pickup.</p>
+            </div>
+          </aside>
+          </div>
         </div>
 
         {/* Step 2: fleet picker */}
