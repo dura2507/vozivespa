@@ -791,9 +791,9 @@ export default function BikeDetail({
                       caption_label: "font-barlow font-bold uppercase tracking-wide text-ink text-base",
                       nav: "flex items-center gap-1",
                       button_previous:
-                        "w-8 h-8 flex items-center justify-center text-ink/40 hover:text-red transition-colors",
+                        "w-9 h-9 flex items-center justify-center text-ink/50 rounded-full hover:bg-red hover:text-white transition-colors cursor-pointer",
                       button_next:
-                        "w-8 h-8 flex items-center justify-center text-ink/40 hover:text-red transition-colors",
+                        "w-9 h-9 flex items-center justify-center text-ink/50 rounded-full hover:bg-red hover:text-white transition-colors cursor-pointer",
                       month_grid: "w-full border-collapse",
                       weekdays: "mb-2",
                       weekday: "text-[10px] font-bold tracking-widest text-ink/30 text-center py-1 w-9 uppercase",

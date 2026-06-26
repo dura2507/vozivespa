@@ -380,10 +380,9 @@ function buildGroupText(bookings: BookingRow[], translatedNote?: string | null):
     `*Riding:* ${escapeMd(ridingStyleLabel(primary.riding_style))}`,
     cleanNote ? `*Notes:* ${escapeMd(cleanNote)}` : null,
     translatedNote ? `\n🇬🇧 *English translation*\n${escapeMd(translatedNote)}` : null,
-    `\n${DIVIDER}\n_Manage in the admin dashboard_`,
   ].filter((l): l is string => l !== null);
 
-  return lines.join("\n");
+  return lines.join("\n") + statusBanner(primary);
 }
 
 export async function sendOwnerGroupBookingTelegram(
@@ -402,10 +401,6 @@ export async function sendOwnerGroupBookingTelegram(
   }
 
   const text = buildGroupText(bookings, translatedNote);
-  const phoneDigits = primary.customer_phone.replace(/[^\d]/g, "");
-  const keyboard: InlineKeyboard = phoneDigits
-    ? [[{ text: "WhatsApp Customer", url: `https://wa.me/${phoneDigits}` }]]
-    : [];
 
   const results = await Promise.allSettled(
     targets.map(async ({ chatId, threadId }) => {
@@ -414,7 +409,7 @@ export async function sendOwnerGroupBookingTelegram(
         ...(threadId ? { message_thread_id: threadId } : {}),
         text,
         parse_mode: "MarkdownV2",
-        ...(keyboard.length ? { reply_markup: { inline_keyboard: keyboard } } : {}),
+        reply_markup: { inline_keyboard: buildKeyboard(primary) },
       });
       const replyToId = msgRes.result?.message_id;
       if (receipt?.url) {
@@ -436,6 +431,24 @@ export async function sendOwnerGroupBookingTelegram(
     .filter((r): r is PromiseFulfilledResult<{ chatId: string; messageId: number }> => r.status === "fulfilled")
     .map((r) => r.value)
     .filter((r) => r.messageId > 0);
+}
+
+// Re-render a group booking's consolidated message in place (after the
+// owner taps Confirm / Decline) so the status banner + buttons reflect
+// the new state on every copy.
+export async function editTelegramMessageForGroup(
+  chatId: number | string,
+  messageId: number,
+  bookings: BookingRow[],
+): Promise<void> {
+  if (bookings.length === 0) return;
+  await callTelegram("editMessageText", {
+    chat_id: chatId,
+    message_id: messageId,
+    text: buildGroupText(bookings),
+    parse_mode: "MarkdownV2",
+    reply_markup: { inline_keyboard: buildKeyboard(bookings[0]) },
+  });
 }
 
 export async function editTelegramMessageForBooking(

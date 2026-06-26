@@ -4,10 +4,11 @@ import { sendCustomerBookingDecidedEmail } from "@/lib/email";
 import {
   answerTelegramCallback,
   editTelegramMessageForBooking,
+  editTelegramMessageForGroup,
   parseCallbackData,
   NEW_STATUS,
 } from "@/lib/telegram";
-import { findFreeUnit, describeConflict } from "@/lib/availability";
+import { findFreeUnit, findUnitConflict, describeConflict } from "@/lib/availability";
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +71,101 @@ export async function POST(request: Request) {
 
   if (!booking) {
     await answerTelegramCallback(cb.id, "Booking not found");
+    return NextResponse.json({ ok: true });
+  }
+
+  // Multi-bike group booking: the consolidated message's buttons carry
+  // the primary row's token, but Confirm/Decline must apply to EVERY row
+  // in the group. Handled here, fully separate from the single-booking
+  // path below so that flow is untouched.
+  if (booking.booking_group_id) {
+    const { data: groupData, error: groupErr } = await supabase
+      .from("bookings")
+      .select("*")
+      .eq("booking_group_id", booking.booking_group_id)
+      .order("created_at", { ascending: true });
+    if (groupErr || !groupData || groupData.length === 0) {
+      await answerTelegramCallback(cb.id, "Database error - try again");
+      return NextResponse.json({ ok: true });
+    }
+    const rows = groupData as BookingRow[];
+    const groupStatus = NEW_STATUS[parsed.action];
+
+    if (rows[0].status === groupStatus) {
+      await answerTelegramCallback(cb.id, `Already ${groupStatus}`);
+      await editTelegramMessageForGroup(cb.message.chat.id, cb.message.message_id, rows);
+      return NextResponse.json({ ok: true });
+    }
+
+    const wasPending = rows[0].status === "pending";
+
+    // On confirm, re-validate every assigned unit is still free for the
+    // window (another booking could have taken one while this group sat
+    // pending). Any conflict aborts the whole group — owner sorts it out.
+    if (groupStatus === "confirmed") {
+      for (const r of rows) {
+        if (!r.bike_unit_id) continue;
+        try {
+          const conflict = await findUnitConflict(supabase, {
+            bikeUnitId: r.bike_unit_id,
+            dateFrom: r.date_from,
+            dateTo: r.date_to,
+            pickupTime: r.pickup_time,
+            returnTime: r.return_time,
+            excludeBookingId: r.id,
+          });
+          if (conflict) {
+            await answerTelegramCallback(cb.id, "Conflict - one bike is no longer free for these dates");
+            return NextResponse.json({ ok: true });
+          }
+        } catch (err) {
+          console.error("[telegram/webhook] group availability error", err);
+          await answerTelegramCallback(cb.id, "Database error - try again");
+          return NextResponse.json({ ok: true });
+        }
+      }
+    }
+
+    const nowIso = new Date().toISOString();
+    const { error: groupUpdErr } = await supabase
+      .from("bookings")
+      .update({ status: groupStatus, decided_at: nowIso })
+      .eq("booking_group_id", booking.booking_group_id);
+    if (groupUpdErr) {
+      console.error("[telegram/webhook] group update error", groupUpdErr);
+      await answerTelegramCallback(cb.id, "Update failed - try again");
+      return NextResponse.json({ ok: true });
+    }
+
+    await answerTelegramCallback(
+      cb.id,
+      groupStatus === "confirmed"
+        ? wasPending
+          ? "✓ Group confirmed"
+          : "✓ Re-confirmed - dates blocked again"
+        : wasPending
+          ? "✗ Group declined"
+          : "✗ Declined - dates released",
+    );
+
+    const updatedRows = rows.map((r) => ({ ...r, status: groupStatus, decided_at: nowIso }));
+    after(async () => {
+      const edits = new Map<string, { chatId: string | number; messageId: number }>();
+      edits.set(`${cb.message!.chat.id}:${cb.message!.message_id}`, {
+        chatId: cb.message!.chat.id,
+        messageId: cb.message!.message_id,
+      });
+      for (const ref of updatedRows[0].telegram_message_refs ?? []) {
+        if (ref?.messageId) edits.set(`${ref.chatId}:${ref.messageId}`, ref);
+      }
+      await Promise.allSettled(
+        [...edits.values()].map((e) => editTelegramMessageForGroup(e.chatId, e.messageId, updatedRows)),
+      );
+      if (wasPending) {
+        await sendCustomerBookingDecidedEmail(updatedRows[0], groupStatus);
+      }
+    });
+
     return NextResponse.json({ ok: true });
   }
 
