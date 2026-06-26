@@ -425,20 +425,22 @@ export default function GroupBooking({
                       href={`/${lang}/fleet/${bike.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="relative w-28 h-28 sm:w-32 sm:h-32 shrink-0 self-start bg-sand overflow-hidden block"
+                      className="relative w-32 h-32 sm:w-40 sm:h-40 shrink-0 self-start bg-sand overflow-hidden block"
                     >
                       {bike.image && (
-                        <Image src={bike.image} alt={bike.model} fill className="object-cover" sizes="128px" />
+                        <Image src={bike.image} alt={bike.model} fill className="object-cover" sizes="160px" />
                       )}
                       {LICENCE_BADGE[bike.licenceCode] && (
-                        <Image
-                          src={LICENCE_BADGE[bike.licenceCode]}
-                          alt={`${bike.licenceCode} licence required`}
-                          width={96}
-                          height={96}
-                          quality={100}
-                          className="absolute bottom-1 right-1 w-11 h-11 drop-shadow"
-                        />
+                        <span className="absolute bottom-1.5 right-1.5 bg-white rounded-md p-1 shadow">
+                          <Image
+                            src={LICENCE_BADGE[bike.licenceCode]}
+                            alt={`${bike.licenceCode} licence required`}
+                            width={96}
+                            height={96}
+                            quality={100}
+                            className="w-10 h-10 block"
+                          />
+                        </span>
                       )}
                     </a>
                     <div className="flex flex-col flex-1 min-w-0">
@@ -446,30 +448,30 @@ export default function GroupBooking({
                         href={`/${lang}/fleet/${bike.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-semibold text-ink text-base leading-tight hover:text-red"
+                        className="font-semibold text-ink text-lg leading-tight hover:text-red"
                       >
                         {bike.model}
                       </a>
-                      <div className="text-xs text-muted mt-1">
+                      <div className="text-sm text-muted mt-1">
                         {price != null ? `${price}€ · period` : `from ${bike.pricing.day}/day`} · {bike.maxSpeed} ·{" "}
                         {bike.seats} {bike.seats > 1 ? "seats" : "seat"}
                       </div>
-                      <div className="flex items-center gap-2.5 flex-wrap mt-1.5">
-                        <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <div className="flex items-center gap-2.5 flex-wrap mt-2">
+                        <span className="inline-flex items-center gap-1 text-xs text-emerald-700 font-medium">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
                           {dict.home.fleet.helmetsIncluded}
                         </span>
                         {bike.experienceNote && (
-                          <span className="text-[10px] tracking-[0.08em] uppercase text-red font-bold">
+                          <span className="text-[11px] tracking-[0.08em] uppercase text-red font-bold">
                             {dict.home.fleet.experienceRequired}
                           </span>
                         )}
                       </div>
 
                       <div className="mt-auto pt-3 flex items-center justify-between gap-2">
-                        <div className="text-xs min-w-0 leading-tight">
+                        <div className="text-sm min-w-0 leading-tight">
                           {!rangeReady ? (
                             <span className="text-ink/40 uppercase tracking-[0.08em]">Pick dates ↑</span>
                           ) : !a ? (
