@@ -417,66 +417,64 @@ export default function GroupBooking({
                 return (
                   <div
                     key={bike.id}
-                    className={`bg-white border overflow-hidden flex flex-col transition-colors ${
+                    className={`bg-white border p-3 flex gap-3 transition-colors ${
                       qty > 0 ? "border-red" : "border-ink/10"
                     }`}
                   >
-                    <div className="relative aspect-[16/10] bg-sand">
+                    <a
+                      href={`/${lang}/fleet/${bike.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative w-24 h-24 shrink-0 self-start bg-sand overflow-hidden block"
+                    >
                       {bike.image && (
-                        <Image
-                          src={bike.image}
-                          alt={bike.model}
-                          fill
-                          className="object-cover"
-                          sizes="(min-width:1280px) 30vw, (min-width:640px) 45vw, 90vw"
-                        />
+                        <Image src={bike.image} alt={bike.model} fill className="object-cover" sizes="96px" />
                       )}
-                      <span className="absolute top-2 left-2 text-[10px] font-bold tracking-[0.1em] uppercase bg-red text-white px-2 py-1">
-                        Licence {bike.licenceCode}
-                      </span>
-                    </div>
-                    <div className="p-4 flex flex-col flex-1">
-                      <div className="font-semibold text-ink">{bike.model}</div>
-                      <div className="text-xs text-muted mt-1">
-                        {price != null ? `${price}€ for this period` : `from ${bike.pricing.day}/day`}
-                      </div>
-                      <div className="text-xs text-muted mt-0.5">
-                        {bike.maxSpeed} · {bike.seats} {bike.seats > 1 ? "seats" : "seat"} ·{" "}
+                    </a>
+                    <div className="flex flex-col flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <a
                           href={`/${lang}/fleet/${bike.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-red font-medium hover:underline"
+                          className="font-semibold text-ink text-sm leading-tight hover:text-red"
                         >
-                          full details
+                          {bike.model}
                         </a>
+                        <span className="text-[9px] font-bold tracking-[0.08em] uppercase bg-red/10 text-red px-1.5 py-0.5">
+                          {bike.licenceCode}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-3 flex-wrap mt-2">
-                        <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
+                      <div className="text-[11px] text-muted mt-0.5">
+                        {price != null ? `${price}€ · period` : `from ${bike.pricing.day}/day`} · {bike.maxSpeed} ·{" "}
+                        {bike.seats} {bike.seats > 1 ? "seats" : "seat"}
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap mt-1">
+                        <span className="inline-flex items-center gap-0.5 text-[10px] text-emerald-700 font-medium">
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
                           {dict.home.fleet.helmetsIncluded}
                         </span>
                         {bike.experienceNote && (
-                          <span className="text-[10px] tracking-[0.12em] uppercase text-red font-bold">
+                          <span className="text-[9px] tracking-[0.08em] uppercase text-red font-bold">
                             {dict.home.fleet.experienceRequired}
                           </span>
                         )}
                       </div>
 
-                      <div className="mt-auto pt-3 border-t border-ink/8 flex items-center justify-between gap-2">
-                        <div className="text-xs min-w-0">
+                      <div className="mt-auto pt-2 flex items-center justify-between gap-2">
+                        <div className="text-[11px] min-w-0 leading-tight">
                           {!rangeReady ? (
                             <span className="text-ink/40 uppercase tracking-[0.08em]">Pick dates ↑</span>
                           ) : !a ? (
                             <span className="text-muted">checking…</span>
                           ) : soldOut ? (
                             <span className="text-red font-medium">
-                              Booked out
+                              Booked
                               {a.nextFree && (
-                                <span className="text-ink/60 font-normal block">
-                                  from {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
+                                <span className="text-ink/60 font-normal">
+                                  {" "}· from {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
                                 </span>
                               )}
                             </span>
@@ -485,21 +483,21 @@ export default function GroupBooking({
                           )}
                         </div>
                         {rangeReady && !soldOut && a && (
-                          <div className="flex items-center gap-2 shrink-0">
+                          <div className="flex items-center gap-1.5 shrink-0">
                             <button
                               type="button"
                               onClick={() => setQty(bike.id, qty - 1)}
                               disabled={qty <= 0}
-                              className="w-8 h-8 border border-ink/20 text-lg disabled:opacity-30"
+                              className="w-7 h-7 border border-ink/20 text-base leading-none disabled:opacity-30"
                             >
                               −
                             </button>
-                            <span className="font-bold text-sm min-w-5 text-center">{qty}</span>
+                            <span className="font-bold text-sm min-w-4 text-center">{qty}</span>
                             <button
                               type="button"
                               onClick={() => setQty(bike.id, qty + 1)}
                               disabled={qty >= free}
-                              className="w-8 h-8 border border-ink/20 text-lg disabled:opacity-30"
+                              className="w-7 h-7 border border-ink/20 text-base leading-none disabled:opacity-30"
                             >
                               +
                             </button>
@@ -512,36 +510,31 @@ export default function GroupBooking({
               })}
             </div>
 
-            {/* Global good-to-know box (same for every bike) */}
-            <div className="bg-white border border-ink/10 p-5 mb-8">
-              <p className="font-barlow font-bold uppercase tracking-wide text-ink text-sm mb-4">
-                Good to know
-              </p>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
-                {[
-                  { label: dict.home.included.items.helmets.label, sub: dict.home.included.items.helmets.sub, ok: true },
-                  { label: dict.home.included.items.insurance.label, sub: dict.home.included.items.insurance.sub, ok: true },
-                  { label: dict.home.included.items.unlimitedKm.label, sub: dict.home.included.items.unlimitedKm.sub, ok: true },
-                  { label: dict.home.goodToKnow.deposit.label, sub: `${BRAND.deposit} · ${dict.home.goodToKnow.deposit.sub}`, ok: false },
-                  { label: dict.home.goodToKnow.season.label, sub: dict.home.goodToKnow.season.sub, ok: false },
-                  { label: dict.home.goodToKnow.phoneHolders.label, sub: dict.home.goodToKnow.phoneHolders.sub, ok: false },
-                  { label: "Pickup", sub: BRAND.address, ok: false },
-                ].map((it, i) => (
-                  <div key={i} className="flex gap-2">
-                    {it.ok ? (
-                      <svg className="w-4 h-4 mt-0.5 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : (
-                      <span className="w-1.5 h-1.5 mt-2 shrink-0 rounded-full bg-ink/30" aria-hidden />
-                    )}
-                    <div>
-                      <p className="text-sm font-semibold text-ink">{it.label}</p>
-                      <p className="text-xs text-muted leading-snug">{it.sub}</p>
-                    </div>
+            {/* Global good-to-know box — detail-page styling (every rental) */}
+            <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mb-3">
+              Good to know · every rental
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-ink/10 border border-ink/10 mb-8">
+              {[
+                { label: dict.home.included.items.helmets.label, text: dict.home.included.items.helmets.sub, d: "M5 13l4 4L19 7", sw: 3 },
+                { label: dict.home.included.items.insurance.label, text: dict.home.included.items.insurance.sub, d: "M5 13l4 4L19 7", sw: 3 },
+                { label: dict.home.included.items.unlimitedKm.label, text: dict.home.included.items.unlimitedKm.sub, d: "M5 13l4 4L19 7", sw: 3 },
+                { label: dict.fleet.specsSection.depositLabel, text: dict.fleet.specsSection.depositText.replace("{deposit}", BRAND.deposit), d: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z", sw: 1.5 },
+                { label: dict.fleet.specsSection.seasonLabel, text: dict.fleet.specsSection.seasonText.replace("{season}", dict.fleet.specsSection.seasonValue), d: "M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z", sw: 1.5 },
+                { label: dict.fleet.specsSection.fuelLabel, text: dict.fleet.specsSection.fuelText, d: "M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25", sw: 1.5 },
+                { label: dict.fleet.specsSection.noPhoneHoldersLabel, text: dict.fleet.specsSection.noPhoneHoldersText, d: "M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z", sw: 1.5 },
+                { label: "Pickup", text: BRAND.address, d: "M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 9.75c0 7.142-7.5 11.25-7.5 11.25S4.5 16.892 4.5 9.75a7.5 7.5 0 1115 0z", sw: 1.5 },
+              ].map((it, i) => (
+                <div key={i} className="bg-off-white px-4 py-4 flex items-start gap-3">
+                  <svg className="w-5 h-5 text-red shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={it.sw}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d={it.d} />
+                  </svg>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-muted mb-1">{it.label}</p>
+                    <p className="text-ink text-xs leading-snug">{it.text}</p>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
 
             {/* Cart bar */}
