@@ -526,8 +526,9 @@ export default function GroupBooking({
               })}
             </div>
 
-            {/* Costs & conditions — dark feature band */}
-            <div className="bg-ink text-white px-5 md:px-8 py-5 mb-3 flex flex-wrap items-center justify-center gap-x-8 md:gap-x-10 gap-y-4">
+            {/* Two full-bleed feature bands, stacked, that flow edge to edge */}
+            <div className="my-8 w-screen relative left-1/2 -translate-x-1/2">
+            <div className="bg-ink text-white px-5 md:px-12 py-6 flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4">
               {[
                 { label: "Deposit, refunded", value: BRAND.deposit, d: "M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z", sw: 1.5 },
                 { label: "Basic insurance", value: "Included", d: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z", sw: 1.5 },
@@ -547,8 +548,7 @@ export default function GroupBooking({
               ))}
             </div>
 
-            {/* Good to know — light feature band */}
-            <div className="bg-sand text-ink px-5 md:px-8 py-5 mb-8 flex flex-wrap items-center justify-center gap-x-8 md:gap-x-10 gap-y-4">
+            <div className="bg-sand text-ink px-5 md:px-12 py-6 flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4">
               {[
                 { label: "Helmets", value: "Included", d: "M5 13l4 4L19 7", sw: 3 },
                 { label: "Season", value: "Apr–Oct", d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5", sw: 1.5 },
@@ -565,6 +565,7 @@ export default function GroupBooking({
                   </div>
                 </div>
               ))}
+            </div>
             </div>
 
             {/* Cart bar */}
