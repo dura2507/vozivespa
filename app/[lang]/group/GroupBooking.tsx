@@ -64,7 +64,7 @@ export default function GroupBooking({
   const [returnTime, setReturnTime] = useState("19:00");
   const [avail, setAvail] = useState<Record<string, FleetAvail> | null>(null);
   const [loadingAvail, setLoadingAvail] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isWide, setIsWide] = useState(false);
   const [cart, setCart] = useState<Record<string, number>>({});
   const [step, setStep] = useState<"select" | "details" | "done">("select");
 
@@ -119,10 +119,11 @@ export default function GroupBooking({
     };
   }, [from, to, pickupTime, returnTime]);
 
-  // One month on phones, two side by side on wider screens.
+  // Two months side by side only on real desktop width (the instruction
+  // panel sits beside them there); one month below that.
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const update = () => setIsMobile(mq.matches);
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsWide(mq.matches);
     update();
     mq.addEventListener("change", update);
     return () => mq.removeEventListener("change", update);
@@ -244,7 +245,7 @@ export default function GroupBooking({
     <>
       <Navbar lang={lang} t={dict.nav} />
       <main className="pt-28 md:pt-32 pb-20 px-5 md:px-12 min-h-screen bg-off-white">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
         <h1 className="font-barlow font-bold text-3xl md:text-4xl text-ink uppercase tracking-wide mb-2">
           Book multiple bikes
         </h1>
@@ -270,6 +271,8 @@ export default function GroupBooking({
           <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mb-3">
             Your rental period
           </p>
+          <div className="grid lg:grid-cols-[1fr_260px] gap-5 items-start">
+          <div>
           <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
             <DayPicker
               mode="range"
@@ -277,7 +280,7 @@ export default function GroupBooking({
               selected={range}
               onSelect={setRange}
               weekStartsOn={1}
-              numberOfMonths={isMobile ? 1 : 2}
+              numberOfMonths={isWide ? 2 : 1}
               startMonth={new Date()}
               endMonth={SEASON_END_DATE}
               disabled={[{ before: today }, { after: SEASON_END_DATE }]}
@@ -339,17 +342,23 @@ export default function GroupBooking({
               </label>
             </div>
           )}
+          </div>
 
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="bg-white border border-ink/10 p-3 text-sm text-ink/80 flex gap-2.5">
-              <span className="font-bold text-red">1</span> Pick one date window for the whole group
+          <aside className="bg-white border border-ink/10 p-5 lg:sticky lg:top-28">
+            <p className="font-barlow font-bold uppercase tracking-wide text-ink text-sm mb-3">
+              How it works
+            </p>
+            <ol className="space-y-2.5 text-sm text-ink/80">
+              <li className="flex gap-2.5"><span className="font-bold text-red">1</span> Pick one date window for the whole group</li>
+              <li className="flex gap-2.5"><span className="font-bold text-red">2</span> Add any bikes from the fleet that are free</li>
+              <li className="flex gap-2.5"><span className="font-bold text-red">3</span> One deposit, one booking, sorted</li>
+            </ol>
+            <div className="border-t border-ink/10 mt-4 pt-4 space-y-1.5 text-xs text-muted">
+              <p>20% now to reserve, the rest on arrival.</p>
+              <p>{BRAND.deposit} security deposit on pickup.</p>
+              <p>Same dates for all bikes.</p>
             </div>
-            <div className="bg-white border border-ink/10 p-3 text-sm text-ink/80 flex gap-2.5">
-              <span className="font-bold text-red">2</span> Add any bikes from the fleet that are free
-            </div>
-            <div className="bg-white border border-ink/10 p-3 text-sm text-ink/80 flex gap-2.5">
-              <span className="font-bold text-red">3</span> One deposit (20% now, rest on arrival) · {BRAND.deposit} on pickup
-            </div>
+          </aside>
           </div>
         </div>
 
