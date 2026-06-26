@@ -729,8 +729,9 @@ export default function BikeDetail({
                 </div>
 
                 {/* Freestanding bike strip so the visitor sees exactly
-                    which bike's calendar they're about to lock. */}
-                <div className="flex items-center gap-3 sm:gap-6 mb-8">
+                    which bike's calendar they're about to lock. On desktop
+                    the large image beside the calendar replaces it. */}
+                <div className="flex items-center gap-3 sm:gap-6 mb-8 lg:hidden">
                   <div className="relative w-14 h-14 sm:w-20 sm:h-20 shrink-0 overflow-hidden">
                     <Image
                       src={bike.image}
@@ -745,6 +746,8 @@ export default function BikeDetail({
                   </p>
                 </div>
 
+                <div className="grid lg:grid-cols-[auto_1fr] gap-6 items-start">
+                <div>
                 <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
                   <DayPicker
                     mode="range"
@@ -904,6 +907,18 @@ export default function BikeDetail({
                     </div>
                   </>
                 )}
+                </div>
+
+                <aside className="hidden lg:block relative aspect-[4/3] bg-sand overflow-hidden lg:sticky lg:top-28">
+                  <Image
+                    src={bike.image}
+                    alt={bike.name}
+                    fill
+                    sizes="(min-width: 1024px) 40vw, 0px"
+                    className="object-cover"
+                  />
+                </aside>
+                </div>
 
                 {bookingStep === "dates" && (
                   <div className="mt-5 flex justify-end">
