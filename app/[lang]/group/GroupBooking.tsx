@@ -81,8 +81,13 @@ export default function GroupBooking({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
 
-  const from = range?.from ? toIsoDate(range.from) : null;
-  const to = range?.to ? toIsoDate(range.to) : null;
+  // A single calendar click leaves range.to undefined (DayPicker waits
+  // for a second click). Treat "from set, to missing" as a same-day
+  // rental so a single day can be booked.
+  const effFrom = range?.from ?? null;
+  const effTo = range?.to ?? range?.from ?? null;
+  const from = effFrom ? toIsoDate(effFrom) : null;
+  const to = effTo ? toIsoDate(effTo) : null;
   const rangeReady = Boolean(from && to);
 
   // Fetch whole-fleet availability for the chosen window. Re-runs on any
@@ -116,9 +121,11 @@ export default function GroupBooking({
   // Per-bike total for the chosen window (one unit). Used for the card
   // price and the cart sum.
   const priceFor = useMemo(() => {
+    const f = range?.from ?? null;
+    const t = range?.to ?? range?.from ?? null;
     return (bike: Category): number | null => {
-      if (!range?.from || !range?.to) return null;
-      const res = calculatePrice(range.from, range.to, pickupTime, returnTime, bike.pricing);
+      if (!f || !t) return null;
+      const res = calculatePrice(f, t, pickupTime, returnTime, bike.pricing);
       return res ? res.totalPrice : null;
     };
   }, [range, pickupTime, returnTime]);
@@ -226,7 +233,8 @@ export default function GroupBooking({
   return (
     <>
       <Navbar lang={lang} t={dict.nav} />
-      <main className="max-w-5xl mx-auto px-5 md:px-8 py-10">
+      <main className="pt-28 md:pt-32 pb-20 px-5 md:px-12 min-h-screen bg-off-white">
+        <div className="max-w-5xl mx-auto">
         <h1 className="font-barlow font-bold text-3xl md:text-4xl text-ink uppercase tracking-wide mb-2">
           Book multiple bikes
         </h1>
@@ -293,7 +301,7 @@ export default function GroupBooking({
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block">
                 <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                  Pickup time · {range?.from && format(range.from, "EEE dd MMM", { locale: dfLocale })}
+                  Pickup time · {effFrom && format(effFrom, "EEE dd MMM", { locale: dfLocale })}
                 </span>
                 <select
                   value={pickupTime}
@@ -307,7 +315,7 @@ export default function GroupBooking({
               </label>
               <label className="block">
                 <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                  Return time · {range?.to && format(range.to, "EEE dd MMM", { locale: dfLocale })}
+                  Return time · {effTo && format(effTo, "EEE dd MMM", { locale: dfLocale })}
                 </span>
                 <select
                   value={returnTime}
@@ -570,6 +578,7 @@ export default function GroupBooking({
         )}
         </>
         )}
+        </div>
       </main>
       <Footer lang={lang} t={dict.footer} nav={dict.nav} />
     </>
