@@ -271,7 +271,7 @@ export default function GroupBooking({
           <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mb-3">
             Your rental period
           </p>
-          <div className="grid lg:grid-cols-[1fr_260px] gap-5 items-start">
+          <div className="grid lg:grid-cols-[auto_1fr] gap-5 items-start">
           <div>
           <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
             <DayPicker
@@ -291,8 +291,8 @@ export default function GroupBooking({
                 month_caption: "flex items-center justify-center mb-4",
                 caption_label: "font-barlow font-bold uppercase tracking-wide text-ink text-base",
                 nav: "flex items-center gap-1",
-                button_previous: "w-8 h-8 flex items-center justify-center text-ink/40 hover:text-red transition-colors",
-                button_next: "w-8 h-8 flex items-center justify-center text-ink/40 hover:text-red transition-colors",
+                button_previous: "w-9 h-9 flex items-center justify-center text-ink/50 rounded-full hover:bg-red hover:text-white transition-colors cursor-pointer",
+                button_next: "w-9 h-9 flex items-center justify-center text-ink/50 rounded-full hover:bg-red hover:text-white transition-colors cursor-pointer",
                 month_grid: "w-full border-collapse",
                 weekdays: "mb-2",
                 weekday: "text-[10px] font-bold tracking-widest text-ink/30 text-center py-1 w-9 uppercase",
