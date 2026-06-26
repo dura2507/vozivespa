@@ -448,7 +448,7 @@ export default function GroupBooking({
                         )}
                       </a>
 
-                      <div className="relative flex flex-col flex-1 min-w-0 pr-20 sm:pr-24">
+                      <div className="relative flex flex-col flex-1 min-w-0 pr-24 sm:pr-28">
                         {LICENCE_BADGE[bike.licenceCode] && (
                           <Image
                             src={LICENCE_BADGE[bike.licenceCode]}
@@ -456,30 +456,30 @@ export default function GroupBooking({
                             width={120}
                             height={120}
                             quality={100}
-                            className="absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20"
+                            className="absolute top-1/2 right-0 -translate-y-1/2 w-20 h-20 sm:w-24 sm:h-24"
                           />
                         )}
                         <a
                           href={`/${lang}/fleet/${bike.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-semibold text-ink text-lg leading-tight hover:text-red"
+                          className="font-semibold text-ink text-base leading-tight hover:text-red"
                         >
                           {bike.model}
                         </a>
-                        <div className="text-sm text-muted mt-1">
+                        <div className="text-xs text-muted mt-1">
                           {price != null ? `${price}€ · period` : `from ${bike.pricing.day}/day`} · {bike.maxSpeed} ·{" "}
                           {bike.seats} {bike.seats > 1 ? "seats" : "seat"}
                         </div>
-                        <div className="flex items-center gap-2.5 flex-wrap mt-2">
-                          <span className="inline-flex items-center gap-1 text-xs text-emerald-700 font-medium">
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <div className="flex items-center gap-2.5 flex-wrap mt-1.5">
+                          <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
                             {dict.home.fleet.helmetsIncluded}
                           </span>
                           {bike.experienceNote && (
-                            <span className="text-[11px] tracking-[0.08em] uppercase text-red font-bold">
+                            <span className="text-[10px] tracking-[0.08em] uppercase text-red font-bold">
                               {dict.home.fleet.experienceRequired}
                             </span>
                           )}
@@ -487,7 +487,7 @@ export default function GroupBooking({
 
                         {!soldOut && (
                           <div className="mt-auto pt-3 flex items-center justify-between gap-2">
-                            <div className="text-sm min-w-0 leading-tight">
+                            <div className="text-xs min-w-0 leading-tight">
                               {!rangeReady ? (
                                 <span className="text-ink/40 uppercase tracking-[0.08em]">Pick dates ↑</span>
                               ) : !a ? (
