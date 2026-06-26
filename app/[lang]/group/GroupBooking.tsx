@@ -407,7 +407,7 @@ export default function GroupBooking({
                 ? `Pick your bikes${loadingAvail ? " · checking availability…" : ""}`
                 : "The fleet · pick dates above to check availability"}
             </p>
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 mb-8">
+            <div className="grid sm:grid-cols-2 gap-4 mb-8">
               {bikes.map((bike) => {
                 const a = avail?.[bike.id];
                 const free = a?.freeUnits ?? 0;
@@ -450,6 +450,19 @@ export default function GroupBooking({
                         >
                           full details
                         </a>
+                      </div>
+                      <div className="flex items-center gap-3 flex-wrap mt-2">
+                        <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          {dict.home.fleet.helmetsIncluded}
+                        </span>
+                        {bike.experienceNote && (
+                          <span className="text-[10px] tracking-[0.12em] uppercase text-red font-bold">
+                            {dict.home.fleet.experienceRequired}
+                          </span>
+                        )}
                       </div>
 
                       <div className="mt-auto pt-3 border-t border-ink/8 flex items-center justify-between gap-2">
@@ -499,6 +512,38 @@ export default function GroupBooking({
               })}
             </div>
 
+            {/* Global good-to-know box (same for every bike) */}
+            <div className="bg-white border border-ink/10 p-5 mb-8">
+              <p className="font-barlow font-bold uppercase tracking-wide text-ink text-sm mb-4">
+                Good to know
+              </p>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+                {[
+                  { label: dict.home.included.items.helmets.label, sub: dict.home.included.items.helmets.sub, ok: true },
+                  { label: dict.home.included.items.insurance.label, sub: dict.home.included.items.insurance.sub, ok: true },
+                  { label: dict.home.included.items.unlimitedKm.label, sub: dict.home.included.items.unlimitedKm.sub, ok: true },
+                  { label: dict.home.goodToKnow.deposit.label, sub: `${BRAND.deposit} · ${dict.home.goodToKnow.deposit.sub}`, ok: false },
+                  { label: dict.home.goodToKnow.season.label, sub: dict.home.goodToKnow.season.sub, ok: false },
+                  { label: dict.home.goodToKnow.phoneHolders.label, sub: dict.home.goodToKnow.phoneHolders.sub, ok: false },
+                  { label: "Pickup", sub: BRAND.address, ok: false },
+                ].map((it, i) => (
+                  <div key={i} className="flex gap-2">
+                    {it.ok ? (
+                      <svg className="w-4 h-4 mt-0.5 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      <span className="w-1.5 h-1.5 mt-2 shrink-0 rounded-full bg-ink/30" aria-hidden />
+                    )}
+                    <div>
+                      <p className="text-sm font-semibold text-ink">{it.label}</p>
+                      <p className="text-xs text-muted leading-snug">{it.sub}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Cart bar */}
             <div className="bg-sand border border-ink/10 p-4 flex items-center justify-between gap-4 flex-wrap sticky bottom-4">
               <div>
@@ -538,6 +583,9 @@ export default function GroupBooking({
                 <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
                   Your details
                 </p>
+                <div className="bg-sand px-4 py-3 text-xs text-ink/80 leading-relaxed">
+                  <span className="font-semibold">Reminder:</span> helmets included · {BRAND.deposit} deposit on pickup · bring your valid licence · full tank in, full tank out · pickup at {BRAND.address}
+                </div>
                 <div className="grid sm:grid-cols-3 gap-3">
                   <label className="block">
                     <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Name *</span>
