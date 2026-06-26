@@ -517,20 +517,40 @@ export default function GroupBooking({
               })}
             </div>
 
-            {/* Global good-to-know — dark feature block like the detail page */}
-            <section className="mb-8 bg-ink text-white p-6 md:p-8">
+            {/* Costs & conditions (rental-specific) */}
+            <section className="mb-4 bg-ink text-white p-6 md:p-8">
               <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-white/40 mb-6 text-center">
-                Good to know · every rental
+                Costs & conditions
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-px bg-white/10 border border-white/10">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-px bg-white/10 border border-white/10">
                 {[
-                  { label: "Helmets", value: "Included", sub: "Always provided", d: "M5 13l4 4L19 7", sw: 3 },
+                  { label: "Deposit", value: BRAND.deposit, sub: "Refunded if no damage", d: "M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z", sw: 1.5 },
                   { label: "Insurance", value: "Basic, incl.", sub: "Theft + engine cover", d: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z", sw: 1.5 },
                   { label: "Distance", value: "Unlimited km", sub: "No driving limit", d: "M5 13l4 4L19 7", sw: 3 },
-                  { label: "Rental day", value: "24h = 1 day", sub: "Pickup to pickup, not calendar day", d: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z", sw: 1.5 },
-                  { label: "Deposit", value: BRAND.deposit, sub: "Refunded if no damage", d: "M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z", sw: 1.5 },
-                  { label: "Season", value: "Apr–Oct", sub: "Full tank in & out", d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5", sw: 1.5 },
                   { label: "Fuel", value: "Full → full", sub: "Or we charge the diff", d: "M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25", sw: 1.5 },
+                  { label: "Rental day", value: "24h = 1 day", sub: "Pickup to pickup, not calendar day", d: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z", sw: 1.5 },
+                ].map((it, i) => (
+                  <div key={i} className="bg-ink px-4 py-6 text-center">
+                    <svg className="w-6 h-6 mx-auto mb-3 text-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={it.sw}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d={it.d} />
+                    </svg>
+                    <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/50 mb-1.5">{it.label}</p>
+                    <p className="text-white font-semibold text-sm leading-tight">{it.value}</p>
+                    <p className="text-white/40 text-[10px] mt-1 leading-snug">{it.sub}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Good to know (general) */}
+            <section className="mb-8 bg-ink text-white p-6 md:p-8">
+              <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-white/40 mb-6 text-center">
+                Good to know
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 border border-white/10">
+                {[
+                  { label: "Helmets", value: "Included", sub: "Always provided", d: "M5 13l4 4L19 7", sw: 3 },
+                  { label: "Season", value: "Apr–Oct", sub: "When we rent", d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5", sw: 1.5 },
                   { label: "Phone holders", value: "Not available", sub: "Can't bring your own", d: "M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z", sw: 1.5 },
                   { label: "Pickup", value: "Our Zadar shop", sub: BRAND.address, d: "M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 9.75c0 7.142-7.5 11.25-7.5 11.25S4.5 16.892 4.5 9.75a7.5 7.5 0 1115 0z", sw: 1.5 },
                 ].map((it, i) => (
