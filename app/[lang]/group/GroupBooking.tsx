@@ -407,7 +407,7 @@ export default function GroupBooking({
                 ? `Pick your bikes${loadingAvail ? " · checking availability…" : ""}`
                 : "The fleet · pick dates above to check availability"}
             </p>
-            <div className="space-y-2 mb-8">
+            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 mb-8">
               {bikes.map((bike) => {
                 const a = avail?.[bike.id];
                 const free = a?.freeUnits ?? 0;
@@ -417,27 +417,31 @@ export default function GroupBooking({
                 return (
                   <div
                     key={bike.id}
-                    className={`bg-white border p-4 flex items-center gap-4 flex-wrap transition-colors ${
+                    className={`bg-white border overflow-hidden flex flex-col transition-colors ${
                       qty > 0 ? "border-red" : "border-ink/10"
                     }`}
                   >
-                    <div className="relative w-20 h-14 shrink-0 bg-sand overflow-hidden">
+                    <div className="relative aspect-[16/10] bg-sand">
                       {bike.image && (
-                        <Image src={bike.image} alt={bike.model} fill className="object-cover" sizes="80px" />
+                        <Image
+                          src={bike.image}
+                          alt={bike.model}
+                          fill
+                          className="object-cover"
+                          sizes="(min-width:1280px) 30vw, (min-width:640px) 45vw, 90vw"
+                        />
                       )}
+                      <span className="absolute top-2 left-2 text-[10px] font-bold tracking-[0.1em] uppercase bg-red text-white px-2 py-1">
+                        Licence {bike.licenceCode}
+                      </span>
                     </div>
-                    <div className="min-w-[160px] flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-ink">{bike.model}</span>
-                        <span className="text-[10px] font-bold tracking-[0.1em] uppercase bg-red/10 text-red px-1.5 py-0.5">
-                          Licence {bike.licenceCode}
-                        </span>
-                      </div>
+                    <div className="p-4 flex flex-col flex-1">
+                      <div className="font-semibold text-ink">{bike.model}</div>
                       <div className="text-xs text-muted mt-1">
                         {price != null ? `${price}€ for this period` : `from ${bike.pricing.day}/day`}
-                        {" · "}{bike.maxSpeed}
-                        {" · "}{bike.seats} {bike.seats > 1 ? "seats" : "seat"}
-                        {" · "}
+                      </div>
+                      <div className="text-xs text-muted mt-0.5">
+                        {bike.maxSpeed} · {bike.seats} {bike.seats > 1 ? "seats" : "seat"} ·{" "}
                         <a
                           href={`/${lang}/fleet/${bike.id}`}
                           target="_blank"
@@ -447,49 +451,49 @@ export default function GroupBooking({
                           full details
                         </a>
                       </div>
-                      {rangeReady &&
-                        (!a ? (
-                          <div className="text-xs text-muted mt-1">checking…</div>
-                        ) : soldOut ? (
-                          <div className="text-xs text-red font-medium mt-1">
-                            Booked out for these dates
-                            {a.nextFree && (
-                              <span className="text-ink/60 font-normal">
-                                {" "}· available from {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
-                              </span>
-                            )}
+
+                      <div className="mt-auto pt-3 border-t border-ink/8 flex items-center justify-between gap-2">
+                        <div className="text-xs min-w-0">
+                          {!rangeReady ? (
+                            <span className="text-ink/40 uppercase tracking-[0.08em]">Pick dates ↑</span>
+                          ) : !a ? (
+                            <span className="text-muted">checking…</span>
+                          ) : soldOut ? (
+                            <span className="text-red font-medium">
+                              Booked out
+                              {a.nextFree && (
+                                <span className="text-ink/60 font-normal block">
+                                  from {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
+                                </span>
+                              )}
+                            </span>
+                          ) : (
+                            <span className="text-emerald-700 font-medium">{free} available</span>
+                          )}
+                        </div>
+                        {rangeReady && !soldOut && a && (
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => setQty(bike.id, qty - 1)}
+                              disabled={qty <= 0}
+                              className="w-8 h-8 border border-ink/20 text-lg disabled:opacity-30"
+                            >
+                              −
+                            </button>
+                            <span className="font-bold text-sm min-w-5 text-center">{qty}</span>
+                            <button
+                              type="button"
+                              onClick={() => setQty(bike.id, qty + 1)}
+                              disabled={qty >= free}
+                              className="w-8 h-8 border border-ink/20 text-lg disabled:opacity-30"
+                            >
+                              +
+                            </button>
                           </div>
-                        ) : (
-                          <div className="text-xs text-emerald-700 font-medium mt-1">
-                            {free} available for these dates
-                          </div>
-                        ))}
-                    </div>
-                    {!rangeReady ? (
-                      <span className="text-xs text-ink/40 uppercase tracking-[0.08em]">Pick dates ↑</span>
-                    ) : soldOut ? (
-                      <span className="text-xs text-muted uppercase tracking-[0.08em]">Unavailable</span>
-                    ) : (
-                      <div className="flex items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() => setQty(bike.id, qty - 1)}
-                          disabled={qty <= 0}
-                          className="w-8 h-8 border border-ink/20 text-lg disabled:opacity-30"
-                        >
-                          −
-                        </button>
-                        <span className="font-bold text-sm min-w-5 text-center">{qty}</span>
-                        <button
-                          type="button"
-                          onClick={() => setQty(bike.id, qty + 1)}
-                          disabled={qty >= free}
-                          className="w-8 h-8 border border-ink/20 text-lg disabled:opacity-30"
-                        >
-                          +
-                        </button>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })}
