@@ -432,6 +432,18 @@ export default function GroupBooking({
                       <div className="text-xs text-muted">
                         {price != null ? `${price}€ for this period` : `${bike.pricing.day}/day`}
                       </div>
+                      <div className="text-[11px] text-ink/50 mt-0.5">
+                        Licence {bike.licenceCode}
+                        {" · "}
+                        <a
+                          href={`/${lang}/fleet/${bike.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-red hover:underline"
+                        >
+                          details
+                        </a>
+                      </div>
                       {!a ? (
                         <div className="text-xs text-muted mt-0.5">checking…</div>
                       ) : soldOut ? (
@@ -645,15 +657,50 @@ export default function GroupBooking({
                     })}
                   </div>
 
-                  <label className="block mt-4">
-                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Deposit screenshot *</span>
+                  <div className="mt-4">
+                    <p className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em] mb-1.5">
+                      Deposit screenshot *
+                    </p>
                     <input
+                      id="group-receipt-file"
                       type="file"
                       accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf"
                       onChange={(e) => setReceipt(e.target.files?.[0] ?? null)}
-                      className="mt-1 w-full text-sm"
+                      className="sr-only"
                     />
-                  </label>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <label
+                        htmlFor="group-receipt-file"
+                        className="inline-flex items-center cursor-pointer bg-ink text-white font-bold text-[10px] tracking-widest uppercase px-4 py-2.5 hover:bg-red transition-colors"
+                      >
+                        Choose file
+                      </label>
+                      <span className="text-sm text-ink min-w-0 break-all">
+                        {receipt ? (
+                          <>
+                            <span className="font-semibold">{receipt.name}</span>
+                            <span className="text-muted ml-2">({(receipt.size / 1024).toFixed(0)} KB)</span>
+                          </>
+                        ) : (
+                          <span className="text-muted">No file chosen</span>
+                        )}
+                      </span>
+                      {receipt && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setReceipt(null);
+                            const el = document.getElementById("group-receipt-file") as HTMLInputElement | null;
+                            if (el) el.value = "";
+                          }}
+                          className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red transition-colors px-2 py-1 border border-ink/15 hover:border-red"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-muted text-xs mt-2">JPG, PNG, HEIC or PDF · max 4 MB</p>
+                  </div>
                 </div>
 
                 {submitError && <p className="text-red text-sm font-semibold">{submitError}</p>}
