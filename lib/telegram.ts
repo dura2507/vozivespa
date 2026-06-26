@@ -348,13 +348,23 @@ function buildGroupText(bookings: BookingRow[], translatedNote?: string | null):
   const ret = fmtTimeOfDay(primary.return_time);
   const nights = bookingDays(primary);
 
+  // Aggregate identical (model + riding style) units so each line shows
+  // its rider config, e.g. "Liberty 50 ×2 (solo)". Riding style is now
+  // per bike, so this drives how many helmets the shop preps.
   const counts = new Map<string, number>();
   for (const b of bookings) {
-    const name = bikeNameFor(b);
-    counts.set(name, (counts.get(name) ?? 0) + 1);
+    const key = `${bikeNameFor(b)}|${b.riding_style ?? ""}`;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
   }
-  const bikeLines = [...counts.entries()].map(
-    ([name, n]) => `*Bike:* ${escapeMd(name)} \\(×${n}\\)`,
+  const bikeLines = [...counts.entries()].map(([key, n]) => {
+    const sep = key.lastIndexOf("|");
+    const name = key.slice(0, sep);
+    const ride = ridingStyleLabel(key.slice(sep + 1) as BookingRow["riding_style"]);
+    return `*Bike:* ${escapeMd(name)} \\(×${n}, ${escapeMd(ride)}\\)`;
+  });
+  const helmets = bookings.reduce(
+    (s, b) => s + (b.riding_style === "with_passenger" ? 2 : 1),
+    0,
   );
 
   const totalCents = bookings.reduce((s, b) => s + (b.total_price_cents ?? 0), 0);
@@ -365,6 +375,7 @@ function buildGroupText(bookings: BookingRow[], translatedNote?: string | null):
     `*New group booking request* \\(${bookings.length} bikes\\)`,
     DIVIDER,
     ...bikeLines,
+    `*Helmets:* ${helmets}`,
     DIVIDER,
     `*Pickup:* ${escapeMd(fmtDate(primary.date_from))}${pickup ? ` ${escapeMd(pickup)}` : ""}`,
     `*Return:* ${escapeMd(fmtDate(primary.date_to))}${ret ? ` ${escapeMd(ret)}` : ""} \\(${nights} ${nights === 1 ? "day" : "days"}\\)`,
@@ -377,7 +388,6 @@ function buildGroupText(bookings: BookingRow[], translatedNote?: string | null):
     `*Email:* ${escapeMd(primary.customer_email)}`,
     `*Licence:* ${escapeMd(primary.drivers_licence ?? "-")}`,
     licenceCountry ? `*Licence country:* ${escapeMd(licenceCountry)}` : null,
-    `*Riding:* ${escapeMd(ridingStyleLabel(primary.riding_style))}`,
     cleanNote ? `*Notes:* ${escapeMd(cleanNote)}` : null,
     translatedNote ? `\n🇬🇧 *English translation*\n${escapeMd(translatedNote)}` : null,
   ].filter((l): l is string => l !== null);

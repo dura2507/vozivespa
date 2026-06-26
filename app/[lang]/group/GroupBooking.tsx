@@ -44,6 +44,11 @@ function toIsoDate(d: Date): string {
 
 type FleetAvail = { totalUnits: number; freeUnits: number; nextFree: { from: string; to: string } | null };
 
+// Riding style is per physical bike (per unit), not per group, so the
+// shop can prep the right number of helmets. The cart holds one entry
+// per booked unit; its value is that unit's riding style.
+type RidingStyle = "solo" | "with_passenger";
+
 export default function GroupBooking({
   bikes,
   lang,
@@ -60,7 +65,8 @@ export default function GroupBooking({
   const [avail, setAvail] = useState<Record<string, FleetAvail> | null>(null);
   const [loadingAvail, setLoadingAvail] = useState(false);
   const [isWide, setIsWide] = useState(false);
-  const [cart, setCart] = useState<Record<string, number>>({});
+  // bikeId → one riding style per booked unit. Array length = quantity.
+  const [cart, setCart] = useState<Record<string, RidingStyle[]>>({});
   const [step, setStep] = useState<"select" | "details" | "done">("select");
 
   // Details / deposit step state (mirrors the single-bike flow).
@@ -70,7 +76,6 @@ export default function GroupBooking({
   const [notes, setNotes] = useState("");
   const [driversLicence, setDriversLicence] = useState<string>("");
   const [licenceCountry, setLicenceCountry] = useState("");
-  const [ridingStyle, setRidingStyle] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod["id"]>("paypal_ff");
   const [receipt, setReceipt] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -136,11 +141,18 @@ export default function GroupBooking({
     };
   }, [range, pickupTime, returnTime]);
 
-  const cartCount = Object.values(cart).reduce((a, b) => a + b, 0);
+  const qtyOf = (bikeId: string) => cart[bikeId]?.length ?? 0;
+  const cartCount = Object.values(cart).reduce((a, arr) => a + arr.length, 0);
+  // Helmets: every unit needs one for the rider, plus one more when a
+  // passenger rides along. Surfaced to the owner so they can prep them.
+  const helmetCount = Object.values(cart).reduce(
+    (a, arr) => a + arr.reduce((s, rs) => s + (rs === "with_passenger" ? 2 : 1), 0),
+    0,
+  );
   const cartTotal = useMemo(() => {
     let sum = 0;
     for (const bike of bikes) {
-      const qty = cart[bike.id] ?? 0;
+      const qty = cart[bike.id]?.length ?? 0;
       if (qty <= 0) continue;
       const p = priceFor(bike);
       if (p != null) sum += p * qty;
@@ -151,7 +163,21 @@ export default function GroupBooking({
   function setQty(bikeId: string, qty: number) {
     const free = avail?.[bikeId]?.freeUnits ?? 0;
     const clamped = Math.max(0, Math.min(qty, free));
-    setCart((c) => ({ ...c, [bikeId]: clamped }));
+    setCart((c) => {
+      const cur = c[bikeId] ?? [];
+      const next = cur.slice(0, clamped);
+      while (next.length < clamped) next.push("solo");
+      return { ...c, [bikeId]: next };
+    });
+  }
+
+  // Flip one booked unit's riding style (per-unit helmet planning).
+  function setUnitRiding(bikeId: string, index: number, value: RidingStyle) {
+    setCart((c) => {
+      const cur = c[bikeId] ? [...c[bikeId]] : [];
+      if (index < cur.length) cur[index] = value;
+      return { ...c, [bikeId]: cur };
+    });
   }
 
   // 20% booking fee secures the dates, rest paid on arrival (same as the
@@ -179,17 +205,13 @@ export default function GroupBooking({
       setSubmitError("Pick your driver's licence category.");
       return;
     }
-    if (!ridingStyle) {
-      setSubmitError("Pick a riding style.");
-      return;
-    }
     if (!receipt) {
       setSubmitError("Upload your deposit screenshot.");
       return;
     }
     const items = bikes
-      .filter((b) => (cart[b.id] ?? 0) > 0)
-      .map((b) => ({ bikeId: b.id, quantity: cart[b.id] }));
+      .filter((b) => qtyOf(b.id) > 0)
+      .map((b) => ({ bikeId: b.id, ridingStyles: cart[b.id] }));
     if (items.length === 0) return;
 
     setSubmitError(null);
@@ -208,7 +230,6 @@ export default function GroupBooking({
       fd.set("returnTime", returnTime);
       fd.set("paymentMethod", paymentMethod);
       fd.set("driversLicence", driversLicence);
-      fd.set("ridingStyle", ridingStyle);
       fd.set("locale", lang);
       fd.set("receipt", receipt);
 
@@ -365,7 +386,7 @@ export default function GroupBooking({
               {bikes.map((bike) => {
                 const a = avail?.[bike.id];
                 const free = a?.freeUnits ?? 0;
-                const qty = cart[bike.id] ?? 0;
+                const qty = qtyOf(bike.id);
                 const price = priceFor(bike);
                 const soldOut = a != null && free === 0;
                 return (
@@ -438,12 +459,14 @@ export default function GroupBooking({
                   {cartCount === 0
                     ? "No bikes yet"
                     : bikes
-                        .filter((b) => (cart[b.id] ?? 0) > 0)
-                        .map((b) => `${b.model} × ${cart[b.id]}`)
+                        .filter((b) => qtyOf(b.id) > 0)
+                        .map((b) => `${b.model} × ${qtyOf(b.id)}`)
                         .join(" · ")}
                 </p>
                 {cartCount > 0 && (
-                  <p className="text-xs text-muted mt-0.5">{cartCount} bikes · one deposit</p>
+                  <p className="text-xs text-muted mt-0.5">
+                    {cartCount} bikes · {helmetCount} helmets · one deposit
+                  </p>
                 )}
               </div>
               <div className="flex items-center gap-5">
@@ -481,7 +504,7 @@ export default function GroupBooking({
                     <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
                   </label>
                 </div>
-                <div className="grid sm:grid-cols-3 gap-3">
+                <div className="grid sm:grid-cols-2 gap-3">
                   <label className="block">
                     <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Driver licence *</span>
                     <select value={driversLicence} onChange={(e) => setDriversLicence(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white">
@@ -495,15 +518,48 @@ export default function GroupBooking({
                     <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Licence country</span>
                     <input value={licenceCountry} onChange={(e) => setLicenceCountry(e.target.value)} placeholder="e.g. Germany" className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
                   </label>
-                  <label className="block">
-                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Riding style *</span>
-                    <select value={ridingStyle} onChange={(e) => setRidingStyle(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white">
-                      <option value="">—</option>
-                      <option value="solo">Solo</option>
-                      <option value="with_passenger">With passenger</option>
-                    </select>
-                  </label>
                 </div>
+
+                {/* Riding style per bike → drives helmet prep */}
+                <div className="border-t border-ink/10 pt-4">
+                  <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
+                    Riding style per bike
+                  </p>
+                  <p className="text-xs text-muted mb-3">
+                    So we prep the right helmets · {helmetCount} helmets total
+                  </p>
+                  <div className="space-y-2">
+                    {bikes
+                      .filter((b) => qtyOf(b.id) > 0)
+                      .flatMap((b) =>
+                        (cart[b.id] ?? []).map((rs, i) => (
+                          <div key={`${b.id}-${i}`} className="flex items-center justify-between gap-3 flex-wrap">
+                            <span className="text-sm text-ink">
+                              {b.model}
+                              {qtyOf(b.id) > 1 ? ` #${i + 1}` : ""}
+                            </span>
+                            <div className="flex gap-2">
+                              {(["solo", "with_passenger"] as RidingStyle[]).map((opt) => (
+                                <button
+                                  type="button"
+                                  key={opt}
+                                  onClick={() => setUnitRiding(b.id, i, opt)}
+                                  className={`px-3 py-1.5 text-xs font-bold border transition-colors ${
+                                    rs === opt
+                                      ? "bg-ink text-white border-ink"
+                                      : "bg-white text-ink/70 border-ink/15 hover:border-ink/40"
+                                  }`}
+                                >
+                                  {opt === "solo" ? "Solo" : "With passenger"}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )),
+                      )}
+                  </div>
+                </div>
+
                 <label className="block">
                   <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Notes</span>
                   <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />

@@ -51,7 +51,10 @@ function inSet<T extends readonly string[]>(set: T, v: FormDataEntryValue | null
   return typeof v === "string" && (set as readonly string[]).includes(v) ? (v as T[number]) : null;
 }
 
-type Item = { bikeId: string; quantity: number };
+type RidingStyle = (typeof RIDING_STYLES)[number];
+// One riding style per booked unit (drives helmet prep). The array
+// length is that bike's quantity.
+type Item = { bikeId: string; ridingStyles: RidingStyle[] };
 
 function parseItems(raw: FormDataEntryValue | null): Item[] | null {
   if (typeof raw !== "string") return null;
@@ -62,20 +65,23 @@ function parseItems(raw: FormDataEntryValue | null): Item[] | null {
     return null;
   }
   if (!Array.isArray(parsed) || parsed.length === 0) return null;
-  const out: Item[] = [];
+  // Collapse duplicate bikeIds, concatenating their per-unit styles.
+  const merged = new Map<string, RidingStyle[]>();
   for (const it of parsed) {
     if (!it || typeof it !== "object") return null;
     const bikeId = (it as { bikeId?: unknown }).bikeId;
-    const quantity = (it as { quantity?: unknown }).quantity;
+    const styles = (it as { ridingStyles?: unknown }).ridingStyles;
     if (typeof bikeId !== "string" || bikeId.trim().length === 0) return null;
-    const q = typeof quantity === "number" ? quantity : Number(quantity);
-    if (!Number.isInteger(q) || q < 1 || q > 20) return null;
-    out.push({ bikeId: bikeId.trim(), quantity: q });
+    if (!Array.isArray(styles) || styles.length === 0 || styles.length > 20) return null;
+    const clean: RidingStyle[] = [];
+    for (const s of styles) {
+      if (typeof s !== "string" || !(RIDING_STYLES as readonly string[]).includes(s)) return null;
+      clean.push(s as RidingStyle);
+    }
+    const key = bikeId.trim();
+    merged.set(key, [...(merged.get(key) ?? []), ...clean]);
   }
-  // Collapse duplicate bikeIds into a single summed quantity.
-  const merged = new Map<string, number>();
-  for (const it of out) merged.set(it.bikeId, (merged.get(it.bikeId) ?? 0) + it.quantity);
-  return [...merged.entries()].map(([bikeId, quantity]) => ({ bikeId, quantity }));
+  return [...merged.entries()].map(([bikeId, ridingStyles]) => ({ bikeId, ridingStyles }));
 }
 
 export async function POST(request: Request) {
@@ -101,7 +107,6 @@ export async function POST(request: Request) {
   const returnTime = asSlot(form.get("returnTime"));
   const paymentMethod = inSet(PAYMENT_METHODS, form.get("paymentMethod"));
   const driversLicence = inSet(LICENCES, form.get("driversLicence"));
-  const ridingStyle = inSet(RIDING_STYLES, form.get("ridingStyle"));
   const locale = inSet(LOCALES, form.get("locale")) ?? "en";
   const receipt = form.get("receipt");
 
@@ -131,7 +136,6 @@ export async function POST(request: Request) {
   }
   if (!paymentMethod) return NextResponse.json({ error: "Pick a payment method for the deposit" }, { status: 400 });
   if (!driversLicence) return NextResponse.json({ error: "Pick your driver's licence category" }, { status: 400 });
-  if (!ridingStyle) return NextResponse.json({ error: "Pick a riding style" }, { status: 400 });
   if (!(receipt instanceof File) || receipt.size === 0) {
     return NextResponse.json({ error: "Upload a receipt screenshot" }, { status: 400 });
   }
@@ -149,26 +153,32 @@ export async function POST(request: Request) {
   // units for the shared window, and price it. Any shortfall aborts the
   // whole group (all-or-nothing) so the customer never gets a partial
   // booking.
-  type Planned = { bikeId: string; unitIds: string[]; perUnitCents: number };
+  type Planned = {
+    bikeId: string;
+    unitIds: string[];
+    perUnitCents: number;
+    ridingStyles: RidingStyle[];
+  };
   const planned: Planned[] = [];
   let groupTotalCents = 0;
 
   for (const item of items) {
+    const qty = item.ridingStyles.length;
     const bike = await getBikeWithPricing(item.bikeId);
     if (!bike) {
       return NextResponse.json({ error: `Bike not available: ${item.bikeId}` }, { status: 404 });
     }
     let avail;
     try {
-      avail = await findFreeUnits(supabase, { bikeId: item.bikeId, ...window }, item.quantity);
+      avail = await findFreeUnits(supabase, { bikeId: item.bikeId, ...window }, qty);
     } catch (err) {
       console.error("[/api/bookings/group] availability error", err);
       return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
     }
-    if (avail.unitIds.length < item.quantity) {
+    if (avail.unitIds.length < qty) {
       return NextResponse.json(
         {
-          error: `${bike.shortName ?? bike.model}: only ${avail.totalFree} of ${item.quantity} available for these dates`,
+          error: `${bike.shortName ?? bike.model}: only ${avail.totalFree} of ${qty} available for these dates`,
           bikeId: item.bikeId,
         },
         { status: 409 },
@@ -185,14 +195,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: `Could not price ${bike.shortName ?? bike.model}` }, { status: 400 });
     }
     const perUnitCents = price.totalPrice * 100;
-    planned.push({ bikeId: item.bikeId, unitIds: avail.unitIds.slice(0, item.quantity), perUnitCents });
-    groupTotalCents += perUnitCents * item.quantity;
+    planned.push({
+      bikeId: item.bikeId,
+      unitIds: avail.unitIds.slice(0, qty),
+      perUnitCents,
+      ridingStyles: item.ridingStyles,
+    });
+    groupTotalCents += perUnitCents * qty;
   }
 
   // One group id ties the rows together; one row per physical unit.
   const groupId = crypto.randomUUID();
   const rows = planned.flatMap((p) =>
-    p.unitIds.map((unitId) => ({
+    p.unitIds.map((unitId, i) => ({
       bike_id: p.bikeId,
       customer_name: name,
       customer_email: email,
@@ -207,7 +222,7 @@ export async function POST(request: Request) {
       bike_unit_id: unitId,
       booking_group_id: groupId,
       drivers_licence: driversLicence,
-      riding_style: ridingStyle,
+      riding_style: p.ridingStyles[i],
       locale,
     })),
   );
