@@ -200,15 +200,15 @@ export default function GroupBooking({
     e.preventDefault();
     if (!from || !to) return;
     if (!name.trim() || !phone.trim() || !email.trim()) {
-      setSubmitError("Name, email and phone are required.");
+      setSubmitError(dict.group.errRequired);
       return;
     }
     if (!driversLicence) {
-      setSubmitError("Pick your driver's licence category.");
+      setSubmitError(dict.group.errLicence);
       return;
     }
     if (!receipt) {
-      setSubmitError("Upload your deposit screenshot.");
+      setSubmitError(dict.group.errReceipt);
       return;
     }
     const items = bikes
@@ -238,19 +238,20 @@ export default function GroupBooking({
       const res = await fetch("/api/bookings/group", { method: "POST", body: fd });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        setSubmitError(typeof body?.error === "string" ? body.error : "Could not submit booking.");
+        setSubmitError(typeof body?.error === "string" ? body.error : dict.group.errSubmit);
         setSubmitting(false);
         return;
       }
       setStep("done");
     } catch (err) {
       console.error("group booking submit failed", err);
-      setSubmitError("Network error. Please try again.");
+      setSubmitError(dict.group.errNetwork);
     } finally {
       setSubmitting(false);
     }
   }
 
+  const g = dict.group;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const dfLocale = DATE_FNS_LOCALES[lang] ?? enUS;
@@ -267,7 +268,7 @@ export default function GroupBooking({
           <button
             type="button"
             onClick={() => setPreview(null)}
-            aria-label="Close preview"
+            aria-label={g.closePreview}
             className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white hover:text-red"
           >
             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -282,12 +283,10 @@ export default function GroupBooking({
       <main className="pt-28 md:pt-32 pb-20 px-5 md:px-12 min-h-screen bg-off-white">
         <div className="max-w-6xl mx-auto">
         <h1 className="font-barlow font-bold text-3xl md:text-4xl text-ink uppercase tracking-wide mb-2">
-          Book multiple bikes
+          {g.title}
         </h1>
         <p className="text-sm text-muted mb-8 max-w-prose">
-          Pick one date window, then add as many bikes as you need to a
-          single booking with one deposit. We show the whole fleet so you
-          can see what is free and when.
+          {g.intro}
         </p>
 
         {step === "done" ? (
@@ -298,12 +297,10 @@ export default function GroupBooking({
               </svg>
             </div>
             <h2 className="font-barlow font-black uppercase text-3xl md:text-4xl tracking-tight text-ink mb-3">
-              Booking received
+              {g.received}
             </h2>
             <p className="text-ink text-base leading-relaxed mb-6">
-              {name && `${name}, `}we got your group request and your deposit
-              screenshot. We will confirm by email shortly. If you do not hear
-              back within a few hours, message us on WhatsApp.
+              {name && `${name}, `}{g.receivedBody}
             </p>
             <div className="bg-sand px-5 py-4 mb-8 text-left text-sm">
               {bikes
@@ -314,15 +311,15 @@ export default function GroupBooking({
                   </p>
                 ))}
               <p className="text-ink mt-2 pt-2 border-t border-ink/10">
-                <span className="text-muted">Total: </span>
-                {cartTotal}€ · {cartCount} bikes · {helmetCount} helmets
+                <span className="text-muted">{dict.fleet.success.summaryTotal}: </span>
+                {cartTotal}€ · {cartCount} {g.bikesWord} · {helmetCount} {g.helmetsWord}
               </p>
             </div>
             <a
               href={`/${lang}/#fleet`}
               className="bg-ink text-white font-bold text-xs tracking-widest uppercase px-7 py-3 hover:bg-red transition-colors inline-block"
             >
-              Back to fleet
+              {g.backToFleet}
             </a>
           </div>
         ) : (
@@ -330,7 +327,7 @@ export default function GroupBooking({
         {/* Step 1: shared date window */}
         <div className="mb-8">
           <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mb-3">
-            Your rental period
+            {g.period}
           </p>
           <div className="grid lg:grid-cols-[auto_1fr] gap-5 items-start">
           <div>
@@ -375,7 +372,7 @@ export default function GroupBooking({
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block">
                 <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                  Pickup time · {effFrom && format(effFrom, "EEE dd MMM", { locale: dfLocale })}
+                  {dict.fleet.calendar.pickupTime} · {effFrom && format(effFrom, "EEE dd MMM", { locale: dfLocale })}
                 </span>
                 <select
                   value={pickupTime}
@@ -389,7 +386,7 @@ export default function GroupBooking({
               </label>
               <label className="block">
                 <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
-                  Return time · {effTo && format(effTo, "EEE dd MMM", { locale: dfLocale })}
+                  {dict.fleet.calendar.returnTime} · {effTo && format(effTo, "EEE dd MMM", { locale: dfLocale })}
                 </span>
                 <select
                   value={returnTime}
@@ -407,17 +404,17 @@ export default function GroupBooking({
 
           <aside className="bg-white border border-ink/10 p-5 lg:sticky lg:top-28">
             <p className="font-barlow font-bold uppercase tracking-wide text-ink text-sm mb-3">
-              How it works
+              {g.howItWorks}
             </p>
             <ol className="space-y-2.5 text-sm text-ink/80">
-              <li className="flex gap-2.5"><span className="font-bold text-red">1</span> Pick one date window for the whole group</li>
-              <li className="flex gap-2.5"><span className="font-bold text-red">2</span> Add any bikes from the fleet that are free</li>
-              <li className="flex gap-2.5"><span className="font-bold text-red">3</span> One deposit, one booking, sorted</li>
+              <li className="flex gap-2.5"><span className="font-bold text-red">1</span> {g.step1}</li>
+              <li className="flex gap-2.5"><span className="font-bold text-red">2</span> {g.step2}</li>
+              <li className="flex gap-2.5"><span className="font-bold text-red">3</span> {g.step3}</li>
             </ol>
             <div className="border-t border-ink/10 mt-4 pt-4 space-y-1.5 text-xs text-muted">
-              <p>20% now to reserve, the rest on arrival.</p>
-              <p>{BRAND.deposit} security deposit on pickup.</p>
-              <p>Same dates for all bikes.</p>
+              <p>{g.reserveLine}</p>
+              <p>{g.depositLine.replace("{deposit}", BRAND.deposit)}</p>
+              <p>{g.sameDates}</p>
             </div>
           </aside>
           </div>
@@ -427,8 +424,8 @@ export default function GroupBooking({
         <>
             <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mb-3">
               {rangeReady
-                ? `Pick your bikes${loadingAvail ? " · checking availability…" : ""}`
-                : "The fleet · pick dates above to check availability"}
+                ? `${g.pickBikes}${loadingAvail ? ` · ${g.checkingAvailability}` : ""}`
+                : g.fleetNoDates}
             </p>
             <div className="grid sm:grid-cols-2 gap-4 mb-8">
               {bikes.map((bike) => {
@@ -448,11 +445,11 @@ export default function GroupBooking({
                       <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/65 text-center px-4">
                         <div>
                           <p className="text-sm font-bold uppercase tracking-[0.08em] text-ink/80 leading-snug">
-                            Not available for the selected period
+                            {g.notAvailable}
                           </p>
                           {a?.nextFree && (
                             <p className="text-xs text-emerald-700 font-medium mt-1.5">
-                              Free from {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
+                              {g.freeFrom} {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
                             </p>
                           )}
                         </div>
@@ -463,7 +460,7 @@ export default function GroupBooking({
                       <button
                         type="button"
                         onClick={() => bike.image && setPreview(bike.image)}
-                        aria-label={`Enlarge ${bike.model} photo`}
+                        aria-label={g.enlarge}
                         className="relative w-32 h-32 shrink-0 self-start bg-sand overflow-hidden block cursor-zoom-in"
                       >
                         {bike.image && (
@@ -491,8 +488,8 @@ export default function GroupBooking({
                           {bike.model}
                         </a>
                         <div className="text-xs text-muted mt-1">
-                          {price != null ? `${price}€ · period` : `from ${bike.pricing.day}/day`} · {bike.maxSpeed} ·{" "}
-                          {bike.seats} {bike.seats > 1 ? "seats" : "seat"}
+                          {price != null ? `${price}€ · ${g.period2}` : `${bike.pricing.day}${dict.fleet.priceBox.perDay}`} · {bike.maxSpeed} ·{" "}
+                          {bike.seats} {bike.seats > 1 ? g.seats : g.seat}
                         </div>
                         <div className="flex items-center gap-2.5 flex-wrap mt-1.5">
                           <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
@@ -512,11 +509,11 @@ export default function GroupBooking({
                           <div className="mt-auto pt-3 flex items-center justify-between gap-2">
                             <div className="text-xs min-w-0 leading-tight">
                               {!rangeReady ? (
-                                <span className="text-ink/40 uppercase tracking-[0.08em]">Pick dates ↑</span>
+                                <span className="text-ink/40 uppercase tracking-[0.08em]">{g.pickDates} ↑</span>
                               ) : !a ? (
-                                <span className="text-muted">checking…</span>
+                                <span className="text-muted">{g.checking}</span>
                               ) : (
-                                <span className="text-emerald-700 font-medium">{free} available</span>
+                                <span className="text-emerald-700 font-medium">{free} {g.available}</span>
                               )}
                             </div>
                             {rangeReady && a && (
@@ -553,11 +550,11 @@ export default function GroupBooking({
             <div className="my-8 w-screen relative left-1/2 -translate-x-1/2">
             <div className="bg-ink text-white px-5 md:px-12 py-6 flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4">
               {[
-                { label: "Deposit, refunded", value: BRAND.deposit, d: "M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z", sw: 1.5 },
-                { label: "Basic insurance", value: "Included", d: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z", sw: 1.5 },
-                { label: "Kilometres", value: "Unlimited", d: "M5 13l4 4L19 7", sw: 3 },
-                { label: "Fuel policy", value: "Full → full", d: "M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25", sw: 1.5 },
-                { label: "Pickup to pickup", value: "24h = 1 day", d: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z", sw: 1.5 },
+                { label: g.bandDeposit, value: BRAND.deposit, d: "M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z", sw: 1.5 },
+                { label: g.bandInsurance, value: g.valIncluded, d: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z", sw: 1.5 },
+                { label: g.bandKm, value: g.valUnlimited, d: "M5 13l4 4L19 7", sw: 3 },
+                { label: g.bandFuel, value: "Full → full", d: "M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25", sw: 1.5 },
+                { label: g.bandDay, value: "24h = 1 day", d: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z", sw: 1.5 },
               ].map((it, i) => (
                 <div key={i} className="flex items-center gap-2.5">
                   <svg className="w-6 h-6 text-red shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={it.sw}>
@@ -573,10 +570,10 @@ export default function GroupBooking({
 
             <div className="bg-sand text-ink px-5 md:px-12 py-6 flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4">
               {[
-                { label: "Helmets", value: "Included", d: "M5 13l4 4L19 7", sw: 3 },
-                { label: "Season", value: "Apr–Oct", d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5", sw: 1.5 },
-                { label: "Phone holders", value: "Not available", d: "M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z", sw: 1.5 },
-                { label: "Pickup", value: "Our Zadar shop", d: "M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 9.75c0 7.142-7.5 11.25-7.5 11.25S4.5 16.892 4.5 9.75a7.5 7.5 0 1115 0z", sw: 1.5 },
+                { label: g.bandHelmets, value: g.valIncluded, d: "M5 13l4 4L19 7", sw: 3 },
+                { label: g.bandSeason, value: "Apr–Oct", d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5", sw: 1.5 },
+                { label: g.bandPhone, value: g.valNotAvailable, d: "M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z", sw: 1.5 },
+                { label: g.bandPickup, value: g.valZadarShop, d: "M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 9.75c0 7.142-7.5 11.25-7.5 11.25S4.5 16.892 4.5 9.75a7.5 7.5 0 1115 0z", sw: 1.5 },
               ].map((it, i) => (
                 <div key={i} className="flex items-center gap-2.5">
                   <svg className="w-6 h-6 text-red shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={it.sw}>
@@ -594,10 +591,10 @@ export default function GroupBooking({
             {/* Cart bar */}
             <div className="bg-sand border border-ink/10 p-4 flex items-center justify-between gap-4 flex-wrap sticky bottom-4">
               <div>
-                <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Your group</p>
+                <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.yourGroup}</p>
                 <p className="text-sm text-ink mt-0.5">
                   {cartCount === 0
-                    ? "No bikes yet"
+                    ? g.noBikes
                     : bikes
                         .filter((b) => qtyOf(b.id) > 0)
                         .map((b) => `${b.model} × ${qtyOf(b.id)}`)
@@ -605,13 +602,13 @@ export default function GroupBooking({
                 </p>
                 {cartCount > 0 && (
                   <p className="text-xs text-muted mt-0.5">
-                    {cartCount} bikes · {helmetCount} helmets · one deposit
+                    {cartCount} {g.bikesWord} · {helmetCount} {g.helmetsWord} · {g.oneDeposit}
                   </p>
                 )}
               </div>
               <div className="flex items-center gap-5">
                 <div className="text-right">
-                  <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Total</p>
+                  <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{dict.fleet.calendar.total}</p>
                   <p className="text-2xl font-bold text-red leading-tight">{cartTotal}€</p>
                 </div>
                 <button
@@ -620,7 +617,7 @@ export default function GroupBooking({
                   onClick={() => setStep("details")}
                   className="bg-red text-white font-bold text-xs tracking-widest uppercase px-5 py-3 hover:bg-red-dark disabled:opacity-40"
                 >
-                  Continue →
+                  {g.continue} →
                 </button>
               </div>
             </div>
@@ -628,28 +625,28 @@ export default function GroupBooking({
             {step === "details" && (
               <form onSubmit={handleSubmit} className="mt-6 bg-white border border-ink/10 p-5 space-y-5">
                 <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                  Your details
+                  {dict.fleet.form.title}
                 </p>
                 <div className="bg-sand px-4 py-3 text-xs text-ink/80 leading-relaxed">
-                  <span className="font-semibold">Reminder:</span> helmets included · {BRAND.deposit} deposit on pickup · bring your valid licence · full tank in, full tank out · pickup at {BRAND.address}
+                  {g.reminder.replace("{deposit}", BRAND.deposit).replace("{address}", BRAND.address)}
                 </div>
                 <div className="grid sm:grid-cols-3 gap-3">
                   <label className="block">
-                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Name *</span>
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.lblName} *</span>
                     <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
                   </label>
                   <label className="block">
-                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Phone *</span>
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.lblPhone} *</span>
                     <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
                   </label>
                   <label className="block">
-                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Email *</span>
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.lblEmail} *</span>
                     <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
                   </label>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <label className="block">
-                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Driver licence *</span>
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.lblLicence} *</span>
                     <select value={driversLicence} onChange={(e) => setDriversLicence(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white">
                       <option value="">—</option>
                       {LICENCE_OPTIONS.map((l) => (
@@ -658,18 +655,18 @@ export default function GroupBooking({
                     </select>
                   </label>
                   <label className="block">
-                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Licence country</span>
-                    <input value={licenceCountry} onChange={(e) => setLicenceCountry(e.target.value)} placeholder="e.g. Germany" className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
+                    <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.lblLicenceCountry}</span>
+                    <input value={licenceCountry} onChange={(e) => setLicenceCountry(e.target.value)} placeholder={g.licenceCountryPh} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
                   </label>
                 </div>
 
                 {/* Riding style per bike → drives helmet prep */}
                 <div className="border-t border-ink/10 pt-4">
                   <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
-                    Riding style per bike
+                    {g.ridingPerBike}
                   </p>
                   <p className="text-xs text-muted mb-3">
-                    So we prep the right helmets · {helmetCount} helmets total
+                    {g.helmetsHint} · {helmetCount} {g.helmetsTotal}
                   </p>
                   <div className="space-y-2">
                     {bikes
@@ -693,7 +690,7 @@ export default function GroupBooking({
                                       : "bg-white text-ink/70 border-ink/15 hover:border-ink/40"
                                   }`}
                                 >
-                                  {opt === "solo" ? "Solo" : "With passenger"}
+                                  {opt === "solo" ? dict.fleet.form.ridingStyleSolo : dict.fleet.form.ridingStyleWithPassenger}
                                 </button>
                               ))}
                             </div>
@@ -704,16 +701,18 @@ export default function GroupBooking({
                 </div>
 
                 <label className="block">
-                  <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">Notes</span>
+                  <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.lblNotes}</span>
                   <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
                 </label>
 
                 <div className="border-t border-ink/10 pt-4">
                   <p className="text-sm text-ink mb-1">
-                    Pay <span className="font-bold text-red">{bookingFee}€</span> now to secure your dates
-                    {" "}(20% of {cartTotal}€). The rest ({Math.round((cartTotal - bookingFee) * 100) / 100}€) is paid on arrival.
+                    {g.payHeadline
+                      .replace("{fee}", String(bookingFee))
+                      .replace("{total}", String(cartTotal))
+                      .replace("{rest}", String(Math.round((cartTotal - bookingFee) * 100) / 100))}
                   </p>
-                  <p className="text-xs text-muted mb-4">After paying, upload a screenshot below. Security deposit {BRAND.deposit} on pickup.</p>
+                  <p className="text-xs text-muted mb-4">{g.payUpload.replace("{deposit}", BRAND.deposit)}</p>
 
                   <div className="space-y-2.5">
                     {(BRAND.payment as PaymentMethod[]).map((p) => {
@@ -729,7 +728,7 @@ export default function GroupBooking({
                                   {p.link && (
                                     <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
                                       <a href={p.link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center justify-center bg-ink text-white text-[11px] font-bold tracking-widest uppercase px-4 py-2.5 hover:bg-red transition-colors">
-                                        Pay {bookingFee}€ with {p.label.split(" · ")[0]}
+                                        {g.payWith.replace("{fee}", String(bookingFee)).replace("{method}", p.label.split(" · ")[0])}
                                       </a>
                                       <div className="bg-white border border-ink/10 p-2 inline-block shrink-0 self-start sm:self-center">
                                         <QRCodeSVG value={p.link} size={96} level="M" />
@@ -742,7 +741,7 @@ export default function GroupBooking({
                                       <div className="flex items-center gap-2 flex-wrap">
                                         <code className="text-ink text-sm font-mono break-all">{p.value}</code>
                                         <button type="button" onClick={(e) => { e.preventDefault(); copyValue(p.valueCopy ?? p.value!, `${p.id}-value`); }} className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red px-2 py-1 border border-ink/15 hover:border-red">
-                                          {copied === `${p.id}-value` ? "✓ Copied" : "Copy"}
+                                          {copied === `${p.id}-value` ? `✓ ${dict.fleet.reservation.copied}` : dict.fleet.reservation.copy}
                                         </button>
                                       </div>
                                     </div>
@@ -764,7 +763,7 @@ export default function GroupBooking({
 
                   <div className="mt-4">
                     <p className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em] mb-1.5">
-                      Deposit screenshot *
+                      {g.depositScreenshot} *
                     </p>
                     <input
                       id="group-receipt-file"
@@ -778,7 +777,7 @@ export default function GroupBooking({
                         htmlFor="group-receipt-file"
                         className="inline-flex items-center cursor-pointer bg-ink text-white font-bold text-[10px] tracking-widest uppercase px-4 py-2.5 hover:bg-red transition-colors"
                       >
-                        Choose file
+                        {g.chooseFile}
                       </label>
                       <span className="text-sm text-ink min-w-0 break-all">
                         {receipt ? (
@@ -787,7 +786,7 @@ export default function GroupBooking({
                             <span className="text-muted ml-2">({(receipt.size / 1024).toFixed(0)} KB)</span>
                           </>
                         ) : (
-                          <span className="text-muted">No file chosen</span>
+                          <span className="text-muted">{g.noFile}</span>
                         )}
                       </span>
                       {receipt && (
@@ -800,11 +799,11 @@ export default function GroupBooking({
                           }}
                           className="text-[10px] font-bold tracking-widest uppercase text-ink/60 hover:text-red transition-colors px-2 py-1 border border-ink/15 hover:border-red"
                         >
-                          Remove
+                          {g.remove}
                         </button>
                       )}
                     </div>
-                    <p className="text-muted text-xs mt-2">JPG, PNG, HEIC or PDF · max 4 MB</p>
+                    <p className="text-muted text-xs mt-2">{g.fileHint}</p>
                   </div>
                 </div>
 
@@ -812,10 +811,10 @@ export default function GroupBooking({
 
                 <div className="flex items-center justify-between gap-4 pt-2 flex-wrap">
                   <button type="button" onClick={() => setStep("select")} className="text-xs font-bold tracking-widest uppercase text-ink/50 hover:text-red">
-                    ← Back to bikes
+                    ← {g.backToBikes}
                   </button>
                   <button type="submit" disabled={submitting} className="bg-red text-white font-bold text-xs tracking-widest uppercase px-6 py-3 hover:bg-red-dark disabled:opacity-50">
-                    {submitting ? "Submitting…" : `Submit booking · ${cartCount} bikes`}
+                    {submitting ? dict.fleet.form.submitting : `${g.submit} · ${cartCount} ${g.bikesWord}`}
                   </button>
                 </div>
               </form>
