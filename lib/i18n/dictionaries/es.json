@@ -646,6 +646,7 @@
     "depositScreenshot": "Comprobante de pago",
     "fileHint": "JPG, PNG, HEIC o PDF · máx 4 MB",
     "useTime": "Usar esta hora",
-    "freeFromTime": "Libre desde"
+    "freeFromTime": "Libre desde",
+    "useDates": "Usar estas fechas"
   }
 }

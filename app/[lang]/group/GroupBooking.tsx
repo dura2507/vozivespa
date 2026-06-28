@@ -462,9 +462,23 @@ export default function GroupBooking({
                             </div>
                           ) : (
                             a?.nextFree && (
-                              <p className="text-xs text-emerald-700 font-medium mt-1.5">
-                                {g.freeFrom} {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
-                              </p>
+                              <div className="mt-1.5">
+                                <p className="text-xs text-emerald-700 font-medium">
+                                  {g.freeFrom} {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
+                                </p>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setRange({
+                                      from: new Date(`${a.nextFree!.from}T00:00:00`),
+                                      to: new Date(`${a.nextFree!.to}T00:00:00`),
+                                    })
+                                  }
+                                  className="mt-1.5 inline-block bg-ink text-white text-[11px] font-bold uppercase tracking-[0.08em] px-3 py-1.5 hover:bg-red transition-colors"
+                                >
+                                  {g.useDates} ({format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })})
+                                </button>
+                              </div>
                             )
                           )}
                         </div>

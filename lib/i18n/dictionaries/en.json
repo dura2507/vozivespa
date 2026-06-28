@@ -646,6 +646,7 @@
     "depositScreenshot": "Deposit screenshot",
     "fileHint": "JPG, PNG, HEIC or PDF · max 4 MB",
     "useTime": "Use this time",
-    "freeFromTime": "Free from"
+    "freeFromTime": "Free from",
+    "useDates": "Use these dates"
   }
 }

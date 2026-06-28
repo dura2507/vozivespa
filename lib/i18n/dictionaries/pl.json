@@ -646,6 +646,7 @@
     "depositScreenshot": "Potwierdzenie wpłaty",
     "fileHint": "JPG, PNG, HEIC lub PDF · maks. 4 MB",
     "useTime": "Użyj tej godziny",
-    "freeFromTime": "Wolne od"
+    "freeFromTime": "Wolne od",
+    "useDates": "Użyj tych dat"
   }
 }

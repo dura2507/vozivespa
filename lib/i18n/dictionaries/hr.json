@@ -646,6 +646,7 @@
     "depositScreenshot": "Potvrda uplate",
     "fileHint": "JPG, PNG, HEIC ili PDF · maks. 4 MB",
     "useTime": "Primijeni vrijeme",
-    "freeFromTime": "Slobodno od"
+    "freeFromTime": "Slobodno od",
+    "useDates": "Primijeni razdoblje"
   }
 }

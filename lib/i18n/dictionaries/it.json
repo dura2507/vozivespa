@@ -646,6 +646,7 @@
     "depositScreenshot": "Ricevuta del pagamento",
     "fileHint": "JPG, PNG, HEIC o PDF · max 4 MB",
     "useTime": "Usa quest'ora",
-    "freeFromTime": "Libera dalle"
+    "freeFromTime": "Libera dalle",
+    "useDates": "Usa queste date"
   }
 }

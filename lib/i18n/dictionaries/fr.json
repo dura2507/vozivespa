@@ -646,6 +646,7 @@
     "depositScreenshot": "Justificatif de paiement",
     "fileHint": "JPG, PNG, HEIC ou PDF · max 4 Mo",
     "useTime": "Utiliser cette heure",
-    "freeFromTime": "Libre dès"
+    "freeFromTime": "Libre dès",
+    "useDates": "Utiliser ces dates"
   }
 }
