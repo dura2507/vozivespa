@@ -715,6 +715,19 @@ export default function BikeDetail({
             </div>
           </section>
 
+          {/* Cross-sell: book several different bikes in one go */}
+          <Link
+            href={`/${lang}/group`}
+            className="mb-12 flex items-center justify-between gap-4 bg-ink text-white px-6 py-5 hover:bg-red transition-colors"
+          >
+            <span className="text-sm sm:text-base font-semibold">
+              {dict.nav.groupBookingLead}
+            </span>
+            <span className="text-xs font-bold tracking-widest uppercase whitespace-nowrap">
+              {dict.nav.groupBooking} →
+            </span>
+          </Link>
+
           {/* Booking flow - calendar + form + success */}
           <section id="book" ref={calendarRef} className="mb-16 scroll-mt-28">
             {bookingStep !== "done" && (

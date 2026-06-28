@@ -9,7 +9,9 @@
     "terms": "Uvjeti",
     "bookNow": "Rezerviraj",
     "menuAria": "Izbornik",
-    "languageSwitcher": "Jezik"
+    "languageSwitcher": "Jezik",
+    "groupBooking": "Rezerviraj više vozila",
+    "groupBookingLead": "Iznajmljujete više vozila?"
   },
   "footer": {
     "intro": "Najam skutera i motocikala u Zadru. Istraži dalmatinsku obalu na dva kotača.",
@@ -57,28 +59,69 @@
       "eyebrow": "Uz svaki najam",
       "title": "Što je uključeno",
       "items": {
-        "insurance": { "label": "Osnovno osiguranje", "sub": "Krađa i šteta na motoru" },
-        "helmets": { "label": "Kacige", "sub": "Uvijek uključene" },
-        "unlimitedKm": { "label": "Neograničeni km", "sub": "Bez ograničenja vožnje" },
-        "roadside": { "label": "Cestovna pomoć", "sub": "Besplatno do 20km, dalje 50€ i više" },
-        "transparent": { "label": "Transparentne cijene", "sub": "Što vidiš, to plaćaš" },
-        "warranty": { "label": "Jamstvo motora", "sub": "Pokrivamo kvarove motora" }
+        "insurance": {
+          "label": "Osnovno osiguranje",
+          "sub": "Krađa i šteta na motoru"
+        },
+        "helmets": {
+          "label": "Kacige",
+          "sub": "Uvijek uključene"
+        },
+        "unlimitedKm": {
+          "label": "Neograničeni km",
+          "sub": "Bez ograničenja vožnje"
+        },
+        "roadside": {
+          "label": "Cestovna pomoć",
+          "sub": "Besplatno do 20km, dalje 50€ i više"
+        },
+        "transparent": {
+          "label": "Transparentne cijene",
+          "sub": "Što vidiš, to plaćaš"
+        },
+        "warranty": {
+          "label": "Jamstvo motora",
+          "sub": "Pokrivamo kvarove motora"
+        }
       }
     },
     "goodToKnow": {
       "eyebrow": "Važno",
       "title": "Dobro je znati",
-      "deposit": { "label": "Polog", "sub": "Po motoru, vraća se nakon povrata ako nema oštećenja." },
-      "phoneHolders": { "value": "Ne", "label": "Držači za mobitel", "sub": "Ne nudimo niti ugrađujemo držače za mobitel, a ne možeš donijeti ni svoj. Nijedan naš motor nema držač." },
-      "season": { "value": "Tra-Lis", "label": "Sezona", "sub": "Iznajmljujemo od travnja do listopada. Pun spremnik na izlasku, pun spremnik na povratu." },
-      "languages": { "label": "Jezici", "sub": "Govorimo njemački, engleski i portugalski. Piši nam na WhatsApp." }
+      "deposit": {
+        "label": "Polog",
+        "sub": "Po motoru, vraća se nakon povrata ako nema oštećenja."
+      },
+      "phoneHolders": {
+        "value": "Ne",
+        "label": "Držači za mobitel",
+        "sub": "Ne nudimo niti ugrađujemo držače za mobitel, a ne možeš donijeti ni svoj. Nijedan naš motor nema držač."
+      },
+      "season": {
+        "value": "Tra-Lis",
+        "label": "Sezona",
+        "sub": "Iznajmljujemo od travnja do listopada. Pun spremnik na izlasku, pun spremnik na povratu."
+      },
+      "languages": {
+        "label": "Jezici",
+        "sub": "Govorimo njemački, engleski i portugalski. Piši nam na WhatsApp."
+      }
     },
     "howItWorks": {
       "eyebrow": "Jednostavan proces",
       "title": "Kako funkcionira",
-      "step1": { "title": "Odaberi vozilo", "text": "Odaberi skuter ili motocikl, od 50ccm gradskog skutera do 390ccm motocikla za ceste." },
-      "step2": { "title": "Traži termine", "text": "Provjeri dostupnost u kalendaru i pošalji kratku upitnicu. Preuzimanje u našem dućanu u Zadru." },
-      "step3": { "title": "Potvrđujemo i kreni", "text": "Šaljemo potvrdu mailom u roku nekoliko sati. Plati 20% predujma, preuzmi motor i kreni." },
+      "step1": {
+        "title": "Odaberi vozilo",
+        "text": "Odaberi skuter ili motocikl, od 50ccm gradskog skutera do 390ccm motocikla za ceste."
+      },
+      "step2": {
+        "title": "Traži termine",
+        "text": "Provjeri dostupnost u kalendaru i pošalji kratku upitnicu. Preuzimanje u našem dućanu u Zadru."
+      },
+      "step3": {
+        "title": "Potvrđujemo i kreni",
+        "text": "Šaljemo potvrdu mailom u roku nekoliko sati. Plati 20% predujma, preuzmi motor i kreni."
+      },
       "cta": "Rezerviraj motor"
     },
     "reviews": {
@@ -277,7 +320,7 @@
     "priceBox": {
       "perDay": "/ dan",
       "unlimitedLine": "Neograničeni km · Osnovno osiguranje · {deposit} polog",
-        "helmetsIncluded": "Kacige uključene",
+      "helmetsIncluded": "Kacige uključene",
       "licenceEyebrow": "Potrebna vozačka",
       "bringLicence": "Donesi važeću vozačku pri preuzimanju. Nema vozačke, nema vožnje.",
       "dayBadge": "24h",

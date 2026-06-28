@@ -57,6 +57,7 @@ export default function Navbar({
 
   const LINKS = [
     { label: t.fleet, href: "/#fleet" },
+    { label: t.groupBooking, href: "/group" },
     { label: t.gallery, href: "/gallery" },
     { label: t.info, href: "/info" },
     { label: t.faq, href: "/faq" },
