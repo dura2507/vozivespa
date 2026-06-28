@@ -644,6 +644,8 @@
     "noFile": "Keine Datei gewählt",
     "remove": "Entfernen",
     "depositScreenshot": "Zahlungsbeleg",
-    "fileHint": "JPG, PNG, HEIC oder PDF · max. 4 MB"
+    "fileHint": "JPG, PNG, HEIC oder PDF · max. 4 MB",
+    "useTime": "Uhrzeit übernehmen",
+    "freeFromTime": "Frei ab"
   }
 }

@@ -42,7 +42,7 @@ function toIsoDate(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-type FleetAvail = { totalUnits: number; freeUnits: number; nextFree: { from: string; to: string } | null };
+type FleetAvail = { totalUnits: number; freeUnits: number; freeFromTime: string | null; nextFree: { from: string; to: string } | null };
 
 // Riding style is per physical bike (per unit), not per group, so the
 // shop can prep the right number of helmets. The cart holds one entry
@@ -110,7 +110,7 @@ export default function GroupBooking({
         if (cancelled) return;
         const map: Record<string, FleetAvail> = {};
         for (const b of data.bikes ?? []) {
-          map[b.bikeId] = { totalUnits: b.totalUnits, freeUnits: b.freeUnits, nextFree: b.nextFree };
+          map[b.bikeId] = { totalUnits: b.totalUnits, freeUnits: b.freeUnits, freeFromTime: b.freeFromTime, nextFree: b.nextFree };
         }
         setAvail(map);
       })
@@ -447,10 +447,25 @@ export default function GroupBooking({
                           <p className="text-sm font-bold uppercase tracking-[0.08em] text-ink/80 leading-snug">
                             {g.notAvailable}
                           </p>
-                          {a?.nextFree && (
-                            <p className="text-xs text-emerald-700 font-medium mt-1.5">
-                              {g.freeFrom} {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
-                            </p>
+                          {a?.freeFromTime ? (
+                            <div className="mt-1.5">
+                              <p className="text-xs text-emerald-700 font-medium">
+                                {g.freeFromTime} {a.freeFromTime}
+                              </p>
+                              <button
+                                type="button"
+                                onClick={() => setPickupTime(a.freeFromTime!)}
+                                className="mt-1.5 inline-block bg-ink text-white text-[11px] font-bold uppercase tracking-[0.08em] px-3 py-1.5 hover:bg-red transition-colors"
+                              >
+                                {g.useTime} ({a.freeFromTime})
+                              </button>
+                            </div>
+                          ) : (
+                            a?.nextFree && (
+                              <p className="text-xs text-emerald-700 font-medium mt-1.5">
+                                {g.freeFrom} {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
+                              </p>
+                            )
                           )}
                         </div>
                       </div>

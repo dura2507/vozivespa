@@ -644,6 +644,8 @@
     "noFile": "Aucun fichier choisi",
     "remove": "Retirer",
     "depositScreenshot": "Justificatif de paiement",
-    "fileHint": "JPG, PNG, HEIC ou PDF · max 4 Mo"
+    "fileHint": "JPG, PNG, HEIC ou PDF · max 4 Mo",
+    "useTime": "Utiliser cette heure",
+    "freeFromTime": "Libre dès"
   }
 }

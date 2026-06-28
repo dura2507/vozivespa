@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { TURNAROUND_MINUTES } from "@/lib/pricing";
+import { TURNAROUND_MINUTES, buildSlots } from "@/lib/pricing";
 
 // A booking's time window . used to find a free physical unit on the
 // requested bike model.
@@ -457,6 +457,85 @@ export async function nextFreeWindow(
     if (opts.seasonEndIso && dateTo > opts.seasonEndIso) break;
     const res = await findFreeUnits(supabase, { ...w, dateFrom, dateTo }, 1);
     if (res.unitIds.length >= 1) return { dateFrom, dateTo };
+  }
+  return null;
+}
+
+// Same-day smart hint: when a bike is full at the requested pickup time,
+// find the earliest LATER pickup slot on the start date at which at least
+// one unit frees up (e.g. booked until 15:00 → free from 15:30 with the
+// turnaround buffer). Returns the "HH:MM" slot, or null if there's no
+// later same-day window (caller then falls back to nextFreeWindow). One
+// DB load, then evaluated in memory with the same overlap + buffer rules
+// as findFreeUnits, so it never contradicts the real availability check.
+export async function earliestFreePickupSameDay(
+  supabase: SupabaseClient,
+  w: BookingWindow,
+): Promise<string | null> {
+  const { data: units, error: unitErr } = await supabase
+    .from("bike_units")
+    .select("id")
+    .eq("bike_id", w.bikeId)
+    .eq("active", true)
+    .eq("is_backup", false);
+  if (unitErr) throw new Error(`unit lookup: ${unitErr.message}`);
+  const unitIds = (units ?? []).map((u) => (u as { id: string }).id);
+  if (unitIds.length === 0) return null;
+
+  const { data: bookings, error: bErr } = await supabase
+    .from("bookings")
+    .select("bike_unit_id, date_from, date_to, pickup_time, return_time")
+    .eq("bike_id", w.bikeId)
+    .in("status", ["confirmed", "pending"])
+    .is("returned_at", null)
+    .lte("date_from", w.dateTo)
+    .gte("date_to", w.dateFrom);
+  if (bErr) throw new Error(`booking lookup: ${bErr.message}`);
+
+  const { data: blocks, error: blkErr } = await supabase
+    .from("blocked_dates")
+    .select("date_from, date_to, start_time, end_time, bike_unit_id")
+    .eq("bike_id", w.bikeId)
+    .is("booking_id", null)
+    .lte("date_from", w.dateTo)
+    .gte("date_to", w.dateFrom);
+  if (blkErr) throw new Error(`block lookup: ${blkErr.message}`);
+
+  const bufferMs = TURNAROUND_MINUTES * 60_000;
+  const reqPickupMs = toMs(w.dateFrom, w.pickupTime);
+  const endMs = toMs(w.dateTo, w.returnTime);
+
+  for (const slot of buildSlots()) {
+    const slotMs = toMs(w.dateFrom, slot);
+    if (slotMs <= reqPickupMs) continue; // only later than what they asked
+    if (slotMs >= endMs) break; // pickup must stay before the return moment
+
+    const occupied = new Set<string>();
+    let wholeModelBlocked = false;
+    for (const m of (blocks ?? []) as Array<{
+      date_from: string; date_to: string; start_time: string | null; end_time: string | null; bike_unit_id: string | null;
+    }>) {
+      const overlaps =
+        !m.start_time || !m.end_time
+          ? true
+          : slotMs < toMs(m.date_to, m.end_time) && toMs(m.date_from, m.start_time) < endMs;
+      if (!overlaps) continue;
+      if (m.bike_unit_id === null) { wholeModelBlocked = true; break; }
+      occupied.add(m.bike_unit_id);
+    }
+    if (wholeModelBlocked) continue;
+
+    for (const b of (bookings ?? []) as Array<{
+      bike_unit_id: string | null; date_from: string; date_to: string; pickup_time: string; return_time: string;
+    }>) {
+      const cStart = toMs(b.date_from, b.pickup_time);
+      const cEnd = toMs(b.date_to, b.return_time);
+      if (slotMs < cEnd + bufferMs && cStart - bufferMs < endMs) {
+        if (b.bike_unit_id) occupied.add(b.bike_unit_id);
+      }
+    }
+
+    if (unitIds.some((id) => !occupied.has(id))) return slot;
   }
   return null;
 }

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 import { isValidSlot } from "@/lib/pricing";
 import { SEASON_END_ISO } from "@/lib/season";
-import { findFreeUnits, nextFreeWindow } from "@/lib/availability";
+import { findFreeUnits, nextFreeWindow, earliestFreePickupSameDay } from "@/lib/availability";
 import { getUnitCounts } from "@/lib/bike-pricing";
 
 export const dynamic = "force-dynamic";
@@ -45,18 +45,27 @@ export async function GET(request: Request) {
       } catch (err) {
         console.error("[/api/availability/fleet] findFreeUnits", bikeId, err);
       }
-      // Only the fully-booked models need the "available from" lookup —
-      // that's the expensive forward scan, so skip it when units are free.
+      // Fully-booked models get the "available from" hints. Prefer a
+      // same-day later pickup time (most helpful when the conflict is only
+      // a morning booking); fall back to the next free date otherwise.
+      let freeFromTime: string | null = null;
       let nextFree: { from: string; to: string } | null = null;
       if (freeUnits === 0) {
         try {
-          const w = await nextFreeWindow(supabase, window, { seasonEndIso: SEASON_END_ISO });
-          if (w) nextFree = { from: w.dateFrom, to: w.dateTo };
+          freeFromTime = await earliestFreePickupSameDay(supabase, window);
         } catch (err) {
-          console.error("[/api/availability/fleet] nextFreeWindow", bikeId, err);
+          console.error("[/api/availability/fleet] earliestFreePickupSameDay", bikeId, err);
+        }
+        if (!freeFromTime) {
+          try {
+            const w = await nextFreeWindow(supabase, window, { seasonEndIso: SEASON_END_ISO });
+            if (w) nextFree = { from: w.dateFrom, to: w.dateTo };
+          } catch (err) {
+            console.error("[/api/availability/fleet] nextFreeWindow", bikeId, err);
+          }
         }
       }
-      return { bikeId, totalUnits, freeUnits, nextFree };
+      return { bikeId, totalUnits, freeUnits, freeFromTime, nextFree };
     }),
   );
 

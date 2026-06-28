@@ -644,6 +644,8 @@
     "noFile": "Nessun file scelto",
     "remove": "Rimuovi",
     "depositScreenshot": "Ricevuta del pagamento",
-    "fileHint": "JPG, PNG, HEIC o PDF · max 4 MB"
+    "fileHint": "JPG, PNG, HEIC o PDF · max 4 MB",
+    "useTime": "Usa quest'ora",
+    "freeFromTime": "Libera dalle"
   }
 }

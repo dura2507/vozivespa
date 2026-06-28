@@ -644,6 +644,8 @@
     "noFile": "Nie wybrano pliku",
     "remove": "Usuń",
     "depositScreenshot": "Potwierdzenie wpłaty",
-    "fileHint": "JPG, PNG, HEIC lub PDF · maks. 4 MB"
+    "fileHint": "JPG, PNG, HEIC lub PDF · maks. 4 MB",
+    "useTime": "Użyj tej godziny",
+    "freeFromTime": "Wolne od"
   }
 }
