@@ -476,14 +476,14 @@ export default function GroupBooking({
                         type="button"
                         onClick={() => bike.image && setPreview(bike.image)}
                         aria-label={g.enlarge}
-                        className="relative w-32 h-32 shrink-0 self-start bg-sand overflow-hidden block cursor-zoom-in"
+                        className="relative w-24 h-24 sm:w-32 sm:h-32 shrink-0 self-start bg-sand overflow-hidden block cursor-zoom-in"
                       >
                         {bike.image && (
                           <Image src={bike.image} alt={bike.model} fill className="object-cover" sizes="128px" />
                         )}
                       </button>
 
-                      <div className="relative flex flex-col flex-1 min-w-0 pr-24 sm:pr-28">
+                      <div className="relative flex flex-col flex-1 min-w-0 pr-[4.5rem] sm:pr-28">
                         {LICENCE_BADGE[bike.licenceCode] && (
                           <Image
                             src={LICENCE_BADGE[bike.licenceCode]}
@@ -491,14 +491,14 @@ export default function GroupBooking({
                             width={120}
                             height={120}
                             quality={100}
-                            className="absolute top-1/2 right-0 -translate-y-1/2 w-20 h-20 sm:w-24 sm:h-24"
+                            className="absolute top-1/2 right-0 -translate-y-1/2 w-16 h-16 sm:w-24 sm:h-24"
                           />
                         )}
                         <a
                           href={`/${lang}/fleet/${bike.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-semibold text-ink text-lg leading-tight hover:text-red"
+                          className="font-semibold text-ink text-base sm:text-lg leading-tight hover:text-red"
                         >
                           {bike.model}
                         </a>
