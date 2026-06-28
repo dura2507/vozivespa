@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 import { isValidSlot } from "@/lib/pricing";
 import { SEASON_END_ISO } from "@/lib/season";
-import { findFreeUnits, nextFreeWindow, earliestFreePickupSameDay } from "@/lib/availability";
+import { findFreeUnits, nextFreeWindow, earliestFreePickupSameDay, latestFreeReturnSameDay } from "@/lib/availability";
 import { getUnitCounts } from "@/lib/bike-pricing";
 
 export const dynamic = "force-dynamic";
@@ -49,6 +49,7 @@ export async function GET(request: Request) {
       // same-day later pickup time (most helpful when the conflict is only
       // a morning booking); fall back to the next free date otherwise.
       let freeFromTime: string | null = null;
+      let freeIfReturnBy: string | null = null;
       let nextFree: { from: string; to: string; pickupTime: string } | null = null;
       if (freeUnits === 0) {
         try {
@@ -58,6 +59,13 @@ export async function GET(request: Request) {
         }
         if (!freeFromTime) {
           try {
+            freeIfReturnBy = await latestFreeReturnSameDay(supabase, window);
+          } catch (err) {
+            console.error("[/api/availability/fleet] latestFreeReturnSameDay", bikeId, err);
+          }
+        }
+        if (!freeFromTime && !freeIfReturnBy) {
+          try {
             const w = await nextFreeWindow(supabase, window, { seasonEndIso: SEASON_END_ISO });
             if (w) nextFree = { from: w.dateFrom, to: w.dateTo, pickupTime: w.pickupTime };
           } catch (err) {
@@ -65,7 +73,7 @@ export async function GET(request: Request) {
           }
         }
       }
-      return { bikeId, totalUnits, freeUnits, freeFromTime, nextFree };
+      return { bikeId, totalUnits, freeUnits, freeFromTime, freeIfReturnBy, nextFree };
     }),
   );
 

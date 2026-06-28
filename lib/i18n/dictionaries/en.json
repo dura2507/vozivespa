@@ -648,6 +648,8 @@
     "useTime": "Use this time",
     "freeFromTime": "Free from",
     "useDates": "Use these dates",
-    "at": "at"
+    "at": "at",
+    "freeIfReturnBy": "Free if returned by",
+    "useReturn": "Use return time"
   }
 }

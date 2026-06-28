@@ -648,6 +648,8 @@
     "useTime": "Primijeni vrijeme",
     "freeFromTime": "Slobodno od",
     "useDates": "Primijeni razdoblje",
-    "at": "u"
+    "at": "u",
+    "freeIfReturnBy": "Slobodno uz povrat do",
+    "useReturn": "Primijeni povrat"
   }
 }

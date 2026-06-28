@@ -648,6 +648,8 @@
     "useTime": "Utiliser cette heure",
     "freeFromTime": "Libre dès",
     "useDates": "Utiliser ces dates",
-    "at": "à"
+    "at": "à",
+    "freeIfReturnBy": "Libre si rendu avant",
+    "useReturn": "Utiliser ce retour"
   }
 }

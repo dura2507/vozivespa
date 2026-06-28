@@ -648,6 +648,8 @@
     "useTime": "Uhrzeit übernehmen",
     "freeFromTime": "Frei ab",
     "useDates": "Zeitraum übernehmen",
-    "at": "um"
+    "at": "um",
+    "freeIfReturnBy": "Frei, wenn Rückgabe bis",
+    "useReturn": "Rückgabe übernehmen"
   }
 }
