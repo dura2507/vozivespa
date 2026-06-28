@@ -578,7 +578,7 @@ export default function GroupBooking({
 
             {/* Two full-bleed feature bands, stacked, that flow edge to edge */}
             <div className="my-8 w-screen relative left-1/2 -translate-x-1/2">
-            <div className="bg-ink text-white px-5 md:px-12 py-6 flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4">
+            <div className="bg-ink text-white px-5 md:px-12 py-6 grid grid-cols-2 gap-x-5 gap-y-5 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-8 md:gap-x-12 sm:gap-y-4">
               {[
                 { label: g.bandDeposit, value: BRAND.deposit, d: "M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z", sw: 1.5 },
                 { label: g.bandInsurance, value: g.valIncluded, d: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z", sw: 1.5 },
@@ -598,7 +598,7 @@ export default function GroupBooking({
               ))}
             </div>
 
-            <div className="bg-sand text-ink px-5 md:px-12 py-6 flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-4">
+            <div className="bg-sand text-ink px-5 md:px-12 py-6 grid grid-cols-2 gap-x-5 gap-y-5 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-8 md:gap-x-12 sm:gap-y-4">
               {[
                 { label: g.bandHelmets, value: g.valIncluded, d: "M5 13l4 4L19 7", sw: 3 },
                 { label: g.bandSeason, value: "Apr–Oct", d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5", sw: 1.5 },
@@ -621,6 +621,14 @@ export default function GroupBooking({
             {/* Cart bar */}
             <div className="bg-sand border border-ink/10 p-4 flex items-center justify-between gap-4 flex-wrap sticky bottom-4">
               <div>
+                {rangeReady && effFrom && effTo && (
+                  <p className="text-sm text-ink font-medium mb-1.5">
+                    {from === to
+                      ? format(effFrom, "dd MMM", { locale: dfLocale })
+                      : `${format(effFrom, "dd MMM", { locale: dfLocale })} → ${format(effTo, "dd MMM", { locale: dfLocale })}`}
+                    <span className="text-muted font-normal"> · {pickupTime}–{returnTime}</span>
+                  </p>
+                )}
                 <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.yourGroup}</p>
                 <p className="text-sm text-ink mt-0.5">
                   {cartCount === 0
