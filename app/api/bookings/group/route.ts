@@ -149,6 +149,33 @@ export async function POST(request: Request) {
   const supabase = getServiceClient();
   const window = { dateFrom: from, dateTo: to, pickupTime, returnTime };
 
+  // Every requested model must exist AND be active in the DB. The
+  // single-bike flow guards this; getBikeWithPricing only checks the
+  // static catalogue, so without this a deactivated model with active
+  // units could slip through the group flow.
+  const requestedIds = [...new Set(items.map((i) => i.bikeId))];
+  const { data: bikeRows, error: bikeErr } = await supabase
+    .from("bikes")
+    .select("id, active")
+    .in("id", requestedIds);
+  if (bikeErr) {
+    console.error("[/api/bookings/group] bike active lookup", bikeErr);
+    return NextResponse.json({ error: "Could not validate bikes" }, { status: 500 });
+  }
+  const activeIds = new Set(
+    (bikeRows ?? [])
+      .filter((b) => (b as { active: boolean }).active)
+      .map((b) => (b as { id: string }).id),
+  );
+  for (const item of items) {
+    if (!activeIds.has(item.bikeId)) {
+      return NextResponse.json(
+        { error: "One of the selected bikes is no longer available" },
+        { status: 404 },
+      );
+    }
+  }
+
   // For each bike: confirm it exists + active, find `quantity` free
   // units for the shared window, and price it. Any shortfall aborts the
   // whole group (all-or-nothing) so the customer never gets a partial
