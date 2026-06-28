@@ -647,6 +647,7 @@
     "fileHint": "JPG, PNG, HEIC o PDF · máx 4 MB",
     "useTime": "Usar esta hora",
     "freeFromTime": "Libre desde",
-    "useDates": "Usar estas fechas"
+    "useDates": "Usar estas fechas",
+    "at": "a las"
   }
 }

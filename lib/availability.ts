@@ -441,22 +441,92 @@ function addDaysIso(iso: string, days: number): string {
 }
 
 // Smart suggestion: when a bike is fully booked for the requested
-// window, find the nearest LATER window of the SAME duration (same
-// pickup/return times, shifted by whole days) where at least one unit
-// is free. Lets the customer re-plan instead of just seeing "sold out".
-// Steps one day at a time up to `horizonDays`; stops at the season end.
+// window, find the nearest LATER window of the SAME duration (shifted by
+// whole days) where at least one unit is free, AND the earliest pickup
+// time on that day at which it frees up. Lets the customer re-plan with a
+// concrete date + time instead of just seeing "sold out". One DB load
+// across the horizon, then evaluated in memory with the same overlap +
+// buffer rules as findFreeUnits so the hint never contradicts the real
+// check. Steps one day at a time up to `horizonDays`; stops at season end.
 export async function nextFreeWindow(
   supabase: SupabaseClient,
   w: BookingWindow,
   opts: { horizonDays?: number; seasonEndIso?: string } = {},
-): Promise<{ dateFrom: string; dateTo: string } | null> {
+): Promise<{ dateFrom: string; dateTo: string; pickupTime: string } | null> {
   const horizon = opts.horizonDays ?? 14;
+  const minFrom = addDaysIso(w.dateFrom, 1);
+  const maxTo = addDaysIso(w.dateTo, horizon);
+
+  const { data: units, error: unitErr } = await supabase
+    .from("bike_units")
+    .select("id")
+    .eq("bike_id", w.bikeId)
+    .eq("active", true)
+    .eq("is_backup", false);
+  if (unitErr) throw new Error(`unit lookup: ${unitErr.message}`);
+  const unitIds = (units ?? []).map((u) => (u as { id: string }).id);
+  if (unitIds.length === 0) return null;
+
+  const { data: bookings, error: bErr } = await supabase
+    .from("bookings")
+    .select("bike_unit_id, date_from, date_to, pickup_time, return_time")
+    .eq("bike_id", w.bikeId)
+    .in("status", ["confirmed", "pending"])
+    .is("returned_at", null)
+    .lte("date_from", maxTo)
+    .gte("date_to", minFrom);
+  if (bErr) throw new Error(`booking lookup: ${bErr.message}`);
+
+  const { data: blocks, error: blkErr } = await supabase
+    .from("blocked_dates")
+    .select("date_from, date_to, start_time, end_time, bike_unit_id")
+    .eq("bike_id", w.bikeId)
+    .is("booking_id", null)
+    .lte("date_from", maxTo)
+    .gte("date_to", minFrom);
+  if (blkErr) throw new Error(`block lookup: ${blkErr.message}`);
+
+  const bufferMs = TURNAROUND_MINUTES * 60_000;
+  const blockRows = (blocks ?? []) as Array<{
+    date_from: string; date_to: string; start_time: string | null; end_time: string | null; bike_unit_id: string | null;
+  }>;
+  const bookingRows = (bookings ?? []) as Array<{
+    bike_unit_id: string | null; date_from: string; date_to: string; pickup_time: string; return_time: string;
+  }>;
+
   for (let shift = 1; shift <= horizon; shift++) {
     const dateFrom = addDaysIso(w.dateFrom, shift);
     const dateTo = addDaysIso(w.dateTo, shift);
     if (opts.seasonEndIso && dateTo > opts.seasonEndIso) break;
-    const res = await findFreeUnits(supabase, { ...w, dateFrom, dateTo }, 1);
-    if (res.unitIds.length >= 1) return { dateFrom, dateTo };
+    const endMs = toMs(dateTo, w.returnTime);
+
+    for (const slot of buildSlots()) {
+      const slotMs = toMs(dateFrom, slot);
+      if (slotMs >= endMs) break;
+
+      const occupied = new Set<string>();
+      let wholeModelBlocked = false;
+      for (const m of blockRows) {
+        const overlaps =
+          !m.start_time || !m.end_time
+            ? m.date_from <= dateTo && m.date_to >= dateFrom
+            : slotMs < toMs(m.date_to, m.end_time) && toMs(m.date_from, m.start_time) < endMs;
+        if (!overlaps) continue;
+        if (m.bike_unit_id === null) { wholeModelBlocked = true; break; }
+        occupied.add(m.bike_unit_id);
+      }
+      if (wholeModelBlocked) continue;
+
+      for (const b of bookingRows) {
+        const cStart = toMs(b.date_from, b.pickup_time);
+        const cEnd = toMs(b.date_to, b.return_time);
+        if (slotMs < cEnd + bufferMs && cStart - bufferMs < endMs) {
+          if (b.bike_unit_id) occupied.add(b.bike_unit_id);
+        }
+      }
+
+      if (unitIds.some((id) => !occupied.has(id))) return { dateFrom, dateTo, pickupTime: slot };
+    }
   }
   return null;
 }

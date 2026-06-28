@@ -49,7 +49,7 @@ export async function GET(request: Request) {
       // same-day later pickup time (most helpful when the conflict is only
       // a morning booking); fall back to the next free date otherwise.
       let freeFromTime: string | null = null;
-      let nextFree: { from: string; to: string } | null = null;
+      let nextFree: { from: string; to: string; pickupTime: string } | null = null;
       if (freeUnits === 0) {
         try {
           freeFromTime = await earliestFreePickupSameDay(supabase, window);
@@ -59,7 +59,7 @@ export async function GET(request: Request) {
         if (!freeFromTime) {
           try {
             const w = await nextFreeWindow(supabase, window, { seasonEndIso: SEASON_END_ISO });
-            if (w) nextFree = { from: w.dateFrom, to: w.dateTo };
+            if (w) nextFree = { from: w.dateFrom, to: w.dateTo, pickupTime: w.pickupTime };
           } catch (err) {
             console.error("[/api/availability/fleet] nextFreeWindow", bikeId, err);
           }

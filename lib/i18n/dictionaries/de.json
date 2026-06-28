@@ -647,6 +647,7 @@
     "fileHint": "JPG, PNG, HEIC oder PDF · max. 4 MB",
     "useTime": "Uhrzeit übernehmen",
     "freeFromTime": "Frei ab",
-    "useDates": "Zeitraum übernehmen"
+    "useDates": "Zeitraum übernehmen",
+    "at": "um"
   }
 }

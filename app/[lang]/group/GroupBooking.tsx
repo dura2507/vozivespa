@@ -42,7 +42,7 @@ function toIsoDate(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-type FleetAvail = { totalUnits: number; freeUnits: number; freeFromTime: string | null; nextFree: { from: string; to: string } | null };
+type FleetAvail = { totalUnits: number; freeUnits: number; freeFromTime: string | null; nextFree: { from: string; to: string; pickupTime: string } | null };
 
 // Riding style is per physical bike (per unit), not per group, so the
 // shop can prep the right number of helmets. The cart holds one entry
@@ -464,19 +464,20 @@ export default function GroupBooking({
                             a?.nextFree && (
                               <div className="mt-1.5">
                                 <p className="text-xs text-emerald-700 font-medium">
-                                  {g.freeFrom} {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}
+                                  {g.freeFrom} {format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })} {g.at} {a.nextFree.pickupTime}
                                 </p>
                                 <button
                                   type="button"
-                                  onClick={() =>
+                                  onClick={() => {
                                     setRange({
                                       from: new Date(`${a.nextFree!.from}T00:00:00`),
                                       to: new Date(`${a.nextFree!.to}T00:00:00`),
-                                    })
-                                  }
+                                    });
+                                    setPickupTime(a.nextFree!.pickupTime);
+                                  }}
                                   className="mt-1.5 inline-block bg-ink text-white text-[11px] font-bold uppercase tracking-[0.08em] px-3 py-1.5 hover:bg-red transition-colors"
                                 >
-                                  {g.useDates} ({format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })})
+                                  {g.useDates} ({format(new Date(`${a.nextFree.from}T00:00:00`), "dd MMM", { locale: dfLocale })}, {a.nextFree.pickupTime})
                                 </button>
                               </div>
                             )
