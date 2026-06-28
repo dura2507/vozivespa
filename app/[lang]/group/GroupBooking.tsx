@@ -81,6 +81,8 @@ export default function GroupBooking({
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  // Image lightbox: src of the photo currently shown enlarged, or null.
+  const [preview, setPreview] = useState<string | null>(null);
 
   // A single calendar click leaves range.to undefined (DayPicker waits
   // for a second click). Treat "from set, to missing" as a same-day
@@ -256,6 +258,27 @@ export default function GroupBooking({
   return (
     <>
       <Navbar lang={lang} t={dict.nav} />
+
+      {preview && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/85 flex items-center justify-center p-4"
+          onClick={() => setPreview(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setPreview(null)}
+            aria-label="Close preview"
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white hover:text-red"
+          >
+            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div className="relative w-[92vw] max-w-3xl h-[80vh]" onClick={(e) => e.stopPropagation()}>
+            <Image src={preview} alt="" fill className="object-contain" sizes="92vw" />
+          </div>
+        </div>
+      )}
       <main className="pt-28 md:pt-32 pb-20 px-5 md:px-12 min-h-screen bg-off-white">
         <div className="max-w-6xl mx-auto">
         <h1 className="font-barlow font-bold text-3xl md:text-4xl text-ink uppercase tracking-wide mb-2">
@@ -437,16 +460,16 @@ export default function GroupBooking({
                     )}
 
                     <div className={`flex gap-3 ${soldOut ? "opacity-40 grayscale pointer-events-none" : ""}`}>
-                      <a
-                        href={`/${lang}/fleet/${bike.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="relative w-32 h-32 shrink-0 self-start bg-sand overflow-hidden block"
+                      <button
+                        type="button"
+                        onClick={() => bike.image && setPreview(bike.image)}
+                        aria-label={`Enlarge ${bike.model} photo`}
+                        className="relative w-32 h-32 shrink-0 self-start bg-sand overflow-hidden block cursor-zoom-in"
                       >
                         {bike.image && (
                           <Image src={bike.image} alt={bike.model} fill className="object-cover" sizes="128px" />
                         )}
-                      </a>
+                      </button>
 
                       <div className="relative flex flex-col flex-1 min-w-0 pr-24 sm:pr-28">
                         {LICENCE_BADGE[bike.licenceCode] && (
