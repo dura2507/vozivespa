@@ -231,6 +231,10 @@ export async function findUnitConflict(
     .from("bookings")
     .select("id, customer_name, date_from, date_to, pickup_time, return_time")
     .in("status", ["confirmed", "pending"])
+    // A returned bike frees its unit immediately — ignore returned rows,
+    // same as findFreeUnit / findFreeUnits. Without this, confirming a
+    // booking that reused an early-returned unit would falsely conflict.
+    .is("returned_at", null)
     .eq("bike_unit_id", args.bikeUnitId)
     .lte("date_from", args.dateTo)
     .gte("date_to", args.dateFrom);
