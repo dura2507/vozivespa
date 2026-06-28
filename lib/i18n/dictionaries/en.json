@@ -274,7 +274,7 @@
     "back": "All bikes",
     "inStock": "{n} in our fleet",
     "inStockHint": "Riding with friends? We have {n} of these.",
-    "inStockCta": "Want more than one at once? Just message us →",
+    "inStockCta": "More than one at once? Book multiple →",
     "licenceByCode": {
       "AM/B": "AM or B licence",
       "A1": "A1 licence",

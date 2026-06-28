@@ -512,7 +512,7 @@ export default function BikeDetail({
                       {(tF.inStockHint as string).replace("{n}", String(unitCount))}
                     </p>
                     <Link
-                      href={`/${lang}/contact`}
+                      href={`/${lang}/group`}
                       className="inline-block mt-1.5 text-xs font-bold text-red hover:underline"
                     >
                       {tF.inStockCta as string}
