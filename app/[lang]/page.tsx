@@ -415,6 +415,19 @@ export default async function HomePage({
               );
             })}
           </div>
+
+          {/* Cross-sell: book several different bikes in one go */}
+          <Link
+            href={`/${lang}/group`}
+            className="mt-12 flex items-center justify-between gap-4 bg-ink text-white px-6 md:px-10 py-7 md:py-9 hover:bg-red transition-colors"
+          >
+            <p className="font-barlow font-black uppercase text-xl sm:text-2xl md:text-3xl tracking-tight leading-tight">
+              {dict.nav.groupBookingLead}
+            </p>
+            <span className="text-xs font-bold tracking-widest uppercase whitespace-nowrap border border-white/40 px-4 sm:px-6 py-3 shrink-0">
+              {dict.nav.groupBooking} →
+            </span>
+          </Link>
         </section>
 
         {/* WhatsApp contact intentionally removed from the homepage /
