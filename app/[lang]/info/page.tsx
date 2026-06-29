@@ -7,7 +7,9 @@ import { getCategoriesWithPricing } from "@/lib/bike-pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 
-export const dynamic = "force-dynamic";
+// ISR: info content + category pricing change rarely, refresh every 10 min.
+// Was force-dynamic.
+export const revalidate = 600;
 
 const LicenceIcon = () => (
   <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

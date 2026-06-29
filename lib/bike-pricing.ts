@@ -28,7 +28,15 @@ type OverrideMap = Map<string, Partial<Record<TierKey, string>>>;
 type TierKey = "day" | "weekend" | "week" | "month";
 
 async function loadOverrides(): Promise<OverrideMap> {
-  const supabase = getServiceClient();
+  let supabase: ReturnType<typeof getServiceClient>;
+  try {
+    supabase = getServiceClient();
+  } catch (err) {
+    // No DB client (missing env at build / transient outage): fall back to
+    // catalogue pricing so ISR prerender + revalidation never hard-fail.
+    console.error("[bike-pricing] loadOverrides (client)", err);
+    return new Map();
+  }
   const { data, error } = await supabase
     .from("bike_price_overrides")
     .select("bike_id, day_price, weekend_price, week_price, month_price");
@@ -133,7 +141,13 @@ export async function listPricingRows(): Promise<PricingRow[]> {
 // they exist in the booking pool but stay invisible to customers,
 // the owner decides spontaneously whether to release the spare.
 export async function getUnitCounts(): Promise<Record<string, number>> {
-  const supabase = getServiceClient();
+  let supabase: ReturnType<typeof getServiceClient>;
+  try {
+    supabase = getServiceClient();
+  } catch (err) {
+    console.error("[bike-pricing] getUnitCounts (client)", err);
+    return {};
+  }
   const { data, error } = await supabase
     .from("bike_units")
     .select("bike_id")
@@ -234,7 +248,13 @@ export async function getAvailableNowCounts(): Promise<
     }
   >
 > {
-  const supabase = getServiceClient();
+  let supabase: ReturnType<typeof getServiceClient>;
+  try {
+    supabase = getServiceClient();
+  } catch (err) {
+    console.error("[bike-pricing] getAvailableNowCounts (client)", err);
+    return {};
+  }
   const nowMs = Date.now();
   const today = todayInZagreb(nowMs);
 

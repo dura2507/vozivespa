@@ -1,10 +1,21 @@
 import { notFound } from "next/navigation";
-import { getBikeWithPricing, getUnitCounts } from "@/lib/bike-pricing";
+import { getBikeWithPricing, getUnitCounts, getCategoriesWithPricing } from "@/lib/bike-pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import BikeDetail from "./BikeDetail";
 
-export const dynamic = "force-dynamic";
+// ISR: cache the bike page, refresh stock + booked-dates every 2 min.
+// Live availability is re-checked at booking submit, so brief staleness is
+// safe. Was force-dynamic (SSR + DB on every request).
+export const revalidate = 120;
+
+// Prerender one cached page per bike (IDs come from the static catalogue,
+// so this needs no DB). Next crosses these with the parent [lang] params.
+// Without this the route stays fully dynamic and never caches.
+export async function generateStaticParams() {
+  const cats = await getCategoriesWithPricing();
+  return cats.map((cat) => ({ bikeId: cat.id }));
+}
 
 export default async function BikeDetailPage({
   params,

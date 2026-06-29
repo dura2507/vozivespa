@@ -10,7 +10,12 @@ import { getCategoriesWithPricing, getUnitCounts, getAvailableNowCounts } from "
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 
-export const dynamic = "force-dynamic";
+// ISR: serve the marketing page from cache and refresh availability every
+// 2 min instead of rendering server-side on every request. The live unit
+// check still runs at booking submit, so a slightly stale "available now"
+// count can never cause a double booking. Keeps Fluid Active CPU low under
+// ad traffic (this page was the top CPU consumer as force-dynamic).
+export const revalidate = 120;
 
 function fmt(template: string, vars: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, key) => String(vars[key] ?? ""));

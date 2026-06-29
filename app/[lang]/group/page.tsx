@@ -4,7 +4,10 @@ import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import GroupBooking from "./GroupBooking";
 
-export const dynamic = "force-dynamic";
+// ISR: the page shell (bike list) is cached; live per-date availability is
+// fetched client-side from /api/availability/fleet on every interaction, so
+// nothing here needs per-request rendering. Was force-dynamic.
+export const revalidate = 120;
 
 // Multi-bike ("group") booking page: pick a shared date window, then add
 // several different bikes from the whole fleet to one booking. Stage 2b.
