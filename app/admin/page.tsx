@@ -105,6 +105,7 @@ function BookingRow({
     <div className="bg-white border border-ink/10 hover:border-red transition-colors flex items-stretch overflow-hidden">
     <Link
       href={`/admin/bookings/${group.primaryId}`}
+      prefetch={false}
       className="block flex-1 min-w-0 px-4 py-3"
     >
       <div className="flex items-center justify-between gap-3 mb-1">
@@ -246,6 +247,7 @@ function FleetCard({ entry }: { entry: FleetEntry }) {
   return (
     <Link
       href={`/admin?bike=${entry.bikeId}`}
+      prefetch={false}
       className={`block p-4 border transition-colors ${
         fullyOut
           ? "bg-red/10 border-red"

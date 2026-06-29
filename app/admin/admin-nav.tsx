@@ -31,7 +31,7 @@ export function AdminNav({ nav }: { nav: NavItem[] }) {
           <Link
             key={n.href}
             href={n.href}
-            prefetch
+            prefetch={false}
             className={`text-xs font-bold tracking-[0.15em] uppercase transition-colors ${
               isActive(pathname, n.href) ? "text-white" : "text-white/55 hover:text-white"
             }`}
@@ -80,7 +80,7 @@ export function AdminNav({ nav }: { nav: NavItem[] }) {
             <Link
               key={n.href}
               href={n.href}
-              prefetch
+              prefetch={false}
               onClick={() => setOpen(false)}
               className={`block px-5 py-4 text-sm font-bold tracking-[0.15em] uppercase border-b border-white/5 ${
                 isActive(pathname, n.href)
