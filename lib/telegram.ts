@@ -1,4 +1,4 @@
-import { CATEGORIES } from "@/lib/mockData";
+import { CATEGORIES, BRAND } from "@/lib/mockData";
 import { retry } from "@/lib/retry";
 import { billableDays } from "@/lib/pricing";
 import type { BookingRow } from "@/lib/supabase";
@@ -381,6 +381,7 @@ function buildGroupText(bookings: BookingRow[], translatedNote?: string | null):
     `*Return:* ${escapeMd(fmtDate(primary.date_to))}${ret ? ` ${escapeMd(ret)}` : ""} \\(${nights} ${nights === 1 ? "day" : "days"}\\)`,
     `*Total:* ${escapeMd(`${Math.round(totalCents / 100)}€`)}`,
     feeStr ? `*Booking fee:* ${escapeMd(feeStr)} \\(20%\\)` : null,
+    `*Deposit:* ${escapeMd(`${bookings.length} × ${BRAND.deposit} = ${bookings.length * (parseInt(BRAND.deposit, 10) || 250)}€`)}`,
     `*Paid via:* ${escapeMd(paymentLabel(primary.payment_method))}`,
     DIVIDER,
     `*Name:* ${escapeMd(primary.customer_name)}`,

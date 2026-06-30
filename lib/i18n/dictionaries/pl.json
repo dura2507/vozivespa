@@ -566,7 +566,8 @@
       "return": "Zwrot",
       "total": "Razem",
       "days": "dni",
-      "day": "dzień"
+      "day": "dzień",
+      "deposit": "Kaucja"
     }
   },
   "group": {
@@ -596,13 +597,13 @@
     "spokenLanguage": "Język",
     "fromDialCode": "z numeru kierunkowego",
     "override": "Zmień (€)",
-    "reminder": "Przypomnienie: kaski w cenie · {deposit} kaucja przy odbiorze · zabierz ważne prawo jazdy · pełny bak na start, pełny na koniec · odbiór w {address}",
+    "reminder": "Przypomnienie: kaski w cenie · {deposit} kaucja za pojazd · zabierz ważne prawo jazdy · pełny bak na start, pełny na koniec · odbiór w {address}",
     "submit": "Wyślij rezerwację",
     "received": "Rezerwacja przyjęta",
     "receivedBody": "otrzymaliśmy Twoją rezerwację grupową i potwierdzenie wpłaty. Wkrótce potwierdzimy mailem. Jeśli nie odezwiemy się w ciągu kilku godzin, napisz na WhatsApp.",
     "backToFleet": "Powrót do floty",
     "backToBikes": "Powrót do motorów",
-    "bandDeposit": "Kaucja, zwrotna",
+    "bandDeposit": "Kaucja/pojazd, zwrotna",
     "bandInsurance": "Podstawowe ubezpieczenie",
     "bandKm": "Kilometry",
     "bandFuel": "Zasada paliwa",
@@ -625,9 +626,9 @@
     "howItWorks": "Jak to działa",
     "step1": "Wybierz termin dla całej grupy",
     "step2": "Dodaj wolne motory z floty",
-    "step3": "Jedna kaucja, jedna rezerwacja, gotowe",
+    "step3": "Jedna kaucja za pojazd, jedna rezerwacja",
     "reserveLine": "20% teraz na rezerwację, reszta przy odbiorze.",
-    "depositLine": "{deposit} kaucja przy odbiorze.",
+    "depositLine": "{deposit} kaucja za pojazd.",
     "checking": "sprawdzam…",
     "checkingAvailability": "sprawdzam dostępność…",
     "lblName": "Imię",
@@ -638,7 +639,7 @@
     "lblNotes": "Uwagi",
     "licenceCountryPh": "np. Niemcy",
     "payHeadline": "Zapłać teraz {fee}€, aby zarezerwować termin (20% z {total}€). Resztę ({rest}€) płacisz przy odbiorze.",
-    "payUpload": "Po zapłacie wgraj zrzut ekranu poniżej. {deposit} kaucja przy odbiorze.",
+    "payUpload": "Po zapłacie wgraj zrzut ekranu poniżej. {deposit} kaucja za pojazd.",
     "payWith": "Zapłać {fee}€ przez {method}",
     "chooseFile": "Wybierz plik",
     "noFile": "Nie wybrano pliku",
@@ -650,6 +651,7 @@
     "useDates": "Użyj tych dat",
     "at": "o",
     "freeIfReturnBy": "Wolne przy zwrocie do",
-    "useReturn": "Użyj tego zwrotu"
+    "useReturn": "Użyj tego zwrotu",
+    "depositSummary": "Kaucja: {count} × {each} = {total}"
   }
 }

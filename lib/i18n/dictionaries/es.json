@@ -566,7 +566,8 @@
       "return": "Devolución",
       "total": "Total",
       "days": "días",
-      "day": "día"
+      "day": "día",
+      "deposit": "Fianza"
     }
   },
   "group": {
@@ -596,13 +597,13 @@
     "spokenLanguage": "Idioma",
     "fromDialCode": "del prefijo",
     "override": "Modificar (€)",
-    "reminder": "Recuerda: cascos incluidos · {deposit} fianza en la recogida · trae tu carnet válido · lleno al salir, lleno al volver · recogida en {address}",
+    "reminder": "Recuerda: cascos incluidos · {deposit} fianza por vehículo · trae tu carnet válido · lleno al salir, lleno al volver · recogida en {address}",
     "submit": "Enviar reserva",
     "received": "Reserva recibida",
     "receivedBody": "hemos recibido tu solicitud de grupo y tu comprobante de pago. Confirmamos pronto por email. Si no recibes respuesta en unas horas, escríbenos por WhatsApp.",
     "backToFleet": "Volver a la flota",
     "backToBikes": "Volver a las motos",
-    "bandDeposit": "Fianza, reembolsable",
+    "bandDeposit": "Fianza/vehículo, reembolsable",
     "bandInsurance": "Seguro básico",
     "bandKm": "Kilómetros",
     "bandFuel": "Regla de combustible",
@@ -625,9 +626,9 @@
     "howItWorks": "Cómo funciona",
     "step1": "Elige un periodo para todo el grupo",
     "step2": "Añade las motos libres de la flota",
-    "step3": "Una fianza, una reserva, listo",
+    "step3": "Una fianza por vehículo, una reserva",
     "reserveLine": "20% ahora para reservar, el resto a la llegada.",
-    "depositLine": "{deposit} fianza en la recogida.",
+    "depositLine": "{deposit} fianza por vehículo.",
     "checking": "comprobando…",
     "checkingAvailability": "comprobando disponibilidad…",
     "lblName": "Nombre",
@@ -638,7 +639,7 @@
     "lblNotes": "Notas",
     "licenceCountryPh": "p. ej. Alemania",
     "payHeadline": "Paga ahora {fee}€ para asegurar tus fechas (20% de {total}€). El resto ({rest}€) se paga a la llegada.",
-    "payUpload": "Tras pagar, sube una captura abajo. {deposit} fianza en la recogida.",
+    "payUpload": "Tras pagar, sube una captura abajo. {deposit} fianza por vehículo.",
     "payWith": "Paga {fee}€ con {method}",
     "chooseFile": "Elegir archivo",
     "noFile": "Ningún archivo elegido",
@@ -650,6 +651,7 @@
     "useDates": "Usar estas fechas",
     "at": "a las",
     "freeIfReturnBy": "Libre si se devuelve antes de",
-    "useReturn": "Usar esta devolución"
+    "useReturn": "Usar esta devolución",
+    "depositSummary": "Fianza: {count} × {each} = {total}"
   }
 }

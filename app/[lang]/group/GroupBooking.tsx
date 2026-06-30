@@ -145,6 +145,10 @@ export default function GroupBooking({
 
   const qtyOf = (bikeId: string) => cart[bikeId]?.length ?? 0;
   const cartCount = Object.values(cart).reduce((a, arr) => a + arr.length, 0);
+  // Security deposit is per vehicle (250€ each), not one flat deposit for
+  // the whole group. The total shown to the customer is count × each.
+  const depositEach = parseInt(BRAND.deposit, 10) || 250;
+  const depositTotal = cartCount * depositEach;
   // Helmets: every unit needs one for the rider, plus one more when a
   // passenger rides along. Surfaced to the owner so they can prep them.
   const helmetCount = Object.values(cart).reduce(
@@ -652,9 +656,17 @@ export default function GroupBooking({
                         .join(" · ")}
                 </p>
                 {cartCount > 0 && (
-                  <p className="text-xs text-muted mt-0.5">
-                    {cartCount} {g.bikesWord} · {helmetCount} {g.helmetsWord} · {g.oneDeposit}
-                  </p>
+                  <>
+                    <p className="text-xs text-muted mt-0.5">
+                      {cartCount} {g.bikesWord} · {helmetCount} {g.helmetsWord}
+                    </p>
+                    <p className="text-xs text-ink font-semibold mt-0.5">
+                      {g.depositSummary
+                        .replace("{count}", String(cartCount))
+                        .replace("{each}", BRAND.deposit)
+                        .replace("{total}", `${depositTotal}€`)}
+                    </p>
+                  </>
                 )}
               </div>
               <div className="flex items-center gap-5">

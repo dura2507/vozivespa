@@ -260,6 +260,7 @@ function groupSummaryHtml(bookings: BookingRow[], sum?: Dictionary["emails"]["su
     <tr><td style="padding:4px 0;color:#6b6b6b;">${lReturn}</td><td style="padding:4px 0;font-weight:600;">${fmtDate(primary.date_to)}${ret ? ` &middot; ${ret}` : ""} <span style="color:#6b6b6b;font-weight:400;">(${nights} ${nights === 1 ? lDay : lDays})</span></td></tr>
     <tr><td style="padding:4px 0;color:#6b6b6b;">Helmets</td><td style="padding:4px 0;font-weight:600;">${helmets}</td></tr>
     <tr><td style="padding:4px 0;color:#6b6b6b;">${lTotal}</td><td style="padding:4px 0;font-weight:600;color:#B61F36;">${Math.round(totalCents / 100)}€</td></tr>
+    <tr><td style="padding:4px 0;color:#6b6b6b;">${sum?.deposit ?? "Deposit"}</td><td style="padding:4px 0;font-weight:600;">${bookings.length} &times; ${BRAND.deposit} = ${bookings.length * (parseInt(BRAND.deposit, 10) || 250)}€</td></tr>
   </table>`;
 }
 
@@ -727,7 +728,11 @@ export async function sendCustomerGroupBookingDecidedEmail(
     to: fmtDate(primary.date_to),
     pickupTime: fmtTimeOfDay(primary.pickup_time),
     returnTime: fmtTimeOfDay(primary.return_time),
-    deposit: BRAND.deposit,
+    // Deposit is per vehicle: show the total breakdown for groups.
+    deposit:
+      bookings.length > 1
+        ? `${bookings.length} × ${BRAND.deposit} = ${bookings.length * (parseInt(BRAND.deposit, 10) || 250)}€`
+        : BRAND.deposit,
   };
   const bodyHtml = isConfirmed
     ? `

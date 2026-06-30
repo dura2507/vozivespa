@@ -566,7 +566,8 @@
       "return": "Return",
       "total": "Total",
       "days": "days",
-      "day": "day"
+      "day": "day",
+      "deposit": "Deposit"
     }
   },
   "group": {
@@ -596,13 +597,13 @@
     "spokenLanguage": "Spoken language",
     "fromDialCode": "from dial code",
     "override": "Override (€)",
-    "reminder": "Reminder: helmets included · {deposit} deposit on pickup · bring your valid licence · full tank in, full tank out · pickup at {address}",
+    "reminder": "Reminder: helmets included · {deposit} deposit per vehicle · bring your valid licence · full tank in, full tank out · pickup at {address}",
     "submit": "Submit booking",
     "received": "Booking received",
     "receivedBody": "we got your group request and your deposit screenshot. We'll confirm by email shortly. If you don't hear back within a few hours, message us on WhatsApp.",
     "backToFleet": "Back to fleet",
     "backToBikes": "Back to bikes",
-    "bandDeposit": "Deposit, refunded",
+    "bandDeposit": "Deposit/vehicle, refunded",
     "bandInsurance": "Basic insurance",
     "bandKm": "Kilometres",
     "bandFuel": "Fuel policy",
@@ -625,9 +626,9 @@
     "howItWorks": "How it works",
     "step1": "Pick one date window for the whole group",
     "step2": "Add any bikes from the fleet that are free",
-    "step3": "One deposit, one booking, sorted",
+    "step3": "One deposit per vehicle, one booking",
     "reserveLine": "20% now to reserve, the rest on arrival.",
-    "depositLine": "{deposit} security deposit on pickup.",
+    "depositLine": "{deposit} security deposit per vehicle.",
     "checking": "checking…",
     "checkingAvailability": "checking availability…",
     "lblName": "Name",
@@ -638,7 +639,7 @@
     "lblNotes": "Notes",
     "licenceCountryPh": "e.g. Germany",
     "payHeadline": "Pay {fee}€ now to secure your dates (20% of {total}€). The rest ({rest}€) is paid on arrival.",
-    "payUpload": "After paying, upload a screenshot below. Security deposit {deposit} on pickup.",
+    "payUpload": "After paying, upload a screenshot below. {deposit} security deposit per vehicle.",
     "payWith": "Pay {fee}€ with {method}",
     "chooseFile": "Choose file",
     "noFile": "No file chosen",
@@ -650,6 +651,7 @@
     "useDates": "Use these dates",
     "at": "at",
     "freeIfReturnBy": "Free if returned by",
-    "useReturn": "Use return time"
+    "useReturn": "Use return time",
+    "depositSummary": "Deposit: {count} × {each} = {total}"
   }
 }

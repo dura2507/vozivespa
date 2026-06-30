@@ -566,7 +566,8 @@
       "return": "Riconsegna",
       "total": "Totale",
       "days": "giorni",
-      "day": "giorno"
+      "day": "giorno",
+      "deposit": "Cauzione"
     }
   },
   "group": {
@@ -596,13 +597,13 @@
     "spokenLanguage": "Lingua parlata",
     "fromDialCode": "dal prefisso",
     "override": "Modifica (€)",
-    "reminder": "Promemoria: caschi inclusi · {deposit} deposito al ritiro · porta la patente valida · pieno all'inizio, pieno alla fine · ritiro presso {address}",
+    "reminder": "Promemoria: caschi inclusi · {deposit} deposito per veicolo · porta la patente valida · pieno all'inizio, pieno alla fine · ritiro presso {address}",
     "submit": "Invia prenotazione",
     "received": "Prenotazione ricevuta",
     "receivedBody": "abbiamo ricevuto la tua richiesta di gruppo e la ricevuta del deposito. Confermiamo a breve via email. Se non ricevi risposta entro poche ore, scrivici su WhatsApp.",
     "backToFleet": "Torna alla flotta",
     "backToBikes": "Torna alle moto",
-    "bandDeposit": "Deposito, rimborsato",
+    "bandDeposit": "Deposito/veicolo, rimborsato",
     "bandInsurance": "Assicurazione base",
     "bandKm": "Chilometri",
     "bandFuel": "Regola carburante",
@@ -625,9 +626,9 @@
     "howItWorks": "Come funziona",
     "step1": "Scegli un periodo per tutto il gruppo",
     "step2": "Aggiungi le moto libere della flotta",
-    "step3": "Un deposito, una prenotazione, fatto",
+    "step3": "Un deposito per veicolo, una prenotazione",
     "reserveLine": "20% ora per prenotare, il resto all'arrivo.",
-    "depositLine": "{deposit} deposito cauzionale al ritiro.",
+    "depositLine": "{deposit} deposito cauzionale per veicolo.",
     "checking": "verifico…",
     "checkingAvailability": "verifico disponibilità…",
     "lblName": "Nome",
@@ -638,7 +639,7 @@
     "lblNotes": "Note",
     "licenceCountryPh": "es. Germania",
     "payHeadline": "Paga ora {fee}€ per bloccare le date (20% di {total}€). Il resto ({rest}€) si paga all'arrivo.",
-    "payUpload": "Dopo il pagamento carica uno screenshot qui sotto. {deposit} deposito al ritiro.",
+    "payUpload": "Dopo il pagamento carica uno screenshot qui sotto. {deposit} deposito per veicolo.",
     "payWith": "Paga {fee}€ con {method}",
     "chooseFile": "Scegli file",
     "noFile": "Nessun file scelto",
@@ -650,6 +651,7 @@
     "useDates": "Usa queste date",
     "at": "alle",
     "freeIfReturnBy": "Libera se reso entro",
-    "useReturn": "Usa quest'orario di reso"
+    "useReturn": "Usa quest'orario di reso",
+    "depositSummary": "Cauzione: {count} × {each} = {total}"
   }
 }

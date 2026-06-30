@@ -566,7 +566,8 @@
       "return": "Restitution",
       "total": "Total",
       "days": "jours",
-      "day": "jour"
+      "day": "jour",
+      "deposit": "Caution"
     }
   },
   "group": {
@@ -596,13 +597,13 @@
     "spokenLanguage": "Langue parlée",
     "fromDialCode": "selon l'indicatif",
     "override": "Modifier (€)",
-    "reminder": "Rappel : casques inclus · {deposit} caution au retrait · apporte ton permis valide · plein au départ, plein au retour · retrait à {address}",
+    "reminder": "Rappel : casques inclus · {deposit} caution par véhicule · apporte ton permis valide · plein au départ, plein au retour · retrait à {address}",
     "submit": "Envoyer la réservation",
     "received": "Réservation reçue",
     "receivedBody": "nous avons reçu ta demande de groupe et ton justificatif de paiement. Nous confirmons bientôt par email. Sans réponse sous quelques heures, écris-nous sur WhatsApp.",
     "backToFleet": "Retour à la flotte",
     "backToBikes": "Retour aux motos",
-    "bandDeposit": "Caution, remboursée",
+    "bandDeposit": "Caution/véhicule, remboursée",
     "bandInsurance": "Assurance de base",
     "bandKm": "Kilomètres",
     "bandFuel": "Règle carburant",
@@ -625,9 +626,9 @@
     "howItWorks": "Comment ça marche",
     "step1": "Choisis une période pour tout le groupe",
     "step2": "Ajoute les motos libres de la flotte",
-    "step3": "Une caution, une réservation, c'est fait",
+    "step3": "Une caution par véhicule, une réservation",
     "reserveLine": "20% maintenant pour réserver, le reste à l'arrivée.",
-    "depositLine": "{deposit} caution au retrait.",
+    "depositLine": "{deposit} caution par véhicule.",
     "checking": "vérification…",
     "checkingAvailability": "vérification de la disponibilité…",
     "lblName": "Nom",
@@ -638,7 +639,7 @@
     "lblNotes": "Notes",
     "licenceCountryPh": "ex. Allemagne",
     "payHeadline": "Paie maintenant {fee}€ pour bloquer tes dates (20% de {total}€). Le reste ({rest}€) se paie à l'arrivée.",
-    "payUpload": "Après le paiement, téléverse une capture ci-dessous. {deposit} caution au retrait.",
+    "payUpload": "Après le paiement, téléverse une capture ci-dessous. {deposit} caution par véhicule.",
     "payWith": "Paie {fee}€ avec {method}",
     "chooseFile": "Choisir un fichier",
     "noFile": "Aucun fichier choisi",
@@ -650,6 +651,7 @@
     "useDates": "Utiliser ces dates",
     "at": "à",
     "freeIfReturnBy": "Libre si rendu avant",
-    "useReturn": "Utiliser ce retour"
+    "useReturn": "Utiliser ce retour",
+    "depositSummary": "Caution : {count} × {each} = {total}"
   }
 }

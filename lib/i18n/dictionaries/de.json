@@ -566,7 +566,8 @@
       "return": "Rückgabe",
       "total": "Gesamt",
       "days": "Tage",
-      "day": "Tag"
+      "day": "Tag",
+      "deposit": "Kaution"
     }
   },
   "group": {
@@ -596,13 +597,13 @@
     "spokenLanguage": "Gesprochene Sprache",
     "fromDialCode": "aus Vorwahl",
     "override": "Überschreiben (€)",
-    "reminder": "Hinweis: Helme inklusive · {deposit} Kaution bei Abholung · gültigen Führerschein mitbringen · voller Tank rein, voller Tank raus · Abholung bei {address}",
+    "reminder": "Hinweis: Helme inklusive · {deposit} Kaution pro Fahrzeug · gültigen Führerschein mitbringen · voller Tank rein, voller Tank raus · Abholung bei {address}",
     "submit": "Buchung absenden",
     "received": "Buchung erhalten",
     "receivedBody": "wir haben deine Gruppen-Anfrage und deinen Zahlungsbeleg erhalten. Wir bestätigen in Kürze per E-Mail. Falls du innerhalb weniger Stunden nichts hörst, schreib uns auf WhatsApp.",
     "backToFleet": "Zurück zur Flotte",
     "backToBikes": "Zurück zu den Bikes",
-    "bandDeposit": "Kaution, erstattet",
+    "bandDeposit": "Kaution/Fahrzeug, erstattet",
     "bandInsurance": "Basis-Versicherung",
     "bandKm": "Kilometer",
     "bandFuel": "Tank-Regel",
@@ -625,9 +626,9 @@
     "howItWorks": "So funktioniert's",
     "step1": "Einen Zeitraum für die ganze Gruppe wählen",
     "step2": "Freie Bikes aus der Flotte hinzufügen",
-    "step3": "Eine Kaution, eine Buchung, fertig",
+    "step3": "Eine Kaution pro Fahrzeug, eine Buchung",
     "reserveLine": "20% jetzt zum Reservieren, Rest bei Ankunft.",
-    "depositLine": "{deposit} Kaution bei Abholung.",
+    "depositLine": "{deposit} Kaution pro Fahrzeug.",
     "checking": "prüfe…",
     "checkingAvailability": "prüfe Verfügbarkeit…",
     "lblName": "Name",
@@ -638,7 +639,7 @@
     "lblNotes": "Notizen",
     "licenceCountryPh": "z.B. Deutschland",
     "payHeadline": "Zahle jetzt {fee}€, um deine Tage zu sichern (20% von {total}€). Der Rest ({rest}€) wird bei Ankunft bezahlt.",
-    "payUpload": "Nach der Zahlung lade unten einen Screenshot hoch. {deposit} Kaution bei Abholung.",
+    "payUpload": "Nach der Zahlung lade unten einen Screenshot hoch. {deposit} Kaution pro Fahrzeug.",
     "payWith": "{fee}€ mit {method} zahlen",
     "chooseFile": "Datei wählen",
     "noFile": "Keine Datei gewählt",
@@ -650,6 +651,7 @@
     "useDates": "Zeitraum übernehmen",
     "at": "um",
     "freeIfReturnBy": "Frei, wenn Rückgabe bis",
-    "useReturn": "Rückgabe übernehmen"
+    "useReturn": "Rückgabe übernehmen",
+    "depositSummary": "Kaution: {count} × {each} = {total}"
   }
 }

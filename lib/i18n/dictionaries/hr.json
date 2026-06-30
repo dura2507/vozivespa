@@ -566,7 +566,8 @@
       "return": "Povrat",
       "total": "Ukupno",
       "days": "dana",
-      "day": "dan"
+      "day": "dan",
+      "deposit": "Polog"
     }
   },
   "group": {
@@ -596,13 +597,13 @@
     "spokenLanguage": "Jezik",
     "fromDialCode": "iz pozivnog broja",
     "override": "Promijeni (€)",
-    "reminder": "Napomena: kacige uključene · {deposit} polog pri preuzimanju · ponesi važeću dozvolu · pun spremnik unutra, pun spremnik van · preuzimanje u {address}",
+    "reminder": "Napomena: kacige uključene · {deposit} polog po vozilu · ponesi važeću dozvolu · pun spremnik unutra, pun spremnik van · preuzimanje u {address}",
     "submit": "Pošalji rezervaciju",
     "received": "Rezervacija primljena",
     "receivedBody": "primili smo tvoju grupnu prijavu i potvrdu uplate. Uskoro potvrđujemo e-poštom. Ako se ne javimo unutar nekoliko sati, piši nam na WhatsApp.",
     "backToFleet": "Natrag na flotu",
     "backToBikes": "Natrag na vozila",
-    "bandDeposit": "Polog, povrat",
+    "bandDeposit": "Polog/vozilu, povrat",
     "bandInsurance": "Osnovno osiguranje",
     "bandKm": "Kilometri",
     "bandFuel": "Pravilo goriva",
@@ -625,9 +626,9 @@
     "howItWorks": "Kako funkcionira",
     "step1": "Odaberi razdoblje za cijelu grupu",
     "step2": "Dodaj slobodna vozila iz flote",
-    "step3": "Jedan polog, jedna rezervacija, gotovo",
+    "step3": "Jedan polog po vozilu, jedna rezervacija",
     "reserveLine": "20% sada za rezervaciju, ostalo pri dolasku.",
-    "depositLine": "{deposit} polog pri preuzimanju.",
+    "depositLine": "{deposit} polog po vozilu.",
     "checking": "provjeravam…",
     "checkingAvailability": "provjeravam dostupnost…",
     "lblName": "Ime",
@@ -638,7 +639,7 @@
     "lblNotes": "Napomene",
     "licenceCountryPh": "npr. Njemačka",
     "payHeadline": "Plati sada {fee}€ da osiguraš termin (20% od {total}€). Ostatak ({rest}€) plaćaš pri dolasku.",
-    "payUpload": "Nakon plaćanja učitaj snimku zaslona ispod. {deposit} polog pri preuzimanju.",
+    "payUpload": "Nakon plaćanja učitaj snimku zaslona ispod. {deposit} polog po vozilu.",
     "payWith": "Plati {fee}€ putem {method}",
     "chooseFile": "Odaberi datoteku",
     "noFile": "Nije odabrana datoteka",
@@ -650,6 +651,7 @@
     "useDates": "Primijeni razdoblje",
     "at": "u",
     "freeIfReturnBy": "Slobodno uz povrat do",
-    "useReturn": "Primijeni povrat"
+    "useReturn": "Primijeni povrat",
+    "depositSummary": "Polog: {count} × {each} = {total}"
   }
 }
