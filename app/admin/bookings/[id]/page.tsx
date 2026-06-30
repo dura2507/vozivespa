@@ -82,25 +82,52 @@ export default async function AdminBookingDetail({
 
       <div className="grid md:grid-cols-[1.4fr_1fr] gap-6 mb-8">
         <div className="bg-white border border-ink/10 p-5 space-y-3 text-sm">
-          <Field label="Bike">
-            <span className="font-semibold">{b.bikeName}</span>{" "}
-            <span className="text-muted text-xs">({b.bike_id})</span>
-            {bike && (
-              <Link
-                href={`/fleet/${bike.id}`}
-                target="_blank"
-                className="ml-2 text-red text-xs font-bold tracking-widest uppercase"
-              >
-                view →
-              </Link>
-            )}
-          </Field>
-          {b.unitLabel && (
-            <Field label="Unit">
-              <span className="font-mono text-sm bg-ink/5 px-2 py-0.5">
-                {b.unitLabel}
-              </span>
+          {b.groupSize > 1 ? (
+            <Field label={`Bikes (${b.groupSize})`}>
+              <div className="space-y-1.5">
+                {(b.groupBikes ?? []).map((gb) => (
+                  <div key={gb.id} className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold">{gb.bikeName}</span>
+                    {gb.unitLabel && (
+                      <span className="font-mono text-xs bg-ink/5 px-2 py-0.5">
+                        {gb.unitLabel}
+                      </span>
+                    )}
+                    <span className="text-xs text-muted">
+                      {gb.ridingStyle === "with_passenger" ? "with passenger" : "solo"}
+                    </span>
+                    {gb.priceCents != null && (
+                      <span className="text-xs text-muted">
+                        · {(gb.priceCents / 100).toFixed(0)}€
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
             </Field>
+          ) : (
+            <>
+              <Field label="Bike">
+                <span className="font-semibold">{b.bikeName}</span>{" "}
+                <span className="text-muted text-xs">({b.bike_id})</span>
+                {bike && (
+                  <Link
+                    href={`/fleet/${bike.id}`}
+                    target="_blank"
+                    className="ml-2 text-red text-xs font-bold tracking-widest uppercase"
+                  >
+                    view →
+                  </Link>
+                )}
+              </Field>
+              {b.unitLabel && (
+                <Field label="Unit">
+                  <span className="font-mono text-sm bg-ink/5 px-2 py-0.5">
+                    {b.unitLabel}
+                  </span>
+                </Field>
+              )}
+            </>
           )}
           <Field label="Pickup">
             {fmtDate(b.date_from)} · {fmtTimeOfDay(b.pickup_time)}

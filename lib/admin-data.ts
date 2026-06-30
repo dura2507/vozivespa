@@ -19,6 +19,16 @@ export type EnrichedBooking = BookingRow & {
   // equal this row's own price / 1.
   groupTotalCents: number | null;
   groupSize: number;
+  // Every bike in the group (including this row) so the admin sees ALL
+  // reserved vehicles at a glance, not just the primary one. For a solo
+  // booking this is a single-element list.
+  groupBikes?: Array<{
+    id: string;
+    bikeName: string;
+    unitLabel: string | null;
+    ridingStyle: string | null;
+    priceCents: number | null;
+  }>;
 };
 
 export type EnrichedBlock = BlockedDateRow & {
@@ -158,19 +168,43 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
       ? signedReceiptUrl(data.deposit_screenshot_path).catch(() => null)
       : Promise.resolve<string | null>(null),
     listUnitLabelMap(),
-    // Pull the group siblings so we can show the whole-booking total.
+    // Pull the group siblings so we can show the whole-booking total AND
+    // every reserved bike, not just the primary row.
     data.booking_group_id
       ? supabase
           .from("bookings")
-          .select("total_price_cents")
+          .select("id, bike_id, bike_unit_id, riding_style, total_price_cents")
           .eq("booking_group_id", data.booking_group_id)
       : Promise.resolve({ data: null }),
   ]);
-  const siblings = (group as { data: { total_price_cents: number | null }[] | null }).data;
+  type Sibling = {
+    id: string;
+    bike_id: string;
+    bike_unit_id: string | null;
+    riding_style: string | null;
+    total_price_cents: number | null;
+  };
+  const siblings = (group as { data: Sibling[] | null }).data;
   const groupSize = siblings?.length ?? 1;
   const groupTotalCents = siblings
     ? siblings.reduce((s, b) => s + (b.total_price_cents ?? 0), 0)
     : data.total_price_cents;
+  const toGroupBike = (b: {
+    id: string;
+    bike_id: string;
+    bike_unit_id: string | null;
+    riding_style: string | null;
+    total_price_cents: number | null;
+  }) => ({
+    id: b.id,
+    bikeName: bikeName(b.bike_id),
+    unitLabel: b.bike_unit_id ? unitLabels.get(b.bike_unit_id) ?? null : null,
+    ridingStyle: b.riding_style,
+    priceCents: b.total_price_cents,
+  });
+  const groupBikes = siblings
+    ? [...siblings].sort((a, b) => bikeName(a.bike_id).localeCompare(bikeName(b.bike_id))).map(toGroupBike)
+    : [toGroupBike(data)];
   return {
     ...data,
     bikeName: bikeName(data.bike_id),
@@ -180,6 +214,7 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
     receiptUrl: url,
     groupTotalCents,
     groupSize,
+    groupBikes,
   };
 }
 
@@ -423,12 +458,20 @@ export function groupBookingsForDisplay(rows: EnrichedBooking[]): BookingDisplay
     const unitLabels = group
       .map((b) => b.unitLabel)
       .filter((l): l is string => !!l);
+    // For a group, list every distinct model with its count so the
+    // dashboard shows ALL reserved bikes at a glance, not just the first.
+    const modelCounts = new Map<string, number>();
+    for (const b of group) modelCounts.set(b.bikeName, (modelCounts.get(b.bikeName) ?? 0) + 1);
+    const bikeNameSummary =
+      group.length > 1
+        ? [...modelCounts.entries()].map(([n, c]) => (c > 1 ? `${n} ×${c}` : n)).join(", ")
+        : head.bikeName;
     return {
       primaryId: head.id,
       key,
       bookings: group,
       customerName: head.customer_name,
-      bikeName: head.bikeName,
+      bikeName: bikeNameSummary,
       unitsSummary:
         unitLabels.length > 0 ? `[${unitLabels.join(", ")}]` : null,
       pickupAt: head.pickupAt,
