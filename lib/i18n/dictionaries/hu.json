@@ -1,0 +1,657 @@
+{
+  "nav": {
+    "home": "Főoldal",
+    "fleet": "Flotta",
+    "gallery": "Galéria",
+    "info": "Infó",
+    "faq": "GYIK",
+    "contact": "Kapcsolat",
+    "terms": "Feltételek",
+    "bookNow": "Foglalj most",
+    "menuAria": "Menü",
+    "languageSwitcher": "Nyelv",
+    "groupBooking": "Több jármű foglalása",
+    "groupBookingLead": "Egynél több járművet bérelnél?"
+  },
+  "footer": {
+    "intro": "Robogó- és motorbérlés Zadarban. Fedezd fel a dalmát partvidéket két keréken.",
+    "locationLabel": "Zadar, Croatia",
+    "call": "Hívás",
+    "whatsapp": "WhatsApp",
+    "trusted": "Megbízható bérlőpartner",
+    "openHoursPrefix": "Nyitva",
+    "rights": "Minden jog fenntartva."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Zadar, Croatia",
+      "headline1": "Hódítsd meg a",
+      "headline2": "horvát",
+      "headline3": "partot",
+      "sub": "Robogó- és motorbérlés Zadarban, 50cc-től 390cc-ig. Bukósisak és alapbiztosítás benne van. Tengerparti utak, szigetek, szabadság.",
+      "checkAvailability": "Elérhetőség ellenőrzése",
+      "fromPrice": "{price}/naptól",
+      "statBikes": "Motorok és robogók",
+      "statReviews": "5 csillagos értékelés",
+      "statKm": "Km benne van"
+    },
+    "fleet": {
+      "eyebrow": "Válaszd ki a járgányod",
+      "title": "A flottánk",
+      "fromPrefix": "ettől",
+      "topSpeed": "Végsebesség",
+      "experienceRequired": "Tapasztalat szükséges",
+      "bookNow": "Foglalj most",
+      "inStock": "{n} db a flottánkban",
+      "inStockHint": "Barátokkal jössz? Ebből {n} db van nálunk.",
+      "availableNow": "Most elérhető",
+      "availableNowCount": "{n} db most elérhető",
+      "notAvailableNow": "Szervizben",
+      "bookedUntil": "Szervizben eddig: {date}",
+      "bookedUntilToday": "Szervizben ma eddig: {time}",
+      "bookedUntilTomorrow": "Szervizben holnap eddig: {time}",
+      "availableFrom": "Elérhető ettől: {time}",
+      "outOfService": "Szervizben",
+      "helmetsIncluded": "Bukósisak benne van",
+      "viewDetails": "Részletek"
+    },
+    "included": {
+      "eyebrow": "Minden bérléshez",
+      "title": "Mit tartalmaz",
+      "items": {
+        "insurance": {
+          "label": "Alapbiztosítás",
+          "sub": "Lopás + motorvédelem"
+        },
+        "helmets": {
+          "label": "Bukósisak",
+          "sub": "Mindig biztosítjuk"
+        },
+        "unlimitedKm": {
+          "label": "Korlátlan km",
+          "sub": "Nincs vezetési limit"
+        },
+        "roadside": {
+          "label": "Útszéli segély",
+          "sub": "20 km-ig ingyenes, utána 50€-tól"
+        },
+        "transparent": {
+          "label": "Átlátható árak",
+          "sub": "Amit látsz, azt fizeted"
+        },
+        "warranty": {
+          "label": "Motorgarancia",
+          "sub": "A motorhibát mi álljuk"
+        }
+      }
+    },
+    "goodToKnow": {
+      "eyebrow": "Jó tudni",
+      "title": "Jó tudni",
+      "deposit": {
+        "label": "Kaució",
+        "sub": "Járművenként, sérülésmentes visszaadás után visszajár."
+      },
+      "phoneHolders": {
+        "value": "Nincs",
+        "label": "Telefontartó",
+        "sub": "Nem kínálunk és nem szerelünk fel telefontartót, sajátot sem hozhatsz. Egyik motorunkon sincs."
+      },
+      "season": {
+        "value": "Ápr-Okt",
+        "label": "Bérlési szezon",
+        "sub": "Áprilistól októberig adunk bérbe. Tele tankkal el, tele tankkal vissza."
+      },
+      "languages": {
+        "label": "Nyelvek",
+        "sub": "Németül, angolul és portugálul beszélünk. Írj nekünk WhatsApp-on."
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "Egyszerű folyamat",
+      "title": "Hogyan működik",
+      "step1": {
+        "title": "Válaszd ki a járgányod",
+        "text": "Válassz robogót vagy motort, az 50cc-s városi cirkálótól a 390cc-s autópálya-gépig."
+      },
+      "step2": {
+        "title": "Kérd a dátumaidat",
+        "text": "Nézd meg az elérhetőséget a naptárban, és küldj egy gyors kérést. Átvétel a zadari boltunkban."
+      },
+      "step3": {
+        "title": "Visszaigazolunk, te pedig vezetsz",
+        "text": "Néhány órán belül e-mailben visszaigazolunk. Fizesd ki a 20%-os foglalási díjat, vedd át a motort, és indulhatsz."
+      },
+      "cta": "Foglalj motort"
+    },
+    "reviews": {
+      "eyebrow": "Mit mondanak a bérlők",
+      "title": "Értékelések",
+      "leaveReview": "Hagyj egy Google-értékelést"
+    },
+    "gallerySection": {
+      "eyebrow": "Mozgásban",
+      "title": "Galéria",
+      "seeAll": "Összes fotó megtekintése"
+    },
+    "cta": {
+      "eyebrow": "Készen állsz a vezetésre?",
+      "headline1": "Foglald le a",
+      "headline2": "motorod ma",
+      "ctaBtn": "Elérhetőség ellenőrzése"
+    }
+  },
+  "info": {
+    "eyebrow": "Minden, amit tudnod kell",
+    "title": "Infó",
+    "licenceRequirements": {
+      "title": "Jogosítvány-követelmények",
+      "scooter50": "Robogó 50cc: B vagy AM kategóriás jogosítvány plusz robogós tapasztalat",
+      "scooter125": "Robogó 125cc és motor 125cc: A1 kategóriás jogosítvány",
+      "motorbike390": "Motor 390cc: A2 kategóriás jogosítvány",
+      "verify": "Átvételkor ellenőrizzük a jogosítványod"
+    },
+    "depositPayment": {
+      "title": "Kaució és fizetés",
+      "deposit": "{deposit} kaució járművenként, sérülésmentes visszaadás után visszajár.",
+      "bookingFee": "A 20%-os foglalási díj rögzíti a dátumaidat.",
+      "noCards": "A foglalási díjhoz nem fogadunk el bankkártyás fizetést."
+    },
+    "fleetSection": {
+      "title": "A flottánk egy pillantásra"
+    }
+  },
+  "faq": {
+    "eyebrow": "Kérdésed van?",
+    "title": "GYIK",
+    "categories": {
+      "booking": "Foglalás és fizetés",
+      "pickup": "Átvételkor",
+      "ride": "A vezetés alatt",
+      "return": "Visszaadás",
+      "incidents": "Sérülés és útszéli segély"
+    }
+  },
+  "terms": {
+    "eyebrow": "Foglalási feltételek",
+    "title": "Általános szerződési feltételek",
+    "intro": "Foglalási feltételek robogó- és motorbérléshez. A {legal} foglalásával elfogadod az alábbi szabályokat.",
+    "questionsLine": "Kérdésed van? Elérsz minket itt:",
+    "questionsTail": "vagy WhatsApp-on a kapcsolati oldalon.",
+    "sections": [
+      {
+        "heading": "Foglalások",
+        "bullets": [
+          "A fizetés előtt mindig erősítsd meg nálunk azonnal az elérhetőséget. Az elérhetőség gyorsan változhat, és egy korábbi visszaigazolás nem garantálja, hogy a robogó vagy motor még elérhető.",
+          "Foglaláskor add meg az átvételi és visszaadási dátumokat és időpontokat.",
+          "A foglalás rögzítéséhez a teljes összeg 20%-ának megfelelő foglalási díj szükséges.",
+          "Fizetési módok: PayPal, banki átutalás, Revolut vagy készpénz személyesen (ha már Zadarban vagy). Bankkártyát nem fogadunk el.",
+          "A fizetés után küldj nekünk egy képernyőképet a tranzakcióról igazolásként. Készpénzes fizetésnél nem szükséges.",
+          "Ha értesítés nélkül több mint 1 órát késel, a foglalásod automatikusan törlésre kerül, és a foglalási díj nem visszatéríthető.",
+          "Ha egy robogó vagy motor egy másik ügyfél által okozott baleset vagy kár miatt elérhetetlenné válik, törölhetjük a foglalásod, és teljes egészében visszatérítjük a foglalási díjat.",
+          "Robogó vagy motor vezetéséhez előzetes tapasztalat szükséges. Ha azt vesszük észre, hogy nincs elegendő tapasztalatod a biztonságos vezetéshez, fenntartjuk a jogot, hogy a foglalást visszatérítés nélkül elutasítsuk."
+        ]
+      },
+      {
+        "heading": "Kaució és fizetés",
+        "bullets": [
+          "Kaució: 250€ járművenként, sérülésmentes visszaadás után visszajár.",
+          "Foglalási díj: a teljes összeg 20%-a. Rögzíti a dátumaidat, lemondás esetén nem visszatéríthető.",
+          "Fizetési módok: PayPal (Friends & Family ajánlott, díjmentes), banki átutalás, Revolut vagy készpénz érkezéskor.",
+          "Bankkártyát nem fogadunk el."
+        ]
+      },
+      {
+        "heading": "Átvétel és visszaadás",
+        "bullets": [
+          "Átvétel és visszaadás itt: Velebitska Ulica 2, 23000 Zadar.",
+          "Nyitva hétfőtől vasárnapig, 09:00 és 19:00 között.",
+          "Az átvételi és visszaadási idősávok 30 perces időközök 09:00 és 19:00 között.",
+          "Visszaadáskor 15 perc türelmi idő. Az ezen túli késedelmes visszaadás extra díjat von maga után.",
+          "Fizetés után küldd el a kaució tranzakciójának képernyőképét, hogy ellenőrizhessük és megerősíthessük."
+        ]
+      },
+      {
+        "heading": "Biztosítás és biztonság",
+        "bullets": [
+          "Az alapbiztosítás minden bérléshez jár, és fedezi a motor lopását és a motorkárt.",
+          "A balesetek, karcolások, sérülések és defektek a bérlő felelőssége.",
+          "Ha egy harmadik fél okoz balesetet, fel kell hívnod a rendőrséget és hivatalos jegyzőkönyvet kell beszerezned. A felelős fél felel.",
+          "Bukósisakot mindig biztosítunk.",
+          "Minden motort kifogástalan, működőképes állapotban adunk át. Kérjük a bérlőket, hogy vizsgálják meg a motort, készítsenek fotókat és videókat átvételkor, és ugyanabban az állapotban adják vissza."
+        ]
+      },
+      {
+        "heading": "Sérülés, javítás és meghibásodás",
+        "bullets": [
+          "A kaució fedezi a kezdeti javítási költségeket. A motort egy helyi szerelőhöz visszük felmérésre. A bérlő a teljes javítási költséget a szerelő számlája szerint fizeti (mindig adunk másolatot).",
+          "Útszéli meghibásodási szerviz: 20 km-ig ingyenes. 20 km felett: 50€. Szigetek: Preko 150€, Dugi Otok 500€.",
+          "Elveszett kulcs: 50€ pótlási díj plusz a helyszíntől függő esetleges meghibásodási szerviz.",
+          "A bérlő magatartásától független motorhiba esetén minden költséget mi állunk."
+        ]
+      },
+      {
+        "heading": "Üzemanyag",
+        "bullets": [
+          "Minden motort tele tankkal adunk át. Kérjük, tele tankkal is add vissza.",
+          "Ha nem teli tankkal adod vissza, felszámítjuk a hiányzó üzemanyagot plusz egy tankolási díjat."
+        ]
+      },
+      {
+        "heading": "Vezetői követelmények",
+        "bullets": [
+          "Hozd magaddal az érvényes jogosítványod átvételkor. Jogosítvány nélkül nincs vezetés. A tulajdonos ellenőrzi, hogy a jogosítvány kategóriája megfelel-e a motor osztályának.",
+          "A vezetéshez előzetes vezetési tapasztalat szükséges. Ha átvételkor azt állapítjuk meg, hogy a tapasztalat nem elegendő a motor biztonságos kezeléséhez, fenntartjuk a jogot az elutasításra. Ilyen esetben a foglalási díj nem visszatéríthető, ezért kérjük, légy őszinte a tapasztalatoddal kapcsolatban a foglaláskor.",
+          "A bérlő teljes felelősséget vállal a bérlési időszak alatti minden balesetért, kárért és sérülésért."
+        ]
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Lépj kapcsolatba velünk",
+    "title": "Kapcsolat",
+    "intro": "A leggyorsabb válaszért írj nekünk WhatsApp-on, vagy küldj üzenetet, és néhány órán belül jelentkezünk.",
+    "form": {
+      "name": "Név",
+      "email": "E-mail",
+      "message": "Üzenet",
+      "messagePlaceholder": "A kérdésed, terveid, bármi más...",
+      "send": "Üzenet küldése",
+      "sending": "Küldés...",
+      "sent": "Üzenet elküldve. Hamarosan válaszolunk.",
+      "error": "Nem sikerült elküldeni. Próbáld WhatsApp-on vagy hívj minket."
+    },
+    "openHours": "Nyitvatartás",
+    "address": "Cím",
+    "getDirections": "Megnyitás a Google Maps-ben"
+  },
+  "gallery": {
+    "eyebrow": "Mozgásban",
+    "title": "Galéria",
+    "intro": "Pillanatképek valódi túrákról a partvidéken és a szigeteken."
+  },
+  "fleet": {
+    "back": "Összes motor",
+    "inStock": "{n} db a flottánkban",
+    "inStockHint": "Barátokkal jössz? Ebből {n} db van nálunk.",
+    "inStockCta": "Egynél több egyszerre? Foglalj többet →",
+    "licenceByCode": {
+      "AM/B": "AM vagy B jogosítvány",
+      "A1": "A1 jogosítvány",
+      "A2": "A2 jogosítvány"
+    },
+    "specs": {
+      "title": "Műszaki adatok",
+      "eyebrow": "A motor",
+      "engine": "Motor",
+      "power": "Teljesítmény",
+      "topSpeed": "Végsebesség",
+      "tank": "Tank",
+      "consumption": "Fogyasztás",
+      "range": "Hatótáv",
+      "seats": "Ülések",
+      "year": "Évjárat"
+    },
+    "pricing": {
+      "title": "Árak",
+      "eyebrow": "Rugalmas feltételek",
+      "daily": "Napi",
+      "dailySub": "1 nap",
+      "weekend": "Hétvége",
+      "weekendSub": "Péntektől vasárnapig",
+      "week": "Hét",
+      "weekSub": "7 nap",
+      "month": "Hónap",
+      "monthSub": "30 nap",
+      "unlimitedKm": "Korlátlan km, minden ár tartalmazza az ALAPbiztosítást",
+      "depositLine": "Kaució: {deposit} · Szezon: {season}",
+      "perDay": "/ nap",
+      "fromPrefix": "ettől"
+    },
+    "priceBox": {
+      "perDay": "/ nap",
+      "unlimitedLine": "Korlátlan km · Alapbiztosítás · {deposit} kaució",
+      "helmetsIncluded": "Bukósisak benne van",
+      "licenceEyebrow": "Szükséges jogosítvány",
+      "bringLicence": "Hozd magaddal az érvényes jogosítványod átvételkor. Jogosítvány nélkül nincs vezetés.",
+      "dayBadge": "24h",
+      "dayLabel": "1 nap = 24 óra",
+      "dayCopy": "Átvételtől átvételig, nem naptári nap. Pl. ma 11:00-tól holnap 11:00-ig = 1 nap."
+    },
+    "headsUp": "Jó tudni",
+    "checkAvailability": "Elérhetőség ellenőrzése",
+    "specsSection": {
+      "depositLabel": "Kaució",
+      "depositText": "{deposit} járművenként, sérülésmentes visszaadás után visszajár. Átvételkor: készpénz (díjmentes), PayPal, Revolut vagy Wise (tranzakciós díj felmerülhet). Hitel- vagy bankkártya nem.",
+      "noPhoneHoldersLabel": "Nincs telefontartó",
+      "noPhoneHoldersText": "Nem kínálunk és nem szerelünk fel telefontartót, sajátot sem hozhatsz.",
+      "seasonLabel": "Szezon",
+      "seasonValue": "Áprilistól októberig",
+      "seasonText": "{season}. Csak ebben az időszakban adunk bérbe.",
+      "fuelLabel": "Üzemanyag",
+      "fuelText": "Tele tankkal adjuk át. Tele tankkal is add vissza."
+    },
+    "tierLabel": {
+      "day": "Napi tarifa",
+      "weekend": "Hétvégi tarifa (péntek-vasárnap)",
+      "weekend-mix": "Hétvége + nap kombináció",
+      "week": "Heti tarifa",
+      "week-mix": "Hét + nap kombináció",
+      "month": "Havi tarifa",
+      "month-mix": "Hónap + nap kombináció"
+    },
+    "calendar": {
+      "title": "Foglald le ezt a motort",
+      "eyebrow": "Válaszd ki a dátumokat",
+      "legendFree": "Elérhető",
+      "legendBooked": "Foglalt",
+      "pickupDate": "Átvétel dátuma",
+      "returnDate": "Visszaadás dátuma",
+      "pickupTime": "Átvétel ideje",
+      "returnTime": "Visszaadás ideje",
+      "shopHours": "Nyitvatartás 09:00 és 19:00 között. Az ezen kívüli időpontok nem elérhetők",
+      "tooClose": " (vagy túl közel egy másik foglaláshoz, 1 óra kell a foglalások között)",
+      "totalDays": "{n} nap",
+      "totalDay": "1 nap",
+      "appliedTier": "Alkalmazott tarifa",
+      "total": "Összesen",
+      "continue": "Tovább a foglalási űrlapra",
+      "selectDates": "Először válaszd ki az átvételi és visszaadási dátumokat"
+    },
+    "form": {
+      "title": "Az adataid",
+      "name": "Teljes név",
+      "email": "E-mail",
+      "phone": "Telefon (országkóddal, pl. +49...)",
+      "notes": "Megjegyzések (nem kötelező)",
+      "notesPlaceholder": "Pl. 2 bukósisak kell, speciális átvételi idő, bármi más...",
+      "licence": "Vezetői engedély",
+      "licencePlaceholder": "Válassz kategóriát",
+      "licenceCountry": "Kiállítás országa",
+      "licenceCountryPlaceholder": "pl. Németország, Ausztria, Olaszország...",
+      "licenceOptions": {
+        "AM": "AM (moped / 50cc)",
+        "A1": "A1 (125cc-ig)",
+        "A2": "A2 (35 kW-ig)",
+        "A": "A (korlátozás nélküli)",
+        "B": "B (autós jogosítvány, fedi az AM/50cc-t)"
+      },
+      "ridingStyle": "Vezetési stílus",
+      "ridingStyleSolo": "Egyedül",
+      "ridingStyleWithPassenger": "Utassal",
+      "ridingStylePlaceholder": "Válassz stílust",
+      "soloOnly": "Ez a motor egyszemélyes. Csak egyedül.",
+      "maxRiders": "Legfeljebb {n} utas engedélyezett.",
+      "experienceWarning": "Vezetési tapasztalat szükséges. A valótlan adatok azt jelentik, hogy a foglalási díjat megtartjuk, és a bérlést elutasítjuk.",
+      "submit": "Kérés küldése",
+      "submitting": "Küldés...",
+      "reviewLine": "Átnézzük a foglalási képernyőképed, és e-mailben visszaigazolunk, általában néhány órán belül. A küldéssel elfogadod a",
+      "termsLink": "feltételeinket"
+    },
+    "reservation": {
+      "title": "Foglalás",
+      "lockBooking": "{total}€ 20%-a a foglalás rögzítéséhez",
+      "instructions": "Fizess {fee}€-t az alábbi módok egyikével, majd tölts fel egy képernyőképet a tranzakcióról. A fennmaradó {rest}€-t átvételkor fizeted készpénzben (díjmentes), Revoluttal, PayPallal vagy bank-/hitelkártyával (tranzakciós díj felmerülhet).",
+      "noBooking": "Nincs foglalási díj, nincs foglalás.",
+      "uploadScreenshot": "Tölts fel képernyőképet a fizetésről",
+      "uploadPicked": "Kiválasztva",
+      "uploadHint": "Csak kép, max 4 MB",
+      "uploadError": "Tölts fel képernyőképet a foglalási fizetésedről.",
+      "fileTooLarge": "A fájl túl nagy. Max 4 MB.",
+      "copy": "Másolás",
+      "copied": "Másolva!",
+      "openInApp": "Alkalmazás megnyitása",
+      "payWith": "Koppints a {method} fizetéshez",
+      "recommended": "Ajánlott",
+      "paymentNotes": {
+        "paypal_ff": "Díjmentes. Használd a Friends & Family opciót.",
+        "paypal_company": "Normál PayPal. Kis díj merül fel.",
+        "revolut": "Kattints a gombra a fizetéshez, vagy olvasd be a QR-t a telefonoddal.",
+        "bank": "Használj azonnali átutalást. A pénznemváltás díjat adhat hozzá."
+      }
+    },
+    "success": {
+      "title": "Kérés megérkezett",
+      "intro": "Átnézzük a foglalásod, és hamarosan e-mailben visszaigazoljuk. A hivatkozási számod {ref}.",
+      "summaryBike": "Motor",
+      "summaryFrom": "Átvétel",
+      "summaryTo": "Visszaadás",
+      "summaryTotal": "Összesen",
+      "summaryPaid": "Befizetett foglalási díj",
+      "summaryRemaining": "Átvételkor fizetendő",
+      "back": "Vissza a főoldalra"
+    }
+  },
+  "bikes": {
+    "scooter-50": {
+      "description": "Keveset fogyaszt, könnyen kezelhető, tökéletes a városhoz.",
+      "longDescription": "Nagyon takarékos, könnyen kezelhető, és tökéletes a laza cirkáláshoz Zadarban és a partvidéken.",
+      "tagline": "Üzemanyag-takarékos. Előzetes vezetési tapasztalat szükséges.",
+      "experienceNote": "Előzetes vezetési tapasztalat szükséges. Kezdőknek nem."
+    },
+    "scooter-50-topcase": {
+      "description": "Piaggio Liberty 50 topcase-szel, extra tárhely.",
+      "longDescription": "Ugyanaz a Liberty 50, mint a standard, topcase-szel felszerelve extra tárhelyért a hosszabb túrákon.",
+      "tagline": "Topcase benne van, extra tárhely.",
+      "experienceNote": "Előzetes vezetési tapasztalat szükséges. Kezdőknek nem."
+    },
+    "scooter-125": {
+      "description": "Tökéletes mindenes város- és parti túrákhoz.",
+      "longDescription": "Ugyanolyan könnyű kezelhetőség, mint az 50-esnél, több erővel a parti kirándulásokhoz.",
+      "tagline": "Mindenes a városhoz és a parthoz."
+    },
+    "bike-125-a": {
+      "description": "Sportos és fürge, aktív vezetőknek készült.",
+      "longDescription": "Supermoto-érzés 125cc-vel. Könnyű, fürge és ideális a lendületes vezetőknek, akik szeretik a kanyarokat és a parti utakat.",
+      "tagline": "Sportos. A vezetési stílus miatt magasabb fogyasztás."
+    },
+    "bike-125-b": {
+      "description": "Naked-bike érzés nagyszerű hatótávval és sportos jelleggel.",
+      "longDescription": "Valódi naked-bike jelleg 125cc-vel. Kiváló hatótáv, tökéletes a hosszabb túrákhoz a partvidéken és a szigetekhez.",
+      "tagline": "Nagyszerű hatótáv, tökéletes a hosszabb túrákhoz."
+    },
+    "bike-390": {
+      "description": "A2-kész erő a parthoz. Könnyű, fürge, városra, vidékre és kanyarokra építve.",
+      "longDescription": "Prémium A2-kompatibilis motor. Könnyű, fürge és tökéletes a városhoz, vidékhez és kanyarokhoz, akár egy napra, akár egy egész hónapra szeretnéd.",
+      "tagline": "Erős és prémium. Top választás magabiztos vezetőknek."
+    }
+  },
+  "faqItems": [
+    {
+      "question": "Mit tartalmaz a meghibásodási szerviz?",
+      "answer": "20 km-ig: ingyenes (balesetek vagy elveszett kulcsok esetén extra költségek merülnek fel). 20 km felett: 50€. Szigetek: Preko 150€, Dugi Otok 500€. Elveszett kulcs: 50€. A meghibásodási szerviz akkor érvényes, ha baleset vagy elveszett kulcs miatt nem tudsz visszatérni a címünkre. Motorhiba esetén minden költséget mi állunk."
+    },
+    {
+      "question": "Milyen állapotban kapom meg a motort?",
+      "answer": "Minden motort és robogót kifogástalan, működőképes állapotban adunk át. Kérjük a bérlőket, hogy vizsgálják meg a motort, készítsenek tiszta fotókat és videókat átvételkor a meglévő karcolásokról vagy sérülésekről, és ugyanabban az állapotban adják vissza. Ezek a felvételek hivatalos bizonyítékok bármilyen vita esetén."
+    },
+    {
+      "question": "Milyen biztosítás van benne?",
+      "answer": "Az alapbiztosítás fedezi a motor lopását és a motorkárt. A balesetek, karcolások, sérülések és defektek a bérlő felelőssége. Ha egy harmadik fél okoz balesetet, fel kell hívnod a rendőrséget és hivatalos jegyzőkönyvet kell beszerezned. A felelős fél felel."
+    },
+    {
+      "question": "Mi a lemondási feltételetek?",
+      "answer": "Minden foglalás nem visszatéríthető. A 20%-os foglalási díj rögzíti a dátumaidat, és lemondás esetén nem jár vissza. Ha egy motor egy másik ügyfél által okozott baleset vagy kár miatt elérhetetlenné válik, törlünk és teljes egészében visszatérítünk."
+    },
+    {
+      "question": "Mikor és hol adom vissza a motort?",
+      "answer": "A megbeszélt időpontban és helyen. 15 perc türelmi időt adunk. Az ezen túli késedelmes visszaadás extra díjat von maga után. Visszaadás a címünkön: Velebitska Ulica 2, 23000 Zadar."
+    },
+    {
+      "question": "Ki felel a balesetekért vagy sérülésekért?",
+      "answer": "A bérlő teljes felelősséget vállal a bérlési időszak alatt bekövetkező minden balesetért, kárért vagy sérülésért."
+    },
+    {
+      "question": "Mi történik, ha a motor megsérül?",
+      "answer": "A kaució fedezi a kezdeti javítási költségeket. A motort egy helyi szerelőhöz visszük felmérésre és javításra, a bérlő pedig a teljes javítási költséget a szerelő számlája szerint fizeti. Ha a javítás meghaladja a kauciót, a bérlő fizeti a különbözetet. Az átláthatóság érdekében mindig adunk másolatot a számláról."
+    },
+    {
+      "question": "Mi van, ha elveszítem a kulcsot?",
+      "answer": "Egy pótkulcsot 50€-ért szállítunk, plusz a helyszínedtől függő esetleges meghibásodási szervizdíj."
+    },
+    {
+      "question": "Hogyan foglalhatok?",
+      "answer": "Mindig erősítsd meg nálunk először az elérhetőséget. Gyorsan változhat. Egy 20%-os foglalási díj rögzíti a dátumaidat. Fizess PayPallal, banki átutalással, Revoluttal vagy készpénzzel érkezéskor. Fizetés után küldj nekünk egy képernyőképet a tranzakcióról. Ha értesítés nélkül több mint 1 órát késel, a foglalás automatikusan törlésre kerül. Bankkártyát nem fogadunk el."
+    },
+    {
+      "question": "Kínáltok telefontartót?",
+      "answer": "Nem. Nem kínálunk és nem szerelünk fel telefontartót, és sajátot sem hozhatsz. Egyik motorunkon sincs. Kérjük, tervezd meg az útvonalad, mielőtt elindulsz."
+    },
+    {
+      "question": "Hogyan működik az üzemanyag, tele tank vagy üres tank?",
+      "answer": "Minden motort tele tankkal adunk át. Kérjük, tele tankkal is add vissza. Ha nem teli tankkal adod vissza a motort, felszámítjuk a hiányzó üzemanyagot plusz egy tankolási díjat."
+    },
+    {
+      "question": "Hogyan navigáljak telefontartó nélkül?",
+      "answer": "Két praktikus lehetőség: vezess utassal, aki az irányokat kezeli, vagy használj egy Bluetooth fülbe helyezhető navigációs szettet a hangos, fordulóról fordulóra navigációhoz anélkül, hogy levennéd a szemed az útról. Akárhogy is, tervezd meg az útvonalad átvétel előtt."
+    },
+    {
+      "question": "Mi van, ha úgy döntötök, hogy nem vagyok elég tapasztalt?",
+      "answer": "A vezetéshez előzetes tapasztalat szükséges. Ha átvételkor azt állapítjuk meg, hogy nincs elég tapasztalatod a motor biztonságos kezeléséhez, fenntartjuk a jogot a bérlés elutasítására. Ilyen esetben a foglalási díj nem visszatéríthető, ezért kérjük, légy őszinte a tapasztalatoddal kapcsolatban a foglaláskor."
+    }
+  ],
+  "common": {
+    "loading": "Betöltés...",
+    "tryAgain": "Próbáld újra",
+    "language": "Nyelv"
+  },
+  "emails": {
+    "bookingReceived": {
+      "subject": "Megkaptuk a foglalásod, {bike} {from} - {to}",
+      "preheader": "Megkaptuk a foglalási kérésed a {bike} járműre. A tulajdonos hamarosan visszaigazol.",
+      "headline": "Megkaptuk a kérésed",
+      "greeting": "Szia {name},",
+      "intro": "köszönjük a foglalási kérésed. Átnézzük, és hamarosan e-mailben visszaigazoljuk, általában néhány órán belül.",
+      "urgentLine": "Addig is, sürgős valami?",
+      "signoff": "Találkozunk Zadarban."
+    },
+    "bookingConfirmed": {
+      "subject": "Visszaigazolva, {bike} {from} - {to}",
+      "preheader": "A {bike} visszaigazolva erre: {from} - {to}.",
+      "headline": "Foglalás visszaigazolva",
+      "greeting": "Szia {name},",
+      "intro": "a {bike} rögzítve. Találkozunk Zadarban.",
+      "pickupHeader": "Átvétel",
+      "openHoursLabel": "Nyitva",
+      "bringHeader": "Hozd magaddal",
+      "bringLicence": "Érvényes motoros jogosítvány, e nélkül nem tudjuk átadni",
+      "bringDeposit": "{deposit} kaució (készpénz érkezéskor, sérülésmentes visszaadás után visszajár)",
+      "bringTank": "A motor tele tankkal érkezik, kérjük, tele tankkal add vissza",
+      "adjustHeader": "Módosítanod kell?",
+      "adjustLine": "Az átvétel rögzítve {from} {pickupTime}-kor, visszaadás {to} {returnTime}-ig. Szólj, ha bármi változik:",
+      "cancelLine": "Megváltoztak a terveid?",
+      "cancelLink": "Foglalás lemondása",
+      "cancelTail": ", a dátumok azonnal felszabadulnak valaki más számára."
+    },
+    "bookingDeclined": {
+      "subject": "Frissítés a foglalásoddal kapcsolatban, {bike}",
+      "preheader": "Frissítés a {bike} foglalásoddal kapcsolatban, ezek a dátumok nem jöttek össze.",
+      "headline": "Frissítés a foglalásoddal kapcsolatban",
+      "greeting": "Szia {name},",
+      "intro": "sajnos nem tudjuk biztosítani a {bike} járművet ezekre a dátumokra. Sajnáljuk.",
+      "tryOther": "Szeretnél más dátumokat vagy másik motort kipróbálni? Írj nekünk, és mindent megteszünk, hogy találjunk valami megfelelőt."
+    },
+    "contactReceived": {
+      "subject": "Köszönjük az üzeneted",
+      "preheader": "Megkaptuk az üzeneted, hamarosan válaszolunk.",
+      "headline": "Megkaptuk az üzeneted",
+      "greeting": "Szia {name},",
+      "intro": "köszönjük, hogy megkerestél. Amint lehet, jelentkezünk.",
+      "yourMessage": "Az üzeneted:",
+      "signoff": "Találkozunk Zadarban."
+    },
+    "summary": {
+      "bike": "Motor",
+      "pickup": "Átvétel",
+      "return": "Visszaadás",
+      "total": "Összesen",
+      "days": "nap",
+      "day": "nap",
+      "deposit": "Kaució"
+    }
+  },
+  "group": {
+    "title": "Több motor foglalása",
+    "intro": "Válassz egy dátumablakot, majd adj hozzá annyi motort, amennyire szükséged van, egyetlen foglaláshoz egy kaucióval. Megmutatjuk az egész flottát, hogy lásd, mi szabad és mikor.",
+    "period": "A bérlési időszakod",
+    "sameDates": "Ugyanazok a dátumok minden motorhoz.",
+    "pickBikes": "Válaszd ki a motorjaid",
+    "fleetNoDates": "A flotta · válassz fent egy időszakot az elérhetőség ellenőrzéséhez",
+    "period2": "időszak",
+    "fullDetails": "teljes részletek",
+    "notAvailable": "Nem elérhető a kiválasztott időszakra",
+    "freeFrom": "Szabad ettől",
+    "pickDates": "Válassz időszakot",
+    "available": "elérhető",
+    "seat": "ülés",
+    "seats": "ülés",
+    "yourGroup": "A csoportod",
+    "noBikes": "Még nincs motor",
+    "bikesWord": "motor",
+    "helmetsWord": "bukósisak",
+    "oneDeposit": "egy kaució",
+    "continue": "Tovább",
+    "ridingPerBike": "Vezetési stílus motoronként",
+    "helmetsHint": "Hogy a megfelelő bukósisakokat készítsük elő",
+    "helmetsTotal": "bukósisak összesen",
+    "spokenLanguage": "Beszélt nyelv",
+    "fromDialCode": "hívókódból",
+    "override": "Felülírás (€)",
+    "reminder": "Emlékeztető: bukósisak benne van · {deposit} kaució járművenként · hozd az érvényes jogosítványod · tele tankkal el, tele tankkal vissza · átvétel itt: {address}",
+    "submit": "Foglalás beküldése",
+    "received": "Foglalás megérkezett",
+    "receivedBody": "megkaptuk a csoportos kérésed és a kaució képernyőképét. Hamarosan e-mailben visszaigazoljuk. Ha néhány órán belül nem hallasz felőlünk, írj nekünk WhatsApp-on.",
+    "backToFleet": "Vissza a flottához",
+    "backToBikes": "Vissza a motorokhoz",
+    "bandDeposit": "Kaució/jármű, visszajár",
+    "bandInsurance": "Alapbiztosítás",
+    "bandKm": "Kilométer",
+    "bandFuel": "Üzemanyag-szabály",
+    "bandDay": "Átvételtől átvételig",
+    "bandHelmets": "Bukósisak",
+    "bandSeason": "Szezon",
+    "bandPhone": "Telefontartó",
+    "bandPickup": "Átvétel",
+    "valIncluded": "Benne van",
+    "valUnlimited": "Korlátlan",
+    "valNotAvailable": "Nem elérhető",
+    "valZadarShop": "A zadari boltunk",
+    "errRequired": "A név, e-mail és telefon kötelező.",
+    "errLicence": "Válaszd ki a vezetői engedélyed kategóriáját.",
+    "errReceipt": "Tölts fel egy kaució képernyőképet.",
+    "errSubmit": "Nem sikerült beküldeni a foglalást.",
+    "errNetwork": "Hálózati hiba. Kérjük, próbáld újra.",
+    "enlarge": "Fotó nagyítása",
+    "closePreview": "Előnézet bezárása",
+    "howItWorks": "Hogyan működik",
+    "step1": "Válassz egy dátumablakot az egész csoportnak",
+    "step2": "Adj hozzá bármilyen szabad motort a flottából",
+    "step3": "Egy kaució járművenként, egy foglalás",
+    "reserveLine": "20% most a foglaláshoz, a többi érkezéskor.",
+    "depositLine": "{deposit} kaució járművenként.",
+    "checking": "ellenőrzés…",
+    "checkingAvailability": "elérhetőség ellenőrzése…",
+    "lblName": "Név",
+    "lblPhone": "Telefon",
+    "lblEmail": "E-mail",
+    "lblLicence": "Vezetői engedély",
+    "lblLicenceCountry": "Jogosítvány országa",
+    "lblNotes": "Megjegyzések",
+    "licenceCountryPh": "pl. Németország",
+    "payHeadline": "Fizess {fee}€-t most a dátumaid rögzítéséhez ({total}€ 20%-a). A többit ({rest}€) érkezéskor fizeted.",
+    "payUpload": "Fizetés után tölts fel egy képernyőképet alább. {deposit} kaució járművenként.",
+    "payWith": "Fizess {fee}€-t ezzel: {method}",
+    "chooseFile": "Fájl kiválasztása",
+    "noFile": "Nincs fájl kiválasztva",
+    "remove": "Eltávolítás",
+    "depositScreenshot": "Kaució képernyőkép",
+    "fileHint": "JPG, PNG, HEIC vagy PDF · max 4 MB",
+    "useTime": "Ezt az időpontot használom",
+    "freeFromTime": "Szabad ettől",
+    "useDates": "Ezeket a dátumokat használom",
+    "at": "ekkor:",
+    "freeIfReturnBy": "Szabad, ha visszaadod eddig:",
+    "useReturn": "Visszaadási idő használata",
+    "depositSummary": "Kaució: {count} × {each} = {total}"
+  }
+}

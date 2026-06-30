@@ -5,7 +5,7 @@ import Image from "next/image";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
 import { format } from "date-fns";
-import { enUS, de, es, it, hr } from "date-fns/locale";
+import { enUS, de, es, it, hr, hu, sk, cs, ptBR } from "date-fns/locale";
 import type { Locale as DateFnsLocale } from "date-fns";
 import "react-day-picker/style.css";
 import { QRCodeSVG } from "qrcode.react";
@@ -33,6 +33,10 @@ const DATE_FNS_LOCALES: Partial<Record<Locale, DateFnsLocale>> = {
   es,
   it,
   hr,
+  hu,
+  sk,
+  cs,
+  pt: ptBR,
 };
 
 function toIsoDate(d: Date): string {

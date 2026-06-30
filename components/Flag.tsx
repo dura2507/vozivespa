@@ -18,7 +18,10 @@ export type FlagCode =
   | "PL"
   | "FR"
   | "ES"
-  | "BR";
+  | "BR"
+  | "HU"
+  | "SK"
+  | "CZ";
 
 const FLAGS: Record<FlagCode, React.ReactNode> = {
   GB: (
@@ -128,6 +131,27 @@ const FLAGS: Record<FlagCode, React.ReactNode> = {
       />
     </svg>
   ),
+  HU: (
+    <svg viewBox="0 0 9 6" preserveAspectRatio="xMidYMid slice">
+      <rect width="9" height="2" fill="#CD2A3E" />
+      <rect y="2" width="9" height="2" fill="#FFF" />
+      <rect y="4" width="9" height="2" fill="#436F4D" />
+    </svg>
+  ),
+  SK: (
+    <svg viewBox="0 0 9 6" preserveAspectRatio="xMidYMid slice">
+      <rect width="9" height="2" fill="#FFF" />
+      <rect y="2" width="9" height="2" fill="#0B4EA2" />
+      <rect y="4" width="9" height="2" fill="#EE1620" />
+    </svg>
+  ),
+  CZ: (
+    <svg viewBox="0 0 9 6" preserveAspectRatio="xMidYMid slice">
+      <rect width="9" height="3" fill="#FFF" />
+      <rect y="3" width="9" height="3" fill="#D7141A" />
+      <path d="M0,0 L4.5,3 L0,6 Z" fill="#11457E" />
+    </svg>
+  ),
 };
 
 // Map each UI locale to the country whose flag we want to show for it.
@@ -141,6 +165,10 @@ const LOCALE_TO_FLAG: Record<Locale, FlagCode> = {
   pl: "PL",
   fr: "FR",
   es: "ES",
+  hu: "HU",
+  sk: "SK",
+  cs: "CZ",
+  pt: "BR",
 };
 
 export function Flag({

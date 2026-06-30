@@ -19,6 +19,10 @@ export const LEGAL_STRINGS: Record<
   pl: { privacyTitle: "Polityka prywatności", imprintTitle: "Impressum", backHome: "← Powrót do strony głównej" },
   fr: { privacyTitle: "Politique de confidentialité", imprintTitle: "Mentions légales", backHome: "← Retour à l'accueil" },
   es: { privacyTitle: "Política de privacidad", imprintTitle: "Aviso legal", backHome: "← Volver al inicio" },
+  hu: { privacyTitle: "Adatvédelmi szabályzat", imprintTitle: "Impresszum", backHome: "← Vissza a főoldalra" },
+  sk: { privacyTitle: "Zásady ochrany osobných údajov", imprintTitle: "Impressum", backHome: "← Späť na úvod" },
+  cs: { privacyTitle: "Zásady ochrany osobních údajů", imprintTitle: "Impressum", backHome: "← Zpět na úvod" },
+  pt: { privacyTitle: "Política de Privacidade", imprintTitle: "Informações legais", backHome: "← Voltar ao início" },
 };
 
 // Shared contact block referenced across both pages.
@@ -107,6 +111,9 @@ export function PrivacyContent({ locale }: { locale: Locale }) {
         </article>
       );
 
+    // Languages without a dedicated privacy translation fall back to the
+    // English policy (hu, sk, cs, pt). Titles/back-link are still localised.
+    default:
     case "en":
       return (
         <article className="prose-content space-y-6 text-ink">
@@ -414,6 +421,22 @@ export function ImprintContent({ locale }: { locale: Locale }) {
     es: {
       lead: "Información conforme a las obligaciones de transparencia aplicables.",
       activity: "Este sitio opera el alquiler de scooters y motos SickMotos · Rent a Moto en Zadar.",
+    },
+    hu: {
+      lead: "Tájékoztatás a vonatkozó átláthatósági kötelezettségek szerint.",
+      activity: "Ez az oldal a SickMotos · Rent a Moto robogó- és motorkölcsönzőt üzemelteti Zadarban.",
+    },
+    sk: {
+      lead: "Informácie podľa platných požiadaviek na transparentnosť.",
+      activity: "Táto stránka prevádzkuje požičovňu skútrov a motoriek SickMotos · Rent a Moto v Zadare.",
+    },
+    cs: {
+      lead: "Informace podle platných požadavků na transparentnost.",
+      activity: "Tato stránka provozuje půjčovnu skútrů a motocyklů SickMotos · Rent a Moto v Zadaru.",
+    },
+    pt: {
+      lead: "Informações de acordo com os requisitos de transparência aplicáveis.",
+      activity: "Este site opera o aluguel de scooters e motos SickMotos · Rent a Moto em Zadar.",
     },
   };
   const i = intro[locale];

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
 import { format, addDays, differenceInCalendarDays, isSameDay } from "date-fns";
-import { enUS, de, es, it, hr } from "date-fns/locale";
+import { enUS, de, es, it, hr, hu, sk, cs, ptBR } from "date-fns/locale";
 import type { Locale as DateFnsLocale } from "date-fns";
 import "react-day-picker/style.css";
 import { QRCodeSVG } from "qrcode.react";
@@ -73,7 +73,7 @@ export default function BikeDetail({
 }) {
   const tF = dict.fleet;
   const tBike = dict.bikes[bike.id as keyof typeof dict.bikes];
-  const dateLocale: DateFnsLocale = ({ en: enUS, de, es, it, hr } as Record<string, DateFnsLocale>)[lang] ?? enUS;
+  const dateLocale: DateFnsLocale = ({ en: enUS, de, es, it, hr, hu, sk, cs, pt: ptBR } as Record<string, DateFnsLocale>)[lang] ?? enUS;
   const [activeImage, setActiveImage] = useState(bike.image);
   const [range, setRange] = useState<DateRange | undefined>();
   const [pickupTime, setPickupTime] = useState("09:00");

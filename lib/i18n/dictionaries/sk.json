@@ -1,0 +1,657 @@
+{
+  "nav": {
+    "home": "Domov",
+    "fleet": "Vozový park",
+    "gallery": "Galéria",
+    "info": "Info",
+    "faq": "FAQ",
+    "contact": "Kontakt",
+    "terms": "Podmienky",
+    "bookNow": "Rezervovať",
+    "menuAria": "Menu",
+    "languageSwitcher": "Jazyk",
+    "groupBooking": "Multibuchung",
+    "groupBookingLead": "Požičiavaš si viac ako jeden bike?"
+  },
+  "footer": {
+    "intro": "Požičovňa skútrov a motoriek v Zadare. Spoznaj dalmatínske pobrežie na dvoch kolesách.",
+    "locationLabel": "Zadar, Croatia",
+    "call": "Zavolať",
+    "whatsapp": "WhatsApp",
+    "trusted": "Overený partner pre prenájom",
+    "openHoursPrefix": "Otvorené",
+    "rights": "Všetky práva vyhradené."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Zadar, Croatia",
+      "headline1": "Ride the",
+      "headline2": "Croatian",
+      "headline3": "Coast",
+      "sub": "Požičovňa skútrov a motoriek v Zadare, 50cc až 390cc. Helmy a základné poistenie v cene. Pobrežné cesty, ostrovy, sloboda.",
+      "checkAvailability": "Skontrolovať dostupnosť",
+      "fromPrice": "Od {price}/deň",
+      "statBikes": "Bikov a skútrov",
+      "statReviews": "5-hviezdičkových recenzií",
+      "statKm": "Km v cene"
+    },
+    "fleet": {
+      "eyebrow": "Vyber si svoj stroj",
+      "title": "Náš vozový park",
+      "fromPrefix": "od",
+      "topSpeed": "Maximálna rýchlosť",
+      "experienceRequired": "Vyžaduje sa skúsenosť",
+      "bookNow": "Rezervovať",
+      "inStock": "{n} v našom parku",
+      "inStockHint": "Jazdíš s kamarátmi? Máme {n} kusov.",
+      "availableNow": "Dostupné teraz",
+      "availableNowCount": "{n} dostupných teraz",
+      "notAvailableNow": "V servise",
+      "bookedUntil": "V servise do {date}",
+      "bookedUntilToday": "V servise do dnes {time}",
+      "bookedUntilTomorrow": "V servise do zajtra {time}",
+      "availableFrom": "Dostupné od {time}",
+      "outOfService": "V servise",
+      "helmetsIncluded": "Helmy v cene",
+      "viewDetails": "Detaily"
+    },
+    "included": {
+      "eyebrow": "Pri každom prenájme",
+      "title": "Čo je v cene",
+      "items": {
+        "insurance": {
+          "label": "Základné poistenie",
+          "sub": "Krytie krádeže a motora"
+        },
+        "helmets": {
+          "label": "Helmy",
+          "sub": "Vždy poskytujeme"
+        },
+        "unlimitedKm": {
+          "label": "Neobmedzené km",
+          "sub": "Žiadne limity jazdy"
+        },
+        "roadside": {
+          "label": "Asistenčná služba",
+          "sub": "Do 20km zdarma, potom 50€ a viac"
+        },
+        "transparent": {
+          "label": "Transparentné ceny",
+          "sub": "Čo vidíš, to platíš"
+        },
+        "warranty": {
+          "label": "Záruka na motor",
+          "sub": "Poruchu motora kryjeme my"
+        }
+      }
+    },
+    "goodToKnow": {
+      "eyebrow": "Pozor",
+      "title": "Dobré vedieť",
+      "deposit": {
+        "label": "Kaucia",
+        "sub": "Za bike, vrátená po odovzdaní, ak nie je poškodenie."
+      },
+      "phoneHolders": {
+        "value": "Nie",
+        "label": "Držiaky na telefón",
+        "sub": "Neponúkame ani nemontujeme držiaky na telefón a nemôžeš si priniesť ani vlastný. Žiadny z našich bikov ho nemá."
+      },
+      "season": {
+        "value": "Apr-Okt",
+        "label": "Sezóna jazdenia",
+        "sub": "Požičiavame od apríla do októbra. Plná nádrž dnu, plná nádrž von."
+      },
+      "languages": {
+        "label": "Jazyky",
+        "sub": "Hovoríme po nemecky, anglicky a portugalsky. Napíš nám na WhatsApp."
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "Jednoduchý postup",
+      "title": "Ako to funguje",
+      "step1": {
+        "title": "Vyber si svoj stroj",
+        "text": "Vyber si skúter alebo motorku, od 50cc mestského krížnika až po 390cc stroj na diaľnicu."
+      },
+      "step2": {
+        "title": "Požiadaj o termíny",
+        "text": "Skontroluj dostupnosť v kalendári a pošli nám rýchlu žiadosť. Vyzdvihnutie v našom obchode v Zadare."
+      },
+      "step3": {
+        "title": "Potvrdíme a ty jazdíš",
+        "text": "Potvrdenie pošleme e-mailom do pár hodín. Zaplať 20% rezervačný poplatok, vyzdvihni si bike a vyraz."
+      },
+      "cta": "Rezervovať bike"
+    },
+    "reviews": {
+      "eyebrow": "Čo hovoria jazdci",
+      "title": "Recenzie",
+      "leaveReview": "Zanechať recenziu na Google"
+    },
+    "gallerySection": {
+      "eyebrow": "V pohybe",
+      "title": "Galéria",
+      "seeAll": "Pozrieť všetky fotky"
+    },
+    "cta": {
+      "eyebrow": "Pripravený jazdiť?",
+      "headline1": "Rezervuj si",
+      "headline2": "bike ešte dnes",
+      "ctaBtn": "Skontrolovať dostupnosť"
+    }
+  },
+  "info": {
+    "eyebrow": "Všetko, čo potrebuješ vedieť",
+    "title": "Info",
+    "licenceRequirements": {
+      "title": "Požiadavky na vodičský preukaz",
+      "scooter50": "Skúter 50cc: vodičský preukaz skupiny B alebo AM plus skúsenosť so skútrom",
+      "scooter125": "Skúter 125cc a motorka 125cc: vodičský preukaz skupiny A1",
+      "motorbike390": "Motorka 390cc: vodičský preukaz skupiny A2",
+      "verify": "Vodičský preukaz overujeme pri vyzdvihnutí"
+    },
+    "depositPayment": {
+      "title": "Kaucia a platba",
+      "deposit": "{deposit} kaucia za bike, vrátená po odovzdaní, ak nie je poškodenie.",
+      "bookingFee": "20% rezervačný poplatok zaistí tvoje termíny.",
+      "noCards": "Za rezervačný poplatok neprijímame platby kartou."
+    },
+    "fleetSection": {
+      "title": "Náš vozový park v skratke"
+    }
+  },
+  "faq": {
+    "eyebrow": "Otázky?",
+    "title": "FAQ",
+    "categories": {
+      "booking": "Rezervácia a platba",
+      "pickup": "Pri vyzdvihnutí",
+      "ride": "Počas jazdy",
+      "return": "Vrátenie",
+      "incidents": "Poškodenie a asistencia"
+    }
+  },
+  "terms": {
+    "eyebrow": "Podmienky rezervácie",
+    "title": "Obchodné podmienky",
+    "intro": "Podmienky rezervácie pre prenájom skútrov a motoriek. Rezerváciou u {legal} súhlasíš s nižšie uvedenými pravidlami.",
+    "questionsLine": "Otázky? Kontaktuj nás na",
+    "questionsTail": "alebo cez WhatsApp na kontaktnej stránke.",
+    "sections": [
+      {
+        "heading": "Rezervácie",
+        "bullets": [
+          "Vždy si u nás potvrď dostupnosť tesne pred uskutočnením platby. Dostupnosť sa môže rýchlo meniť a predchádzajúce potvrdenie nezaručuje, že skúter alebo motorka je stále dostupná.",
+          "Pri rezervácii prosím uveď dátum a čas vyzdvihnutia a vrátenia.",
+          "Na zaistenie rezervácie je potrebný rezervačný poplatok 20% z celkovej sumy.",
+          "Spôsoby platby: PayPal, bankový prevod, Revolut alebo hotovosť osobne (ak si už v Zadare). Neprijímame kreditné karty.",
+          "Po uskutočnení platby nám prosím pošli screenshot transakcie ako doklad. Pri platbe v hotovosti nie je potrebný.",
+          "Ak prídeš o viac ako 1 hodinu neskôr bez upozornenia, tvoja rezervácia bude automaticky zrušená a rezervačný poplatok je nevratný.",
+          "Ak sa skúter alebo motorka stane nedostupnou pre nehodu alebo poškodenie spôsobené iným klientom, môžeme tvoju rezerváciu zrušiť a vrátiť celý rezervačný poplatok.",
+          "Jazda na skútri alebo motorke vyžaduje predchádzajúcu skúsenosť. Ak zistíme, že nemáš dostatočné skúsenosti na bezpečnú jazdu, vyhradzujeme si právo rezerváciu odmietnuť bez vrátenia peňazí."
+        ]
+      },
+      {
+        "heading": "Kaucia a platba",
+        "bullets": [
+          "Bezpečnostná kaucia: 250€ za bike, vrátená po odovzdaní, ak nie je poškodenie.",
+          "Rezervačný poplatok: 20% z celkovej sumy. Zaistí tvoje termíny, pri zrušení nevratný.",
+          "Spôsoby platby: PayPal (Friends & Family preferované, bez poplatku), bankový prevod, Revolut alebo hotovosť pri príchode.",
+          "Neprijímame kreditné karty."
+        ]
+      },
+      {
+        "heading": "Vyzdvihnutie a vrátenie",
+        "bullets": [
+          "Vyzdvihnutie a odovzdanie na Velebitska Ulica 2, 23000 Zadar.",
+          "Otvorené po-ne, 09:00 až 19:00.",
+          "Termíny vyzdvihnutia a vrátenia sú 30-minútové intervaly medzi 09:00 a 19:00.",
+          "15-minútová tolerancia pri vrátení. Neskoré odovzdania nad tento rámec sú spoplatnené.",
+          "Po zaplatení pošli screenshot transakcie kaucie, aby sme mohli overiť a potvrdiť."
+        ]
+      },
+      {
+        "heading": "Poistenie a bezpečnosť",
+        "bullets": [
+          "Základné poistenie je súčasťou každého prenájmu a kryje krádež bika a poškodenie motora.",
+          "Nehody, škrabance, poškodenia a defekty pneumatík sú zodpovednosťou nájomcu.",
+          "Ak nehodu spôsobí tretia strana, musíš zavolať políciu a získať oficiálnu správu. Zodpovedná strana ručí.",
+          "Helmy vždy poskytujeme.",
+          "Všetky biky odovzdávame v dokonalom prevádzkovom stave. Žiadame nájomcov, aby si bike skontrolovali, urobili fotky a videá pri vyzdvihnutí a vrátili ho v rovnakom stave."
+        ]
+      },
+      {
+        "heading": "Poškodenie, oprava a porucha",
+        "bullets": [
+          "Kaucia kryje počiatočné náklady na opravu. Bike vezmeme k miestnemu mechanikovi na posúdenie. Nájomca platí plnú cenu opravy podľa faktúry mechanika (kópiu vždy poskytneme).",
+          "Asistenčná služba pri poruche: do 20 km zdarma. Nad 20 km: 50€. Ostrovy: Preko 150€, Dugi Otok 500€.",
+          "Stratený kľúč: 50€ poplatok za náhradu plus prípadná asistenčná služba podľa lokality.",
+          "V prípade poruchy motora nesúvisiacej so správaním nájomcu kryjeme všetky náklady."
+        ]
+      },
+      {
+        "heading": "Palivo",
+        "bullets": [
+          "Každý bike odovzdávame s plnou nádržou. Prosím vráť ho tiež s plnou nádržou.",
+          "Ak ho vrátiš bez plnej nádrže, účtujeme chýbajúce palivo plus poplatok za dotankovanie."
+        ]
+      },
+      {
+        "heading": "Požiadavky na vodiča",
+        "bullets": [
+          "Prines si k vyzdvihnutiu platný vodičský preukaz. Bez preukazu žiadna jazda. Majiteľ overí, že skupina preukazu zodpovedá triede bika.",
+          "Jazda vyžaduje predchádzajúcu skúsenosť. Ak pri vyzdvihnutí zistíme, že skúsenosť nepostačuje na bezpečné ovládanie bika, vyhradzujeme si právo odmietnuť. Rezervačný poplatok je v takom prípade nevratný, preto buď pri rezervácii úprimný ohľadom svojich skúseností.",
+          "Nájomca preberá plnú zodpovednosť za všetky nehody, škody a zranenia počas obdobia prenájmu."
+        ]
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Spoj sa s nami",
+    "title": "Kontakt",
+    "intro": "Najrýchlejšiu odpoveď dostaneš cez WhatsApp, alebo pošli správu a ozveme sa ti do pár hodín.",
+    "form": {
+      "name": "Meno",
+      "email": "Email",
+      "message": "Správa",
+      "messagePlaceholder": "Tvoja otázka, plány, čokoľvek iné...",
+      "send": "Odoslať správu",
+      "sending": "Odosielanie...",
+      "sent": "Správa odoslaná. Čoskoro odpovieme.",
+      "error": "Nepodarilo sa odoslať. Skús WhatsApp alebo zavolaj."
+    },
+    "openHours": "Otváracie hodiny",
+    "address": "Adresa",
+    "getDirections": "Otvoriť v Google Maps"
+  },
+  "gallery": {
+    "eyebrow": "V pohybe",
+    "title": "Galéria",
+    "intro": "Zábery zo skutočných jázd po pobreží a ostrovoch."
+  },
+  "fleet": {
+    "back": "Všetky biky",
+    "inStock": "{n} v našom parku",
+    "inStockHint": "Jazdíš s kamarátmi? Máme {n} kusov.",
+    "inStockCta": "Viac naraz? Rezervuj viacero →",
+    "licenceByCode": {
+      "AM/B": "Vodičský preukaz AM alebo B",
+      "A1": "Vodičský preukaz A1",
+      "A2": "Vodičský preukaz A2"
+    },
+    "specs": {
+      "title": "Parametre",
+      "eyebrow": "Bike",
+      "engine": "Motor",
+      "power": "Výkon",
+      "topSpeed": "Maximálna rýchlosť",
+      "tank": "Nádrž",
+      "consumption": "Spotreba",
+      "range": "Dojazd",
+      "seats": "Sedadlá",
+      "year": "Rok"
+    },
+    "pricing": {
+      "title": "Ceny",
+      "eyebrow": "Flexibilné podmienky",
+      "daily": "Denne",
+      "dailySub": "1 deň",
+      "weekend": "Víkend",
+      "weekendSub": "Pi až Ne",
+      "week": "Týždeň",
+      "weekSub": "7 dní",
+      "month": "Mesiac",
+      "monthSub": "30 dní",
+      "unlimitedKm": "Neobmedzené km, všetky ceny zahŕňajú ZÁKLADNÉ poistenie",
+      "depositLine": "Kaucia: {deposit} · Sezóna: {season}",
+      "perDay": "/ deň",
+      "fromPrefix": "od"
+    },
+    "priceBox": {
+      "perDay": "/ deň",
+      "unlimitedLine": "Neobmedzené km · Základné poistenie · {deposit} kaucia",
+      "helmetsIncluded": "Helmy v cene",
+      "licenceEyebrow": "Potrebný vodičský preukaz",
+      "bringLicence": "Prines si k vyzdvihnutiu platný vodičský preukaz. Bez preukazu žiadna jazda.",
+      "dayBadge": "24h",
+      "dayLabel": "1 deň = 24 hodín",
+      "dayCopy": "Od vyzdvihnutia po vyzdvihnutie, nie kalendárny deň. Napr. dnes 11:00 do zajtra 11:00 = 1 deň."
+    },
+    "headsUp": "Pozor",
+    "checkAvailability": "Skontrolovať dostupnosť",
+    "specsSection": {
+      "depositLabel": "Kaucia",
+      "depositText": "{deposit} za bike, vrátená po odovzdaní, ak nie je poškodenie. Pri vyzdvihnutí: hotovosť (bez poplatkov), PayPal, Revolut alebo Wise (môžu sa účtovať transakčné poplatky). Žiadne kreditné ani debetné karty.",
+      "noPhoneHoldersLabel": "Žiadne držiaky na telefón",
+      "noPhoneHoldersText": "Neponúkame ani nemontujeme držiaky na telefón a nemôžeš si priniesť ani vlastný.",
+      "seasonLabel": "Sezóna",
+      "seasonValue": "Apríl až október",
+      "seasonText": "{season}. Požičiavame len v tomto období.",
+      "fuelLabel": "Palivo",
+      "fuelText": "Odovzdané s plnou nádržou. Vráť ho tiež s plnou nádržou."
+    },
+    "tierLabel": {
+      "day": "Denná sadzba",
+      "weekend": "Víkendová sadzba (Pi-Ne)",
+      "weekend-mix": "Víkend + dni",
+      "week": "Týždenná sadzba",
+      "week-mix": "Týždeň + dni",
+      "month": "Mesačná sadzba",
+      "month-mix": "Mesiac + dni"
+    },
+    "calendar": {
+      "title": "Rezervovať tento bike",
+      "eyebrow": "Vyber si termíny",
+      "legendFree": "Dostupné",
+      "legendBooked": "Obsadené",
+      "pickupDate": "Dátum vyzdvihnutia",
+      "returnDate": "Dátum vrátenia",
+      "pickupTime": "Čas vyzdvihnutia",
+      "returnTime": "Čas vrátenia",
+      "shopHours": "Otváracie hodiny 09:00 až 19:00. Časy mimo tohto okna nie sú dostupné",
+      "tooClose": " (alebo príliš blízko inej rezervácie, medzi rezerváciami potrebujeme 1h)",
+      "totalDays": "{n} dní",
+      "totalDay": "1 deň",
+      "appliedTier": "Použitá sadzba",
+      "total": "Spolu",
+      "continue": "Pokračovať na rezervačný formulár",
+      "selectDates": "Najprv vyber dátum vyzdvihnutia a vrátenia"
+    },
+    "form": {
+      "title": "Tvoje údaje",
+      "name": "Celé meno",
+      "email": "Email",
+      "phone": "Telefón (s predvoľbou krajiny, napr. +49...)",
+      "notes": "Poznámky (voliteľné)",
+      "notesPlaceholder": "Napr. potrebujem 2 helmy, špeciálny čas vyzdvihnutia, čokoľvek iné...",
+      "licence": "Vodičský preukaz",
+      "licencePlaceholder": "Vyber skupinu",
+      "licenceCountry": "Krajina vydania",
+      "licenceCountryPlaceholder": "napr. Nemecko, Rakúsko, Taliansko...",
+      "licenceOptions": {
+        "AM": "AM (moped / 50cc)",
+        "A1": "A1 (do 125cc)",
+        "A2": "A2 (do 35 kW)",
+        "A": "A (bez obmedzenia)",
+        "B": "B (vodičák na auto, kryje AM/50cc)"
+      },
+      "ridingStyle": "Štýl jazdy",
+      "ridingStyleSolo": "Sám",
+      "ridingStyleWithPassenger": "So spolujazdcom",
+      "ridingStylePlaceholder": "Vyber štýl",
+      "soloOnly": "Tento bike je jednomiestny. Iba sám.",
+      "maxRiders": "Povolených až {n} jazdcov.",
+      "experienceWarning": "Vyžaduje sa skúsenosť s jazdou. Nepravdivé informácie znamenajú, že rezervačný poplatok prepadne a prenájom bude odmietnutý.",
+      "submit": "Odoslať žiadosť",
+      "submitting": "Odosielanie...",
+      "reviewLine": "Skontrolujeme screenshot tvojej rezervácie a potvrdíme e-mailom, zvyčajne do pár hodín. Odoslaním súhlasíš s našimi",
+      "termsLink": "podmienkami"
+    },
+    "reservation": {
+      "title": "Rezervácia",
+      "lockBooking": "20% z {total}€ na zaistenie rezervácie",
+      "instructions": "Zaplať {fee}€ jedným zo spôsobov nižšie a potom nahraj screenshot transakcie. Zvyšných {rest}€ sa platí pri vyzdvihnutí v hotovosti (bez poplatkov), cez Revolut, PayPal alebo debetnou/kreditnou kartou (môžu sa účtovať transakčné poplatky).",
+      "noBooking": "Žiadny rezervačný poplatok, žiadna rezervácia.",
+      "uploadScreenshot": "Nahraj screenshot platby",
+      "uploadPicked": "Vybrané",
+      "uploadHint": "Iba obrázok, max 4 MB",
+      "uploadError": "Nahraj screenshot platby tvojej rezervácie.",
+      "fileTooLarge": "Súbor je príliš veľký. Max 4 MB.",
+      "copy": "Kopírovať",
+      "copied": "Skopírované!",
+      "openInApp": "Otvoriť aplikáciu",
+      "payWith": "Klikni pre platbu cez {method}",
+      "recommended": "Odporúčané",
+      "paymentNotes": {
+        "paypal_ff": "Bez poplatku. Použi možnosť Friends & Family.",
+        "paypal_company": "Štandardný PayPal. Účtuje sa malý poplatok.",
+        "revolut": "Klikni na tlačidlo pre platbu, alebo naskenuj QR telefónom.",
+        "bank": "Použi okamžitý prevod. Konverzia meny môže pridať poplatok."
+      }
+    },
+    "success": {
+      "title": "Žiadosť prijatá",
+      "intro": "Skontrolujeme tvoju rezerváciu a čoskoro potvrdíme e-mailom. Tvoja referencia je {ref}.",
+      "summaryBike": "Bike",
+      "summaryFrom": "Vyzdvihnutie",
+      "summaryTo": "Vrátenie",
+      "summaryTotal": "Spolu",
+      "summaryPaid": "Rezervačný poplatok zaplatený",
+      "summaryRemaining": "Splatné pri vyzdvihnutí",
+      "back": "Späť na domov"
+    }
+  },
+  "bikes": {
+    "scooter-50": {
+      "description": "Úsporný na palivo, ľahko ovládateľný, perfektný do mesta.",
+      "longDescription": "Veľmi úsporný na palivo, ľahko ovládateľný a perfektný na pohodové brázdenie Zadarom a po pobreží.",
+      "tagline": "Úsporný. Vyžaduje sa predchádzajúca skúsenosť s jazdou.",
+      "experienceNote": "Vyžaduje sa predchádzajúca skúsenosť s jazdou. Žiadni začiatočníci."
+    },
+    "scooter-50-topcase": {
+      "description": "Piaggio Liberty 50 s topcase, extra úložný priestor.",
+      "longDescription": "Rovnaký Liberty 50 ako štandard, vybavený topcase pre extra úložný priestor na dlhších jazdách.",
+      "tagline": "Topcase v cene, extra úložný priestor.",
+      "experienceNote": "Vyžaduje sa predchádzajúca skúsenosť s jazdou. Žiadni začiatočníci."
+    },
+    "scooter-125": {
+      "description": "Perfektný univerzál do mesta aj na pobrežie.",
+      "longDescription": "Rovnaké ľahké ovládanie ako pri 50, s väčším výkonom na celodenné výlety po pobreží.",
+      "tagline": "Univerzál do mesta aj na pobrežie."
+    },
+    "bike-125-a": {
+      "description": "Športový a obratný, stvorený pre aktívnych jazdcov.",
+      "longDescription": "Supermoto pocit so 125cc. Ľahký, obratný a ideálny pre temperamentných jazdcov, ktorí milujú zákruty a pobrežné cesty.",
+      "tagline": "Športový. Vyššia spotreba paliva kvôli štýlu jazdy."
+    },
+    "bike-125-b": {
+      "description": "Pocit naked biku so skvelým dojazdom a športovým charakterom.",
+      "longDescription": "Skutočný naked-bike charakter so 125cc. Vynikajúci dojazd, perfektný na dlhšie túry po pobreží a na ostrovy.",
+      "tagline": "Skvelý dojazd, perfektný na dlhšie výlety."
+    },
+    "bike-390": {
+      "description": "Výkon vhodný pre A2 na pobrežie. Ľahký, obratný, stvorený pre mesto, vidiek a zákruty.",
+      "longDescription": "Prémiový bike spĺňajúci A2. Ľahký, obratný a perfektný pre mesto, vidiek a zákruty, či už ho chceš na deň alebo na celý mesiac.",
+      "tagline": "Silný a prémiový. Najlepšia voľba pre sebavedomých jazdcov."
+    }
+  },
+  "faqItems": [
+    {
+      "question": "Čo zahŕňa asistenčná služba?",
+      "answer": "Do 20 km: zdarma (extra náklady pri nehodách alebo strate kľúčov). Nad 20 km: 50€. Ostrovy: Preko 150€, Dugi Otok 500€. Stratený kľúč: 50€. Asistenčná služba platí, ak sa nemôžeš vrátiť na našu adresu kvôli nehode alebo stratenému kľúču. V prípade poruchy motora kryjeme všetky náklady."
+    },
+    {
+      "question": "V akom stave je bike odovzdaný?",
+      "answer": "Všetky biky a skútre odovzdávame v dokonalom prevádzkovom stave. Žiadame nájomcov, aby si bike skontrolovali, urobili jasné fotky a videá pri vyzdvihnutí dokumentujúce akékoľvek existujúce škrabance alebo poškodenia, a vrátili ho v rovnakom stave. Tieto záznamy sú oficiálnym dôkazom v prípade sporu."
+    },
+    {
+      "question": "Aké poistenie je v cene?",
+      "answer": "Základné poistenie kryje krádež bika a poškodenie motora. Nehody, škrabance, poškodenia a defekty pneumatík sú zodpovednosťou nájomcu. Ak nehodu spôsobí tretia strana, musíš zavolať políciu a získať oficiálnu správu. Zodpovedná strana ručí."
+    },
+    {
+      "question": "Aké sú vaše storno podmienky?",
+      "answer": "Všetky rezervácie sú nevratné. 20% rezervačný poplatok zaistí tvoje termíny a v prípade zrušenia sa nevracia. Ak sa bike stane nedostupným pre nehodu alebo poškodenie spôsobené iným klientom, zrušíme a vrátime celú sumu."
+    },
+    {
+      "question": "Kedy a kde bike vraciam?",
+      "answer": "V dohodnutom čase a na dohodnutom mieste. Poskytujeme 15-minútovú toleranciu. Neskoré vrátenia nad tento rámec sú spoplatnené. Odovzdanie na našej adrese: Velebitska Ulica 2, 23000 Zadar."
+    },
+    {
+      "question": "Kto je zodpovedný za nehody alebo zranenia?",
+      "answer": "Nájomca preberá plnú zodpovednosť za všetky nehody, škody alebo zranenia, ktoré sa stanú počas obdobia prenájmu."
+    },
+    {
+      "question": "Čo sa stane, ak je bike poškodený?",
+      "answer": "Kaucia kryje počiatočné náklady na opravu. Bike vezmeme k miestnemu mechanikovi na posúdenie a opravu a nájomca platí plnú cenu opravy podľa faktúry mechanika. Ak opravy prekročia kauciu, nájomca doplatí rozdiel. Kópiu faktúry vždy poskytneme kvôli transparentnosti."
+    },
+    {
+      "question": "Čo ak stratím kľúč?",
+      "answer": "Náhradný kľúč dodáme za 50€ plus prípadný poplatok za asistenčnú službu podľa tvojej lokality."
+    },
+    {
+      "question": "Ako urobím rezerváciu?",
+      "answer": "Vždy si u nás najprv potvrď dostupnosť. Môže sa rýchlo meniť. 20% rezervačný poplatok zaistí tvoje termíny. Plať cez PayPal, bankový prevod, Revolut alebo hotovosťou pri príchode. Po zaplatení nám pošli screenshot transakcie. Ak prídeš o viac ako 1 hodinu neskôr bez upozornenia, rezervácia sa automaticky zruší. Neprijímame kreditné karty."
+    },
+    {
+      "question": "Ponúkate držiaky na telefón?",
+      "answer": "Nie. Neponúkame ani nemontujeme držiaky na telefón a nemôžeš si priniesť ani vlastný. Žiadny z našich bikov ho nemá. Naplánuj si trasu predtým, než vyrazíš."
+    },
+    {
+      "question": "Ako to funguje s palivom, plná alebo prázdna nádrž?",
+      "answer": "Každý bike odovzdávame s plnou nádržou. Prosím vráť ho tiež s plnou nádržou. Ak vrátiš bike bez plnej nádrže, účtujeme chýbajúce palivo plus poplatok za dotankovanie."
+    },
+    {
+      "question": "Ako navigujem bez držiaka na telefón?",
+      "answer": "Dve praktické možnosti: jazdi so spolujazdcom, ktorý zvládne navigáciu, alebo použi Bluetooth do ucha pre hlasovú navigáciu krok za krokom bez spustenia očí z cesty. Tak či onak, naplánuj si trasu pred vyzdvihnutím."
+    },
+    {
+      "question": "Čo ak rozhodnete, že nemám dosť skúseností?",
+      "answer": "Jazda vyžaduje predchádzajúcu skúsenosť. Ak pri vyzdvihnutí zistíme, že nemáš dosť skúseností na bezpečné ovládanie bika, vyhradzujeme si právo prenájom odmietnuť. V takom prípade je rezervačný poplatok nevratný, preto buď pri rezervácii úprimný ohľadom svojich skúseností."
+    }
+  ],
+  "common": {
+    "loading": "Načítava sa...",
+    "tryAgain": "Skúsiť znova",
+    "language": "Jazyk"
+  },
+  "emails": {
+    "bookingReceived": {
+      "subject": "Máme tvoju rezerváciu, {bike} {from} do {to}",
+      "preheader": "Máme tvoju žiadosť o rezerváciu na {bike}. Majiteľ čoskoro potvrdí.",
+      "headline": "Máme tvoju žiadosť",
+      "greeting": "Ahoj {name},",
+      "intro": "vďaka za tvoju žiadosť o rezerváciu. Skontrolujeme ju a čoskoro potvrdíme e-mailom, zvyčajne do pár hodín.",
+      "urgentLine": "Medzitým, niečo súrne?",
+      "signoff": "Uvidíme sa v Zadare."
+    },
+    "bookingConfirmed": {
+      "subject": "Potvrdené, {bike} {from} do {to}",
+      "preheader": "Tvoj {bike} je potvrdený na {from} do {to}.",
+      "headline": "Rezervácia potvrdená",
+      "greeting": "Ahoj {name},",
+      "intro": "tvoj {bike} je zarezervovaný. Uvidíme sa v Zadare.",
+      "pickupHeader": "Vyzdvihnutie",
+      "openHoursLabel": "Otvorené",
+      "bringHeader": "Prines so sebou",
+      "bringLicence": "Platný vodičský preukaz na motorku, bez neho nemôžeme odovzdať",
+      "bringDeposit": "{deposit} kaucia (hotovosť pri príchode, vrátená po odovzdaní, ak nie je poškodenie)",
+      "bringTank": "Bike príde s plnou nádržou, prosím vráť ho plný",
+      "adjustHeader": "Potrebuješ upraviť?",
+      "adjustLine": "Vyzdvihnutie je zarezervované na {from} o {pickupTime}, vrátenie {to} do {returnTime}. Ozvi sa, ak sa niečo zmení:",
+      "cancelLine": "Zmenili sa plány?",
+      "cancelLink": "Zrušiť túto rezerváciu",
+      "cancelTail": ", termíny sa okamžite uvoľnia pre niekoho iného."
+    },
+    "bookingDeclined": {
+      "subject": "Aktualizácia tvojej rezervácie, {bike}",
+      "preheader": "Aktualizácia tvojej rezervácie {bike}, tieto termíny nevyšli.",
+      "headline": "Aktualizácia tvojej rezervácie",
+      "greeting": "Ahoj {name},",
+      "intro": "bohužiaľ nemôžeme poskytnúť {bike} na tieto termíny. Mrzí nás to.",
+      "tryOther": "Chceš skúsiť iné termíny alebo iný bike? Napíš nám a urobíme maximum, aby sme našli niečo vhodné."
+    },
+    "contactReceived": {
+      "subject": "Vďaka za tvoju správu",
+      "preheader": "Máme tvoju správu, čoskoro odpovieme.",
+      "headline": "Máme tvoju správu",
+      "greeting": "Ahoj {name},",
+      "intro": "vďaka, že si sa ozval. Ozveme sa ti čo najskôr.",
+      "yourMessage": "Tvoja správa:",
+      "signoff": "Uvidíme sa v Zadare."
+    },
+    "summary": {
+      "bike": "Bike",
+      "pickup": "Vyzdvihnutie",
+      "return": "Vrátenie",
+      "total": "Spolu",
+      "days": "dní",
+      "day": "deň",
+      "deposit": "Kaucia"
+    }
+  },
+  "group": {
+    "title": "Rezervovať viacero bikov",
+    "intro": "Vyber jedno časové okno a potom pridaj toľko bikov, koľko potrebuješ, do jednej rezervácie s jednou kauciou. Zobrazíme celý park, aby si videl, čo je voľné a kedy.",
+    "period": "Tvoje obdobie prenájmu",
+    "sameDates": "Rovnaké termíny pre všetky biky.",
+    "pickBikes": "Vyber si biky",
+    "fleetNoDates": "Park · vyber obdobie vyššie na kontrolu dostupnosti",
+    "period2": "obdobie",
+    "fullDetails": "úplné detaily",
+    "notAvailable": "Nedostupné pre vybrané obdobie",
+    "freeFrom": "Voľné od",
+    "pickDates": "Vyber obdobie",
+    "available": "voľných",
+    "seat": "sedadlo",
+    "seats": "sedadlá",
+    "yourGroup": "Tvoja skupina",
+    "noBikes": "Zatiaľ žiadne biky",
+    "bikesWord": "bikov",
+    "helmetsWord": "heliem",
+    "oneDeposit": "jedna kaucia",
+    "continue": "Pokračovať",
+    "ridingPerBike": "Štýl jazdy na bike",
+    "helmetsHint": "Aby sme pripravili správne helmy",
+    "helmetsTotal": "heliem spolu",
+    "spokenLanguage": "Hovorený jazyk",
+    "fromDialCode": "z predvoľby",
+    "override": "Prepísať (€)",
+    "reminder": "Pripomienka: helmy v cene · {deposit} kaucia za vozidlo · prines si platný vodičský preukaz · plná nádrž dnu, plná nádrž von · vyzdvihnutie na {address}",
+    "submit": "Odoslať rezerváciu",
+    "received": "Rezervácia prijatá",
+    "receivedBody": "máme tvoju skupinovú žiadosť a screenshot kaucie. Čoskoro potvrdíme e-mailom. Ak sa do pár hodín neozveme, napíš nám na WhatsApp.",
+    "backToFleet": "Späť na park",
+    "backToBikes": "Späť na biky",
+    "bandDeposit": "Kaucia/vozidlo, vrátená",
+    "bandInsurance": "Základné poistenie",
+    "bandKm": "Kilometre",
+    "bandFuel": "Pravidlá paliva",
+    "bandDay": "Od vyzdvihnutia po vyzdvihnutie",
+    "bandHelmets": "Helmy",
+    "bandSeason": "Sezóna",
+    "bandPhone": "Držiaky na telefón",
+    "bandPickup": "Vyzdvihnutie",
+    "valIncluded": "V cene",
+    "valUnlimited": "Neobmedzené",
+    "valNotAvailable": "Nedostupné",
+    "valZadarShop": "Náš obchod v Zadare",
+    "errRequired": "Meno, email a telefón sú povinné.",
+    "errLicence": "Vyber skupinu svojho vodičského preukazu.",
+    "errReceipt": "Nahraj screenshot kaucie.",
+    "errSubmit": "Rezerváciu sa nepodarilo odoslať.",
+    "errNetwork": "Chyba siete. Prosím skús znova.",
+    "enlarge": "Zväčšiť fotku",
+    "closePreview": "Zatvoriť náhľad",
+    "howItWorks": "Ako to funguje",
+    "step1": "Vyber jedno časové okno pre celú skupinu",
+    "step2": "Pridaj akékoľvek voľné biky z parku",
+    "step3": "Jedna kaucia za vozidlo, jedna rezervácia",
+    "reserveLine": "20% teraz na rezerváciu, zvyšok pri príchode.",
+    "depositLine": "{deposit} bezpečnostná kaucia za vozidlo.",
+    "checking": "kontrolujem…",
+    "checkingAvailability": "kontrolujem dostupnosť…",
+    "lblName": "Meno",
+    "lblPhone": "Telefón",
+    "lblEmail": "Email",
+    "lblLicence": "Vodičský preukaz",
+    "lblLicenceCountry": "Krajina preukazu",
+    "lblNotes": "Poznámky",
+    "licenceCountryPh": "napr. Nemecko",
+    "payHeadline": "Zaplať teraz {fee}€ na zaistenie termínov (20% z {total}€). Zvyšok ({rest}€) sa platí pri príchode.",
+    "payUpload": "Po zaplatení nahraj nižšie screenshot. {deposit} bezpečnostná kaucia za vozidlo.",
+    "payWith": "Zaplať {fee}€ cez {method}",
+    "chooseFile": "Vybrať súbor",
+    "noFile": "Nevybraný žiadny súbor",
+    "remove": "Odstrániť",
+    "depositScreenshot": "Screenshot kaucie",
+    "fileHint": "JPG, PNG, HEIC alebo PDF · max 4 MB",
+    "useTime": "Použiť tento čas",
+    "freeFromTime": "Voľné od",
+    "useDates": "Použiť tieto termíny",
+    "at": "o",
+    "freeIfReturnBy": "Voľné, ak vrátiš do",
+    "useReturn": "Použiť čas vrátenia",
+    "depositSummary": "Kaucia: {count} × {each} = {total}"
+  }
+}

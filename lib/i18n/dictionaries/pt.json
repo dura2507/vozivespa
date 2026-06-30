@@ -1,0 +1,657 @@
+{
+  "nav": {
+    "home": "Início",
+    "fleet": "Frota",
+    "gallery": "Galeria",
+    "info": "Info",
+    "faq": "FAQ",
+    "contact": "Contato",
+    "terms": "Termos",
+    "bookNow": "Reservar agora",
+    "menuAria": "Menu",
+    "languageSwitcher": "Idioma",
+    "groupBooking": "Multireserva",
+    "groupBookingLead": "Vai alugar mais de uma moto?"
+  },
+  "footer": {
+    "intro": "Aluguel de scooters e motos em Zadar. Explore a costa da Dalmácia sobre duas rodas.",
+    "locationLabel": "Zadar, Croatia",
+    "call": "Ligar",
+    "whatsapp": "WhatsApp",
+    "trusted": "Parceiro de aluguel confiável",
+    "openHoursPrefix": "Aberto",
+    "rights": "Todos os direitos reservados."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Zadar, Croatia",
+      "headline1": "Pilote a",
+      "headline2": "Costa",
+      "headline3": "Croata",
+      "sub": "Aluguel de scooters e motos em Zadar, de 50cc a 390cc. Capacetes e seguro básico inclusos. Estradas litorâneas, ilhas, liberdade.",
+      "checkAvailability": "Ver disponibilidade",
+      "fromPrice": "A partir de {price}/dia",
+      "statBikes": "Motos e scooters",
+      "statReviews": "Avaliações 5 estrelas",
+      "statKm": "Km inclusos"
+    },
+    "fleet": {
+      "eyebrow": "Escolha sua moto",
+      "title": "Nossa frota",
+      "fromPrefix": "a partir de",
+      "topSpeed": "Velocidade máxima",
+      "experienceRequired": "Experiência necessária",
+      "bookNow": "Reservar agora",
+      "inStock": "{n} na nossa frota",
+      "inStockHint": "Pilotando com a galera? Temos {n} dessas.",
+      "availableNow": "Disponível agora",
+      "availableNowCount": "{n} disponíveis agora",
+      "notAvailableNow": "Em manutenção",
+      "bookedUntil": "Em manutenção até {date}",
+      "bookedUntilToday": "Em manutenção até hoje {time}",
+      "bookedUntilTomorrow": "Em manutenção até amanhã {time}",
+      "availableFrom": "Disponível a partir das {time}",
+      "outOfService": "Em manutenção",
+      "helmetsIncluded": "Capacetes inclusos",
+      "viewDetails": "Detalhes"
+    },
+    "included": {
+      "eyebrow": "Em todo aluguel",
+      "title": "O que está incluso",
+      "items": {
+        "insurance": {
+          "label": "Seguro básico",
+          "sub": "Cobre roubo e motor"
+        },
+        "helmets": {
+          "label": "Capacetes",
+          "sub": "Sempre fornecidos"
+        },
+        "unlimitedKm": {
+          "label": "Km ilimitados",
+          "sub": "Sem limite de rodagem"
+        },
+        "roadside": {
+          "label": "Socorro na estrada",
+          "sub": "Grátis até 20km, depois 50€ ou mais"
+        },
+        "transparent": {
+          "label": "Preços transparentes",
+          "sub": "O que você vê é o que paga"
+        },
+        "warranty": {
+          "label": "Garantia do motor",
+          "sub": "Falhas de motor por nossa conta"
+        }
+      }
+    },
+    "goodToKnow": {
+      "eyebrow": "Fica ligado",
+      "title": "Bom saber",
+      "deposit": {
+        "label": "Caução",
+        "sub": "Por moto, devolvida após a entrega se não houver danos."
+      },
+      "phoneHolders": {
+        "value": "Não",
+        "label": "Suportes de celular",
+        "sub": "Não oferecemos nem instalamos suportes de celular, e você não pode trazer o seu. Nenhuma das nossas motos tem um."
+      },
+      "season": {
+        "value": "Abr-Out",
+        "label": "Temporada",
+        "sub": "Alugamos de abril a outubro. Tanque cheio na saída, tanque cheio na volta."
+      },
+      "languages": {
+        "label": "Idiomas",
+        "sub": "Falamos alemão, inglês e português. Fale com a gente no WhatsApp."
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "Processo simples",
+      "title": "Como funciona",
+      "step1": {
+        "title": "Escolha sua moto",
+        "text": "Escolha sua scooter ou moto, do 50cc para a cidade até a máquina 390cc para a estrada."
+      },
+      "step2": {
+        "title": "Solicite suas datas",
+        "text": "Confira a disponibilidade no calendário e envie uma solicitação rápida. Retirada na nossa loja em Zadar."
+      },
+      "step3": {
+        "title": "A gente confirma e você pilota",
+        "text": "Enviamos a confirmação por email em poucas horas. Pague os 20% de reserva, retire sua moto e vá."
+      },
+      "cta": "Reservar uma moto"
+    },
+    "reviews": {
+      "eyebrow": "O que dizem os pilotos",
+      "title": "Avaliações",
+      "leaveReview": "Deixar uma avaliação no Google"
+    },
+    "gallerySection": {
+      "eyebrow": "Em movimento",
+      "title": "Galeria",
+      "seeAll": "Ver todas as fotos"
+    },
+    "cta": {
+      "eyebrow": "Pronto pra pilotar?",
+      "headline1": "Reserve sua",
+      "headline2": "moto hoje",
+      "ctaBtn": "Ver disponibilidade"
+    }
+  },
+  "info": {
+    "eyebrow": "Tudo o que você precisa saber",
+    "title": "Info",
+    "licenceRequirements": {
+      "title": "Requisitos de habilitação",
+      "scooter50": "Scooter 50cc: habilitação categoria B ou AM mais experiência com scooter",
+      "scooter125": "Scooter 125cc e moto 125cc: habilitação categoria A1",
+      "motorbike390": "Moto 390cc: habilitação categoria A2",
+      "verify": "Verificamos sua habilitação na retirada"
+    },
+    "depositPayment": {
+      "title": "Caução e pagamento",
+      "deposit": "{deposit} de caução por moto, devolvida após a entrega se não houver danos.",
+      "bookingFee": "20% de reserva garantem suas datas.",
+      "noCards": "Não aceitamos cartão para o valor da reserva."
+    },
+    "fleetSection": {
+      "title": "Nossa frota em resumo"
+    }
+  },
+  "faq": {
+    "eyebrow": "Dúvidas?",
+    "title": "FAQ",
+    "categories": {
+      "booking": "Reserva e pagamento",
+      "pickup": "Na retirada",
+      "ride": "Durante a pilotagem",
+      "return": "Devolução",
+      "incidents": "Danos e socorro na estrada"
+    }
+  },
+  "terms": {
+    "eyebrow": "Condições de reserva",
+    "title": "Termos e condições",
+    "intro": "Condições de reserva para aluguel de scooters e motos. Ao reservar com a {legal}, você concorda com as regras abaixo.",
+    "questionsLine": "Dúvidas? Fale com a gente em",
+    "questionsTail": "ou pelo WhatsApp na página de contato.",
+    "sections": [
+      {
+        "heading": "Reservas",
+        "bullets": [
+          "Sempre confirme a disponibilidade com a gente imediatamente antes de fazer o pagamento. A disponibilidade pode mudar rápido, e uma confirmação anterior não garante que a scooter ou moto ainda esteja disponível.",
+          "Ao fazer uma reserva, informe as datas e horários de retirada e devolução.",
+          "Uma taxa de reserva de 20% do valor total é necessária para garantir sua reserva.",
+          "Formas de pagamento: PayPal, transferência bancária, Revolut ou dinheiro pessoalmente (se você já estiver em Zadar). Não aceitamos cartão de crédito.",
+          "Após fazer o pagamento, envie um print da transação como comprovante. Não é necessário se pagar em dinheiro.",
+          "Se você chegar mais de 1 hora atrasado sem avisar, sua reserva será cancelada automaticamente e a taxa de reserva não será reembolsada.",
+          "Se uma scooter ou moto ficar indisponível por acidente ou dano causado por outro cliente, podemos cancelar sua reserva e reembolsar integralmente a taxa de reserva.",
+          "Pilotar uma scooter ou moto exige experiência prévia. Se percebermos que você não tem experiência suficiente para pilotar com segurança, reservamos o direito de recusar a reserva sem reembolso."
+        ]
+      },
+      {
+        "heading": "Caução e pagamento",
+        "bullets": [
+          "Caução: 250€ por moto, devolvida após a entrega se não houver danos.",
+          "Taxa de reserva: 20% do total. Garante suas datas, não reembolsável em caso de cancelamento.",
+          "Formas de pagamento: PayPal (Friends & Family preferencial, sem taxa), transferência bancária, Revolut ou dinheiro na chegada.",
+          "Não aceitamos cartão de crédito."
+        ]
+      },
+      {
+        "heading": "Retirada e devolução",
+        "bullets": [
+          "Retirada e devolução em Velebitska Ulica 2, 23000 Zadar.",
+          "Aberto de segunda a domingo, das 09:00 às 19:00.",
+          "Os horários de retirada e devolução são em intervalos de 30 minutos entre 09:00 e 19:00.",
+          "Tolerância de 15 minutos na devolução. Atrasos além disso geram taxas extras.",
+          "Envie o print da transação da caução depois de pagar para que possamos verificar e confirmar."
+        ]
+      },
+      {
+        "heading": "Seguro e segurança",
+        "bullets": [
+          "O seguro básico está incluso em todo aluguel e cobre roubo da moto e danos ao motor.",
+          "Acidentes, arranhões, danos e pneus furados são de responsabilidade do locatário.",
+          "Se um terceiro causar um acidente, você deve chamar a polícia e obter um boletim oficial. O responsável responde pelos danos.",
+          "Capacetes são sempre fornecidos.",
+          "Todas as motos são entregues em perfeitas condições de funcionamento. Pedimos aos locatários que inspecionem a moto, tirem fotos e vídeos na retirada e a devolvam nas mesmas condições."
+        ]
+      },
+      {
+        "heading": "Danos, reparo e pane",
+        "bullets": [
+          "A caução cobre os custos iniciais de reparo. Levamos a moto a um mecânico local para avaliação. O locatário paga o custo total do reparo conforme a nota fiscal do mecânico (uma cópia é sempre fornecida).",
+          "Serviço de socorro na estrada: grátis até 20 km. Acima de 20 km: 50€. Ilhas: Preko 150€, Dugi Otok 500€.",
+          "Perda de chave: taxa de reposição de 50€ mais o serviço de socorro aplicável conforme a localização.",
+          "Em caso de falha de motor não relacionada ao comportamento do locatário, cobrimos todos os custos."
+        ]
+      },
+      {
+        "heading": "Combustível",
+        "bullets": [
+          "Toda moto é entregue com o tanque cheio. Por favor, devolva também com o tanque cheio.",
+          "Se devolvida sem o tanque cheio, cobramos o combustível faltante mais uma taxa de reabastecimento."
+        ]
+      },
+      {
+        "heading": "Requisitos do piloto",
+        "bullets": [
+          "Traga sua habilitação válida na retirada. Sem habilitação, sem pilotagem. O proprietário verifica se a categoria da habilitação corresponde à classe da moto.",
+          "Pilotar exige experiência prévia. Se na retirada determinarmos que sua experiência é insuficiente para conduzir a moto com segurança, reservamos o direito de recusar. A taxa de reserva não é reembolsável nesse caso, então seja honesto sobre sua experiência ao reservar.",
+          "O locatário assume total responsabilidade por todos os acidentes, danos e lesões durante o período de aluguel."
+        ]
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Entre em contato",
+    "title": "Contato",
+    "intro": "Fale com a gente no WhatsApp para uma resposta mais rápida, ou envie uma mensagem e retornamos em poucas horas.",
+    "form": {
+      "name": "Nome",
+      "email": "Email",
+      "message": "Mensagem",
+      "messagePlaceholder": "Sua dúvida, planos, qualquer outra coisa...",
+      "send": "Enviar mensagem",
+      "sending": "Enviando...",
+      "sent": "Mensagem enviada. Responderemos em breve.",
+      "error": "Não foi possível enviar. Tente o WhatsApp ou ligue."
+    },
+    "openHours": "Horário de funcionamento",
+    "address": "Endereço",
+    "getDirections": "Abrir no Google Maps"
+  },
+  "gallery": {
+    "eyebrow": "Em movimento",
+    "title": "Galeria",
+    "intro": "Flagrantes de pilotagens reais pela costa e pelas ilhas."
+  },
+  "fleet": {
+    "back": "Todas as motos",
+    "inStock": "{n} na nossa frota",
+    "inStockHint": "Pilotando com a galera? Temos {n} dessas.",
+    "inStockCta": "Mais de uma de uma vez? Reserve várias →",
+    "licenceByCode": {
+      "AM/B": "Habilitação AM ou B",
+      "A1": "Habilitação A1",
+      "A2": "Habilitação A2"
+    },
+    "specs": {
+      "title": "Ficha técnica",
+      "eyebrow": "A moto",
+      "engine": "Motor",
+      "power": "Potência",
+      "topSpeed": "Velocidade máxima",
+      "tank": "Tanque",
+      "consumption": "Consumo",
+      "range": "Autonomia",
+      "seats": "Lugares",
+      "year": "Ano"
+    },
+    "pricing": {
+      "title": "Preços",
+      "eyebrow": "Condições flexíveis",
+      "daily": "Diária",
+      "dailySub": "1 dia",
+      "weekend": "Fim de semana",
+      "weekendSub": "Sex a dom",
+      "week": "Semana",
+      "weekSub": "7 dias",
+      "month": "Mês",
+      "monthSub": "30 dias",
+      "unlimitedKm": "Km ilimitados, todos os preços incluem seguro BÁSICO",
+      "depositLine": "Caução: {deposit} · Temporada: {season}",
+      "perDay": "/ dia",
+      "fromPrefix": "a partir de"
+    },
+    "priceBox": {
+      "perDay": "/ dia",
+      "unlimitedLine": "Km ilimitados · Seguro básico · {deposit} de caução",
+      "helmetsIncluded": "Capacetes inclusos",
+      "licenceEyebrow": "Habilitação necessária",
+      "bringLicence": "Traga sua habilitação válida na retirada. Sem habilitação, sem pilotagem.",
+      "dayBadge": "24h",
+      "dayLabel": "1 dia = 24 horas",
+      "dayCopy": "Retirada a retirada, não dia do calendário. Ex.: 11:00 de hoje até 11:00 de amanhã = 1 dia."
+    },
+    "headsUp": "Fica ligado",
+    "checkAvailability": "Ver disponibilidade",
+    "specsSection": {
+      "depositLabel": "Caução",
+      "depositText": "{deposit} por moto, devolvida após a entrega se não houver danos. Na retirada: dinheiro (sem taxas), PayPal, Revolut ou Wise (taxas de transação podem ser aplicadas). Sem cartão de crédito ou débito.",
+      "noPhoneHoldersLabel": "Sem suportes de celular",
+      "noPhoneHoldersText": "Não oferecemos nem instalamos suportes de celular, e você não pode trazer o seu.",
+      "seasonLabel": "Temporada",
+      "seasonValue": "Abril a outubro",
+      "seasonText": "{season}. Alugamos só nesse período.",
+      "fuelLabel": "Combustível",
+      "fuelText": "Entregue com o tanque cheio. Devolva também com o tanque cheio."
+    },
+    "tierLabel": {
+      "day": "Tarifa diária",
+      "weekend": "Tarifa de fim de semana (sex-dom)",
+      "weekend-mix": "Fim de semana + dias",
+      "week": "Tarifa semanal",
+      "week-mix": "Semana + dias",
+      "month": "Tarifa mensal",
+      "month-mix": "Mês + dias"
+    },
+    "calendar": {
+      "title": "Reservar esta moto",
+      "eyebrow": "Escolha suas datas",
+      "legendFree": "Disponível",
+      "legendBooked": "Reservado",
+      "pickupDate": "Data de retirada",
+      "returnDate": "Data de devolução",
+      "pickupTime": "Hora de retirada",
+      "returnTime": "Hora de devolução",
+      "shopHours": "Horário da loja 09:00 às 19:00. Horários fora dessa janela não estão disponíveis",
+      "tooClose": " (ou muito perto de outra reserva, precisamos de 1h entre reservas)",
+      "totalDays": "{n} dias",
+      "totalDay": "1 dia",
+      "appliedTier": "Tarifa aplicada",
+      "total": "Total",
+      "continue": "Continuar para o formulário de reserva",
+      "selectDates": "Selecione primeiro as datas de retirada e devolução"
+    },
+    "form": {
+      "title": "Seus dados",
+      "name": "Nome completo",
+      "email": "Email",
+      "phone": "Telefone (com código do país, ex.: +49...)",
+      "notes": "Observações (opcional)",
+      "notesPlaceholder": "Ex.: preciso de 2 capacetes, horário especial de retirada, qualquer outra coisa...",
+      "licence": "Habilitação",
+      "licencePlaceholder": "Escolha uma categoria",
+      "licenceCountry": "País de emissão",
+      "licenceCountryPlaceholder": "ex.: Alemanha, Áustria, Itália...",
+      "licenceOptions": {
+        "AM": "AM (ciclomotor / 50cc)",
+        "A1": "A1 (até 125cc)",
+        "A2": "A2 (até 35 kW)",
+        "A": "A (sem restrição)",
+        "B": "B (habilitação de carro, cobre AM/50cc)"
+      },
+      "ridingStyle": "Estilo de pilotagem",
+      "ridingStyleSolo": "Sozinho",
+      "ridingStyleWithPassenger": "Com passageiro",
+      "ridingStylePlaceholder": "Escolha um estilo",
+      "soloOnly": "Esta moto é de um lugar só. Apenas sozinho.",
+      "maxRiders": "Até {n} pessoas permitidas.",
+      "experienceWarning": "Experiência de pilotagem é obrigatória. Informações falsas significam que a taxa de reserva é retida e o aluguel é recusado.",
+      "submit": "Enviar solicitação",
+      "submitting": "Enviando...",
+      "reviewLine": "Vamos analisar o print da sua reserva e confirmar por email, geralmente em poucas horas. Ao enviar, você concorda com nossos",
+      "termsLink": "termos"
+    },
+    "reservation": {
+      "title": "Reserva",
+      "lockBooking": "20% de {total}€ para garantir a reserva",
+      "instructions": "Pague {fee}€ por um dos métodos abaixo e depois envie um print da transação. Os {rest}€ restantes são pagos na retirada em dinheiro (sem taxas), Revolut, PayPal ou cartão de débito/crédito (taxas de transação podem ser aplicadas).",
+      "noBooking": "Sem taxa de reserva, sem reserva.",
+      "uploadScreenshot": "Envie o print do pagamento",
+      "uploadPicked": "Selecionado",
+      "uploadHint": "Apenas imagem, máx. 4 MB",
+      "uploadError": "Envie um print do pagamento da sua reserva.",
+      "fileTooLarge": "Arquivo muito grande. Máximo 4 MB.",
+      "copy": "Copiar",
+      "copied": "Copiado!",
+      "openInApp": "Abrir app",
+      "payWith": "Toque para pagar via {method}",
+      "recommended": "Recomendado",
+      "paymentNotes": {
+        "paypal_ff": "Sem taxa. Use a opção Friends & Family.",
+        "paypal_company": "PayPal padrão. Uma pequena taxa é aplicada.",
+        "revolut": "Clique no botão para pagar, ou escaneie o QR com seu celular.",
+        "bank": "Use transferência instantânea. A conversão de moeda pode adicionar uma taxa."
+      }
+    },
+    "success": {
+      "title": "Solicitação recebida",
+      "intro": "Vamos analisar sua reserva e confirmar por email em breve. Sua referência é {ref}.",
+      "summaryBike": "Moto",
+      "summaryFrom": "Retirada",
+      "summaryTo": "Devolução",
+      "summaryTotal": "Total",
+      "summaryPaid": "Taxa de reserva paga",
+      "summaryRemaining": "A pagar na retirada",
+      "back": "Voltar para o início"
+    }
+  },
+  "bikes": {
+    "scooter-50": {
+      "description": "Econômica no combustível, fácil de pilotar, perfeita para a cidade.",
+      "longDescription": "Muito econômica no combustível, fácil de manusear e perfeita para passeios tranquilos por Zadar e ao longo da costa.",
+      "tagline": "Econômica no combustível. Experiência prévia de pilotagem necessária.",
+      "experienceNote": "Experiência prévia de pilotagem necessária. Sem iniciantes."
+    },
+    "scooter-50-topcase": {
+      "description": "Piaggio Liberty 50 com Topcase, mais espaço de carga.",
+      "longDescription": "A mesma Liberty 50 da versão padrão, equipada com Topcase para mais espaço de carga em pilotagens mais longas.",
+      "tagline": "Topcase incluso, mais espaço de carga.",
+      "experienceNote": "Experiência prévia de pilotagem necessária. Sem iniciantes."
+    },
+    "scooter-125": {
+      "description": "Perfeita para tudo, cidade e passeios pela costa.",
+      "longDescription": "A mesma facilidade de manuseio da 50, com mais potência para bate-voltas ao longo da costa.",
+      "tagline": "Versátil para cidade e costa."
+    },
+    "bike-125-a": {
+      "description": "Esportiva e ágil, feita para pilotos ativos.",
+      "longDescription": "Pegada de supermoto com 125cc. Leve, ágil e ideal para pilotos animados que adoram curvas e estradas litorâneas.",
+      "tagline": "Esportiva. Maior consumo por causa do estilo de pilotagem."
+    },
+    "bike-125-b": {
+      "description": "Pegada de naked com ótima autonomia e caráter esportivo.",
+      "longDescription": "Verdadeiro caráter de naked com 125cc. Excelente autonomia, perfeita para passeios mais longos pela costa e até as ilhas.",
+      "tagline": "Ótima autonomia, perfeita para viagens mais longas."
+    },
+    "bike-390": {
+      "description": "Potência A2 para a costa. Leve, ágil, feita para cidade, estrada e curvas.",
+      "longDescription": "Moto premium compatível com A2. Leve, ágil e perfeita para cidade, estrada e curvas, seja por um dia ou pelo mês inteiro.",
+      "tagline": "Forte e premium. Escolha número 1 para pilotos confiantes."
+    }
+  },
+  "faqItems": [
+    {
+      "question": "O que inclui o serviço de socorro na estrada?",
+      "answer": "Até 20 km: grátis (custos extras se aplicam a acidentes ou perda de chave). Acima de 20 km: 50€. Ilhas: Preko 150€, Dugi Otok 500€. Perda de chave: 50€. O serviço de socorro se aplica quando você não consegue voltar ao nosso endereço por acidente ou perda de chave. Em caso de falha de motor, cobrimos todos os custos."
+    },
+    {
+      "question": "Em que condições a moto é entregue?",
+      "answer": "Todas as motos e scooters são entregues em perfeitas condições de funcionamento. Pedimos aos locatários que inspecionem a moto, tirem fotos e vídeos nítidos na retirada documentando arranhões ou danos existentes, e a devolvam nas mesmas condições. Esses registros são prova oficial em caso de qualquer disputa."
+    },
+    {
+      "question": "Qual seguro está incluso?",
+      "answer": "O seguro básico cobre roubo da moto e danos ao motor. Acidentes, arranhões, danos e pneus furados são de responsabilidade do locatário. Se um terceiro causar um acidente, você deve chamar a polícia e obter um boletim oficial. O responsável responde pelos danos."
+    },
+    {
+      "question": "Qual é a política de cancelamento?",
+      "answer": "Todas as reservas são não reembolsáveis. A taxa de reserva de 20% garante suas datas e não é devolvida em caso de cancelamento. Se uma moto ficar indisponível por acidente ou dano causado por outro cliente, cancelamos e reembolsamos integralmente."
+    },
+    {
+      "question": "Quando e onde devolvo a moto?",
+      "answer": "No horário e local combinados. Damos uma tolerância de 15 minutos. Devoluções atrasadas além disso geram taxas extras. Devolução no nosso endereço: Velebitska Ulica 2, 23000 Zadar."
+    },
+    {
+      "question": "Quem é responsável por acidentes ou lesões?",
+      "answer": "O locatário assume total responsabilidade por todos os acidentes, danos ou lesões que ocorram durante o período de aluguel."
+    },
+    {
+      "question": "O que acontece se a moto for danificada?",
+      "answer": "A caução cobre os custos iniciais de reparo. Levamos a moto a um mecânico local para avaliação e reparo, e o locatário paga o custo total do reparo conforme a nota fiscal do mecânico. Se os reparos excederem a caução, o locatário paga a diferença. Uma cópia da nota é sempre fornecida para transparência."
+    },
+    {
+      "question": "E se eu perder a chave?",
+      "answer": "Uma chave de reposição será entregue por 50€ mais o serviço de socorro aplicável conforme sua localização."
+    },
+    {
+      "question": "Como faço uma reserva?",
+      "answer": "Sempre confirme a disponibilidade com a gente primeiro. Ela pode mudar rápido. Uma taxa de reserva de 20% garante suas datas. Pague via PayPal, transferência bancária, Revolut ou dinheiro na chegada. Após pagar, envie um print da transação. Se você chegar mais de 1 hora atrasado sem avisar, a reserva é cancelada automaticamente. Não aceitamos cartão de crédito."
+    },
+    {
+      "question": "Vocês oferecem suportes de celular?",
+      "answer": "Não. Não oferecemos nem instalamos suportes de celular, e você também não pode trazer o seu. Nenhuma das nossas motos tem um. Por favor, planeje sua rota antes de sair."
+    },
+    {
+      "question": "Como funciona o combustível, tanque cheio ou vazio?",
+      "answer": "Toda moto é entregue com o tanque cheio. Por favor, devolva também com o tanque cheio. Se você devolver a moto sem o tanque cheio, cobramos o combustível faltante mais uma taxa de reabastecimento."
+    },
+    {
+      "question": "Como navego sem um suporte de celular?",
+      "answer": "Duas opções práticas: pilote com um passageiro que cuide das direções, ou use um fone Bluetooth intra-auricular para navegação por áudio passo a passo sem tirar os olhos da estrada. De qualquer forma, planeje sua rota antes da retirada."
+    },
+    {
+      "question": "E se vocês decidirem que não tenho experiência suficiente?",
+      "answer": "Pilotar exige experiência prévia. Se na retirada determinarmos que você não tem experiência suficiente para conduzir a moto com segurança, reservamos o direito de recusar o aluguel. Nesse caso, a taxa de reserva não é reembolsável, então seja honesto sobre sua experiência ao reservar."
+    }
+  ],
+  "common": {
+    "loading": "Carregando...",
+    "tryAgain": "Tentar de novo",
+    "language": "Idioma"
+  },
+  "emails": {
+    "bookingReceived": {
+      "subject": "Recebemos sua reserva, {bike} {from} a {to}",
+      "preheader": "Recebemos sua solicitação de reserva da {bike}. O proprietário confirma em breve.",
+      "headline": "Recebemos sua solicitação",
+      "greeting": "Oi {name},",
+      "intro": "obrigado pela sua solicitação de reserva. Vamos analisá-la e confirmar por email em breve, geralmente em poucas horas.",
+      "urgentLine": "Enquanto isso, algo urgente?",
+      "signoff": "Até logo em Zadar."
+    },
+    "bookingConfirmed": {
+      "subject": "Confirmada, {bike} {from} a {to}",
+      "preheader": "Sua {bike} está confirmada de {from} a {to}.",
+      "headline": "Reserva confirmada",
+      "greeting": "Oi {name},",
+      "intro": "sua {bike} está garantida. Até logo em Zadar.",
+      "pickupHeader": "Retirada",
+      "openHoursLabel": "Aberto",
+      "bringHeader": "Traga com você",
+      "bringLicence": "Habilitação de moto válida, não podemos entregar sem ela",
+      "bringDeposit": "{deposit} de caução (dinheiro na chegada, devolvida após a entrega se não houver danos)",
+      "bringTank": "A moto vem com o tanque cheio, por favor devolva cheio",
+      "adjustHeader": "Precisa ajustar?",
+      "adjustLine": "A retirada está marcada para {from} às {pickupTime}, devolução {to} até {returnTime}. Fale com a gente se algo mudar:",
+      "cancelLine": "Os planos mudaram?",
+      "cancelLink": "Cancelar esta reserva",
+      "cancelTail": ", as datas ficam livres na hora para outra pessoa."
+    },
+    "bookingDeclined": {
+      "subject": "Atualização sobre sua reserva, {bike}",
+      "preheader": "Atualização sobre sua reserva da {bike}, essas datas não deram certo.",
+      "headline": "Atualização sobre sua reserva",
+      "greeting": "Oi {name},",
+      "intro": "infelizmente não conseguimos disponibilizar a {bike} para essas datas. Desculpe por isso.",
+      "tryOther": "Quer tentar outras datas ou outra moto? Manda um alô e a gente faz o possível para encontrar algo que funcione."
+    },
+    "contactReceived": {
+      "subject": "Obrigado pela sua mensagem",
+      "preheader": "Recebemos sua mensagem, responderemos em breve.",
+      "headline": "Recebemos sua mensagem",
+      "greeting": "Oi {name},",
+      "intro": "obrigado por entrar em contato. Retornaremos o mais rápido possível.",
+      "yourMessage": "Sua mensagem:",
+      "signoff": "Até logo em Zadar."
+    },
+    "summary": {
+      "bike": "Moto",
+      "pickup": "Retirada",
+      "return": "Devolução",
+      "total": "Total",
+      "days": "dias",
+      "day": "dia",
+      "deposit": "Caução"
+    }
+  },
+  "group": {
+    "title": "Reservar várias motos",
+    "intro": "Escolha uma janela de datas e adicione quantas motos precisar a uma única reserva com uma só caução. Mostramos a frota inteira para você ver o que está livre e quando.",
+    "period": "Seu período de aluguel",
+    "sameDates": "Mesmas datas para todas as motos.",
+    "pickBikes": "Escolha suas motos",
+    "fleetNoDates": "A frota · escolha um período acima para ver a disponibilidade",
+    "period2": "período",
+    "fullDetails": "detalhes completos",
+    "notAvailable": "Indisponível para o período selecionado",
+    "freeFrom": "Livre a partir de",
+    "pickDates": "Escolha um período",
+    "available": "disponível",
+    "seat": "lugar",
+    "seats": "lugares",
+    "yourGroup": "Seu grupo",
+    "noBikes": "Nenhuma moto ainda",
+    "bikesWord": "motos",
+    "helmetsWord": "capacetes",
+    "oneDeposit": "uma caução",
+    "continue": "Continuar",
+    "ridingPerBike": "Estilo de pilotagem por moto",
+    "helmetsHint": "Para prepararmos os capacetes certos",
+    "helmetsTotal": "capacetes no total",
+    "spokenLanguage": "Idioma falado",
+    "fromDialCode": "pelo código de área",
+    "override": "Substituir (€)",
+    "reminder": "Lembrete: capacetes inclusos · {deposit} de caução por veículo · traga sua habilitação válida · tanque cheio na saída, tanque cheio na volta · retirada em {address}",
+    "submit": "Enviar reserva",
+    "received": "Reserva recebida",
+    "receivedBody": "recebemos sua solicitação em grupo e o print da sua caução. Confirmaremos por email em breve. Se não tiver retorno em poucas horas, mande uma mensagem no WhatsApp.",
+    "backToFleet": "Voltar para a frota",
+    "backToBikes": "Voltar para as motos",
+    "bandDeposit": "Caução/veículo, devolvida",
+    "bandInsurance": "Seguro básico",
+    "bandKm": "Quilômetros",
+    "bandFuel": "Política de combustível",
+    "bandDay": "Retirada a retirada",
+    "bandHelmets": "Capacetes",
+    "bandSeason": "Temporada",
+    "bandPhone": "Suportes de celular",
+    "bandPickup": "Retirada",
+    "valIncluded": "Incluso",
+    "valUnlimited": "Ilimitado",
+    "valNotAvailable": "Indisponível",
+    "valZadarShop": "Nossa loja em Zadar",
+    "errRequired": "Nome, email e telefone são obrigatórios.",
+    "errLicence": "Escolha a categoria da sua habilitação.",
+    "errReceipt": "Envie o print da sua caução.",
+    "errSubmit": "Não foi possível enviar a reserva.",
+    "errNetwork": "Erro de rede. Por favor, tente de novo.",
+    "enlarge": "Ampliar foto",
+    "closePreview": "Fechar visualização",
+    "howItWorks": "Como funciona",
+    "step1": "Escolha uma janela de datas para o grupo inteiro",
+    "step2": "Adicione qualquer moto da frota que esteja livre",
+    "step3": "Uma caução por veículo, uma reserva",
+    "reserveLine": "20% agora para reservar, o resto na chegada.",
+    "depositLine": "{deposit} de caução por veículo.",
+    "checking": "verificando…",
+    "checkingAvailability": "verificando disponibilidade…",
+    "lblName": "Nome",
+    "lblPhone": "Telefone",
+    "lblEmail": "Email",
+    "lblLicence": "Habilitação",
+    "lblLicenceCountry": "País da habilitação",
+    "lblNotes": "Observações",
+    "licenceCountryPh": "ex.: Alemanha",
+    "payHeadline": "Pague {fee}€ agora para garantir suas datas (20% de {total}€). O resto ({rest}€) é pago na chegada.",
+    "payUpload": "Depois de pagar, envie um print abaixo. {deposit} de caução por veículo.",
+    "payWith": "Pague {fee}€ com {method}",
+    "chooseFile": "Escolher arquivo",
+    "noFile": "Nenhum arquivo escolhido",
+    "remove": "Remover",
+    "depositScreenshot": "Print da caução",
+    "fileHint": "JPG, PNG, HEIC ou PDF · máx. 4 MB",
+    "useTime": "Usar este horário",
+    "freeFromTime": "Livre a partir de",
+    "useDates": "Usar estas datas",
+    "at": "às",
+    "freeIfReturnBy": "Livre se devolvida até",
+    "useReturn": "Usar hora de devolução",
+    "depositSummary": "Caução: {count} × {each} = {total}"
+  }
+}

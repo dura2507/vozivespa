@@ -1,0 +1,657 @@
+{
+  "nav": {
+    "home": "Domů",
+    "fleet": "Vozový park",
+    "gallery": "Galerie",
+    "info": "Info",
+    "faq": "FAQ",
+    "contact": "Kontakt",
+    "terms": "Podmínky",
+    "bookNow": "Rezervovat",
+    "menuAria": "Menu",
+    "languageSwitcher": "Jazyk",
+    "groupBooking": "Hromadná rezervace",
+    "groupBookingLead": "Půjčuješ si víc než jeden stroj?"
+  },
+  "footer": {
+    "intro": "Půjčovna skútrů a motorek v Zadaru. Objevuj dalmatské pobřeží na dvou kolech.",
+    "locationLabel": "Zadar, Croatia",
+    "call": "Zavolat",
+    "whatsapp": "WhatsApp",
+    "trusted": "Ověřená půjčovna",
+    "openHoursPrefix": "Otevřeno",
+    "rights": "Všechna práva vyhrazena."
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Zadar, Croatia",
+      "headline1": "Ride the",
+      "headline2": "Croatian",
+      "headline3": "Coast",
+      "sub": "Půjčovna skútrů a motorek v Zadaru, 50cc až 390cc. Helmy a základní pojištění v ceně. Pobřežní silnice, ostrovy, svoboda.",
+      "checkAvailability": "Zjistit dostupnost",
+      "fromPrice": "Od {price}/den",
+      "statBikes": "Motorek a skútrů",
+      "statReviews": "Pětihvězdičkových hodnocení",
+      "statKm": "Kilometrů v ceně"
+    },
+    "fleet": {
+      "eyebrow": "Vyber si svůj stroj",
+      "title": "Náš vozový park",
+      "fromPrefix": "od",
+      "topSpeed": "Maximální rychlost",
+      "experienceRequired": "Vyžadována zkušenost",
+      "bookNow": "Rezervovat",
+      "inStock": "{n} v našem parku",
+      "inStockHint": "Jezdíš s kamarády? Máme jich {n} kusů.",
+      "availableNow": "Dostupné nyní",
+      "availableNowCount": "{n} dostupných nyní",
+      "notAvailableNow": "V servisu",
+      "bookedUntil": "V servisu do {date}",
+      "bookedUntilToday": "V servisu do dnešních {time}",
+      "bookedUntilTomorrow": "V servisu do zítřejších {time}",
+      "availableFrom": "Dostupné od {time}",
+      "outOfService": "V servisu",
+      "helmetsIncluded": "Helmy v ceně",
+      "viewDetails": "Detaily"
+    },
+    "included": {
+      "eyebrow": "U každé výpůjčky",
+      "title": "Co je v ceně",
+      "items": {
+        "insurance": {
+          "label": "Základní pojištění",
+          "sub": "Krytí krádeže a motoru"
+        },
+        "helmets": {
+          "label": "Helmy",
+          "sub": "Vždy k dispozici"
+        },
+        "unlimitedKm": {
+          "label": "Neomezené km",
+          "sub": "Žádné limity na ujeté kilometry"
+        },
+        "roadside": {
+          "label": "Asistenční služba",
+          "sub": "Do 20km zdarma, poté 50€ a více"
+        },
+        "transparent": {
+          "label": "Transparentní ceny",
+          "sub": "Co vidíš, to platíš"
+        },
+        "warranty": {
+          "label": "Záruka na motor",
+          "sub": "Poruchu motoru hradíme my"
+        }
+      }
+    },
+    "goodToKnow": {
+      "eyebrow": "Pozor",
+      "title": "Dobré vědět",
+      "deposit": {
+        "label": "Kauce",
+        "sub": "Za každý stroj, vrácena po odevzdání bez poškození."
+      },
+      "phoneHolders": {
+        "value": "Ne",
+        "label": "Držáky na telefon",
+        "sub": "Držáky na telefon nenabízíme ani nemontujeme a vlastní si přivézt nesmíš. Žádný z našich strojů ho nemá."
+      },
+      "season": {
+        "value": "Duben-Říjen",
+        "label": "Sezóna",
+        "sub": "Půjčujeme od dubna do října. S plnou nádrží ven, s plnou nádrží zpět."
+      },
+      "languages": {
+        "label": "Jazyky",
+        "sub": "Mluvíme německy, anglicky a portugalsky. Napiš nám na WhatsApp."
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "Jednoduchý postup",
+      "title": "Jak to funguje",
+      "step1": {
+        "title": "Vyber si stroj",
+        "text": "Vyber si skútr nebo motorku, od 50cc městského svištění až po 390cc stroj na dálnici."
+      },
+      "step2": {
+        "title": "Pošli svoje termíny",
+        "text": "Zkontroluj dostupnost v kalendáři a pošli rychlou poptávku. Vyzvednutí v naší prodejně v Zadaru."
+      },
+      "step3": {
+        "title": "Potvrdíme a ty vyrazíš",
+        "text": "Potvrzení posíláme e-mailem během pár hodin. Zaplať 20% rezervační poplatek, vyzvedni si stroj a jeď."
+      },
+      "cta": "Rezervovat stroj"
+    },
+    "reviews": {
+      "eyebrow": "Co říkají jezdci",
+      "title": "Hodnocení",
+      "leaveReview": "Napsat hodnocení na Google"
+    },
+    "gallerySection": {
+      "eyebrow": "V pohybu",
+      "title": "Galerie",
+      "seeAll": "Zobrazit všechny fotky"
+    },
+    "cta": {
+      "eyebrow": "Připraven vyrazit?",
+      "headline1": "Rezervuj si",
+      "headline2": "Stroj ještě dnes",
+      "ctaBtn": "Zjistit dostupnost"
+    }
+  },
+  "info": {
+    "eyebrow": "Vše, co potřebuješ vědět",
+    "title": "Info",
+    "licenceRequirements": {
+      "title": "Požadavky na řidičák",
+      "scooter50": "Skútr 50cc: řidičský průkaz skupiny B nebo AM plus zkušenost se skútrem",
+      "scooter125": "Skútr 125cc a motorka 125cc: řidičský průkaz skupiny A1",
+      "motorbike390": "Motorka 390cc: řidičský průkaz skupiny A2",
+      "verify": "Řidičák ověřujeme při vyzvednutí"
+    },
+    "depositPayment": {
+      "title": "Kauce a platba",
+      "deposit": "{deposit} kauce za každý stroj, vrácena po odevzdání bez poškození.",
+      "bookingFee": "20% rezervační poplatek ti zajistí termíny.",
+      "noCards": "Pro rezervační poplatek nepřijímáme platby kartou."
+    },
+    "fleetSection": {
+      "title": "Náš vozový park v přehledu"
+    }
+  },
+  "faq": {
+    "eyebrow": "Otázky?",
+    "title": "FAQ",
+    "categories": {
+      "booking": "Rezervace a platba",
+      "pickup": "Při vyzvednutí",
+      "ride": "Během jízdy",
+      "return": "Vrácení",
+      "incidents": "Poškození a asistence"
+    }
+  },
+  "terms": {
+    "eyebrow": "Rezervační podmínky",
+    "title": "Obchodní podmínky",
+    "intro": "Rezervační podmínky pro půjčování skútrů a motorek. Rezervací u {legal} souhlasíš s níže uvedenými pravidly.",
+    "questionsLine": "Otázky? Napiš nám na",
+    "questionsTail": "nebo přes WhatsApp na stránce kontaktu.",
+    "sections": [
+      {
+        "heading": "Rezervace",
+        "bullets": [
+          "Vždy si u nás potvrď dostupnost těsně před provedením platby. Dostupnost se může rychle změnit a předchozí potvrzení nezaručuje, že je skútr nebo motorka stále k dispozici.",
+          "Při rezervaci prosím uveď datum a čas vyzvednutí a vrácení.",
+          "K zajištění rezervace je vyžadován rezervační poplatek ve výši 20% z celkové částky.",
+          "Způsoby platby: PayPal, bankovní převod, Revolut nebo hotově osobně (pokud už jsi v Zadaru). Kreditní karty nepřijímáme.",
+          "Po provedení platby nám prosím pošli screenshot transakce jako doklad. Při platbě hotově není potřeba.",
+          "Pokud dorazíš o více než 1 hodinu později bez upozornění, tvoje rezervace bude automaticky zrušena a rezervační poplatek je nevratný.",
+          "Pokud se skútr nebo motorka stane nedostupnou kvůli nehodě nebo poškození způsobenému jiným klientem, můžeme tvoji rezervaci zrušit a vrátit celý rezervační poplatek.",
+          "Jízda na skútru nebo motorce vyžaduje předchozí zkušenost. Pokud zjistíme, že nemáš dostatečnou zkušenost pro bezpečnou jízdu, vyhrazujeme si právo rezervaci odmítnout bez vrácení peněz."
+        ]
+      },
+      {
+        "heading": "Kauce a platba",
+        "bullets": [
+          "Kauce: 250€ za každý stroj, vrácena po odevzdání bez poškození.",
+          "Rezervační poplatek: 20% z celku. Zajistí ti termíny, při zrušení nevratný.",
+          "Způsoby platby: PayPal (preferujeme Friends & Family, bez poplatku), bankovní převod, Revolut nebo hotově při příjezdu.",
+          "Kreditní karty nepřijímáme."
+        ]
+      },
+      {
+        "heading": "Vyzvednutí a vrácení",
+        "bullets": [
+          "Vyzvednutí a vrácení na adrese Velebitska Ulica 2, 23000 Zadar.",
+          "Otevřeno po-ne, 09:00 až 19:00.",
+          "Časy vyzvednutí a vrácení jsou ve 30minutových intervalech mezi 09:00 a 19:00.",
+          "15minutová tolerance při vrácení. Pozdější odevzdání mimo ni je zpoplatněno.",
+          "Po zaplacení nám pošli screenshot transakce kauce, abychom mohli ověřit a potvrdit."
+        ]
+      },
+      {
+        "heading": "Pojištění a bezpečnost",
+        "bullets": [
+          "Základní pojištění je součástí každé výpůjčky a kryje krádež stroje a poškození motoru.",
+          "Nehody, škrábance, poškození a defekty pneumatik jsou na zodpovědnosti nájemce.",
+          "Pokud nehodu způsobí třetí strana, musíš zavolat policii a získat oficiální protokol. Odpovědná strana ručí.",
+          "Helmy jsou vždy k dispozici.",
+          "Všechny stroje jsou předávány v dokonalém provozním stavu. Žádáme nájemce, aby stroj prohlédli, pořídili fotky a videa při vyzvednutí a vrátili ho ve stejném stavu."
+        ]
+      },
+      {
+        "heading": "Poškození, oprava a porucha",
+        "bullets": [
+          "Kauce kryje počáteční náklady na opravu. Stroj odvezeme k místnímu mechanikovi na posouzení. Nájemce hradí plnou cenu opravy podle faktury mechanika (kopii vždy poskytujeme).",
+          "Asistenční služba při poruše: do 20 km zdarma. Nad 20 km: 50€. Ostrovy: Preko 150€, Dugi Otok 500€.",
+          "Ztracený klíč: 50€ poplatek za náhradu plus případná asistenční služba podle lokality.",
+          "V případě poruchy motoru bez zavinění nájemce hradíme všechny náklady."
+        ]
+      },
+      {
+        "heading": "Palivo",
+        "bullets": [
+          "Každý stroj je předán s plnou nádrží. Vrať ho prosím také s plnou nádrží.",
+          "Pokud ho vrátíš bez plné nádrže, naúčtujeme chybějící palivo plus poplatek za dotankování."
+        ]
+      },
+      {
+        "heading": "Požadavky na řidiče",
+        "bullets": [
+          "Vezmi si k vyzvednutí platný řidičák. Žádný řidičák, žádná jízda. Majitel ověří, že skupina řidičáku odpovídá třídě stroje.",
+          "Jízda vyžaduje předchozí zkušenost. Pokud při vyzvednutí zjistíme, že zkušenost nestačí na bezpečné zvládnutí stroje, vyhrazujeme si právo odmítnout. Rezervační poplatek je v tom případě nevratný, takže prosím buď upřímný ohledně své zkušenosti už při rezervaci.",
+          "Nájemce přebírá plnou zodpovědnost za všechny nehody, škody a zranění během doby výpůjčky."
+        ]
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Ozvi se nám",
+    "title": "Kontakt",
+    "intro": "Nejrychleji nás zastihneš na WhatsApp, nebo nám pošli zprávu a my se ti ozveme během pár hodin.",
+    "form": {
+      "name": "Jméno",
+      "email": "E-mail",
+      "message": "Zpráva",
+      "messagePlaceholder": "Tvoje otázka, plány, cokoliv dalšího...",
+      "send": "Odeslat zprávu",
+      "sending": "Odesílám...",
+      "sent": "Zpráva odeslána. Brzy odpovíme.",
+      "error": "Nepodařilo se odeslat. Zkus WhatsApp nebo zavolej."
+    },
+    "openHours": "Otevírací doba",
+    "address": "Adresa",
+    "getDirections": "Otevřít v Google Maps"
+  },
+  "gallery": {
+    "eyebrow": "V pohybu",
+    "title": "Galerie",
+    "intro": "Snímky z opravdových jízd po pobřeží a ostrovech."
+  },
+  "fleet": {
+    "back": "Všechny stroje",
+    "inStock": "{n} v našem parku",
+    "inStockHint": "Jezdíš s kamarády? Máme jich {n} kusů.",
+    "inStockCta": "Víc najednou? Rezervuj více →",
+    "licenceByCode": {
+      "AM/B": "Řidičák AM nebo B",
+      "A1": "Řidičák A1",
+      "A2": "Řidičák A2"
+    },
+    "specs": {
+      "title": "Technické údaje",
+      "eyebrow": "Stroj",
+      "engine": "Motor",
+      "power": "Výkon",
+      "topSpeed": "Maximální rychlost",
+      "tank": "Nádrž",
+      "consumption": "Spotřeba",
+      "range": "Dojezd",
+      "seats": "Sedadla",
+      "year": "Rok"
+    },
+    "pricing": {
+      "title": "Ceník",
+      "eyebrow": "Flexibilní podmínky",
+      "daily": "Denně",
+      "dailySub": "1 den",
+      "weekend": "Víkend",
+      "weekendSub": "Pá až ne",
+      "week": "Týden",
+      "weekSub": "7 dní",
+      "month": "Měsíc",
+      "monthSub": "30 dní",
+      "unlimitedKm": "Neomezené km, všechny ceny zahrnují ZÁKLADNÍ pojištění",
+      "depositLine": "Kauce: {deposit} · Sezóna: {season}",
+      "perDay": "/ den",
+      "fromPrefix": "od"
+    },
+    "priceBox": {
+      "perDay": "/ den",
+      "unlimitedLine": "Neomezené km · Základní pojištění · {deposit} kauce",
+      "helmetsIncluded": "Helmy v ceně",
+      "licenceEyebrow": "Požadovaný řidičák",
+      "bringLicence": "Vezmi si k vyzvednutí platný řidičák. Žádný řidičák, žádná jízda.",
+      "dayBadge": "24h",
+      "dayLabel": "1 den = 24 hodin",
+      "dayCopy": "Od vyzvednutí do vyzvednutí, ne kalendářní den. Např. dnes 11:00 do zítra 11:00 = 1 den."
+    },
+    "headsUp": "Pozor",
+    "checkAvailability": "Zjistit dostupnost",
+    "specsSection": {
+      "depositLabel": "Kauce",
+      "depositText": "{deposit} za každý stroj, vrácena po odevzdání bez poškození. Při vyzvednutí: hotově (bez poplatků), PayPal, Revolut nebo Wise (mohou platit transakční poplatky). Žádné kreditní ani debetní karty.",
+      "noPhoneHoldersLabel": "Žádné držáky na telefon",
+      "noPhoneHoldersText": "Držáky na telefon nenabízíme ani nemontujeme a vlastní si přivézt nesmíš.",
+      "seasonLabel": "Sezóna",
+      "seasonValue": "Duben až říjen",
+      "seasonText": "{season}. Půjčujeme jen v tomto období.",
+      "fuelLabel": "Palivo",
+      "fuelText": "Předáno s plnou nádrží. Vrať ho také s plnou nádrží."
+    },
+    "tierLabel": {
+      "day": "Denní sazba",
+      "weekend": "Víkendová sazba (pá-ne)",
+      "weekend-mix": "Víkend plus dny",
+      "week": "Týdenní sazba",
+      "week-mix": "Týden plus dny",
+      "month": "Měsíční sazba",
+      "month-mix": "Měsíc plus dny"
+    },
+    "calendar": {
+      "title": "Rezervovat tento stroj",
+      "eyebrow": "Vyber si termíny",
+      "legendFree": "Dostupné",
+      "legendBooked": "Rezervováno",
+      "pickupDate": "Datum vyzvednutí",
+      "returnDate": "Datum vrácení",
+      "pickupTime": "Čas vyzvednutí",
+      "returnTime": "Čas vrácení",
+      "shopHours": "Otevírací doba 09:00 až 19:00. Časy mimo toto okno nejsou dostupné",
+      "tooClose": " (nebo příliš blízko jiné rezervace, mezi rezervacemi potřebujeme 1h)",
+      "totalDays": "{n} dní",
+      "totalDay": "1 den",
+      "appliedTier": "Použitá sazba",
+      "total": "Celkem",
+      "continue": "Pokračovat na rezervační formulář",
+      "selectDates": "Nejprve vyber datum vyzvednutí a vrácení"
+    },
+    "form": {
+      "title": "Tvoje údaje",
+      "name": "Celé jméno",
+      "email": "E-mail",
+      "phone": "Telefon (s předvolbou země, např. +49...)",
+      "notes": "Poznámky (volitelné)",
+      "notesPlaceholder": "Např. potřebuji 2 helmy, speciální čas vyzvednutí, cokoliv dalšího...",
+      "licence": "Řidičský průkaz",
+      "licencePlaceholder": "Vyber skupinu",
+      "licenceCountry": "Země vydání",
+      "licenceCountryPlaceholder": "např. Německo, Rakousko, Itálie...",
+      "licenceOptions": {
+        "AM": "AM (moped / 50cc)",
+        "A1": "A1 (do 125cc)",
+        "A2": "A2 (do 35 kW)",
+        "A": "A (bez omezení)",
+        "B": "B (řidičák na auto, kryje AM/50cc)"
+      },
+      "ridingStyle": "Styl jízdy",
+      "ridingStyleSolo": "Sólo",
+      "ridingStyleWithPassenger": "Se spolujezdcem",
+      "ridingStylePlaceholder": "Vyber styl",
+      "soloOnly": "Tento stroj je jednomístný. Pouze sólo.",
+      "maxRiders": "Povoleno až {n} jezdců.",
+      "experienceWarning": "Vyžaduje se zkušenost s jízdou. Nepravdivé údaje znamenají, že rezervační poplatek propadá a výpůjčka je odmítnuta.",
+      "submit": "Odeslat poptávku",
+      "submitting": "Odesílám...",
+      "reviewLine": "Zkontrolujeme tvůj screenshot rezervace a potvrdíme e-mailem, obvykle během pár hodin. Odesláním souhlasíš s našimi",
+      "termsLink": "podmínkami"
+    },
+    "reservation": {
+      "title": "Rezervace",
+      "lockBooking": "20% z {total}€ na zajištění rezervace",
+      "instructions": "Zaplať {fee}€ jednou z níže uvedených metod a poté nahraj screenshot transakce. Zbývajících {rest}€ se platí při vyzvednutí hotově (bez poplatků), přes Revolut, PayPal nebo debetní/kreditní kartou (mohou platit transakční poplatky).",
+      "noBooking": "Žádný rezervační poplatek, žádná rezervace.",
+      "uploadScreenshot": "Nahraj screenshot platby",
+      "uploadPicked": "Vybráno",
+      "uploadHint": "Pouze obrázek, max 4 MB",
+      "uploadError": "Nahraj screenshot své rezervační platby.",
+      "fileTooLarge": "Soubor je příliš velký. Max 4 MB.",
+      "copy": "Kopírovat",
+      "copied": "Zkopírováno!",
+      "openInApp": "Otevřít aplikaci",
+      "payWith": "Klepni pro platbu přes {method}",
+      "recommended": "Doporučeno",
+      "paymentNotes": {
+        "paypal_ff": "Bez poplatku. Použij možnost Friends & Family.",
+        "paypal_company": "Standardní PayPal. Platí malý poplatek.",
+        "revolut": "Klikni na tlačítko pro platbu, nebo naskenuj QR telefonem.",
+        "bank": "Použij okamžitý převod. Převod měny může přidat poplatek."
+      }
+    },
+    "success": {
+      "title": "Poptávka přijata",
+      "intro": "Zkontrolujeme tvoji rezervaci a brzy potvrdíme e-mailem. Tvoje reference je {ref}.",
+      "summaryBike": "Stroj",
+      "summaryFrom": "Vyzvednutí",
+      "summaryTo": "Vrácení",
+      "summaryTotal": "Celkem",
+      "summaryPaid": "Rezervační poplatek zaplacen",
+      "summaryRemaining": "Splatné při vyzvednutí",
+      "back": "Zpět na úvod"
+    }
+  },
+  "bikes": {
+    "scooter-50": {
+      "description": "Úsporný, snadno ovladatelný, ideální do města.",
+      "longDescription": "Velmi úsporný, snadno ovladatelný a ideální pro pohodové projížďky Zadarem a podél pobřeží.",
+      "tagline": "Šetří palivo. Vyžaduje předchozí zkušenost s jízdou.",
+      "experienceNote": "Vyžaduje se předchozí zkušenost s jízdou. Žádní úplní začátečníci."
+    },
+    "scooter-50-topcase": {
+      "description": "Piaggio Liberty 50 s topcase, více úložného prostoru.",
+      "longDescription": "Stejný Liberty 50 jako standard, vybavený topcasem pro více úložného prostoru na delší cesty.",
+      "tagline": "Topcase v ceně, více úložného prostoru.",
+      "experienceNote": "Vyžaduje se předchozí zkušenost s jízdou. Žádní úplní začátečníci."
+    },
+    "scooter-125": {
+      "description": "Perfektní univerzál do města i na pobřeží.",
+      "longDescription": "Stejně snadné ovládání jako u padesátky, s větším výkonem na celodenní výlety podél pobřeží.",
+      "tagline": "Univerzál do města i na pobřeží."
+    },
+    "bike-125-a": {
+      "description": "Sportovní a hbitý, stvořený pro aktivní jezdce.",
+      "longDescription": "Supermoto pocit s 125cc. Lehký, hbitý a ideální pro temperamentní jezdce, kteří milují zatáčky a pobřežní silnice.",
+      "tagline": "Sportovní. Vyšší spotřeba paliva kvůli stylu jízdy."
+    },
+    "bike-125-b": {
+      "description": "Pocit naked-bike s velkým dojezdem a sportovním charakterem.",
+      "longDescription": "Opravdový naked-bike charakter s 125cc. Vynikající dojezd, perfektní pro delší túry podél pobřeží a na ostrovy.",
+      "tagline": "Velký dojezd, perfektní pro delší cesty."
+    },
+    "bike-390": {
+      "description": "Výkon vhodný pro A2 na pobřeží. Lehký, hbitý, stvořený pro město, venkov i zatáčky.",
+      "longDescription": "Prémiový stroj splňující A2. Lehký, hbitý a perfektní pro město, venkov i zatáčky, ať už ho chceš na den nebo na celý měsíc.",
+      "tagline": "Silný a prémiový. Top volba pro sebevědomé jezdce."
+    }
+  },
+  "faqItems": [
+    {
+      "question": "Co zahrnuje asistenční služba?",
+      "answer": "Do 20 km: zdarma (u nehod nebo ztracených klíčů platí příplatky). Nad 20 km: 50€. Ostrovy: Preko 150€, Dugi Otok 500€. Ztracený klíč: 50€. Asistenční služba platí, pokud se nemůžeš vrátit na naši adresu kvůli nehodě nebo ztracenému klíči. V případě poruchy motoru hradíme všechny náklady."
+    },
+    {
+      "question": "V jakém stavu je stroj předáván?",
+      "answer": "Všechny stroje a skútry jsou předávány v dokonalém provozním stavu. Žádáme nájemce, aby stroj prohlédli, pořídili při vyzvednutí jasné fotky a videa dokumentující veškeré stávající škrábance nebo poškození a vrátili ho ve stejném stavu. Tyto záznamy jsou oficiálním důkazem v případě jakéhokoliv sporu."
+    },
+    {
+      "question": "Jaké pojištění je v ceně?",
+      "answer": "Základní pojištění kryje krádež stroje a poškození motoru. Nehody, škrábance, poškození a defekty pneumatik jsou na zodpovědnosti nájemce. Pokud nehodu způsobí třetí strana, musíš zavolat policii a získat oficiální protokol. Odpovědná strana ručí."
+    },
+    {
+      "question": "Jaké jsou vaše storno podmínky?",
+      "answer": "Všechny rezervace jsou nevratné. 20% rezervační poplatek ti zajistí termíny a v případě zrušení se nevrací. Pokud se stroj stane nedostupným kvůli nehodě nebo poškození způsobenému jiným klientem, zrušíme rezervaci a vrátíme celou částku."
+    },
+    {
+      "question": "Kdy a kde stroj vracím?",
+      "answer": "V dohodnutý čas a na dohodnutém místě. Dáváme 15minutovou toleranci. Pozdější vrácení mimo ni je zpoplatněno. Odevzdání na naší adrese: Velebitska Ulica 2, 23000 Zadar."
+    },
+    {
+      "question": "Kdo je odpovědný za nehody nebo zranění?",
+      "answer": "Nájemce přebírá plnou zodpovědnost za všechny nehody, škody nebo zranění, ke kterým dojde během doby výpůjčky."
+    },
+    {
+      "question": "Co se stane, když je stroj poškozen?",
+      "answer": "Kauce kryje počáteční náklady na opravu. Stroj odvezeme k místnímu mechanikovi na posouzení a opravu a nájemce hradí plnou cenu opravy podle faktury mechanika. Pokud oprava přesáhne kauci, nájemce doplatí rozdíl. Kopii faktury vždy poskytujeme pro transparentnost."
+    },
+    {
+      "question": "Co když ztratím klíč?",
+      "answer": "Náhradní klíč ti dodáme za 50€ plus případný poplatek za asistenční službu podle tvojí lokality."
+    },
+    {
+      "question": "Jak provedu rezervaci?",
+      "answer": "Vždy si u nás nejprve potvrď dostupnost. Může se rychle změnit. 20% rezervační poplatek ti zajistí termíny. Zaplať přes PayPal, bankovní převod, Revolut nebo hotově při příjezdu. Po zaplacení nám pošli screenshot transakce. Pokud dorazíš o více než 1 hodinu později bez upozornění, rezervace se automaticky zruší. Kreditní karty nepřijímáme."
+    },
+    {
+      "question": "Nabízíte držáky na telefon?",
+      "answer": "Ne. Držáky na telefon nenabízíme ani nemontujeme a vlastní si přivézt také nesmíš. Žádný z našich strojů ho nemá. Naplánuj si prosím trasu předtím, než vyrazíš."
+    },
+    {
+      "question": "Jak to funguje s palivem, plná nebo prázdná nádrž?",
+      "answer": "Každý stroj je předán s plnou nádrží. Vrať ho prosím také s plnou nádrží. Pokud stroj vrátíš bez plné nádrže, naúčtujeme chybějící palivo plus poplatek za dotankování."
+    },
+    {
+      "question": "Jak navigovat bez držáku na telefon?",
+      "answer": "Dvě praktické možnosti: jeď se spolujezdcem, který se postará o směr, nebo použij Bluetooth navigaci do ucha pro hlasové pokyny zatáčku po zatáčce, aniž bys spustil oči ze silnice. Tak či tak, naplánuj si trasu před vyzvednutím."
+    },
+    {
+      "question": "Co když usoudíte, že nemám dost zkušeností?",
+      "answer": "Jízda vyžaduje předchozí zkušenost. Pokud při vyzvednutí zjistíme, že nemáš dost zkušeností na bezpečné zvládnutí stroje, vyhrazujeme si právo výpůjčku odmítnout. V tom případě je rezervační poplatek nevratný, takže prosím buď upřímný ohledně své zkušenosti už při rezervaci."
+    }
+  ],
+  "common": {
+    "loading": "Načítám...",
+    "tryAgain": "Zkusit znovu",
+    "language": "Jazyk"
+  },
+  "emails": {
+    "bookingReceived": {
+      "subject": "Máme tvoji rezervaci, {bike} {from} až {to}",
+      "preheader": "Máme tvoji poptávku na {bike}. Majitel brzy potvrdí.",
+      "headline": "Máme tvoji poptávku",
+      "greeting": "Ahoj {name},",
+      "intro": "děkujeme za tvoji poptávku. Zkontrolujeme ji a brzy potvrdíme e-mailem, obvykle během pár hodin.",
+      "urgentLine": "Mezitím, něco naléhavého?",
+      "signoff": "Uvidíme se v Zadaru."
+    },
+    "bookingConfirmed": {
+      "subject": "Potvrzeno, {bike} {from} až {to}",
+      "preheader": "Tvoje {bike} je potvrzena na {from} až {to}.",
+      "headline": "Rezervace potvrzena",
+      "greeting": "Ahoj {name},",
+      "intro": "tvoje {bike} je zajištěna. Uvidíme se v Zadaru.",
+      "pickupHeader": "Vyzvednutí",
+      "openHoursLabel": "Otevřeno",
+      "bringHeader": "Vezmi si s sebou",
+      "bringLicence": "Platný motorkářský řidičák, bez něj nemůžeme předat",
+      "bringDeposit": "{deposit} kauce (hotově při příjezdu, vrácena po odevzdání bez poškození)",
+      "bringTank": "Stroj přijde s plnou nádrží, vrať ho prosím plný",
+      "adjustHeader": "Potřebuješ něco upravit?",
+      "adjustLine": "Vyzvednutí je zajištěno na {from} v {pickupTime}, vrácení {to} do {returnTime}. Ozvi se, pokud se něco mění:",
+      "cancelLine": "Změnily se plány?",
+      "cancelLink": "Zrušit tuto rezervaci",
+      "cancelTail": ", termíny se okamžitě uvolní pro někoho jiného."
+    },
+    "bookingDeclined": {
+      "subject": "Aktualizace tvojí rezervace, {bike}",
+      "preheader": "Aktualizace tvojí rezervace {bike}, tyto termíny nevyšly.",
+      "headline": "Aktualizace tvojí rezervace",
+      "greeting": "Ahoj {name},",
+      "intro": "bohužel ti nemůžeme {bike} na tyto termíny nabídnout. Omlouváme se.",
+      "tryOther": "Chceš zkusit jiné termíny nebo jiný stroj? Napiš nám a uděláme maximum, abychom našli něco, co bude fungovat."
+    },
+    "contactReceived": {
+      "subject": "Děkujeme za tvoji zprávu",
+      "preheader": "Máme tvoji zprávu, brzy odpovíme.",
+      "headline": "Máme tvoji zprávu",
+      "greeting": "Ahoj {name},",
+      "intro": "děkujeme, že ses ozval. Ozveme se ti co nejdříve.",
+      "yourMessage": "Tvoje zpráva:",
+      "signoff": "Uvidíme se v Zadaru."
+    },
+    "summary": {
+      "bike": "Stroj",
+      "pickup": "Vyzvednutí",
+      "return": "Vrácení",
+      "total": "Celkem",
+      "days": "dní",
+      "day": "den",
+      "deposit": "Kauce"
+    }
+  },
+  "group": {
+    "title": "Rezervovat více strojů",
+    "intro": "Vyber jedno časové okno a pak přidej tolik strojů, kolik potřebuješ, do jedné rezervace s jednou kaucí. Ukazujeme celý vozový park, abys viděl, co je kdy volné.",
+    "period": "Tvoje doba výpůjčky",
+    "sameDates": "Stejné termíny pro všechny stroje.",
+    "pickBikes": "Vyber si stroje",
+    "fleetNoDates": "Vozový park · vyber nahoře období pro kontrolu dostupnosti",
+    "period2": "období",
+    "fullDetails": "úplné detaily",
+    "notAvailable": "Pro vybrané období nedostupné",
+    "freeFrom": "Volné od",
+    "pickDates": "Vyber období",
+    "available": "dostupných",
+    "seat": "sedadlo",
+    "seats": "sedadla",
+    "yourGroup": "Tvoje skupina",
+    "noBikes": "Zatím žádné stroje",
+    "bikesWord": "strojů",
+    "helmetsWord": "helem",
+    "oneDeposit": "jedna kauce",
+    "continue": "Pokračovat",
+    "ridingPerBike": "Styl jízdy na každý stroj",
+    "helmetsHint": "Abychom připravili správné helmy",
+    "helmetsTotal": "helem celkem",
+    "spokenLanguage": "Mluvený jazyk",
+    "fromDialCode": "z předvolby",
+    "override": "Přepsat (€)",
+    "reminder": "Připomínka: helmy v ceně · {deposit} kauce za vozidlo · vezmi si platný řidičák · plná nádrž tam, plná nádrž zpět · vyzvednutí na {address}",
+    "submit": "Odeslat rezervaci",
+    "received": "Rezervace přijata",
+    "receivedBody": "máme tvoji skupinovou poptávku a screenshot kauce. Brzy potvrdíme e-mailem. Pokud se ti během pár hodin neozveme, napiš nám na WhatsApp.",
+    "backToFleet": "Zpět na vozový park",
+    "backToBikes": "Zpět na stroje",
+    "bandDeposit": "Kauce/vozidlo, vratná",
+    "bandInsurance": "Základní pojištění",
+    "bandKm": "Kilometry",
+    "bandFuel": "Pravidla pro palivo",
+    "bandDay": "Od vyzvednutí do vyzvednutí",
+    "bandHelmets": "Helmy",
+    "bandSeason": "Sezóna",
+    "bandPhone": "Držáky na telefon",
+    "bandPickup": "Vyzvednutí",
+    "valIncluded": "V ceně",
+    "valUnlimited": "Neomezené",
+    "valNotAvailable": "Nedostupné",
+    "valZadarShop": "Naše prodejna v Zadaru",
+    "errRequired": "Jméno, e-mail a telefon jsou povinné.",
+    "errLicence": "Vyber skupinu svého řidičského průkazu.",
+    "errReceipt": "Nahraj screenshot své kauce.",
+    "errSubmit": "Rezervaci se nepodařilo odeslat.",
+    "errNetwork": "Chyba sítě. Zkus to prosím znovu.",
+    "enlarge": "Zvětšit fotku",
+    "closePreview": "Zavřít náhled",
+    "howItWorks": "Jak to funguje",
+    "step1": "Vyber jedno časové okno pro celou skupinu",
+    "step2": "Přidej z vozového parku jakékoliv stroje, které jsou volné",
+    "step3": "Jedna kauce za vozidlo, jedna rezervace",
+    "reserveLine": "20% nyní na rezervaci, zbytek při příjezdu.",
+    "depositLine": "{deposit} kauce za vozidlo.",
+    "checking": "kontroluji…",
+    "checkingAvailability": "kontroluji dostupnost…",
+    "lblName": "Jméno",
+    "lblPhone": "Telefon",
+    "lblEmail": "E-mail",
+    "lblLicence": "Řidičský průkaz",
+    "lblLicenceCountry": "Země řidičáku",
+    "lblNotes": "Poznámky",
+    "licenceCountryPh": "např. Německo",
+    "payHeadline": "Zaplať nyní {fee}€, abys zajistil svoje termíny (20% z {total}€). Zbytek ({rest}€) se platí při příjezdu.",
+    "payUpload": "Po zaplacení nahraj níže screenshot. {deposit} kauce za vozidlo.",
+    "payWith": "Zaplať {fee}€ přes {method}",
+    "chooseFile": "Vybrat soubor",
+    "noFile": "Žádný soubor nevybrán",
+    "remove": "Odebrat",
+    "depositScreenshot": "Screenshot kauce",
+    "fileHint": "JPG, PNG, HEIC nebo PDF · max 4 MB",
+    "useTime": "Použít tento čas",
+    "freeFromTime": "Volné od",
+    "useDates": "Použít tyto termíny",
+    "at": "v",
+    "freeIfReturnBy": "Volné, pokud vráceno do",
+    "useReturn": "Použít čas vrácení",
+    "depositSummary": "Kauce: {count} × {each} = {total}"
+  }
+}
