@@ -523,7 +523,9 @@
       "greeting": "Ciao {name},",
       "intro": "grazie per la tua richiesta. La esaminiamo e confermiamo via email a breve, di solito entro poche ore.",
       "urgentLine": "Intanto, qualcosa di urgente?",
-      "signoff": "A presto a Zara."
+      "signoff": "A presto a Zara.",
+      "refLabel": "Numero di prenotazione",
+      "refLine": "Indica il numero di prenotazione e il telefono al momento del pagamento, così possiamo abbinare il pagamento."
     },
     "bookingConfirmed": {
       "subject": "Confermata, {bike} {from} a {to}",

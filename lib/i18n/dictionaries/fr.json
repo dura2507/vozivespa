@@ -523,7 +523,9 @@
       "greeting": "Bonjour {name},",
       "intro": "merci pour votre demande de réservation. Nous l'examinons et confirmons par email rapidement, généralement en quelques heures.",
       "urgentLine": "En attendant, quelque chose d'urgent ?",
-      "signoff": "À bientôt à Zadar."
+      "signoff": "À bientôt à Zadar.",
+      "refLabel": "Numéro de réservation",
+      "refLine": "Indique ton numéro de réservation et ton téléphone lors du paiement, pour que nous puissions l'associer."
     },
     "bookingConfirmed": {
       "subject": "Confirmée, {bike} du {from} au {to}",

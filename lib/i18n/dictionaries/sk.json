@@ -523,7 +523,9 @@
       "greeting": "Ahoj {name},",
       "intro": "vďaka za tvoju žiadosť o rezerváciu. Skontrolujeme ju a čoskoro potvrdíme e-mailom, zvyčajne do pár hodín.",
       "urgentLine": "Medzitým, niečo súrne?",
-      "signoff": "Uvidíme sa v Zadare."
+      "signoff": "Uvidíme sa v Zadare.",
+      "refLabel": "Číslo rezervácie",
+      "refLine": "Pri platbe uveď číslo rezervácie a telefónne číslo, aby sme mohli priradiť tvoju platbu."
     },
     "bookingConfirmed": {
       "subject": "Potvrdené, {bike} {from} do {to}",

@@ -523,7 +523,9 @@
       "greeting": "Bok {name},",
       "intro": "hvala na zahtjevu. Pregledat ćemo ga i potvrditi mailom uskoro, obično u roku nekoliko sati.",
       "urgentLine": "U međuvremenu, nešto hitno?",
-      "signoff": "Vidimo se u Zadru."
+      "signoff": "Vidimo se u Zadru.",
+      "refLabel": "Broj rezervacije",
+      "refLine": "Molimo navedi broj rezervacije i broj telefona pri plaćanju kako bismo povezali tvoju uplatu."
     },
     "bookingConfirmed": {
       "subject": "Potvrđeno, {bike} {from} do {to}",

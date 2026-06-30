@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LocaleFlag } from "@/components/Flag";
 import { FulfillButton } from "./fulfill-button";
+import { bookingRef } from "@/lib/booking-ref";
 import {
   bucketBookings,
   groupBookingsForDisplay,
@@ -81,6 +82,7 @@ function BookingRow({
   quickFulfill?: "pickup" | "return";
 }) {
   const head = group.bookings[0];
+  const ref = bookingRef(head.booking_group_id ?? group.primaryId);
   const totalCents = group.bookings.reduce(
     (sum, b) => sum + (b.total_price_cents ?? 0),
     0,
@@ -133,6 +135,8 @@ function BookingRow({
         <p className="font-bold text-ink shrink-0">{totalLabel}</p>
       </div>
       <p className="text-xs text-muted truncate">
+        <span className="font-mono text-ink/50">{ref}</span>
+        <span className="mx-2 text-ink/20">·</span>
         {group.bikeName}
         {group.unitsSummary && (
           <span className="ml-2 text-ink/60 font-mono">{group.unitsSummary}</span>

@@ -6,6 +6,17 @@ import type { BookingRow } from "@/lib/supabase";
 import { getDictionary, type Dictionary } from "@/lib/i18n/dictionaries";
 import { type Locale, isLocale } from "@/lib/i18n/config";
 import { translate, needsTranslationForOwner } from "@/lib/translate";
+import { bookingRef } from "@/lib/booking-ref";
+
+// Prominent booking-number block for the customer "received" emails so
+// they can quote it (+ their phone) when paying. HTML version.
+function refBlockHtml(ref: string, refLabel: string, refLine: string): string {
+  return `<div style="margin:18px 0;padding:14px 16px;background:#1a1a1a;color:#ffffff;">
+    <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#ffffffaa;">${escape(refLabel)}</div>
+    <div style="font-size:22px;font-weight:700;letter-spacing:.06em;margin-top:2px;">${escape(ref)}</div>
+    <div style="font-size:13px;color:#ffffffd0;margin-top:8px;line-height:1.5;">${escape(refLine)}</div>
+  </div>`;
+}
 
 function fmt(template: string, vars: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/g, (_, key) => vars[key] ?? "");
@@ -527,6 +538,7 @@ export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Pro
   const bikeName = bikeNameFor(booking);
   const dict = await getDictionary(bookingLocale(booking));
   const t = dict.emails.bookingReceived;
+  const ref = bookingRef(booking.booking_group_id ?? booking.id);
   const vars = {
     name: booking.customer_name,
     bike: bikeName,
@@ -538,6 +550,7 @@ export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Pro
     <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${escape(fmt(t.greeting, vars))}</p>
     <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(t.intro)}</p>
     ${bookingSummaryHtml(booking, dict.emails.summary)}
+    ${refBlockHtml(ref, t.refLabel, t.refLine)}
     <p style="margin:24px 0 8px;font-size:14px;color:#6b6b6b;line-height:1.6;">${escape(t.urgentLine)}</p>
     ${contactButtonsHtml()}
     <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">${escape(t.signoff)}</p>
@@ -560,6 +573,9 @@ ${dict.emails.summary.bike}: ${bikeName}
 ${dict.emails.summary.pickup}: ${fmtDate(booking.date_from)}${pickup ? ` · ${pickup}` : ""}
 ${dict.emails.summary.return}: ${fmtDate(booking.date_to)}${ret ? ` · ${ret}` : ""}
 ${dict.emails.summary.total}: ${totalEur(booking)}
+
+${t.refLabel}: ${ref}
+${t.refLine}
 
 ${t.urgentLine} WhatsApp: ${ownerWaLink()}
 
@@ -686,6 +702,7 @@ export async function sendCustomerGroupBookingReceivedEmail(bookings: BookingRow
   if (!primary?.customer_email || !primary.customer_email.includes("@")) return;
   const dict = await getDictionary(bookingLocale(primary));
   const t = dict.emails.bookingReceived;
+  const ref = bookingRef(primary.booking_group_id ?? primary.id);
   const vars = {
     name: primary.customer_name,
     bike: `${bookings.length} bikes`,
@@ -696,6 +713,7 @@ export async function sendCustomerGroupBookingReceivedEmail(bookings: BookingRow
     <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${escape(fmt(t.greeting, vars))}</p>
     <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(t.intro)}</p>
     ${groupSummaryHtml(bookings, dict.emails.summary)}
+    ${refBlockHtml(ref, t.refLabel, t.refLine)}
     <p style="margin:24px 0 8px;font-size:14px;color:#6b6b6b;line-height:1.6;">${escape(t.urgentLine)}</p>
     ${contactButtonsHtml()}
     <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">${escape(t.signoff)}</p>
@@ -706,7 +724,7 @@ export async function sendCustomerGroupBookingReceivedEmail(bookings: BookingRow
     to: primary.customer_email,
     subject: fmt(t.subject, vars),
     html,
-    text: `${fmt(t.greeting, vars)}\n\n${t.intro}\n\n${t.urgentLine} WhatsApp: ${ownerWaLink()}\n\n${t.signoff}\n${BRAND.name}`,
+    text: `${fmt(t.greeting, vars)}\n\n${t.intro}\n\n${t.refLabel}: ${ref}\n${t.refLine}\n\n${t.urgentLine} WhatsApp: ${ownerWaLink()}\n\n${t.signoff}\n${BRAND.name}`,
     replyTo: BRAND.email,
   });
 }

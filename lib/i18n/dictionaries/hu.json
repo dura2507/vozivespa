@@ -523,7 +523,9 @@
       "greeting": "Szia {name},",
       "intro": "köszönjük a foglalási kérésed. Átnézzük, és hamarosan e-mailben visszaigazoljuk, általában néhány órán belül.",
       "urgentLine": "Addig is, sürgős valami?",
-      "signoff": "Találkozunk Zadarban."
+      "signoff": "Találkozunk Zadarban.",
+      "refLabel": "Foglalási szám",
+      "refLine": "Kérjük, add meg a foglalási számodat és telefonszámodat fizetéskor, hogy össze tudjuk párosítani a befizetésed."
     },
     "bookingConfirmed": {
       "subject": "Visszaigazolva, {bike} {from} - {to}",

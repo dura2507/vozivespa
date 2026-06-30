@@ -5,6 +5,7 @@ import { CATEGORIES } from "@/lib/mockData";
 import { getBookingById } from "@/lib/admin-data";
 import { BookingActions } from "./booking-actions";
 import GroupBikeManager from "./group-bike-manager";
+import { bookingRef } from "@/lib/booking-ref";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,7 @@ export default async function AdminBookingDetail({
 
   const bike = CATEGORIES.find((c) => c.id === b.bike_id);
   const fleet = CATEGORIES.map((c) => ({ id: c.id, name: c.shortName ?? c.model }));
+  const ref = bookingRef(b.booking_group_id ?? b.id);
   const phoneDigits = b.customer_phone.replace(/[^\d]/g, "");
   const isImage = b.deposit_screenshot_path?.match(/\.(jpe?g|png|webp|heic|heif)$/i);
 
@@ -74,9 +76,15 @@ export default async function AdminBookingDetail({
       </div>
 
       <div className="flex items-baseline justify-between mb-6 flex-wrap gap-3">
-        <h1 className="font-bold text-3xl text-ink">
-          {b.customer_name}
-        </h1>
+        <div>
+          <h1 className="font-bold text-3xl text-ink">
+            {b.customer_name}
+          </h1>
+          <p className="text-sm text-muted mt-1">
+            Booking{" "}
+            <span className="font-mono font-bold text-ink tracking-wide">{ref}</span>
+          </p>
+        </div>
         <span className="text-[10px] tracking-[0.2em] uppercase font-bold bg-ink text-white px-2 py-1">
           {b.status}
         </span>

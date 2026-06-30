@@ -523,7 +523,9 @@
       "greeting": "Cześć {name},",
       "intro": "dzięki za zgłoszenie rezerwacji. Sprawdzimy je i wkrótce potwierdzimy mailem, zwykle w ciągu kilku godzin.",
       "urgentLine": "W międzyczasie coś pilnego?",
-      "signoff": "Do zobaczenia w Zadarze."
+      "signoff": "Do zobaczenia w Zadarze.",
+      "refLabel": "Numer rezerwacji",
+      "refLine": "Podaj numer rezerwacji i numer telefonu przy płatności, abyśmy mogli powiązać Twoją wpłatę."
     },
     "bookingConfirmed": {
       "subject": "Potwierdzone, {bike} {from} do {to}",
