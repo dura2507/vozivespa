@@ -4,6 +4,7 @@ import { LocaleFlag } from "@/components/Flag";
 import { CATEGORIES } from "@/lib/mockData";
 import { getBookingById } from "@/lib/admin-data";
 import { BookingActions } from "./booking-actions";
+import GroupBikeManager from "./group-bike-manager";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +58,7 @@ export default async function AdminBookingDetail({
   if (!b) notFound();
 
   const bike = CATEGORIES.find((c) => c.id === b.bike_id);
+  const fleet = CATEGORIES.map((c) => ({ id: c.id, name: c.shortName ?? c.model }));
   const phoneDigits = b.customer_phone.replace(/[^\d]/g, "");
   const isImage = b.deposit_screenshot_path?.match(/\.(jpe?g|png|webp|heic|heif)$/i);
 
@@ -235,6 +237,20 @@ export default async function AdminBookingDetail({
             <p className="text-sm text-muted">No receipt uploaded.</p>
           )}
         </div>
+      </div>
+
+      <div className="mb-8">
+        <GroupBikeManager
+          bookingId={b.id}
+          groupBikes={b.groupBikes ?? []}
+          fleet={fleet}
+          window={{
+            from: b.date_from,
+            to: b.date_to,
+            pickupTime: fmtTimeOfDay(b.pickup_time),
+            returnTime: fmtTimeOfDay(b.return_time),
+          }}
+        />
       </div>
 
       <BookingActions booking={JSON.parse(JSON.stringify(b))} />
