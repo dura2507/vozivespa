@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { TURNAROUND_MINUTES, buildSlots } from "@/lib/pricing";
+import { TURNAROUND_MINUTES, buildSlots, buildPickupSlots } from "@/lib/pricing";
 
 // A booking's time window . used to find a free physical unit on the
 // requested bike model.
@@ -500,7 +500,8 @@ export async function nextFreeWindow(
     if (opts.seasonEndIso && dateTo > opts.seasonEndIso) break;
     const endMs = toMs(dateTo, w.returnTime);
 
-    for (const slot of buildSlots()) {
+    // Pickup candidates only — never suggest a 19:00 pickup (closing).
+    for (const slot of buildPickupSlots()) {
       const slotMs = toMs(dateFrom, slot);
       if (slotMs >= endMs) break;
 
@@ -575,7 +576,8 @@ export async function earliestFreePickupSameDay(
   const reqPickupMs = toMs(w.dateFrom, w.pickupTime);
   const endMs = toMs(w.dateTo, w.returnTime);
 
-  for (const slot of buildSlots()) {
+  // Pickup candidates only — never suggest a 19:00 pickup (closing).
+  for (const slot of buildPickupSlots()) {
     const slotMs = toMs(w.dateFrom, slot);
     if (slotMs <= reqPickupMs) continue; // only later than what they asked
     if (slotMs >= endMs) break; // pickup must stay before the return moment

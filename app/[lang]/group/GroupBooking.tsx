@@ -14,10 +14,12 @@ import Footer from "@/components/Footer";
 import { BRAND, LICENCE_BADGE, type Category, type PaymentMethod } from "@/lib/mockData";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { buildSlots, calculatePrice } from "@/lib/pricing";
+import { buildSlots, buildPickupSlots, calculatePrice } from "@/lib/pricing";
 import { SEASON_END_DATE } from "@/lib/season";
 
+// Return may be at closing (19:00); pickup never is (buildPickupSlots).
 const SLOTS = buildSlots();
+const PICKUP_SLOTS = buildPickupSlots();
 
 const LICENCE_OPTIONS = [
   { value: "AM", label: "AM (moped / 50cc)" },
@@ -387,7 +389,7 @@ export default function GroupBooking({
                   onChange={(e) => setPickupTime(e.target.value)}
                   className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all"
                 >
-                  {SLOTS.map((s) => (
+                  {PICKUP_SLOTS.map((s) => (
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>

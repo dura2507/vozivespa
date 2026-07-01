@@ -3,7 +3,7 @@ import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail, sendOwnerBookingEmail } from "@/lib/email";
 import { markEmailReadByHeader } from "@/lib/imap-mark";
-import { isValidSlot, parseTime } from "@/lib/pricing";
+import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
 import { isBookingInSeason, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
 import { describeConflict, findFreeUnit, getBikeUnitLabel } from "@/lib/availability";
 import {
@@ -38,6 +38,12 @@ function asIsoDate(v: FormDataEntryValue | null): string | null {
 function asSlot(v: FormDataEntryValue | null): string | null {
   if (typeof v !== "string") return null;
   return isValidSlot(v) ? v : null;
+}
+
+// Pickup can't be at closing (19:00) — see isValidPickupSlot.
+function asPickupSlot(v: FormDataEntryValue | null): string | null {
+  if (typeof v !== "string") return null;
+  return isValidPickupSlot(v) ? v : null;
 }
 
 function asPaymentMethod(v: FormDataEntryValue | null): PaymentMethod | null {
@@ -105,7 +111,7 @@ export async function POST(request: Request) {
     : rawNotes;
   const from = asIsoDate(form.get("from"));
   const to = asIsoDate(form.get("to"));
-  const pickupTime = asSlot(form.get("pickupTime"));
+  const pickupTime = asPickupSlot(form.get("pickupTime"));
   const returnTime = asSlot(form.get("returnTime"));
   const paymentMethod = asPaymentMethod(form.get("paymentMethod"));
   const driversLicence = asLicence(form.get("driversLicence"));

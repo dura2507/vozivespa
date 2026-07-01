@@ -19,6 +19,7 @@ import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import {
   buildSlots,
+  buildPickupSlots,
   calculatePrice,
   fullyBookedDates,
   TIER_LABEL,
@@ -246,7 +247,7 @@ export default function BikeDetail({
   // that moment.
   const pickupSlots = effectiveRange?.from
     ? validPickupSlots(effectiveRange.from, bookings, totalUnits)
-    : buildSlots();
+    : buildPickupSlots();
   const returnSlots = effectiveRange?.to
     ? validReturnSlots(effectiveRange.to, bookings, totalUnits)
     : buildSlots();

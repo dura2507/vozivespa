@@ -1,6 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { isValidSlot, parseTime, calculatePrice } from "@/lib/pricing";
+import { isValidSlot, isValidPickupSlot, parseTime, calculatePrice } from "@/lib/pricing";
 import { isBookingInSeason, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
 import { findFreeUnits } from "@/lib/availability";
 import { getBikeWithPricing } from "@/lib/bike-pricing";
@@ -46,6 +46,10 @@ function asIsoDate(v: FormDataEntryValue | null): string | null {
 }
 function asSlot(v: FormDataEntryValue | null): string | null {
   return typeof v === "string" && isValidSlot(v) ? v : null;
+}
+// Pickup can't be at closing (19:00) — see isValidPickupSlot.
+function asPickupSlot(v: FormDataEntryValue | null): string | null {
+  return typeof v === "string" && isValidPickupSlot(v) ? v : null;
 }
 function inSet<T extends readonly string[]>(set: T, v: FormDataEntryValue | null): T[number] | null {
   return typeof v === "string" && (set as readonly string[]).includes(v) ? (v as T[number]) : null;
@@ -103,7 +107,7 @@ export async function POST(request: Request) {
     : rawNotes;
   const from = asIsoDate(form.get("from"));
   const to = asIsoDate(form.get("to"));
-  const pickupTime = asSlot(form.get("pickupTime"));
+  const pickupTime = asPickupSlot(form.get("pickupTime"));
   const returnTime = asSlot(form.get("returnTime"));
   const paymentMethod = inSet(PAYMENT_METHODS, form.get("paymentMethod"));
   const driversLicence = inSet(LICENCES, form.get("driversLicence"));

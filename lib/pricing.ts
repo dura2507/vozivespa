@@ -64,7 +64,8 @@ export function isValidSlot(t: string): boolean {
   return mins % SLOT_MINUTES === 0;
 }
 
-// All half-hour pickup/return slots from 09:00 to 19:00 inclusive.
+// All half-hour slots from 09:00 to 19:00 inclusive. This is the RETURN
+// slot list — a bike may come back right at closing (19:00).
 export function buildSlots(): string[] {
   const out: string[] = [];
   for (let h = SHOP_OPEN_HOUR; h <= SHOP_CLOSE_HOUR; h++) {
@@ -74,6 +75,28 @@ export function buildSlots(): string[] {
     }
   }
   return out;
+}
+
+// Latest PICKUP of the day. Owner policy (Thomas, 2026-07-01): the shop
+// won't hand a bike out at closing (19:00) — there's no time to fit
+// helmets and brief the rider — so the last pickup slot is one earlier.
+// Returns still go all the way to 19:00. Keeping this as the single
+// source stops the homepage badge and the booking form from disagreeing
+// about whether a bike freed at 18:30 is pickupable "today at 19:00".
+export const LAST_PICKUP_MINUTES = SHOP_CLOSE_HOUR * 60 - SLOT_MINUTES; // 18:30
+
+// Pickup slots: 09:00 .. 18:30 (never 19:00 — see LAST_PICKUP_MINUTES).
+export function buildPickupSlots(): string[] {
+  return buildSlots().filter((s) => {
+    const mins = parseTime(s);
+    return mins !== null && mins <= LAST_PICKUP_MINUTES;
+  });
+}
+
+// Stricter than isValidSlot: a valid PICKUP time also can't be 19:00.
+export function isValidPickupSlot(t: string): boolean {
+  const mins = parseTime(t);
+  return mins !== null && isValidSlot(t) && mins <= LAST_PICKUP_MINUTES;
 }
 
 // Confirmed booking on a bike, used to compute time-slot constraints.
@@ -136,9 +159,10 @@ export function validPickupSlots(
   bookings: ConfirmedBooking[],
   totalUnits: number,
 ): string[] {
-  if (totalUnits <= 0) return buildSlots();
+  // Pickup list never includes 19:00 (closing) — see buildPickupSlots.
+  if (totalUnits <= 0) return buildPickupSlots();
   const lookaheadMs = MIN_USEFUL_RENTAL_MINUTES * 60_000;
-  return buildSlots().filter(
+  return buildPickupSlots().filter(
     (s) => countBusyUnitsAt(pickupDate, s, bookings, lookaheadMs) < totalUnits,
   );
 }
