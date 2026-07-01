@@ -268,6 +268,11 @@ function FleetCard({ entry }: { entry: FleetEntry }) {
       <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mt-1">
         out
       </p>
+      {entry.reservedSoonCount > 0 && (
+        <p className="text-[11px] text-amber-700 font-bold mt-1 leading-tight">
+          {entry.reservedSoonCount} reserved · pickup soon
+        </p>
+      )}
       {(entry.pendingCount > 0 || entry.upcomingCount > 0) && (
         <p className="text-xs text-muted mt-2 leading-tight">
           {entry.pendingCount > 0 && (

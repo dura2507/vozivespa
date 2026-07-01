@@ -6,6 +6,7 @@ import {
   type BikeUnitRow,
 } from "@/lib/supabase";
 import { signedReceiptUrl } from "@/lib/storage";
+import { TURNAROUND_MINUTES, MIN_USEFUL_RENTAL_MINUTES } from "@/lib/pricing";
 
 export type EnrichedBooking = BookingRow & {
   bikeName: string;
@@ -42,8 +43,15 @@ export type FleetEntry = {
   bikeId: string;
   bikeName: string;
   totalUnits: number;
-  // Distinct unit IDs of currently-out (confirmed + within window) bookings.
+  // Units that are unavailable to a walk-in right now: physically out OR
+  // reserved for an imminent pickup with no useful gap before it. Matches
+  // the public availability logic so the dashboard ratio and the website
+  // ("ausgebucht") never contradict each other.
   outUnits: number;
+  // Of those, how many are NOT physically out yet but committed for a
+  // pickup coming up soon. Shown as a "reserved" note so the owner can
+  // tell the transitional state apart from bikes already handed over.
+  reservedSoonCount: number;
   pendingCount: number;
   upcomingCount: number;
 };
@@ -259,7 +267,20 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     bookableUnitIds.add(u.id);
   }
 
-  const out = new Map<string, { outUnits: Set<string>; pending: number; upcoming: number }>();
+  type Acc = { outUnits: Set<string>; reservedUnits: Set<string>; pending: number; upcoming: number };
+  const makeAcc = (): Acc => ({ outUnits: new Set(), reservedUnits: new Set(), pending: 0, upcoming: 0 });
+  const getAcc = (bikeId: string, map: Map<string, Acc>): Acc => {
+    let e = map.get(bikeId);
+    if (!e) { e = makeAcc(); map.set(bikeId, e); }
+    return e;
+  };
+  // A pickup this soon (with no useful rental fitting in the gap) means the
+  // unit is effectively committed — a walk-in can't have it. Same rule the
+  // public homepage uses, so the dashboard agrees with the website.
+  const bufferMs = TURNAROUND_MINUTES * 60_000;
+  const usefulMs = MIN_USEFUL_RENTAL_MINUTES * 60_000;
+
+  const out = new Map<string, Acc>();
   for (const b of (bookingsRes.data ?? []) as Array<{
     id: string;
     bike_id: string;
@@ -271,13 +292,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     return_time: string;
     returned_at: string | null;
   }>) {
-    const entry =
-      out.get(b.bike_id) ??
-      (() => {
-        const e = { outUnits: new Set<string>(), pending: 0, upcoming: 0 };
-        out.set(b.bike_id, e);
-        return e;
-      })();
+    const entry = getAcc(b.bike_id, out);
     if (b.status === "pending") entry.pending++;
     // Both confirmed AND pending block a unit, so both must count toward
     // OUT/upcoming, otherwise the fleet status contradicts what the public
@@ -291,13 +306,20 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       if (b.bike_unit_id && !bookableUnitIds.has(b.bike_unit_id)) continue;
       const start = toMs(b.date_from, b.pickup_time);
       const end = toMs(b.date_to, b.return_time);
+      // Prefer the unit id (dedupes if the same unit is somehow booked
+      // twice); fall back to the row id so rows without an assigned unit
+      // still count as one occupied slot, not zero.
+      const key = b.bike_unit_id ?? `row:${b.id}`;
       if (start <= nowMs && end >= nowMs) {
-        // Prefer the unit id (dedupes if the same unit is somehow booked
-        // twice); fall back to the row id so rows without an assigned unit
-        // still count as one occupied slot, not zero.
-        entry.outUnits.add(b.bike_unit_id ?? `row:${b.id}`);
+        entry.outUnits.add(key);
       } else if (start > nowMs) {
-        entry.upcoming++;
+        // Imminent pickup with no useful gap → reserved (counts as out).
+        // Otherwise a genuine future booking → upcoming.
+        if (start - bufferMs - nowMs < usefulMs) {
+          entry.reservedUnits.add(key);
+        } else {
+          entry.upcoming++;
+        }
       }
     }
   }
@@ -318,24 +340,11 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     if (nowMs < start || nowMs > end) {
       // Future block — counted via upcomingCount instead.
       if (start > nowMs) {
-        const entry =
-          out.get(m.bike_id) ??
-          (() => {
-            const e = { outUnits: new Set<string>(), pending: 0, upcoming: 0 };
-            out.set(m.bike_id, e);
-            return e;
-          })();
-        entry.upcoming++;
+        getAcc(m.bike_id, out).upcoming++;
       }
       continue;
     }
-    const entry =
-      out.get(m.bike_id) ??
-      (() => {
-        const e = { outUnits: new Set<string>(), pending: 0, upcoming: 0 };
-        out.set(m.bike_id, e);
-        return e;
-      })();
+    const entry = getAcc(m.bike_id, out);
     if (m.bike_unit_id) {
       entry.outUnits.add(m.bike_unit_id);
     } else {
@@ -347,11 +356,22 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
 
   return CATEGORIES.map<FleetEntry>((cat) => {
     const entry = out.get(cat.id);
+    // Committed = physically out ∪ reserved-for-imminent-pickup. Reserved
+    // units already physically out (back-to-back) are only counted once.
+    const committed = new Set(entry?.outUnits);
+    let reservedSoon = 0;
+    for (const key of entry?.reservedUnits ?? []) {
+      if (!committed.has(key)) {
+        committed.add(key);
+        reservedSoon++;
+      }
+    }
     return {
       bikeId: cat.id,
       bikeName: cat.shortName ?? cat.model,
       totalUnits: unitsByBike.get(cat.id) ?? 0,
-      outUnits: entry?.outUnits.size ?? 0,
+      outUnits: committed.size,
+      reservedSoonCount: reservedSoon,
       pendingCount: entry?.pending ?? 0,
       upcomingCount: entry?.upcoming ?? 0,
     };
