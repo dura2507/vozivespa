@@ -655,5 +655,22 @@
     "freeIfReturnBy": "Szabad, ha visszaadod eddig:",
     "useReturn": "Visszaadási idő használata",
     "depositSummary": "Kaució: {count} × {each} = {total}"
+  },
+  "chatbot": {
+    "openLabel": "Chat megnyitása",
+    "close": "Chat bezárása",
+    "title": "Kérdezz bátran",
+    "subtitle": "Motorok, árak, jogosítvány, foglalás. Magyarul vagy a te nyelveden.",
+    "greeting": "Szia! Miben segíthetek?",
+    "placeholder": "Írd be a kérdésed...",
+    "send": "Küldés",
+    "disclaimer": "AI asszisztens. Érzékeny ügyekben WhatsAppon keress minket.",
+    "errorGeneric": "Valami hiba történt. Próbáld újra, vagy írj WhatsAppon.",
+    "suggestions": [
+      "Milyen jogosítvány kell 125cc-hez?",
+      "Kell kaució?",
+      "Kiszállítotok a reptérre?",
+      "Milyen a nyitvatartás?"
+    ]
   }
 }

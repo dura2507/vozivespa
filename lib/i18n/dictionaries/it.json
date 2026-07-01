@@ -655,5 +655,22 @@
     "freeIfReturnBy": "Libera se reso entro",
     "useReturn": "Usa quest'orario di reso",
     "depositSummary": "Cauzione: {count} × {each} = {total}"
+  },
+  "chatbot": {
+    "openLabel": "Apri chat",
+    "close": "Chiudi chat",
+    "title": "Chiedici tutto",
+    "subtitle": "Moto, prezzi, patenti, prenotazione. In italiano o nella tua lingua.",
+    "greeting": "Ciao! Cosa vuoi sapere?",
+    "placeholder": "Scrivi la tua domanda...",
+    "send": "Invia",
+    "disclaimer": "Assistente AI. Per informazioni sensibili usa WhatsApp.",
+    "errorGeneric": "Qualcosa è andato storto. Riprova o scrivici su WhatsApp.",
+    "suggestions": [
+      "Che patente serve per 125cc?",
+      "È richiesto un deposito?",
+      "Consegnate in aeroporto?",
+      "Quali sono gli orari?"
+    ]
   }
 }

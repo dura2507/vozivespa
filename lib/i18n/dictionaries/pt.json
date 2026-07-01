@@ -655,5 +655,22 @@
     "freeIfReturnBy": "Livre se devolvida até",
     "useReturn": "Usar hora de devolução",
     "depositSummary": "Caução: {count} × {each} = {total}"
+  },
+  "chatbot": {
+    "openLabel": "Abrir chat",
+    "close": "Fechar chat",
+    "title": "Pergunte o que quiser",
+    "subtitle": "Motos, preços, habilitação, reserva. Em português ou no seu idioma.",
+    "greeting": "Oi! O que você quer saber?",
+    "placeholder": "Digite sua pergunta...",
+    "send": "Enviar",
+    "disclaimer": "Assistente IA. Para assuntos sensíveis fale pelo WhatsApp.",
+    "errorGeneric": "Algo deu errado. Tente de novo ou fale com a gente no WhatsApp.",
+    "suggestions": [
+      "Qual habilitação para 125cc?",
+      "Precisa de caução?",
+      "Entregam no aeroporto?",
+      "Qual o horário?"
+    ]
   }
 }

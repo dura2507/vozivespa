@@ -655,5 +655,22 @@
     "freeIfReturnBy": "Voľné, ak vrátiš do",
     "useReturn": "Použiť čas vrátenia",
     "depositSummary": "Kaucia: {count} × {each} = {total}"
+  },
+  "chatbot": {
+    "openLabel": "Otvoriť chat",
+    "close": "Zavrieť chat",
+    "title": "Opýtaj sa nás na čokoľvek",
+    "subtitle": "O motorkách, cenách, vodičských, rezervácii. Po slovensky alebo v tvojom jazyku.",
+    "greeting": "Ahoj! Čo ťa zaujíma?",
+    "placeholder": "Napíš svoju otázku...",
+    "send": "Odoslať",
+    "disclaimer": "AI asistent. Pri citlivých veciach napíš na WhatsApp.",
+    "errorGeneric": "Niečo sa pokazilo. Skús to znova alebo nás kontaktuj na WhatsApp.",
+    "suggestions": [
+      "Aký vodičák treba na 125cc?",
+      "Vyžadujete kauciu?",
+      "Doručíte na letisko?",
+      "Aké sú otváracie hodiny?"
+    ]
   }
 }

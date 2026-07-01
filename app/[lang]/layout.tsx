@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
-import { LOCALES, isLocale } from "@/lib/i18n/config";
+import { LOCALES, isLocale, type Locale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import Chatbot from "@/components/Chatbot";
 
 export function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
@@ -14,5 +16,11 @@ export default async function LangLayout({
 }) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
-  return <>{children}</>;
+  const dict = await getDictionary(lang as Locale);
+  return (
+    <>
+      {children}
+      <Chatbot locale={lang as Locale} t={dict.chatbot} />
+    </>
+  );
 }

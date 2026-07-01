@@ -655,5 +655,22 @@
     "freeIfReturnBy": "Free if returned by",
     "useReturn": "Use return time",
     "depositSummary": "Deposit: {count} × {each} = {total}"
+  },
+  "chatbot": {
+    "openLabel": "Open chat",
+    "close": "Close chat",
+    "title": "Ask us anything",
+    "subtitle": "About bikes, prices, licences, booking. English or your language.",
+    "greeting": "Hi! What would you like to know?",
+    "placeholder": "Type your question...",
+    "send": "Send",
+    "disclaimer": "AI assistant. For anything sensitive, please use WhatsApp.",
+    "errorGeneric": "Something went wrong. Please try again or contact us on WhatsApp.",
+    "suggestions": [
+      "Which licence do I need for a 125cc?",
+      "Do I need a deposit?",
+      "Can you deliver to the airport?",
+      "What are your opening hours?"
+    ]
   }
 }

@@ -655,5 +655,22 @@
     "freeIfReturnBy": "Slobodno uz povrat do",
     "useReturn": "Primijeni povrat",
     "depositSummary": "Polog: {count} × {each} = {total}"
+  },
+  "chatbot": {
+    "openLabel": "Otvori chat",
+    "close": "Zatvori chat",
+    "title": "Pitaj nas bilo što",
+    "subtitle": "O motorima, cijenama, vozačkoj, rezervaciji. Na hrvatskom ili tvom jeziku.",
+    "greeting": "Bok! Što te zanima?",
+    "placeholder": "Napiši svoje pitanje...",
+    "send": "Pošalji",
+    "disclaimer": "AI asistent. Za osjetljive stvari koristi WhatsApp.",
+    "errorGeneric": "Nešto je pošlo po zlu. Pokušaj ponovno ili nas kontaktiraj na WhatsAppu.",
+    "suggestions": [
+      "Koju vozačku trebam za 125cc?",
+      "Treba li polog?",
+      "Možete li dostaviti do zračne luke?",
+      "Koje je radno vrijeme?"
+    ]
   }
 }

@@ -655,5 +655,22 @@
     "freeIfReturnBy": "Frei, wenn Rückgabe bis",
     "useReturn": "Rückgabe übernehmen",
     "depositSummary": "Kaution: {count} × {each} = {total}"
+  },
+  "chatbot": {
+    "openLabel": "Chat öffnen",
+    "close": "Chat schließen",
+    "title": "Frag uns alles",
+    "subtitle": "Zu Bikes, Preisen, Führerschein, Buchung. Auf Deutsch oder in deiner Sprache.",
+    "greeting": "Hi! Was möchtest du wissen?",
+    "placeholder": "Deine Frage...",
+    "send": "Senden",
+    "disclaimer": "KI-Assistent. Für Sensibles bitte WhatsApp nutzen.",
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte erneut versuchen oder auf WhatsApp schreiben.",
+    "suggestions": [
+      "Welchen Führerschein brauche ich für 125cc?",
+      "Muss ich eine Kaution hinterlegen?",
+      "Liefert ihr zum Flughafen?",
+      "Welche Öffnungszeiten habt ihr?"
+    ]
   }
 }

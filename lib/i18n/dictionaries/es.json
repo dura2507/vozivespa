@@ -655,5 +655,22 @@
     "freeIfReturnBy": "Libre si se devuelve antes de",
     "useReturn": "Usar esta devolución",
     "depositSummary": "Fianza: {count} × {each} = {total}"
+  },
+  "chatbot": {
+    "openLabel": "Abrir chat",
+    "close": "Cerrar chat",
+    "title": "Pregúntanos lo que quieras",
+    "subtitle": "Motos, precios, carnets, reserva. En español o en tu idioma.",
+    "greeting": "¡Hola! ¿Qué quieres saber?",
+    "placeholder": "Escribe tu pregunta...",
+    "send": "Enviar",
+    "disclaimer": "Asistente IA. Para temas delicados usa WhatsApp.",
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo o escríbenos por WhatsApp.",
+    "suggestions": [
+      "¿Qué carnet necesito para 125cc?",
+      "¿Se pide fianza?",
+      "¿Entregáis en el aeropuerto?",
+      "¿Cuál es el horario?"
+    ]
   }
 }

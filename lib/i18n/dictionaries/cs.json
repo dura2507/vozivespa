@@ -655,5 +655,22 @@
     "freeIfReturnBy": "Volné, pokud vráceno do",
     "useReturn": "Použít čas vrácení",
     "depositSummary": "Kauce: {count} × {each} = {total}"
+  },
+  "chatbot": {
+    "openLabel": "Otevřít chat",
+    "close": "Zavřít chat",
+    "title": "Zeptej se na cokoliv",
+    "subtitle": "Motorky, ceny, řidičák, rezervace. Česky nebo ve tvém jazyce.",
+    "greeting": "Ahoj! Co tě zajímá?",
+    "placeholder": "Napiš svůj dotaz...",
+    "send": "Odeslat",
+    "disclaimer": "AI asistent. U citlivých věcí piš na WhatsApp.",
+    "errorGeneric": "Něco se pokazilo. Zkus to znovu nebo nám napiš na WhatsApp.",
+    "suggestions": [
+      "Jaký řidičák je potřeba na 125cc?",
+      "Vyžaduje se kauce?",
+      "Doručujete na letiště?",
+      "Jaká je otevírací doba?"
+    ]
   }
 }

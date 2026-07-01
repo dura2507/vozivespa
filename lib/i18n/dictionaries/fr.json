@@ -655,5 +655,22 @@
     "freeIfReturnBy": "Libre si rendu avant",
     "useReturn": "Utiliser ce retour",
     "depositSummary": "Caution : {count} × {each} = {total}"
+  },
+  "chatbot": {
+    "openLabel": "Ouvrir le chat",
+    "close": "Fermer le chat",
+    "title": "Demande-nous ce que tu veux",
+    "subtitle": "Motos, prix, permis, réservation. En français ou dans ta langue.",
+    "greeting": "Salut ! Que veux-tu savoir ?",
+    "placeholder": "Écris ta question...",
+    "send": "Envoyer",
+    "disclaimer": "Assistant IA. Pour les infos sensibles utilise WhatsApp.",
+    "errorGeneric": "Un problème est survenu. Réessaie ou contacte-nous sur WhatsApp.",
+    "suggestions": [
+      "Quel permis pour un 125cc ?",
+      "Faut-il une caution ?",
+      "Livrez-vous à l'aéroport ?",
+      "Quels sont vos horaires ?"
+    ]
   }
 }

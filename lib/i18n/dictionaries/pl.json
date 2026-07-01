@@ -655,5 +655,22 @@
     "freeIfReturnBy": "Wolne przy zwrocie do",
     "useReturn": "Użyj tego zwrotu",
     "depositSummary": "Kaucja: {count} × {each} = {total}"
+  },
+  "chatbot": {
+    "openLabel": "Otwórz czat",
+    "close": "Zamknij czat",
+    "title": "Zapytaj nas o wszystko",
+    "subtitle": "O motorach, cenach, prawie jazdy, rezerwacji. Po polsku lub w Twoim języku.",
+    "greeting": "Cześć! Co chcesz wiedzieć?",
+    "placeholder": "Wpisz swoje pytanie...",
+    "send": "Wyślij",
+    "disclaimer": "Asystent AI. W sprawach wrażliwych pisz przez WhatsApp.",
+    "errorGeneric": "Coś poszło nie tak. Spróbuj ponownie lub napisz na WhatsApp.",
+    "suggestions": [
+      "Jakie prawo jazdy na 125cc?",
+      "Czy jest kaucja?",
+      "Dostarczacie na lotnisko?",
+      "Jakie są godziny otwarcia?"
+    ]
   }
 }
