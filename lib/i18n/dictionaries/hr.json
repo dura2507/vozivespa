@@ -671,6 +671,8 @@
       "Treba li polog?",
       "Možete li dostaviti do zračne luke?",
       "Koje je radno vrijeme?"
-    ]
+    ],
+    "errorNotConfigured": "Chatbot još nije spreman. Kontaktiraj nas na WhatsApp ili e-mailom.",
+    "errorRateLimited": "Previše poruka. Pokušaj ponovno za nekoliko minuta."
   }
 }

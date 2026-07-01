@@ -671,6 +671,8 @@
       "Faut-il une caution ?",
       "Livrez-vous à l'aéroport ?",
       "Quels sont vos horaires ?"
-    ]
+    ],
+    "errorNotConfigured": "Le chatbot n'est pas encore prêt. Contacte-nous sur WhatsApp ou par email.",
+    "errorRateLimited": "Trop de messages. Réessaie dans quelques minutes."
   }
 }

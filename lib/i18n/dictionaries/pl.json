@@ -671,6 +671,8 @@
       "Czy jest kaucja?",
       "Dostarczacie na lotnisko?",
       "Jakie są godziny otwarcia?"
-    ]
+    ],
+    "errorNotConfigured": "Chatbot nie jest jeszcze gotowy. Napisz do nas na WhatsApp lub e-mailem.",
+    "errorRateLimited": "Za dużo wiadomości. Spróbuj ponownie za kilka minut."
   }
 }

@@ -671,6 +671,8 @@
       "È richiesto un deposito?",
       "Consegnate in aeroporto?",
       "Quali sono gli orari?"
-    ]
+    ],
+    "errorNotConfigured": "Il chatbot non è ancora attivo. Contattaci su WhatsApp o via email.",
+    "errorRateLimited": "Troppi messaggi. Riprova tra qualche minuto."
   }
 }

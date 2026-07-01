@@ -671,6 +671,8 @@
       "Kell kaució?",
       "Kiszállítotok a reptérre?",
       "Milyen a nyitvatartás?"
-    ]
+    ],
+    "errorNotConfigured": "A chatbot még nem elérhető. Kérjük, keress minket WhatsAppon vagy e-mailben.",
+    "errorRateLimited": "Túl sok üzenet. Próbáld újra pár perc múlva."
   }
 }

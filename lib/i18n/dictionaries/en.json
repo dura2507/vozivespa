@@ -671,6 +671,8 @@
       "Do I need a deposit?",
       "Can you deliver to the airport?",
       "What are your opening hours?"
-    ]
+    ],
+    "errorNotConfigured": "The chatbot isn't ready yet. Please contact us on WhatsApp or by email.",
+    "errorRateLimited": "Too many messages, please try again in a few minutes."
   }
 }

@@ -671,6 +671,8 @@
       "Vyžadujete kauciu?",
       "Doručíte na letisko?",
       "Aké sú otváracie hodiny?"
-    ]
+    ],
+    "errorNotConfigured": "Chatbot ešte nie je pripravený. Napíš nám na WhatsApp alebo e-mailom.",
+    "errorRateLimited": "Príliš veľa správ. Skús to znova o pár minút."
   }
 }

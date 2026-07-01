@@ -51,7 +51,15 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
       });
       const data = (await res.json()) as { reply?: string; message?: string; error?: string };
       if (!res.ok) {
-        setError(data.message ?? t.errorGeneric);
+        // Prefer the localised copy over the server's English default so
+        // the error reads in the visitor's language.
+        const localised =
+          data.error === "not_configured"
+            ? t.errorNotConfigured
+            : data.error === "rate_limited"
+              ? t.errorRateLimited
+              : t.errorGeneric;
+        setError(localised ?? data.message ?? t.errorGeneric);
         return;
       }
       if (data.reply) {

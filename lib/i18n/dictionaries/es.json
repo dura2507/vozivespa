@@ -671,6 +671,8 @@
       "¿Se pide fianza?",
       "¿Entregáis en el aeropuerto?",
       "¿Cuál es el horario?"
-    ]
+    ],
+    "errorNotConfigured": "El chatbot aún no está listo. Escríbenos por WhatsApp o email.",
+    "errorRateLimited": "Demasiados mensajes. Inténtalo de nuevo en unos minutos."
   }
 }
