@@ -93,6 +93,11 @@ export default function BikeDetail({
   const [ridingStyle, setRidingStyle] = useState<RidingStyleId | "">("");
   const [receipt, setReceipt] = useState<File | null>(null);
   const [receiptError, setReceiptError] = useState<string | null>(null);
+  // Time-dependent calendar/slot filtering (dropping already-passed slots
+  // on today) must only kick in after mount, otherwise the server render
+  // and the first client render disagree and React warns about hydration.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const [copied, setCopied] = useState<string | null>(null);
   const isSinglePassenger = bike.seats === 1;
   const formRef = useRef<HTMLDivElement>(null);
@@ -234,6 +239,44 @@ export default function BikeDetail({
     bookedMiddleRanges.push({ from: m.from, to: m.to });
   }
 
+  // The pickup slots actually offered for a given day. Same as the dropdown
+  // uses, plus: on today, slots already in the past are dropped (after
+  // mount, to stay hydration-safe). This is the single source of truth for
+  // "can you start a rental on this day".
+  const pickupSlotsFor = (day: Date): string[] => {
+    const base = validPickupSlots(day, bookings, totalUnits);
+    if (!mounted || !isSameDay(day, new Date())) return base;
+    const nowMs = Date.now();
+    return base.filter((s) => {
+      const [h, min] = s.split(":").map(Number);
+      const d = new Date(day);
+      d.setHours(h, min, 0, 0);
+      return d.getTime() > nowMs;
+    });
+  };
+
+  // Disable any day whose pickup dropdown would come up empty — otherwise
+  // the calendar lets you pick a date you can't get a start time for (e.g.
+  // today once its usable slots have passed). Only booking-touched days and
+  // today can be affected; a day with no bookings always has free slots.
+  {
+    const risky = new Set<string>([toIsoDate(new Date())]);
+    for (const b of bookings) {
+      let cur = new Date(`${b.from}T00:00:00`);
+      const end = new Date(`${b.to}T00:00:00`);
+      while (cur.getTime() <= end.getTime()) {
+        risky.add(toIsoDate(cur));
+        cur = addDays(cur, 1);
+      }
+    }
+    for (const iso of risky) {
+      const day = new Date(`${iso}T00:00:00`);
+      if (isFutureOrToday(day) && pickupSlotsFor(day).length === 0) {
+        bookedFullDays.push(day);
+      }
+    }
+  }
+
   // Single click on the calendar leaves range.to undefined — DayPicker
   // is waiting for a second click to complete the range. We treat
   // "from set, to missing" as a same-day rental so the user can pick
@@ -246,7 +289,7 @@ export default function BikeDetail({
   // reject slots only when every unit is busy (or in turnaround) at
   // that moment.
   const pickupSlots = effectiveRange?.from
-    ? validPickupSlots(effectiveRange.from, bookings, totalUnits)
+    ? pickupSlotsFor(effectiveRange.from)
     : buildPickupSlots();
   const returnSlots = effectiveRange?.to
     ? validReturnSlots(effectiveRange.to, bookings, totalUnits)
