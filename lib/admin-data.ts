@@ -225,7 +225,16 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
 export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
   const supabase = getServiceClient();
   const [unitsRes, bookingsRes, blocksRes] = await Promise.all([
-    supabase.from("bike_units").select("id, bike_id").eq("active", true),
+    // Match the public availability + homepage counters: backup / reserve
+    // units aren't part of the bookable fleet, so they must not inflate the
+    // "total" or the "OUT" ratio. Without this the admin card showed 4/5 OUT
+    // for a model where every rentable unit is actually out, and Thomas read
+    // it as "one still available" — the opposite of the truth.
+    supabase
+      .from("bike_units")
+      .select("id, bike_id")
+      .eq("active", true)
+      .eq("is_backup", false),
     supabase
       .from("bookings")
       .select("id, bike_id, bike_unit_id, status, date_from, date_to, pickup_time, return_time, returned_at"),
@@ -239,8 +248,15 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
   if (blocksRes.error) throw new Error(blocksRes.error.message);
 
   const unitsByBike = new Map<string, number>();
+  // Set of unit ids that ARE part of the bookable fleet (non-backup). We
+  // ignore bookings assigned to a backup unit for counting purposes — the
+  // owner handed that unit out at their discretion and it doesn't belong
+  // to the public capacity math. Without this a manual assignment to the
+  // reserve would push OUT above total.
+  const bookableUnitIds = new Set<string>();
   for (const u of (unitsRes.data ?? []) as Array<{ id: string; bike_id: string }>) {
     unitsByBike.set(u.bike_id, (unitsByBike.get(u.bike_id) ?? 0) + 1);
+    bookableUnitIds.add(u.id);
   }
 
   const out = new Map<string, { outUnits: Set<string>; pending: number; upcoming: number }>();
@@ -270,6 +286,9 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     if (b.status === "confirmed" || b.status === "pending") {
       // Returned early → unit is free again, don't count it as out.
       if (b.returned_at) continue;
+      // Skip bookings on a backup unit — they're outside the public
+      // capacity math (see bookableUnitIds above).
+      if (b.bike_unit_id && !bookableUnitIds.has(b.bike_unit_id)) continue;
       const start = toMs(b.date_from, b.pickup_time);
       const end = toMs(b.date_to, b.return_time);
       if (start <= nowMs && end >= nowMs) {
