@@ -6,7 +6,14 @@ import {
   type BikeUnitRow,
 } from "@/lib/supabase";
 import { signedReceiptUrl } from "@/lib/storage";
-import { TURNAROUND_MINUTES, MIN_USEFUL_RENTAL_MINUTES } from "@/lib/pricing";
+import {
+  TURNAROUND_MINUTES,
+  MIN_USEFUL_RENTAL_MINUTES,
+  SHOP_OPEN_HOUR,
+  SLOT_MINUTES,
+  LAST_PICKUP_MINUTES,
+} from "@/lib/pricing";
+import { SEASON_END_ISO } from "@/lib/season";
 
 export type EnrichedBooking = BookingRow & {
   bikeName: string;
@@ -376,6 +383,168 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       upcomingCount: entry?.upcoming ?? 0,
     };
   });
+}
+
+// ---- Per-vehicle availability (Thomas's ask: "next free slot per bike") ----
+
+export type UnitAvailability = {
+  unitLabel: string;
+  // out = physically with a customer now; reserved = free but committed
+  // for a pickup coming up soon; free = available to a walk-in right now.
+  status: "out" | "reserved" | "free";
+  // When it comes back (out) or when the imminent pickup is (reserved).
+  busyUntilMs: number | null;
+  // Next moment this unit can be handed to a walk-in: shop hours, 30-min
+  // turnaround, no 19:00 pickup. Equals now when free right now.
+  nextFreePickupMs: number;
+  // When that free window closes (next booking's pickup), null = open end.
+  freeUntilMs: number | null;
+};
+
+export type FleetUnitAvailability = {
+  bikeId: string;
+  bikeName: string;
+  units: UnitAvailability[];
+};
+
+// UTC ms → Zagreb wallclock parts (mirror of toMs, which goes the other way).
+function zagrebParts(ms: number): { isoDate: string; minutesOfDay: number } {
+  const parts = tzFormatter.formatToParts(new Date(ms)).reduce(
+    (acc, p) => {
+      if (p.type !== "literal") acc[p.type] = p.value;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+  const hour = Number(parts.hour === "24" ? "0" : parts.hour);
+  return {
+    isoDate: `${parts.year}-${parts.month}-${parts.day}`,
+    minutesOfDay: hour * 60 + Number(parts.minute),
+  };
+}
+
+function addDaysIso(iso: string, n: number): string {
+  const d = new Date(`${iso}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+// Snap a raw moment to the next valid PICKUP slot: inside shop hours,
+// on the 30-min grid, never after 18:30 (bumps to next day 09:00).
+function bumpToPickupSlot(ms: number): number {
+  const { isoDate, minutesOfDay } = zagrebParts(ms);
+  if (minutesOfDay < SHOP_OPEN_HOUR * 60) return toMs(isoDate, "09:00");
+  if (minutesOfDay > LAST_PICKUP_MINUTES) return toMs(addDaysIso(isoDate, 1), "09:00");
+  const rounded = Math.ceil(minutesOfDay / SLOT_MINUTES) * SLOT_MINUTES;
+  if (rounded > LAST_PICKUP_MINUTES) return toMs(addDaysIso(isoDate, 1), "09:00");
+  const hh = String(Math.floor(rounded / 60)).padStart(2, "0");
+  const mm = String(rounded % 60).padStart(2, "0");
+  return toMs(isoDate, `${hh}:${mm}`);
+}
+
+// Per bike model, per unit: current status + the next slot the owner can
+// give it to a walk-in. Reserve/backup units are excluded like everywhere.
+export async function listUnitAvailability(
+  bikeId: string,
+  nowMs: number,
+): Promise<FleetUnitAvailability> {
+  const supabase = getServiceClient();
+  const [unitsRes, bookingsRes, blocksRes, labels] = await Promise.all([
+    supabase
+      .from("bike_units")
+      .select("id")
+      .eq("bike_id", bikeId)
+      .eq("active", true)
+      .eq("is_backup", false),
+    supabase
+      .from("bookings")
+      .select("bike_unit_id, date_from, date_to, pickup_time, return_time, returned_at, status")
+      .eq("bike_id", bikeId)
+      .in("status", ["confirmed", "pending"])
+      .is("returned_at", null),
+    supabase
+      .from("blocked_dates")
+      .select("bike_unit_id, date_from, date_to, start_time, end_time")
+      .eq("bike_id", bikeId)
+      .is("booking_id", null),
+    listUnitLabelMap(),
+  ]);
+  if (unitsRes.error) throw new Error(unitsRes.error.message);
+  if (bookingsRes.error) throw new Error(bookingsRes.error.message);
+  if (blocksRes.error) throw new Error(blocksRes.error.message);
+
+  const unitIds = (unitsRes.data ?? []).map((u) => (u as { id: string }).id);
+  const bufferMs = TURNAROUND_MINUTES * 60_000;
+  const usefulMs = MIN_USEFUL_RENTAL_MINUTES * 60_000;
+  const seasonCutoff = toMs(SEASON_END_ISO, "23:59");
+
+  // Collect busy intervals per unit. Whole-model blocks (unit_id null)
+  // apply to every unit.
+  const perUnit = new Map<string, Array<{ start: number; end: number }>>();
+  for (const id of unitIds) perUnit.set(id, []);
+  for (const b of (bookingsRes.data ?? []) as Array<{
+    bike_unit_id: string | null; date_from: string; date_to: string; pickup_time: string; return_time: string;
+  }>) {
+    if (!b.bike_unit_id) continue;
+    const arr = perUnit.get(b.bike_unit_id);
+    if (arr) arr.push({ start: toMs(b.date_from, b.pickup_time), end: toMs(b.date_to, b.return_time) });
+  }
+  for (const m of (blocksRes.data ?? []) as Array<{
+    bike_unit_id: string | null; date_from: string; date_to: string; start_time: string | null; end_time: string | null;
+  }>) {
+    const start = m.start_time ? toMs(m.date_from, m.start_time) : toMs(m.date_from, "00:00");
+    const end = m.end_time ? toMs(m.date_to, m.end_time) : toMs(m.date_to, "23:59") + 60_000;
+    const targets = m.bike_unit_id ? [m.bike_unit_id] : unitIds;
+    for (const id of targets) {
+      const arr = perUnit.get(id);
+      if (arr) arr.push({ start, end });
+    }
+  }
+
+  const units: UnitAvailability[] = unitIds.map((id) => {
+    const intervals = (perUnit.get(id) ?? []).sort((a, b) => a.start - b.start);
+    const current = intervals.find((iv) => nowMs >= iv.start && nowMs < iv.end) ?? null;
+    const nextUpcoming = intervals.find((iv) => iv.start > nowMs) ?? null;
+
+    // Where to start hunting for a free pickup: now, or once the current
+    // rental is back with turnaround done.
+    const searchFrom = current ? current.end + bufferMs : nowMs;
+    let candidate = bumpToPickupSlot(searchFrom);
+    for (let guard = 0; guard < 800 && candidate <= seasonCutoff; guard++) {
+      const clash = intervals.find((iv) => candidate >= iv.start - bufferMs && candidate < iv.end + bufferMs);
+      if (!clash) break;
+      candidate = bumpToPickupSlot(clash.end + bufferMs);
+    }
+    const freeUntil = intervals.find((iv) => iv.start > candidate)?.start ?? null;
+
+    let status: UnitAvailability["status"];
+    let busyUntil: number | null;
+    if (current) {
+      status = "out";
+      busyUntil = current.end;
+    } else if (nextUpcoming && nextUpcoming.start - bufferMs - nowMs < usefulMs) {
+      status = "reserved";
+      busyUntil = nextUpcoming.start;
+    } else {
+      status = "free";
+      busyUntil = null;
+    }
+
+    return {
+      unitLabel: labels.get(id) ?? id.slice(0, 6),
+      status,
+      busyUntilMs: busyUntil,
+      nextFreePickupMs: candidate,
+      freeUntilMs: freeUntil,
+    };
+  });
+
+  // Sort: free first, then reserved, then out — owner scans for what's
+  // available now. Within a status, earliest next-free first.
+  const order = { free: 0, reserved: 1, out: 2 };
+  units.sort((a, b) => order[a.status] - order[b.status] || a.nextFreePickupMs - b.nextFreePickupMs);
+
+  return { bikeId, bikeName: bikeName(bikeId), units };
 }
 
 export async function listManualBlocks(): Promise<EnrichedBlock[]> {

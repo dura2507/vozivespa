@@ -8,11 +8,26 @@ import {
   listAllBookings,
   listFleetSummary,
   listServiceBlocks,
+  listUnitAvailability,
   type BookingDisplay,
   type EnrichedBooking,
   type FleetEntry,
+  type FleetUnitAvailability,
   type ServiceBlock,
 } from "@/lib/admin-data";
+
+const ZAGREB_DT = new Intl.DateTimeFormat("de-DE", {
+  timeZone: "Europe/Zagreb",
+  day: "2-digit",
+  month: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+function fmtDateTimeMs(ms: number): string {
+  // "05.07, 13:30"
+  return ZAGREB_DT.format(new Date(ms)).replace(",", " ·");
+}
 
 export const dynamic = "force-dynamic";
 
@@ -286,6 +301,75 @@ function FleetCard({ entry }: { entry: FleetEntry }) {
   );
 }
 
+// Per-vehicle availability grid for a single model. Answers the owner's
+// walk-in question at a glance: which specific bike is free now, and when
+// the busy ones come back / are next handable.
+function UnitAvailabilityPanel({
+  data,
+  nowMs,
+}: {
+  data: FleetUnitAvailability;
+  nowMs: number;
+}) {
+  return (
+    <section className="mb-10">
+      <div className="flex items-baseline gap-3 mb-3">
+        <h2 className="font-semibold uppercase text-xs tracking-[0.12em] text-ink/80">
+          Availability per bike
+        </h2>
+        <span className="text-xs tracking-[0.15em] uppercase text-ink/40 font-bold">
+          {data.units.length} units
+        </span>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {data.units.map((u) => {
+          const tone =
+            u.status === "free"
+              ? "bg-emerald-50 border-emerald-300"
+              : u.status === "reserved"
+              ? "bg-amber-50 border-amber-300"
+              : "bg-red/10 border-red/40";
+          const label =
+            u.status === "free" ? "Free now" : u.status === "reserved" ? "Reserved" : "Out";
+          const labelTone =
+            u.status === "free"
+              ? "text-emerald-700"
+              : u.status === "reserved"
+              ? "text-amber-700"
+              : "text-red";
+          return (
+            <div key={u.unitLabel} className={`border p-3 ${tone}`}>
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-mono text-xs font-bold text-ink">{u.unitLabel}</span>
+                <span className={`text-[10px] tracking-[0.15em] uppercase font-bold ${labelTone}`}>
+                  {label}
+                </span>
+              </div>
+              {u.status !== "free" && u.busyUntilMs && (
+                <p className="text-[11px] text-ink/60 mt-1.5">
+                  {u.status === "out" ? "Back" : "Pickup"} {fmtDateTimeMs(u.busyUntilMs)}
+                </p>
+              )}
+              <p className="text-xs text-ink mt-1.5 font-bold">
+                {u.status === "free" && u.nextFreePickupMs <= nowMs + 60_000 ? (
+                  <span>Available for walk-in now</span>
+                ) : (
+                  <span>Next pickup {fmtDateTimeMs(u.nextFreePickupMs)}</span>
+                )}
+              </p>
+              {u.freeUntilMs && (
+                <p className="text-[11px] text-ink/50 mt-0.5">
+                  free until {fmtDateTimeMs(u.freeUntilMs)}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 export default async function AdminDashboard({
   searchParams,
 }: {
@@ -293,10 +377,12 @@ export default async function AdminDashboard({
 }) {
   const { bike: bikeFilter } = await searchParams;
   const nowMs = Date.now();
-  const [allRaw, fleet, blocksRaw] = await Promise.all([
+  const [allRaw, fleet, blocksRaw, unitAvail] = await Promise.all([
     listAllBookings(),
     listFleetSummary(nowMs),
     listServiceBlocks(),
+    // Per-vehicle availability only matters on a single-model view.
+    bikeFilter ? listUnitAvailability(bikeFilter, nowMs) : Promise.resolve(null),
   ]);
   const all = bikeFilter ? allRaw.filter((b) => b.bike_id === bikeFilter) : allRaw;
   const blocks = bikeFilter ? blocksRaw.filter((b) => b.bike_id === bikeFilter) : blocksRaw;
@@ -354,6 +440,10 @@ export default async function AdminDashboard({
             ))}
           </div>
         </section>
+      )}
+
+      {unitAvail && unitAvail.units.length > 0 && (
+        <UnitAvailabilityPanel data={unitAvail} nowMs={nowMs} />
       )}
 
       <Section
