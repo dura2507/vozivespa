@@ -36,6 +36,8 @@ export type EnrichedBooking = BookingRow & {
     unitLabel: string | null;
     ridingStyle: string | null;
     priceCents: number | null;
+    onGhost: boolean;
+    canGhost: boolean;
   }>;
 };
 
@@ -178,7 +180,7 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
     .maybeSingle<BookingRow>();
   if (error) throw new Error(error.message);
   if (!data) return null;
-  const [url, unitLabels, group] = await Promise.all([
+  const [url, unitLabels, group, backupUnits] = await Promise.all([
     data.deposit_screenshot_path
       ? signedReceiptUrl(data.deposit_screenshot_path).catch(() => null)
       : Promise.resolve<string | null>(null),
@@ -191,7 +193,16 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
           .select("id, bike_id, bike_unit_id, riding_style, total_price_cents")
           .eq("booking_group_id", data.booking_group_id)
       : Promise.resolve({ data: null }),
+    // Ghost Bikes = the hidden reserve units. Used to flag which rows sit
+    // on a Ghost Bike and which models even have one to swap onto.
+    supabase.from("bike_units").select("id, bike_id").eq("active", true).eq("is_backup", true),
   ]);
+  const backupUnitIds = new Set(
+    ((backupUnits as { data: Array<{ id: string }> | null }).data ?? []).map((u) => u.id),
+  );
+  const modelsWithGhost = new Set(
+    ((backupUnits as { data: Array<{ bike_id: string }> | null }).data ?? []).map((u) => u.bike_id),
+  );
   type Sibling = {
     id: string;
     bike_id: string;
@@ -216,6 +227,10 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
     unitLabel: b.bike_unit_id ? unitLabels.get(b.bike_unit_id) ?? null : null,
     ridingStyle: b.riding_style,
     priceCents: b.total_price_cents,
+    // Is this bike currently parked on the Ghost Bike, and does its model
+    // have a Ghost Bike to swap onto at all?
+    onGhost: b.bike_unit_id ? backupUnitIds.has(b.bike_unit_id) : false,
+    canGhost: modelsWithGhost.has(b.bike_id),
   });
   const groupBikes = siblings
     ? [...siblings].sort((a, b) => bikeName(a.bike_id).localeCompare(bikeName(b.bike_id))).map(toGroupBike)

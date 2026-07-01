@@ -8,6 +8,8 @@ type GroupBike = {
   bikeName: string;
   unitLabel: string | null;
   ridingStyle: string | null;
+  onGhost: boolean;
+  canGhost: boolean;
 };
 type Fleet = { id: string; name: string };
 
@@ -75,6 +77,28 @@ export default function GroupBikeManager({
     }
   }
 
+  async function swapGhost(rowId: string, toGhost: boolean) {
+    setBusy("ghost:" + rowId);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/bookings/${bookingId}/group`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rowId, toGhost }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Could not reassign the bike");
+        return;
+      }
+      router.refresh();
+    } catch {
+      setError("Network error");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function removeBike(rowId: string) {
     if (!confirm("Remove this bike from the booking?")) return;
     setBusy("rm:" + rowId);
@@ -118,19 +142,45 @@ export default function GroupBikeManager({
                   {gb.unitLabel}
                 </span>
               )}
+              {gb.onGhost && (
+                <span className="ml-2 text-xs font-bold uppercase tracking-widest text-violet-600">
+                  👻 Ghost
+                </span>
+              )}
               <span className="ml-2 text-xs text-muted">
                 {gb.ridingStyle === "with_passenger" ? "with passenger" : "solo"}
               </span>
             </span>
-            <button
-              type="button"
-              disabled={busy != null || groupBikes.length <= 1}
-              onClick={() => removeBike(gb.id)}
-              title={groupBikes.length <= 1 ? "Cancel the booking instead" : undefined}
-              className="text-xs font-bold uppercase tracking-widest text-red disabled:opacity-30 hover:underline shrink-0"
-            >
-              {busy === "rm:" + gb.id ? "..." : "Remove"}
-            </button>
+            <span className="flex items-center gap-3 shrink-0">
+              {gb.canGhost && (
+                <button
+                  type="button"
+                  disabled={busy != null}
+                  onClick={() => swapGhost(gb.id, !gb.onGhost)}
+                  title={
+                    gb.onGhost
+                      ? "Move back onto a regular bike"
+                      : "Swap onto the hidden Ghost Bike (frees the regular unit)"
+                  }
+                  className="text-xs font-bold uppercase tracking-widest text-violet-600 disabled:opacity-30 hover:underline"
+                >
+                  {busy === "ghost:" + gb.id
+                    ? "..."
+                    : gb.onGhost
+                      ? "↩ Regular"
+                      : "👻 Ghost Bike"}
+                </button>
+              )}
+              <button
+                type="button"
+                disabled={busy != null || groupBikes.length <= 1}
+                onClick={() => removeBike(gb.id)}
+                title={groupBikes.length <= 1 ? "Cancel the booking instead" : undefined}
+                className="text-xs font-bold uppercase tracking-widest text-red disabled:opacity-30 hover:underline"
+              >
+                {busy === "rm:" + gb.id ? "..." : "Remove"}
+              </button>
+            </span>
           </div>
         ))}
       </div>

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findFreeUnit, describeConflict } from "@/lib/availability";
+import { findFreeUnit, findUnitConflict, describeConflict } from "@/lib/availability";
 import { calculatePrice } from "@/lib/pricing";
 import { getBikeWithPricing } from "@/lib/bike-pricing";
 import { SESSION_COOKIE_NAME, isValidSession } from "@/lib/admin-session";
@@ -194,4 +194,108 @@ export async function DELETE(
     redirectTo = sib?.id ?? null;
   }
   return NextResponse.json({ ok: true, redirectTo });
+}
+
+// PATCH /api/admin/bookings/[id]/group  { rowId, toGhost }
+//
+// Ghost Bike swap (Priscilla's flow): move one bike of the booking onto
+// the hidden reserve unit (is_backup) instead of cancelling — e.g. a rider
+// too big for the assigned bike. Because backup units are excluded from
+// the public capacity everywhere, parking a booking on the Ghost Bike
+// automatically frees the regular unit for another rental. toGhost=false
+// moves it back onto a free regular unit.
+export async function PATCH(
+  request: Request,
+  _ctx: { params: Promise<{ id: string }> },
+) {
+  if (!(await isAdmin())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  let body: { rowId?: unknown; toGhost?: unknown };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+  const rowId = typeof body.rowId === "string" ? body.rowId : "";
+  const toGhost = body.toGhost !== false; // default: assign to ghost
+  if (!rowId) return NextResponse.json({ error: "rowId is required" }, { status: 400 });
+
+  const supabase = getServiceClient();
+  const { data: booking, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("id", rowId)
+    .maybeSingle<BookingRow>();
+  if (error) return NextResponse.json({ error: "Database error" }, { status: 500 });
+  if (!booking) return NextResponse.json({ error: "Bike row not found" }, { status: 404 });
+
+  const window = {
+    bikeId: booking.bike_id,
+    dateFrom: booking.date_from,
+    dateTo: booking.date_to,
+    pickupTime: booking.pickup_time,
+    returnTime: booking.return_time,
+  };
+
+  let targetUnitId: string;
+  if (toGhost) {
+    // The Ghost Bike is the model's hidden reserve unit (is_backup=true).
+    const { data: ghost, error: gErr } = await supabase
+      .from("bike_units")
+      .select("id")
+      .eq("bike_id", booking.bike_id)
+      .eq("active", true)
+      .eq("is_backup", true)
+      .limit(1)
+      .maybeSingle<{ id: string }>();
+    if (gErr) return NextResponse.json({ error: "Database error" }, { status: 500 });
+    if (!ghost) {
+      return NextResponse.json(
+        { error: "This model has no Ghost Bike (no reserve unit set up)." },
+        { status: 400 },
+      );
+    }
+    // Don't double-book the single Ghost Bike.
+    const clash = await findUnitConflict(supabase, {
+      bikeUnitId: ghost.id,
+      dateFrom: booking.date_from,
+      dateTo: booking.date_to,
+      pickupTime: booking.pickup_time,
+      returnTime: booking.return_time,
+      excludeBookingId: booking.id,
+    });
+    if (clash) {
+      return NextResponse.json(
+        { error: `Ghost Bike is already taken for this window${clash.kind === "booking" ? ` (${clash.customerName})` : ""}.` },
+        { status: 409 },
+      );
+    }
+    targetUnitId = ghost.id;
+  } else {
+    // Move back onto a free regular (non-backup) unit.
+    let free;
+    try {
+      free = await findFreeUnit(supabase, window);
+    } catch {
+      return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
+    }
+    if (!free.unitId) {
+      return NextResponse.json(
+        { error: free.conflict ? describeConflict(free.conflict) : "No free regular unit for this window" },
+        { status: 409 },
+      );
+    }
+    targetUnitId = free.unitId;
+  }
+
+  const { error: upErr } = await supabase
+    .from("bookings")
+    .update({ bike_unit_id: targetUnitId })
+    .eq("id", booking.id);
+  if (upErr) {
+    console.error("[admin ghost swap] update", upErr);
+    return NextResponse.json({ error: "Could not reassign the bike" }, { status: 500 });
+  }
+  return NextResponse.json({ ok: true, onGhost: toGhost });
 }
