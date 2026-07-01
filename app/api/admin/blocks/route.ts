@@ -171,12 +171,25 @@ export async function POST(request: Request) {
         }
         const unit = candidates.find((u) => !occupiedOn(u, day));
         if (!unit) {
-          // Every unit busy this day → genuine over-capacity.
+          // Every unit busy this day → genuine over-capacity. If the
+          // clashing booking starts LATER on this day, tell the owner
+          // exactly how to work around it: uncheck "All day" and end the
+          // block 30 min before pickup.
           const clash = bookings.find((bk) => bk.date_from <= day && day <= bk.date_to);
           const who = clash ? ` (${clash.customer_name})` : "";
+          let suggestion = "";
+          if (clash && clash.date_from === day && clash.pickup_time) {
+            const [h, m] = clash.pickup_time.split(":").map((x) => parseInt(x, 10));
+            const totalMin = h * 60 + m - 30; // turnaround window
+            if (totalMin > 9 * 60) {
+              const sh = String(Math.floor(totalMin / 60)).padStart(2, "0");
+              const sm = String(totalMin % 60).padStart(2, "0");
+              suggestion = ` Uncheck "All day" and set End time to ${sh}:${sm} to block up to the turnaround.`;
+            }
+          }
           return NextResponse.json(
             {
-              error: `Can't block — every ${bikeId} is booked on ${day}${who}. Free up that booking first.`,
+              error: `Can't block — every ${bikeId} is booked on ${day}${who}.${suggestion}`,
             },
             { status: 409 },
           );
@@ -220,7 +233,7 @@ export async function POST(request: Request) {
     const freeUnit = unitIsFree(bikeUnitId) ? bikeUnitId : unitIds.find((u) => unitIsFree(u));
     if (!freeUnit) {
       const clash = bookings.find((bk) => overlaps(bk.date_from, bk.date_to, bk.pickup_time, bk.return_time));
-      const who = clash ? ` (${clash.customer_name})` : "";
+      const who = clash ? ` (${clash.customer_name}, pickup ${clash.date_from} ${clash.pickup_time?.slice(0,5) ?? ""})` : "";
       return NextResponse.json(
         { error: `Can't block — every ${bikeId} is needed during this window${who}.` },
         { status: 409 },
