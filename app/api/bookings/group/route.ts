@@ -1,7 +1,7 @@
 import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { isValidSlot, isValidPickupSlot, parseTime, calculatePrice } from "@/lib/pricing";
-import { isBookingInSeason, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
+import { isBookingInSeason, isPickupInPast, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
 import { findFreeUnits } from "@/lib/availability";
 import { getBikeWithPricing } from "@/lib/bike-pricing";
 import { sendOwnerGroupBookingTelegram } from "@/lib/telegram";
@@ -135,6 +135,13 @@ export async function POST(request: Request) {
   if (from === to && parseTime(pickupTime)! >= parseTime(returnTime)!) {
     return NextResponse.json(
       { error: "Return time must be later than pickup time on a same-day booking" },
+      { status: 400 },
+    );
+  }
+  // Authoritative backstop: no pickup in the past (Zagreb time).
+  if (isPickupInPast(from, pickupTime)) {
+    return NextResponse.json(
+      { error: "That pickup time has already passed. Please pick a later slot." },
       { status: 400 },
     );
   }

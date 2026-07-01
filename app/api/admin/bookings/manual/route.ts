@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 import { findFreeUnit, findFreeUnits, findUnitConflict, describeConflict } from "@/lib/availability";
-import { isValidSlot, parseTime } from "@/lib/pricing";
+import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
   const dateTo =
     typeof body.dateTo === "string" && ISO_DATE.test(body.dateTo) ? body.dateTo : null;
   const pickupTime =
-    typeof body.pickupTime === "string" && isValidSlot(body.pickupTime) ? body.pickupTime : null;
+    typeof body.pickupTime === "string" && isValidPickupSlot(body.pickupTime) ? body.pickupTime : null;
   const returnTime =
     typeof body.returnTime === "string" && isValidSlot(body.returnTime) ? body.returnTime : null;
   const requestedUnitId =

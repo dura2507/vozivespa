@@ -4,7 +4,7 @@ import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail, sendOwnerBookingEmail } from "@/lib/email";
 import { markEmailReadByHeader } from "@/lib/imap-mark";
 import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
-import { isBookingInSeason, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
+import { isBookingInSeason, isPickupInPast, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
 import { describeConflict, findFreeUnit, getBikeUnitLabel } from "@/lib/availability";
 import {
   isAllowedReceiptMime,
@@ -152,6 +152,14 @@ export async function POST(request: Request) {
   if (from === to && parseTime(pickupTime)! >= parseTime(returnTime)!) {
     return NextResponse.json(
       { error: "Return time must be later than pickup time on a same-day booking" },
+      { status: 400 },
+    );
+  }
+  // Reject a pickup that has already passed (Zagreb time). Authoritative
+  // backstop: no client can book a slot in the past, whatever it sent.
+  if (isPickupInPast(from, pickupTime)) {
+    return NextResponse.json(
+      { error: "That pickup time has already passed. Please pick a later slot." },
       { status: 400 },
     );
   }

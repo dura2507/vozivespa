@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
-import { format } from "date-fns";
+import { format, isSameDay } from "date-fns";
 import { enUS, de, es, it, hr, hu, sk, cs, ptBR } from "date-fns/locale";
 import type { Locale as DateFnsLocale } from "date-fns";
 import "react-day-picker/style.css";
@@ -14,7 +14,7 @@ import Footer from "@/components/Footer";
 import { BRAND, LICENCE_BADGE, type Category, type PaymentMethod } from "@/lib/mockData";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { buildSlots, buildPickupSlots, calculatePrice } from "@/lib/pricing";
+import { buildSlots, buildPickupSlots, calculatePrice, LAST_PICKUP_MINUTES } from "@/lib/pricing";
 import { SEASON_END_DATE } from "@/lib/season";
 
 // Return may be at closing (19:00); pickup never is (buildPickupSlots).
@@ -89,6 +89,10 @@ export default function GroupBooking({
   const [copied, setCopied] = useState<string | null>(null);
   // Image lightbox: src of the photo currently shown enlarged, or null.
   const [preview, setPreview] = useState<string | null>(null);
+  // Time-dependent filtering (dropping today's already-passed pickup
+  // slots) only after mount, so SSR and first client render agree.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   // A single calendar click leaves range.to undefined (DayPicker waits
   // for a second click). Treat "from set, to missing" as a same-day
@@ -98,6 +102,32 @@ export default function GroupBooking({
   const from = effFrom ? toIsoDate(effFrom) : null;
   const to = effTo ? toIsoDate(effTo) : null;
   const rangeReady = Boolean(from && to);
+
+  // Pickup slots offered for the selected start day. On today, slots that
+  // have already passed are dropped (after mount, hydration-safe). Same
+  // rule the single-bike page uses, so no past pickup can be selected.
+  const pickupOptions = useMemo(() => {
+    if (!mounted || !effFrom || !isSameDay(effFrom, new Date())) return PICKUP_SLOTS;
+    const nowMs = Date.now();
+    return PICKUP_SLOTS.filter((s) => {
+      const [h, m] = s.split(":").map(Number);
+      const d = new Date(effFrom);
+      d.setHours(h, m, 0, 0);
+      return d.getTime() > nowMs;
+    });
+  }, [mounted, effFrom]);
+
+  // Keep the selected pickup time valid as options shrink through the day.
+  useEffect(() => {
+    if (pickupOptions.length > 0 && !pickupOptions.includes(pickupTime)) {
+      setPickupTime(pickupOptions[0]);
+    }
+  }, [pickupOptions, pickupTime]);
+
+  // Once past the last pickup slot (18:30), today can't be a start day —
+  // disable it in the calendar so it isn't selectable with no valid time.
+  const disableTodayNoSlots =
+    mounted && new Date().getHours() * 60 + new Date().getMinutes() > LAST_PICKUP_MINUTES;
 
   // Fetch whole-fleet availability for the chosen window. Re-runs on any
   // change to dates / times. The endpoint returns every model with its
@@ -351,7 +381,11 @@ export default function GroupBooking({
               numberOfMonths={isWide ? 2 : 1}
               startMonth={new Date()}
               endMonth={SEASON_END_DATE}
-              disabled={[{ before: today }, { after: SEASON_END_DATE }]}
+              disabled={[
+                { before: today },
+                { after: SEASON_END_DATE },
+                ...(disableTodayNoSlots ? [today] : []),
+              ]}
               min={1}
               classNames={{
                 root: "font-sans",
@@ -389,7 +423,7 @@ export default function GroupBooking({
                   onChange={(e) => setPickupTime(e.target.value)}
                   className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all"
                 >
-                  {PICKUP_SLOTS.map((s) => (
+                  {pickupOptions.map((s) => (
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { buildSlots, calculatePrice } from "@/lib/pricing";
+import { buildSlots, buildPickupSlots, calculatePrice } from "@/lib/pricing";
 import { groupBookingsForDisplay } from "@/lib/admin-data";
 import type { EnrichedBlock, EnrichedBooking } from "@/lib/admin-data";
 import type { PricingTiers } from "@/lib/mockData";
@@ -67,6 +67,8 @@ function fmtDate(iso: string): string {
 }
 
 const SLOTS = buildSlots();
+// Walk-in pickup follows the no-19:00 rule; returns + service blocks use SLOTS.
+const PICKUP_SLOTS = buildPickupSlots();
 
 export function BlocksManager({
   initialBlocks,
@@ -510,7 +512,7 @@ export function BlocksManager({
                   onChange={(e) => setPickupTime(e.target.value)}
                   className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
                 >
-                  {SLOTS.map((s) => (
+                  {PICKUP_SLOTS.map((s) => (
                     <option key={s} value={s}>
                       {s}
                     </option>

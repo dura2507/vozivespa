@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { EnrichedBooking } from "@/lib/admin-data";
-import { buildSlots, isValidSlot } from "@/lib/pricing";
+import { buildSlots, buildPickupSlots, isValidSlot } from "@/lib/pricing";
 import { CATEGORIES } from "@/lib/mockData";
 
 type Decision = "confirmed" | "declined" | "cancelled";
 type Fulfillment = "pickup" | "undo_pickup" | "return" | "undo_return";
 
 const SLOTS = buildSlots();
+// Pickup can't be 19:00 (closing); returns still can. See buildPickupSlots.
+const PICKUP_SLOTS = buildPickupSlots();
 
 function fmtTimeOfDay(t: string | null | undefined): string {
   return t ? t.slice(0, 5) : "";
@@ -373,7 +375,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
                     onChange={(e) => setPickupTime(e.target.value)}
                     className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white"
                   >
-                    {SLOTS.map((s) => (
+                    {PICKUP_SLOTS.map((s) => (
                       <option key={s} value={s}>
                         {s}
                       </option>

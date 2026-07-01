@@ -22,3 +22,38 @@ export function isIsoInSeason(iso: string): boolean {
 export function isBookingInSeason(from: string, to: string): boolean {
   return isIsoInSeason(from) && isIsoInSeason(to);
 }
+
+// Current wallclock in the shop's timezone (Zagreb). All booking dates
+// and times are stored as Zagreb wall time, so any "is this in the past"
+// comparison must be made against Zagreb now, not the server's UTC clock.
+const ZAGREB_NOW_FMT = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/Zagreb",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+export function zagrebNow(): { isoDate: string; minutesOfDay: number } {
+  const p = ZAGREB_NOW_FMT.formatToParts(new Date()).reduce(
+    (acc, part) => {
+      if (part.type !== "literal") acc[part.type] = part.value;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
+  const hour = Number(p.hour === "24" ? "0" : p.hour);
+  return { isoDate: `${p.year}-${p.month}-${p.day}`, minutesOfDay: hour * 60 + Number(p.minute) };
+}
+
+// True when a pickup (date + "HH:MM", Zagreb wall time) is already in the
+// past. The single authoritative guard so no booking route can accept a
+// pickup that has already come and gone, whatever the client sent.
+export function isPickupInPast(dateFrom: string, pickupTime: string): boolean {
+  const now = zagrebNow();
+  if (dateFrom < now.isoDate) return true;
+  if (dateFrom > now.isoDate) return false;
+  const [h, m] = pickupTime.split(":").map(Number);
+  return h * 60 + m < now.minutesOfDay;
+}
