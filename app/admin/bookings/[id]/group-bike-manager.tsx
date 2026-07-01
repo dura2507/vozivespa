@@ -144,7 +144,7 @@ export default function GroupBikeManager({
               )}
               {gb.onGhost && (
                 <span className="ml-2 text-xs font-bold uppercase tracking-widest text-violet-600">
-                  👻 Ghost
+                  Ghost
                 </span>
               )}
               <span className="ml-2 text-xs text-muted">
@@ -167,8 +167,8 @@ export default function GroupBikeManager({
                   {busy === "ghost:" + gb.id
                     ? "..."
                     : gb.onGhost
-                      ? "↩ Regular"
-                      : "👻 Ghost Bike"}
+                      ? "Regular"
+                      : "Ghost Bike"}
                 </button>
               )}
               <button
