@@ -228,7 +228,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     supabase.from("bike_units").select("id, bike_id").eq("active", true),
     supabase
       .from("bookings")
-      .select("bike_id, bike_unit_id, status, date_from, date_to, pickup_time, return_time, returned_at"),
+      .select("id, bike_id, bike_unit_id, status, date_from, date_to, pickup_time, return_time, returned_at"),
     supabase
       .from("blocked_dates")
       .select("bike_id, bike_unit_id, date_from, date_to, start_time, end_time")
@@ -245,6 +245,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
 
   const out = new Map<string, { outUnits: Set<string>; pending: number; upcoming: number }>();
   for (const b of (bookingsRes.data ?? []) as Array<{
+    id: string;
     bike_id: string;
     bike_unit_id: string | null;
     status: string;
@@ -262,13 +263,20 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
         return e;
       })();
     if (b.status === "pending") entry.pending++;
-    if (b.status === "confirmed") {
+    // Both confirmed AND pending block a unit, so both must count toward
+    // OUT/upcoming, otherwise the fleet status contradicts what the public
+    // availability check does (which uses `in ('confirmed','pending')`) and
+    // Thomas sees "3 booked, only 1 counted" on the dashboard.
+    if (b.status === "confirmed" || b.status === "pending") {
       // Returned early → unit is free again, don't count it as out.
       if (b.returned_at) continue;
       const start = toMs(b.date_from, b.pickup_time);
       const end = toMs(b.date_to, b.return_time);
       if (start <= nowMs && end >= nowMs) {
-        if (b.bike_unit_id) entry.outUnits.add(b.bike_unit_id);
+        // Prefer the unit id (dedupes if the same unit is somehow booked
+        // twice); fall back to the row id so rows without an assigned unit
+        // still count as one occupied slot, not zero.
+        entry.outUnits.add(b.bike_unit_id ?? `row:${b.id}`);
       } else if (start > nowMs) {
         entry.upcoming++;
       }
