@@ -505,10 +505,19 @@ export async function listUnitAvailability(
     const intervals = (perUnit.get(id) ?? []).sort((a, b) => a.start - b.start);
     const current = intervals.find((iv) => nowMs >= iv.start && nowMs < iv.end) ?? null;
     const nextUpcoming = intervals.find((iv) => iv.start > nowMs) ?? null;
+    // A pickup this soon leaves no useful window before it — treat the
+    // unit as committed to that booking, same as the dashboard's OUT.
+    const reserved =
+      !current && nextUpcoming && nextUpcoming.start - bufferMs - nowMs < usefulMs
+        ? nextUpcoming
+        : null;
 
-    // Where to start hunting for a free pickup: now, or once the current
-    // rental is back with turnaround done.
-    const searchFrom = current ? current.end + bufferMs : nowMs;
+    // Where to start hunting for a free pickup: after whatever the unit is
+    // committed to right now (current rental or an imminent reserved one),
+    // otherwise now. This stops us advertising the tiny dead gap before a
+    // reserved pickup as if it were bookable.
+    const blocker = current ?? reserved;
+    const searchFrom = blocker ? blocker.end + bufferMs : nowMs;
     let candidate = bumpToPickupSlot(searchFrom);
     for (let guard = 0; guard < 800 && candidate <= seasonCutoff; guard++) {
       const clash = intervals.find((iv) => candidate >= iv.start - bufferMs && candidate < iv.end + bufferMs);
@@ -522,9 +531,9 @@ export async function listUnitAvailability(
     if (current) {
       status = "out";
       busyUntil = current.end;
-    } else if (nextUpcoming && nextUpcoming.start - bufferMs - nowMs < usefulMs) {
+    } else if (reserved) {
       status = "reserved";
-      busyUntil = nextUpcoming.start;
+      busyUntil = reserved.start;
     } else {
       status = "free";
       busyUntil = null;
