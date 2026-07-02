@@ -45,9 +45,18 @@ export type WebhookEvent = {
   providerCheckoutId: string;
 };
 
+export type CheckoutStatusResult = {
+  status: CheckoutStatus;
+  amountCapturedCents: number;
+};
+
 export interface PaymentProvider {
   readonly name: string;
   createCheckout(input: CreateCheckoutInput): Promise<CreateCheckoutResult>;
+  // Server-side truth check after the widget reports "success" — the SDK
+  // success callback is NOT proof of payment, so we always re-read the
+  // checkout from the PSP before confirming a booking.
+  getCheckoutStatus(providerCheckoutId: string): Promise<CheckoutStatusResult>;
   // Verifies the webhook signature (when the PSP signs them) and parses
   // the body into our normalised event shape. Throws on invalid signature.
   parseWebhook(

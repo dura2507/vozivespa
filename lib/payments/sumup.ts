@@ -2,6 +2,7 @@ import type {
   PaymentProvider,
   CreateCheckoutInput,
   CreateCheckoutResult,
+  CheckoutStatusResult,
   WebhookEvent,
   CheckoutStatus,
 } from "./provider";
@@ -87,6 +88,30 @@ export const sumupProvider: PaymentProvider = {
       // the SDK with it.
       hostedUrl: null,
       widgetCheckoutId: d.id,
+    };
+  },
+
+  async getCheckoutStatus(providerCheckoutId: string): Promise<CheckoutStatusResult> {
+    const secret = env("SUMUP_SECRET_KEY");
+    const res = await fetch(`${BASE}/v0.1/checkouts/${encodeURIComponent(providerCheckoutId)}`, {
+      headers: { Authorization: `Bearer ${secret}` },
+    });
+    const text = await res.text();
+    let data: unknown;
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      data = {};
+    }
+    if (!res.ok) {
+      const err = (data as { message?: string }) ?? {};
+      throw new Error(`SumUp getCheckout ${res.status}: ${err.message ?? text.slice(0, 200)}`);
+    }
+    const d = data as { status?: string; amount?: number | string };
+    const amount = typeof d.amount === "string" ? Number(d.amount) : d.amount ?? 0;
+    return {
+      status: mapStatus(d.status),
+      amountCapturedCents: Math.round(amount * 100),
     };
   },
 

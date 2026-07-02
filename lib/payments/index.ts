@@ -15,15 +15,10 @@ export function paymentProvider(): PaymentProvider | null {
   return null;
 }
 
-// Public-key + merchant info the frontend widget needs. Surfaced via a
-// server component / API so we never hardcode it in client code.
-export function publicPaymentConfig() {
-  const provider = (process.env.PAYMENT_PROVIDER ?? "manual").toLowerCase();
-  if (provider === "sumup") {
-    return {
-      provider: "sumup" as const,
-      publicKey: process.env.NEXT_PUBLIC_SUMUP_PUBLIC_KEY ?? "",
-    };
-  }
-  return { provider: "manual" as const };
+// Whether online card payment is live. The SumUp widget only needs the
+// server-created checkout id (no public key), so the client just needs to
+// know which flow to render: the online card widget, or the manual
+// screenshot upload. Passed from server components into the booking UI.
+export function onlinePaymentEnabled(): boolean {
+  return (process.env.PAYMENT_PROVIDER ?? "manual").toLowerCase() === "sumup";
 }

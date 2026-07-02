@@ -5,6 +5,7 @@ import { sendCustomerBookingReceivedEmail, sendOwnerBookingEmail } from "@/lib/e
 import { markEmailReadByHeader } from "@/lib/imap-mark";
 import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
 import { isBookingInSeason, isPickupInPast, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
+import { onlinePaymentEnabled } from "@/lib/payments";
 import { describeConflict, findFreeUnit, getBikeUnitLabel } from "@/lib/availability";
 import {
   isAllowedReceiptMime,
@@ -128,6 +129,10 @@ export async function POST(request: Request) {
       ? (localeRaw as "en" | "de" | "es" | "it" | "hr" | "pl" | "fr")
       : "en";
   const receipt = form.get("receipt");
+  // Online-payment path: the customer pays the deposit by card next, so no
+  // screenshot is uploaded. Only honoured when online payment is actually
+  // enabled server-side — you can't opt out of the screenshot otherwise.
+  const payOnline = form.get("payOnline") === "1" && onlinePaymentEnabled();
 
   if (!bikeId) return NextResponse.json({ error: "bikeId is required" }, { status: 400 });
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -163,7 +168,10 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
-  if (!paymentMethod) {
+  // Payment method + receipt only matter for the manual (screenshot) flow.
+  // When paying online, the card IS the payment method and no screenshot
+  // is uploaded — the deposit is collected right after via the widget.
+  if (!payOnline && !paymentMethod) {
     return NextResponse.json({ error: "Pick a payment method for the deposit" }, { status: 400 });
   }
   if (!driversLicence) {
@@ -172,17 +180,19 @@ export async function POST(request: Request) {
   if (!ridingStyle) {
     return NextResponse.json({ error: "Pick a riding style" }, { status: 400 });
   }
-  if (!(receipt instanceof File) || receipt.size === 0) {
-    return NextResponse.json({ error: "Upload a receipt screenshot" }, { status: 400 });
-  }
-  if (!isAllowedReceiptMime(receipt.type)) {
-    return NextResponse.json(
-      { error: "Receipt must be a JPG, PNG, HEIC or PDF" },
-      { status: 400 },
-    );
-  }
-  if (receipt.size > MAX_RECEIPT_BYTES) {
-    return NextResponse.json({ error: "Receipt is too large (max 4 MB)" }, { status: 400 });
+  if (!payOnline) {
+    if (!(receipt instanceof File) || receipt.size === 0) {
+      return NextResponse.json({ error: "Upload a receipt screenshot" }, { status: 400 });
+    }
+    if (!isAllowedReceiptMime(receipt.type)) {
+      return NextResponse.json(
+        { error: "Receipt must be a JPG, PNG, HEIC or PDF" },
+        { status: 400 },
+      );
+    }
+    if (receipt.size > MAX_RECEIPT_BYTES) {
+      return NextResponse.json({ error: "Receipt is too large (max 4 MB)" }, { status: 400 });
+    }
   }
 
   const supabase = getServiceClient();
@@ -261,7 +271,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not save booking" }, { status: 500 });
   }
 
-  // 4. Upload receipt + patch booking
+  // Online-payment path stops here: the booking is reserved (pending) and
+  // holds the slot. The customer now pays the deposit by card; the payment
+  // webhook / verify step promotes it to confirmed and fires the emails.
+  // No receipt, no screenshot notification on this path.
+  if (payOnline) {
+    return NextResponse.json({
+      ok: true,
+      bookingId: booking.id,
+      token: (booking as BookingRow).secret_token,
+    });
+  }
+
+  // 4. Upload receipt + patch booking. Past this point we're on the manual
+  // path (payOnline returned above), so the receipt is a validated File —
+  // re-assert it so the type narrows for the upload below.
+  if (!(receipt instanceof File)) {
+    return NextResponse.json({ error: "Upload a receipt screenshot" }, { status: 400 });
+  }
   let receiptPath: string;
   try {
     const bytes = new Uint8Array(await receipt.arrayBuffer());

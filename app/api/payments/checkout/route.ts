@@ -21,13 +21,15 @@ export async function POST(request: Request) {
       { status: 503 },
     );
   }
-  let body: { bookingId?: unknown };
+  let body: { bookingId?: unknown; amountMode?: unknown };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
   const bookingId = typeof body.bookingId === "string" ? body.bookingId : "";
+  // "deposit" = 20% now, rest on-site; "full" = whole rental online.
+  const amountMode = body.amountMode === "full" ? "full" : "deposit";
   if (!bookingId) {
     return NextResponse.json({ error: "bookingId is required" }, { status: 400 });
   }
@@ -57,17 +59,18 @@ export async function POST(request: Request) {
   if (totalCents <= 0) {
     return NextResponse.json({ error: "Nothing to charge yet" }, { status: 400 });
   }
-  // 20% deposit, rounded to whole cents.
-  const depositCents = Math.max(1, Math.round(totalCents * 0.2));
+  // Deposit = 20% (rest paid on-site); full = the whole rental online.
+  const chargeCents =
+    amountMode === "full" ? totalCents : Math.max(1, Math.round(totalCents * 0.2));
   const ref = bookingRef(booking.booking_group_id ?? booking.id);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://rentamotozadar.com";
 
   try {
     const result = await provider.createCheckout({
       reference: ref,
-      amountCents: depositCents,
+      amountCents: chargeCents,
       currency: "EUR",
-      description: `${BRAND.name} deposit ${ref}`,
+      description: `${BRAND.name} ${amountMode === "full" ? "rental" : "deposit"} ${ref}`,
       customer: {
         name: booking.customer_name,
         email: booking.customer_email ?? "",
@@ -77,7 +80,8 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({
       reference: ref,
-      amountCents: depositCents,
+      amountCents: chargeCents,
+      amountMode,
       ...result,
     });
   } catch (err) {
