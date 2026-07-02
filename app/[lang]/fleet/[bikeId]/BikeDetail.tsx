@@ -28,6 +28,7 @@ import {
   type ConfirmedBooking,
 } from "@/lib/pricing";
 import { SEASON_END_DATE } from "@/lib/season";
+import SumUpCardWidget from "@/components/SumUpCardWidget";
 
 type CustomerForm = {
   name: string;
@@ -49,7 +50,8 @@ type Licence = (typeof LICENCE_OPTIONS)[number]["value"];
 
 type RidingStyleId = "solo" | "with_passenger";
 
-type BookingStep = "dates" | "form" | "submitting" | "done";
+type BookingStep = "dates" | "form" | "submitting" | "paying" | "done";
+type PayMode = "screenshot" | "deposit" | "full";
 
 type BlockedRange = { from: Date; to: Date };
 
@@ -66,11 +68,13 @@ export default function BikeDetail({
   lang,
   dict,
   unitCount,
+  onlinePayment,
 }: {
   bike: Category;
   lang: Locale;
   dict: Dictionary;
   unitCount: number;
+  onlinePayment: boolean;
 }) {
   const tF = dict.fleet;
   const tBike = dict.bikes[bike.id as keyof typeof dict.bikes];
@@ -93,6 +97,13 @@ export default function BikeDetail({
   const [ridingStyle, setRidingStyle] = useState<RidingStyleId | "">("");
   const [receipt, setReceipt] = useState<File | null>(null);
   const [receiptError, setReceiptError] = useState<string | null>(null);
+  // Pay-by-card flow state. Defaults to the deposit when online is on;
+  // falls back to the screenshot flow when it's not. Once the server
+  // hands us a pending booking + checkout, we render the SumUp widget.
+  const [payMode, setPayMode] = useState<PayMode>(onlinePayment ? "deposit" : "screenshot");
+  const [pendingBookingId, setPendingBookingId] = useState<string | null>(null);
+  const [checkoutId, setCheckoutId] = useState<string | null>(null);
+  const [checkoutAmountCents, setCheckoutAmountCents] = useState<number>(0);
   // Time-dependent calendar/slot filtering (dropping already-passed slots
   // on today) must only kick in after mount, otherwise the server render
   // and the first client render disagree and React warns about hydration.
@@ -337,7 +348,8 @@ export default function BikeDetail({
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!effectiveRange?.from || !effectiveRange?.to) return;
-    if (!receipt) {
+    const online = payMode !== "screenshot";
+    if (!online && !receipt) {
       setReceiptError(tF.reservation.uploadError);
       return;
     }
@@ -356,13 +368,17 @@ export default function BikeDetail({
       fd.set("to", toIsoDate(effectiveRange.to));
       fd.set("pickupTime", pickupTime);
       fd.set("returnTime", returnTime);
-      fd.set("paymentMethod", paymentMethod);
+      if (!online) fd.set("paymentMethod", paymentMethod);
       fd.set("driversLicence", driversLicence);
       if (licenceCountry.trim()) fd.set("licenceCountry", licenceCountry.trim());
       fd.set("ridingStyle", ridingStyle);
       fd.set("totalPriceCents", String(totalPrice * 100));
       fd.set("locale", lang);
-      fd.set("receipt", receipt);
+      if (online) {
+        fd.set("payOnline", "1");
+      } else if (receipt) {
+        fd.set("receipt", receipt);
+      }
 
       const res = await fetch("/api/bookings", {
         method: "POST",
@@ -380,9 +396,40 @@ export default function BikeDetail({
         return;
       }
 
-      setBookingStep("done");
+      if (!online) {
+        setBookingStep("done");
+        setTimeout(() => {
+          successRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 50);
+        return;
+      }
+
+      // Online path: booking is reserved (pending). Create the checkout,
+      // then hand off to the SumUp widget below.
+      const okBody = (await res.json()) as { bookingId?: string };
+      const bookingId = okBody.bookingId;
+      if (!bookingId) throw new Error("Missing bookingId");
+      setPendingBookingId(bookingId);
+      const coRes = await fetch("/api/payments/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId, amountMode: payMode }),
+      });
+      const coBody = (await coRes.json()) as {
+        widgetCheckoutId?: string;
+        amountCents?: number;
+        error?: string;
+      };
+      if (!coRes.ok || !coBody.widgetCheckoutId) {
+        setSubmitError(coBody.error ?? tF.reservation.uploadError);
+        setBookingStep("form");
+        return;
+      }
+      setCheckoutId(coBody.widgetCheckoutId);
+      setCheckoutAmountCents(coBody.amountCents ?? 0);
+      setBookingStep("paying");
       setTimeout(() => {
-        successRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 50);
     } catch (err) {
       console.error("booking submit failed", err);
@@ -448,8 +495,7 @@ export default function BikeDetail({
   const bookingFee = Math.round(totalPrice * 0.2 * 100) / 100;
   const canSubmit =
     bookingStep === "form" &&
-    !!receipt &&
-    !receiptError &&
+    (payMode !== "screenshot" || (!!receipt && !receiptError)) &&
     !!driversLicence &&
     !!ridingStyle;
 
@@ -1201,6 +1247,39 @@ export default function BikeDetail({
                       {tF.reservation.noBooking}
                     </p>
 
+                    {/* Pay-mode selector — only shown when online payment is
+                        enabled. Deposit = 20% now + rest on-site; Full = pay
+                        everything online; Screenshot = the classic transfer
+                        + screenshot flow. */}
+                    {onlinePayment && (
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-6">
+                        {([
+                          { id: "deposit" as const, label: `Deposit 20% online`, hint: `${bookingFee}€ now, rest on-site` },
+                          { id: "full" as const, label: `Full amount online`, hint: `${totalPrice}€ now, nothing on-site` },
+                          { id: "screenshot" as const, label: `Manual transfer`, hint: `PayPal / Revolut + screenshot` },
+                        ] satisfies Array<{ id: PayMode; label: string; hint: string }>).map((opt) => {
+                          const selected = payMode === opt.id;
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => setPayMode(opt.id)}
+                              className={`text-left px-4 py-3 border transition-colors ${
+                                selected
+                                  ? "border-red bg-red/5"
+                                  : "border-ink/15 bg-white hover:border-ink/30"
+                              }`}
+                            >
+                              <p className="font-semibold text-ink text-sm">{opt.label}</p>
+                              <p className="text-xs text-muted mt-0.5">{opt.hint}</p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {payMode === "screenshot" && (
+                    <>
                     <div className="space-y-2.5 mb-5">
                       {(BRAND.payment as PaymentMethod[]).map((p) => {
                         const selected = paymentMethod === p.id;
@@ -1371,6 +1450,8 @@ export default function BikeDetail({
                         {tF.reservation.uploadHint}
                       </p>
                     </div>
+                    </>
+                    )}
                   </div>
 
                   {submitError && (
@@ -1382,7 +1463,11 @@ export default function BikeDetail({
                     disabled={bookingStep === "submitting" || !canSubmit}
                     className="w-full py-4 bg-red text-white font-bold text-xs tracking-widest uppercase hover:bg-red-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    {bookingStep === "submitting" ? tF.form.submitting : `${tF.form.submit} →`}
+                    {bookingStep === "submitting"
+                      ? tF.form.submitting
+                      : payMode === "screenshot"
+                        ? `${tF.form.submit} →`
+                        : `Continue to payment →`}
                   </button>
 
                   <p className="text-center text-muted text-xs">
@@ -1393,6 +1478,35 @@ export default function BikeDetail({
                     .
                   </p>
                 </form>
+              </div>
+            )}
+
+            {/* Pay by card (SumUp widget) */}
+            {bookingStep === "paying" && pendingBookingId && checkoutId && (
+              <div className="max-w-xl mx-auto space-y-4">
+                <h2 className="font-barlow font-black uppercase text-2xl text-ink">
+                  {payMode === "full" ? "Complete payment" : "Deposit payment"}
+                </h2>
+                <p className="text-sm text-muted">
+                  {payMode === "full"
+                    ? "Pay the full rental now to confirm the booking."
+                    : "Pay the 20% deposit to confirm the booking. The rest is due on arrival."}
+                </p>
+                <SumUpCardWidget
+                  bookingId={pendingBookingId}
+                  checkoutId={checkoutId}
+                  amountCents={checkoutAmountCents}
+                  currency="EUR"
+                  locale={lang}
+                  onPaid={() => {
+                    setBookingStep("done");
+                    setTimeout(() => {
+                      successRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }, 50);
+                  }}
+                  onFail={(msg) => setSubmitError(msg)}
+                />
+                {submitError && <p className="text-xs text-red font-medium">{submitError}</p>}
               </div>
             )}
 

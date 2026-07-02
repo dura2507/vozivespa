@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getBikeWithPricing, getUnitCounts, getCategoriesWithPricing } from "@/lib/bike-pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
+import { onlinePaymentEnabled } from "@/lib/payments";
 import BikeDetail from "./BikeDetail";
 
 // ISR: cache the bike page, refresh stock + booked-dates every 2 min.
@@ -37,6 +38,7 @@ export default async function BikeDetailPage({
       dict={dict}
       bike={bike}
       unitCount={unitCount}
+      onlinePayment={onlinePaymentEnabled()}
     />
   );
 }

@@ -2,6 +2,12 @@ import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { paymentProvider } from "@/lib/payments";
 import { bookingRef } from "@/lib/booking-ref";
+import {
+  sendCustomerBookingDecidedEmail,
+  sendCustomerGroupBookingDecidedEmail,
+} from "@/lib/email";
+import { sendOwnerBookingTelegram, sendOwnerGroupBookingTelegram } from "@/lib/telegram";
+import { getBikeUnitLabel } from "@/lib/availability";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -71,21 +77,47 @@ export async function POST(request: Request) {
 
       if (event.status === "paid") {
         const ids = matches.map((b) => b.id);
-        const { error: upErr } = await supabase
+        // Idempotent update: only rows still pending flip to confirmed.
+        // If /api/payments/verify already promoted them, we get zero rows
+        // back and skip the mails — no duplicate notifications on the
+        // widget-success → webhook race that the SumUp docs warn about.
+        const { data: promoted, error: upErr } = await supabase
           .from("bookings")
           .update({
             status: "confirmed",
             decided_at: new Date().toISOString(),
             payment_method: "revolut", // closest existing value; refine when activating
           })
-          .in("id", ids);
+          .in("id", ids)
+          .eq("status", "pending")
+          .select("id");
         if (upErr) {
           console.error("[/api/payments/webhook] confirm update", upErr);
           return;
         }
+        const changedIds = (promoted ?? []).map((r) => (r as { id: string }).id);
         console.log(
-          `[/api/payments/webhook] confirmed ${ids.length} booking(s) for ${event.reference}`,
+          `[/api/payments/webhook] promoted ${changedIds.length} of ${ids.length} booking(s) for ${event.reference}`,
         );
+        if (changedIds.length === 0) return;
+        try {
+          const { data: fresh } = await supabase
+            .from("bookings")
+            .select("*")
+            .in("id", changedIds);
+          const rows = (fresh ?? []) as BookingRow[];
+          if (rows.length === 1) {
+            const single = rows[0];
+            await sendCustomerBookingDecidedEmail(single, "confirmed");
+            const unitLabel = await getBikeUnitLabel(supabase, single.bike_unit_id).catch(() => null);
+            await sendOwnerBookingTelegram(single, undefined, unitLabel);
+          } else if (rows.length > 1) {
+            await sendCustomerGroupBookingDecidedEmail(rows, "confirmed");
+            await sendOwnerGroupBookingTelegram(rows);
+          }
+        } catch (notifyErr) {
+          console.error("[/api/payments/webhook] notify", notifyErr);
+        }
       } else if (event.status === "failed" || event.status === "cancelled") {
         // We don't auto-decline on failed payment — the customer can
         // retry, and the owner can still manually accept on a different

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getCategoriesWithPricing, getUnitCounts } from "@/lib/bike-pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
+import { onlinePaymentEnabled } from "@/lib/payments";
 import GroupBooking from "./GroupBooking";
 
 // ISR: the page shell (bike list) is cached; live per-date availability is
@@ -29,6 +30,7 @@ export default async function GroupBookingPage({
       dict={dict}
       bikes={bikes}
       unitCounts={unitCounts}
+      onlinePayment={onlinePaymentEnabled()}
     />
   );
 }

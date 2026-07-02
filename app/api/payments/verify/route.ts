@@ -1,7 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { paymentProvider } from "@/lib/payments";
 import { bookingRef } from "@/lib/booking-ref";
+import {
+  sendCustomerBookingDecidedEmail,
+  sendCustomerGroupBookingDecidedEmail,
+} from "@/lib/email";
+import { sendOwnerBookingTelegram, sendOwnerGroupBookingTelegram } from "@/lib/telegram";
+import { getBikeUnitLabel } from "@/lib/availability";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -59,14 +65,48 @@ export async function POST(request: Request) {
   const { data: rows } = await groupFilter;
   const ids = (rows ?? []).map((r) => (r as { id: string }).id);
 
-  const { error: upErr } = await supabase
+  // Idempotent: only bumps rows that are STILL pending. If a previous
+  // verify (or the webhook) already confirmed them, this returns zero
+  // rows updated and we skip the notification fan-out below, so a
+  // repeated widget "success" callback doesn't spam duplicate emails.
+  const { data: promoted, error: upErr } = await supabase
     .from("bookings")
     .update({ status: "confirmed", decided_at: new Date().toISOString() })
     .in("id", ids)
-    .eq("status", "pending");
+    .eq("status", "pending")
+    .select("id");
   if (upErr) {
     console.error("[/api/payments/verify] confirm", upErr);
     return NextResponse.json({ error: "Could not confirm booking" }, { status: 500 });
   }
+  const changedIds = (promoted ?? []).map((r) => (r as { id: string }).id);
+
+  // Fan out the confirmation notifications after we've answered the client
+  // so the widget flips to "done" immediately. Only fire if THIS call did
+  // the pending→confirmed promotion (otherwise it's a duplicate verify /
+  // webhook race and the mails already went out).
+  after(async () => {
+    if (changedIds.length === 0) return;
+    try {
+      const { data: fresh } = await supabase
+        .from("bookings")
+        .select("*")
+        .in("id", changedIds);
+      const rows = (fresh ?? []) as BookingRow[];
+      if (rows.length === 0) return;
+      if (rows.length === 1) {
+        const single = rows[0];
+        await sendCustomerBookingDecidedEmail(single, "confirmed");
+        const unitLabel = await getBikeUnitLabel(supabase, single.bike_unit_id).catch(() => null);
+        await sendOwnerBookingTelegram(single, undefined, unitLabel);
+      } else {
+        await sendCustomerGroupBookingDecidedEmail(rows, "confirmed");
+        await sendOwnerGroupBookingTelegram(rows);
+      }
+    } catch (err) {
+      console.error("[/api/payments/verify] notify", err);
+    }
+  });
+
   return NextResponse.json({ paid: true, reference: ref, confirmed: ids.length });
 }

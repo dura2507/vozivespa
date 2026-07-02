@@ -16,6 +16,7 @@ import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { buildSlots, buildPickupSlots, calculatePrice, LAST_PICKUP_MINUTES } from "@/lib/pricing";
 import { SEASON_END_DATE } from "@/lib/season";
+import SumUpCardWidget from "@/components/SumUpCardWidget";
 
 // Return may be at closing (19:00); pickup never is (buildPickupSlots).
 const SLOTS = buildSlots();
@@ -55,15 +56,19 @@ type FleetAvail = { totalUnits: number; freeUnits: number; freeFromTime: string 
 // per booked unit; its value is that unit's riding style.
 type RidingStyle = "solo" | "with_passenger";
 
+type PayMode = "screenshot" | "deposit" | "full";
+
 export default function GroupBooking({
   bikes,
   lang,
   dict,
+  onlinePayment,
 }: {
   bikes: Category[];
   lang: Locale;
   dict: Dictionary;
   unitCounts: Record<string, number>;
+  onlinePayment: boolean;
 }) {
   const [range, setRange] = useState<DateRange | undefined>();
   const [pickupTime, setPickupTime] = useState("09:00");
@@ -73,7 +78,11 @@ export default function GroupBooking({
   const [isWide, setIsWide] = useState(false);
   // bikeId → one riding style per booked unit. Array length = quantity.
   const [cart, setCart] = useState<Record<string, RidingStyle[]>>({});
-  const [step, setStep] = useState<"select" | "details" | "done">("select");
+  const [step, setStep] = useState<"select" | "details" | "paying" | "done">("select");
+  const [payMode, setPayMode] = useState<PayMode>(onlinePayment ? "deposit" : "screenshot");
+  const [pendingBookingId, setPendingBookingId] = useState<string | null>(null);
+  const [checkoutId, setCheckoutId] = useState<string | null>(null);
+  const [checkoutAmountCents, setCheckoutAmountCents] = useState<number>(0);
 
   // Details / deposit step state (mirrors the single-bike flow).
   const [name, setName] = useState("");
@@ -247,7 +256,8 @@ export default function GroupBooking({
       setSubmitError(dict.group.errLicence);
       return;
     }
-    if (!receipt) {
+    const online = payMode !== "screenshot";
+    if (!online && !receipt) {
       setSubmitError(dict.group.errReceipt);
       return;
     }
@@ -270,10 +280,14 @@ export default function GroupBooking({
       fd.set("to", to);
       fd.set("pickupTime", pickupTime);
       fd.set("returnTime", returnTime);
-      fd.set("paymentMethod", paymentMethod);
+      if (!online) fd.set("paymentMethod", paymentMethod);
       fd.set("driversLicence", driversLicence);
       fd.set("locale", lang);
-      fd.set("receipt", receipt);
+      if (online) {
+        fd.set("payOnline", "1");
+      } else if (receipt) {
+        fd.set("receipt", receipt);
+      }
 
       const res = await fetch("/api/bookings/group", { method: "POST", body: fd });
       if (!res.ok) {
@@ -282,7 +296,33 @@ export default function GroupBooking({
         setSubmitting(false);
         return;
       }
-      setStep("done");
+      if (!online) {
+        setStep("done");
+        return;
+      }
+      // Online path: reserved booking is in, create the checkout.
+      const okBody = (await res.json()) as { bookingId?: string };
+      const bookingId = okBody.bookingId;
+      if (!bookingId) throw new Error("Missing bookingId");
+      setPendingBookingId(bookingId);
+      const coRes = await fetch("/api/payments/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookingId, amountMode: payMode }),
+      });
+      const coBody = (await coRes.json()) as {
+        widgetCheckoutId?: string;
+        amountCents?: number;
+        error?: string;
+      };
+      if (!coRes.ok || !coBody.widgetCheckoutId) {
+        setSubmitError(coBody.error ?? dict.group.errSubmit);
+        setSubmitting(false);
+        return;
+      }
+      setCheckoutId(coBody.widgetCheckoutId);
+      setCheckoutAmountCents(coBody.amountCents ?? 0);
+      setStep("paying");
     } catch (err) {
       console.error("group booking submit failed", err);
       setSubmitError(dict.group.errNetwork);
@@ -329,7 +369,28 @@ export default function GroupBooking({
           {g.intro}
         </p>
 
-        {step === "done" ? (
+        {step === "paying" && pendingBookingId && checkoutId ? (
+          <div className="max-w-xl mx-auto py-6 space-y-4">
+            <h2 className="font-barlow font-black uppercase text-2xl text-ink">
+              {payMode === "full" ? "Complete payment" : "Deposit payment"}
+            </h2>
+            <p className="text-sm text-muted">
+              {payMode === "full"
+                ? "Pay the full rental now to confirm the booking."
+                : `Pay the 20% deposit (${bookingFee}€) to confirm the booking. The rest is due on arrival.`}
+            </p>
+            <SumUpCardWidget
+              bookingId={pendingBookingId}
+              checkoutId={checkoutId}
+              amountCents={checkoutAmountCents}
+              currency="EUR"
+              locale={lang}
+              onPaid={() => setStep("done")}
+              onFail={(msg) => setSubmitError(msg)}
+            />
+            {submitError && <p className="text-xs text-red font-medium">{submitError}</p>}
+          </div>
+        ) : step === "done" ? (
           <div className="text-center max-w-xl mx-auto py-6">
             <div className="success-pop inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-500 mb-6">
               <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -817,6 +878,34 @@ export default function GroupBooking({
                   </p>
                   <p className="text-xs text-muted mb-4">{g.payUpload.replace("{deposit}", BRAND.deposit)}</p>
 
+                  {/* Pay-mode selector — same three options as the single-bike page. */}
+                  {onlinePayment && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-5">
+                      {([
+                        { id: "deposit" as const, label: `Deposit 20% online`, hint: `${bookingFee}€ now, rest on-site` },
+                        { id: "full" as const, label: `Full amount online`, hint: `${cartTotal}€ now, nothing on-site` },
+                        { id: "screenshot" as const, label: `Manual transfer`, hint: `PayPal / Revolut + screenshot` },
+                      ] satisfies Array<{ id: PayMode; label: string; hint: string }>).map((opt) => {
+                        const selected = payMode === opt.id;
+                        return (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => setPayMode(opt.id)}
+                            className={`text-left px-4 py-3 border transition-colors ${
+                              selected ? "border-red bg-red/5" : "border-ink/15 bg-white hover:border-ink/30"
+                            }`}
+                          >
+                            <p className="font-semibold text-ink text-sm">{opt.label}</p>
+                            <p className="text-xs text-muted mt-0.5">{opt.hint}</p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {payMode === "screenshot" && (
+                  <>
                   <div className="space-y-2.5">
                     {(BRAND.payment as PaymentMethod[]).map((p) => {
                       const selected = paymentMethod === p.id;
@@ -908,6 +997,8 @@ export default function GroupBooking({
                     </div>
                     <p className="text-muted text-xs mt-2">{g.fileHint}</p>
                   </div>
+                  </>
+                  )}
                 </div>
 
                 {submitError && <p className="text-red text-sm font-semibold">{submitError}</p>}
