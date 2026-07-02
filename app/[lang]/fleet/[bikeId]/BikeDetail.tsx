@@ -139,6 +139,10 @@ export default function BikeDetail({
   const [manualBlocks, setManualBlocks] = useState<BlockedRange[]>([]);
   const [bookings, setBookings] = useState<ConfirmedBooking[]>([]);
   const [totalUnits, setTotalUnits] = useState(1);
+  // Active bookable unit ids — passed to the slot filters so they can
+  // count actual free units per candidate window (per-unit rather than
+  // per-model), matching what findFreeUnit does server-side.
+  const [activeUnitIds, setActiveUnitIds] = useState<string[]>([]);
   // Virtual bookings derived from full-day manual blocks. Treating
   // each effective-all-day block as a synthetic booking on its unit
   // lets us reuse fullyBookedDates() to grey out a calendar day only
@@ -195,6 +199,7 @@ export default function BikeDetail({
           setBlockBookings(synth);
           setBookings(json.bookings);
           setTotalUnits(json.totalUnits || 1);
+          setActiveUnitIds(json.unitIds ?? []);
         },
       )
       .catch((err) => console.error("Failed to load availability", err));
@@ -250,12 +255,27 @@ export default function BikeDetail({
     bookedMiddleRanges.push({ from: m.from, to: m.to });
   }
 
+  // Single click on the calendar leaves range.to undefined — DayPicker
+  // is waiting for a second click to complete the range. We treat
+  // "from set, to missing" as a same-day rental so the user can pick
+  // a single date, see the day-tier price, and continue. A second
+  // click on a later date still extends into a real range normally.
+  const effectiveRange =
+    range?.from && !range.to ? { from: range.from, to: range.from } : range;
+
   // The pickup slots actually offered for a given day. Same as the dropdown
   // uses, plus: on today, slots already in the past are dropped (after
   // mount, to stay hydration-safe). This is the single source of truth for
   // "can you start a rental on this day".
   const pickupSlotsFor = (day: Date): string[] => {
-    const base = validPickupSlots(day, bookings, totalUnits);
+    // Pair each candidate pickup slot with the currently-selected return
+    // datetime so the filter sees the FULL window (matches findFreeUnit).
+    // If no return date is picked yet, we default to same day at 19:00
+    // (any earlier return would only make the window smaller).
+    const ctx = effectiveRange?.to
+      ? { returnDate: effectiveRange.to, returnTime: returnTime || "19:00", activeUnitIds }
+      : { returnDate: day, returnTime: returnTime || "19:00", activeUnitIds };
+    const base = validPickupSlots(day, bookings, totalUnits, ctx);
     if (!mounted || !isSameDay(day, new Date())) return base;
     const nowMs = Date.now();
     return base.filter((s) => {
@@ -288,23 +308,20 @@ export default function BikeDetail({
     }
   }
 
-  // Single click on the calendar leaves range.to undefined — DayPicker
-  // is waiting for a second click to complete the range. We treat
-  // "from set, to missing" as a same-day rental so the user can pick
-  // a single date, see the day-tier price, and continue. A second
-  // click on a later date still extends into a real range normally.
-  const effectiveRange =
-    range?.from && !range.to ? { from: range.from, to: range.from } : range;
-
   // Time-slot pickers count busy units at each candidate time and
   // reject slots only when every unit is busy (or in turnaround) at
   // that moment.
   const pickupSlots = effectiveRange?.from
     ? pickupSlotsFor(effectiveRange.from)
     : buildPickupSlots();
-  const returnSlots = effectiveRange?.to
-    ? validReturnSlots(effectiveRange.to, bookings, totalUnits)
-    : buildSlots();
+  const returnSlots =
+    effectiveRange?.from && effectiveRange?.to && pickupTime
+      ? validReturnSlots(effectiveRange.to, bookings, totalUnits, {
+          pickupDate: effectiveRange.from,
+          pickupTime,
+          activeUnitIds,
+        })
+      : buildSlots();
 
   // If the active selection got invalidated by a date change, snap to
   // the closest valid slot rather than sending an unbookable request.

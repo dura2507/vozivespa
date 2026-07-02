@@ -154,30 +154,84 @@ function countBusyUnitsAt(
 // rental window (no booking conflict + no upcoming booking within
 // MIN_USEFUL_RENTAL_MINUTES). Prevents the "09:00 looks free but the
 // unit has a 10:00 reservation" trap.
+// Count of units that are free for the WHOLE window (with turnaround
+// buffer on both sides). Mirrors server-side findFreeUnit so the slot
+// filters and the submit check never disagree — the earlier per-instant
+// countBusyUnitsAt could let a slot pass that findFreeUnit would then
+// reject, giving the customer a bogus "time conflict" on submit.
+function unitsFreeForWindow(
+  pickupDate: Date,
+  pickupTime: string,
+  returnDate: Date,
+  returnTime: string,
+  bookings: ConfirmedBooking[],
+  activeUnitIds: string[] | null,
+): number {
+  const bufferMs = TURNAROUND_MINUTES * 60_000;
+  const winStart = combineDateTime(pickupDate, pickupTime).getTime();
+  const winEnd = combineDateTime(returnDate, returnTime).getTime();
+  if (winEnd <= winStart) return 0;
+  const busy = new Set<string>();
+  for (const b of bookings) {
+    if (!b.unitId) continue;
+    const bStart = combineDateTime(new Date(`${b.from}T00:00:00`), b.pickupTime).getTime();
+    const bEnd = combineDateTime(new Date(`${b.to}T00:00:00`), b.returnTime).getTime();
+    // Same overlap check as findFreeUnit: [winStart, winEnd) overlaps
+    // [bStart - buffer, bEnd + buffer)?
+    if (winStart < bEnd + bufferMs && bStart - bufferMs < winEnd) {
+      busy.add(b.unitId);
+    }
+  }
+  if (activeUnitIds && activeUnitIds.length > 0) {
+    let free = 0;
+    for (const id of activeUnitIds) if (!busy.has(id)) free++;
+    return free;
+  }
+  // Fallback when unit ids aren't available client-side: whatever count
+  // of distinct unit-owning bookings we saw, subtract from totalUnits.
+  return -busy.size;
+}
+
+// Pickup slots that leave a bookable window ending at returnTime (on the
+// return date). We check the FULL window against every candidate slot,
+// so a pickup that would clash later is dropped up-front — no more
+// "green button, then time-conflict error" at submit.
 export function validPickupSlots(
   pickupDate: Date,
   bookings: ConfirmedBooking[],
   totalUnits: number,
+  ctx?: { returnDate: Date; returnTime: string; activeUnitIds?: string[] },
 ): string[] {
   // Pickup list never includes 19:00 (closing) — see buildPickupSlots.
   if (totalUnits <= 0) return buildPickupSlots();
-  const lookaheadMs = MIN_USEFUL_RENTAL_MINUTES * 60_000;
-  return buildPickupSlots().filter(
-    (s) => countBusyUnitsAt(pickupDate, s, bookings, lookaheadMs) < totalUnits,
-  );
+  const returnDate = ctx?.returnDate ?? pickupDate;
+  const returnTime = ctx?.returnTime ?? "19:00";
+  const activeUnitIds = ctx?.activeUnitIds ?? null;
+  return buildPickupSlots().filter((s) => {
+    const free = unitsFreeForWindow(pickupDate, s, returnDate, returnTime, bookings, activeUnitIds);
+    // With ids: raw count of free units. Without: negative count of busy
+    // units — we need totalUnits + free > 0 to know at least one is free.
+    return activeUnitIds ? free > 0 : totalUnits + free > 0;
+  });
 }
 
-// Return slots only need the moment itself to be conflict-free — the
-// rental ends there, so there's no forward-looking requirement.
+// Return slots that keep the whole window (from the chosen pickup) free
+// on at least one unit. Same rule as findFreeUnit — no lookahead needed
+// because the rental ends at the slot.
 export function validReturnSlots(
   returnDate: Date,
   bookings: ConfirmedBooking[],
   totalUnits: number,
+  ctx?: { pickupDate: Date; pickupTime: string; activeUnitIds?: string[] },
 ): string[] {
   if (totalUnits <= 0) return buildSlots();
-  return buildSlots().filter(
-    (s) => countBusyUnitsAt(returnDate, s, bookings) < totalUnits,
-  );
+  const pickupDate = ctx?.pickupDate ?? returnDate;
+  const pickupTime = ctx?.pickupTime ?? "09:00";
+  const activeUnitIds = ctx?.activeUnitIds ?? null;
+  return buildSlots().filter((s) => {
+    const free = unitsFreeForWindow(pickupDate, pickupTime, returnDate, s, bookings, activeUnitIds);
+    return activeUnitIds ? free > 0 : totalUnits + free > 0;
+  });
 }
 
 // Set of ISO dates that are fully blocked: for every active unit, its
