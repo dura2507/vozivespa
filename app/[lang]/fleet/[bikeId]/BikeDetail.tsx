@@ -263,18 +263,18 @@ export default function BikeDetail({
   const effectiveRange =
     range?.from && !range.to ? { from: range.from, to: range.from } : range;
 
-  // The pickup slots actually offered for a given day. Same as the dropdown
-  // uses, plus: on today, slots already in the past are dropped (after
-  // mount, to stay hydration-safe). This is the single source of truth for
-  // "can you start a rental on this day".
+  // Slots offered on a given day for the PICKUP dropdown. When a return
+  // date is already picked we scope the check to the whole window so the
+  // dropdown never advertises a start time that would then clash further
+  // down the rental. When no return is picked yet, we fall back to the
+  // per-slot check — otherwise pinning a single pickup day would make the
+  // filter think every other day is a "start after end" window and hide
+  // every later day as unbookable.
   const pickupSlotsFor = (day: Date): string[] => {
-    // Pair each candidate pickup slot with the currently-selected return
-    // datetime so the filter sees the FULL window (matches findFreeUnit).
-    // If no return date is picked yet, we default to same day at 19:00
-    // (any earlier return would only make the window smaller).
-    const ctx = effectiveRange?.to
-      ? { returnDate: effectiveRange.to, returnTime: returnTime || "19:00", activeUnitIds }
-      : { returnDate: day, returnTime: returnTime || "19:00", activeUnitIds };
+    const ctx =
+      effectiveRange?.from && effectiveRange?.to && !isSameDay(effectiveRange.from, effectiveRange.to)
+        ? { returnDate: effectiveRange.to, returnTime: returnTime || "19:00", activeUnitIds }
+        : undefined;
     const base = validPickupSlots(day, bookings, totalUnits, ctx);
     if (!mounted || !isSameDay(day, new Date())) return base;
     const nowMs = Date.now();
@@ -284,6 +284,24 @@ export default function BikeDetail({
       d.setHours(h, min, 0, 0);
       return d.getTime() > nowMs;
     });
+  };
+
+  // Calendar-level check: is a day COMPLETELY unusable as a pickup day
+  // (no valid start slot at all, ignoring any current range)? Used to
+  // grey out days in the picker. MUST be context-free — the old bug was
+  // that a single-day click made every later day look "unbookable" here.
+  const dayHasNoPickupSlot = (day: Date): boolean => {
+    const base = validPickupSlots(day, bookings, totalUnits);
+    if (!mounted || !isSameDay(day, new Date())) return base.length === 0;
+    const nowMs = Date.now();
+    return (
+      base.filter((s) => {
+        const [h, min] = s.split(":").map(Number);
+        const d = new Date(day);
+        d.setHours(h, min, 0, 0);
+        return d.getTime() > nowMs;
+      }).length === 0
+    );
   };
 
   // Disable any day whose pickup dropdown would come up empty — otherwise
@@ -302,7 +320,11 @@ export default function BikeDetail({
     }
     for (const iso of risky) {
       const day = new Date(`${iso}T00:00:00`);
-      if (isFutureOrToday(day) && pickupSlotsFor(day).length === 0) {
+      // Only grey out days that have NO valid pickup slot at all (looked at
+      // day-in-isolation). The dropdown does the window-scoped filtering
+      // — the calendar must stay range-agnostic or a single first click
+      // paints the whole tail of the month as "booked".
+      if (isFutureOrToday(day) && dayHasNoPickupSlot(day)) {
         bookedFullDays.push(day);
       }
     }
