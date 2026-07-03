@@ -1,5 +1,6 @@
 import { ImapFlow } from "imapflow";
 import { simpleParser, type ParsedMail } from "mailparser";
+import { CATEGORIES } from "@/lib/mockData";
 
 // Hardcoded sender allowlist. Only mails whose From address contains
 // one of these substrings get forwarded to Telegram. Everything else
@@ -299,4 +300,53 @@ export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
     await client.logout().catch(() => {});
   }
   return out;
+}
+
+// Map a Riderly bike name to our internal bike_id. Their emails use the
+// full model name ("Piaggio Liberty 125") while we store slugs
+// ("scooter-125"). Simple substring / word overlap — the model list is
+// tiny, so a fancier matcher isn't worth it. Returns null when we can't
+// tell, so the caller can flag the row for manual bike assignment.
+export function mapRiderlyBikeName(riderlyName: string | null): string | null {
+  if (!riderlyName) return null;
+  const q = riderlyName.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  if (!q) return null;
+  let best: { id: string; score: number } | null = null;
+  for (const cat of CATEGORIES) {
+    const hay = `${cat.model} ${cat.shortName ?? ""}`.toLowerCase().replace(/[^a-z0-9]+/g, " ");
+    const qTokens = q.split(" ").filter((t) => t.length >= 2);
+    const hits = qTokens.filter((t) => hay.includes(t)).length;
+    // Boost when a "topcase" hint agrees with the id — otherwise
+    // "Piaggio Liberty 50" would tie with "Piaggio Liberty 50 Topcase".
+    const wantsTopcase = /top\s*case|topcase/i.test(riderlyName);
+    const bonus = wantsTopcase === /topcase/.test(cat.id) ? 1 : 0;
+    const score = hits * 10 + bonus;
+    if (!best || score > best.score) best = { id: cat.id, score };
+  }
+  return best && best.score >= 20 ? best.id : null;
+}
+
+// Parse a Riderly datetime string like "(Wed) 06 May 2026, 10:00" into
+// ISO date + wallclock time. Riderly's format is stable — day-name
+// prefix optional, day / month-name / year, comma, HH:MM. Returns null
+// on anything unrecognisable so the insert can bail cleanly.
+export function parseRiderlyDateTime(
+  raw: string | null,
+): { date: string; time: string } | null {
+  if (!raw) return null;
+  const m = /(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4}),?\s*(\d{1,2}):(\d{2})/.exec(raw);
+  if (!m) return null;
+  const [, dayStr, monthName, yearStr, hStr, minStr] = m;
+  const monthIx = [
+    "jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec",
+  ].indexOf(monthName.slice(0, 3).toLowerCase());
+  if (monthIx < 0) return null;
+  const day = parseInt(dayStr, 10);
+  const year = parseInt(yearStr, 10);
+  const hour = parseInt(hStr, 10);
+  const minute = parseInt(minStr, 10);
+  if (Number.isNaN(day + year + hour + minute)) return null;
+  const iso = `${year}-${String(monthIx + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const time = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  return { date: iso, time };
 }

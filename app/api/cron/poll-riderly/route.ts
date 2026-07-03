@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
-import { pollRiderlyInbox } from "@/lib/riderly";
+import {
+  pollRiderlyInbox,
+  mapRiderlyBikeName,
+  parseRiderlyDateTime,
+  type RiderlyBooking,
+} from "@/lib/riderly";
 import { sendOwnerRiderlyTelegram } from "@/lib/telegram";
 import { sendOwnerRiderlyEmail } from "@/lib/email";
+import { getServiceClient } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -82,5 +88,91 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.json({ found: emails.length, forwarded });
+  // Persist every Riderly booking as a real row in the bookings table so
+  // it shows up in the admin dashboard alongside our own bookings. The
+  // Riderly email is anonymised (no rider name / email / phone), so this
+  // is a placeholder pending row the owner can flesh out on click. Dedup
+  // on the Riderly booking id so re-polling never doubles anything up.
+  let inserted = 0;
+  for (const email of emails) {
+    if (email.kind !== "booking") continue;
+    try {
+      const res = await upsertRiderlyBookingRow(email.booking);
+      if (res === "inserted") inserted++;
+    } catch (err) {
+      console.error("[cron/poll-riderly] insert failed", err);
+    }
+  }
+
+  return NextResponse.json({ found: emails.length, forwarded, inserted });
+}
+
+// Insert a Riderly booking as a pending row in our bookings table, or
+// return "skipped" when a row with the same Riderly id already exists.
+// We store the Riderly id inside the notes field ("Riderly: XXX") both
+// as a human hint in the admin card AND as our dedupe key. Simple, no
+// schema migration needed for a two-a-week integration.
+async function upsertRiderlyBookingRow(
+  b: RiderlyBooking,
+): Promise<"inserted" | "skipped" | "unmapped"> {
+  const supabase = getServiceClient();
+  const marker = `Riderly: ${b.bookingId}`;
+
+  // Dedup: if any row already carries this Riderly id in its notes, do
+  // nothing. Notes is TEXT so we use ilike; the id itself is unique
+  // enough that a substring match is safe.
+  const existing = await supabase
+    .from("bookings")
+    .select("id")
+    .ilike("notes", `%${marker}%`)
+    .limit(1);
+  if ((existing.data ?? []).length > 0) return "skipped";
+
+  const bikeId = mapRiderlyBikeName(b.bikeName);
+  const start = parseRiderlyDateTime(b.startDate);
+  const end = parseRiderlyDateTime(b.endDate);
+  // Without any of these three we can't build a schedulable row.
+  if (!bikeId || !start || !end) {
+    console.warn(
+      `[cron/poll-riderly] can't build row for ${b.bookingId}: bikeId=${bikeId}, start=${!!start}, end=${!!end}`,
+    );
+    return "unmapped";
+  }
+
+  // Ridley emails carry no PII up-front — the accept flow reveals it
+  // later. Placeholder identity is fine for the dashboard card; the
+  // owner can rename after accepting on Riderly.
+  const price = b.totalEur ? Math.round(parseFloat(b.totalEur) * 100) : null;
+  const notesBlocks = [
+    marker,
+    b.bikeName ? `Bike (Riderly): ${b.bikeName}` : null,
+    b.licenceCategory ? `Licence: ${b.licenceCategory}` : null,
+    b.age ? `Age: ${b.age}` : null,
+    b.remainingEur ? `Remaining on-site: €${b.remainingEur}` : null,
+    b.acceptUrl ? `Accept: ${b.acceptUrl}` : null,
+    b.rejectUrl ? `Reject: ${b.rejectUrl}` : null,
+  ].filter((s): s is string => Boolean(s));
+
+  const { error } = await supabase.from("bookings").insert({
+    bike_id: bikeId,
+    customer_name: `Riderly ${b.bookingId}`,
+    customer_email: "",
+    customer_phone: "",
+    notes: notesBlocks.join("\n"),
+    date_from: start.date,
+    date_to: end.date,
+    pickup_time: start.time,
+    return_time: end.time,
+    total_price_cents: price,
+    payment_method: null,
+    drivers_licence: null,
+    riding_style: null,
+    locale: "en",
+    status: "pending",
+  });
+  if (error) {
+    console.error("[cron/poll-riderly] insert error", error);
+    throw new Error(error.message);
+  }
+  return "inserted";
 }
