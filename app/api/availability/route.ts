@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
+import { blockedPickupDates } from "@/lib/availability";
+import { zagrebNow } from "@/lib/season";
 
 export const dynamic = "force-dynamic";
 
@@ -85,26 +87,34 @@ export async function GET(request: Request) {
     return end >= "19:00:00";
   };
 
+  const manualBlocks = (manualRes.data ?? []).map((row) => ({
+    from: row.date_from,
+    to: row.date_to,
+    startTime: row.start_time ? trimT(row.start_time) : null,
+    endTime: row.end_time ? trimT(row.end_time) : null,
+    unitId: row.bike_unit_id, // null = whole-model block
+    effectiveAllDay: isEffectivelyAllDay(row.start_time, row.end_time),
+  }));
+  const bookings = (bookingsRes.data ?? []).map((row) => ({
+    from: row.date_from,
+    to: row.date_to,
+    pickupTime: trimT(row.pickup_time),
+    returnTime: trimT(row.return_time),
+    unitId: row.bike_unit_id,
+  }));
+  const unitIds = (unitsRes.data ?? []).map((u) => (u as { id: string }).id);
+
   return NextResponse.json({
-    manualBlocks: (manualRes.data ?? []).map((row) => ({
-      from: row.date_from,
-      to: row.date_to,
-      startTime: row.start_time ? trimT(row.start_time) : null,
-      endTime: row.end_time ? trimT(row.end_time) : null,
-      unitId: row.bike_unit_id, // null = whole-model block
-      effectiveAllDay: isEffectivelyAllDay(row.start_time, row.end_time),
-    })),
-    bookings: (bookingsRes.data ?? []).map((row) => ({
-      from: row.date_from,
-      to: row.date_to,
-      pickupTime: trimT(row.pickup_time),
-      returnTime: trimT(row.return_time),
-      unitId: row.bike_unit_id,
-    })),
-    totalUnits: (unitsRes.data ?? []).length,
-    // List of active unit ids — frontend needs it to expand a
-    // whole-model block (unit_id null) into "every unit blocked"
-    // when computing the fully-grey calendar dates.
-    unitIds: (unitsRes.data ?? []).map((u) => (u as { id: string }).id),
+    manualBlocks,
+    bookings,
+    totalUnits: unitIds.length,
+    unitIds,
+    // THE calendar truth: every future date with zero possible pickup
+    // slots, computed server-side with the exact findFreeUnit rules
+    // (bookings + manual blocks + turnaround buffer + Zagreb clock).
+    // The frontend paints this list verbatim instead of re-deriving it,
+    // so the single-bike calendar can never contradict the fleet view
+    // or the submit check.
+    blockedPickupDates: blockedPickupDates(bookings, manualBlocks, unitIds, zagrebNow()),
   });
 }

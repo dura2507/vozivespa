@@ -710,3 +710,101 @@ export async function getBikeUnitLabel(
   if (error || !data) return null;
   return (data as { label: string }).label;
 }
+
+// ---------------------------------------------------------------------------
+// Calendar day status — THE single source of truth for "is this date
+// pickupable at all?". The public calendar paints exactly this list; the
+// same overlap + buffer rules as findFreeUnit are applied, so the calendar,
+// the multi-booking fleet view and the submit check can never disagree.
+// Pure function so it's unit-testable and callable from any surface.
+// ---------------------------------------------------------------------------
+
+export type CalendarBooking = {
+  from: string; // YYYY-MM-DD
+  to: string;
+  pickupTime: string; // HH:MM
+  returnTime: string;
+  unitId: string | null;
+};
+
+export type CalendarBlock = {
+  from: string;
+  to: string;
+  startTime: string | null; // HH:MM or null = whole-day
+  endTime: string | null;
+  unitId: string | null; // null = whole model
+};
+
+// Every future date on which NO pickup slot (09:00..18:30) can start a
+// same-day rental on any unit. Mirrors findFreeUnit exactly: bookings
+// block with the turnaround buffer, manual blocks without; whole-day
+// blocks cover their whole date range; whole-model blocks take out all
+// units at once. `now` is Zagreb wall-clock so "today" drops slots that
+// have already passed at the shop.
+export function blockedPickupDates(
+  bookings: CalendarBooking[],
+  blocks: CalendarBlock[],
+  unitIds: string[],
+  now: { isoDate: string; minutesOfDay: number },
+): string[] {
+  if (unitIds.length === 0) return [];
+  const bufferMs = TURNAROUND_MINUTES * 60_000;
+  const slots = buildPickupSlots();
+
+  // Only dates touched by a booking or block (plus today, whose slots
+  // decay over the day) can possibly be blocked — everything else has
+  // a free 09:00 by definition.
+  const candidates = new Set<string>([now.isoDate]);
+  const addRange = (from: string, to: string) => {
+    let cur = new Date(`${from}T00:00:00`);
+    const end = new Date(`${to}T00:00:00`);
+    // Guard against reversed/garbage rows: cap the walk at 400 days.
+    for (let i = 0; cur.getTime() <= end.getTime() && i < 400; i++) {
+      const y = cur.getFullYear();
+      const m = String(cur.getMonth() + 1).padStart(2, "0");
+      const d = String(cur.getDate()).padStart(2, "0");
+      candidates.add(`${y}-${m}-${d}`);
+      cur = new Date(cur.getTime() + 86_400_000);
+    }
+  };
+  for (const b of bookings) addRange(b.from, b.to);
+  for (const m of blocks) addRange(m.from, m.to);
+
+  const out: string[] = [];
+  for (const iso of candidates) {
+    if (iso < now.isoDate) continue;
+    const closeMs = toMs(iso, "19:00");
+    const everySlotBlocked = slots.every((slot) => {
+      if (iso === now.isoDate) {
+        const [h, mm] = slot.split(":").map(Number);
+        if (h * 60 + mm <= now.minutesOfDay) return true; // already passed
+      }
+      const winStart = toMs(iso, slot);
+      const winEnd = closeMs;
+      if (winEnd <= winStart) return true;
+
+      const busy = new Set<string>();
+      for (const m of blocks) {
+        const overlaps =
+          !m.startTime || !m.endTime
+            ? m.from <= iso && iso <= m.to // whole-day: date containment
+            : winStart < toMs(m.to, m.endTime) &&
+              toMs(m.from, m.startTime) < winEnd;
+        if (!overlaps) continue;
+        if (m.unitId === null) return true; // whole model down
+        busy.add(m.unitId);
+      }
+      for (const b of bookings) {
+        if (!b.unitId) continue;
+        const bStart = toMs(b.from, b.pickupTime);
+        const bEnd = toMs(b.to, b.returnTime);
+        if (winStart < bEnd + bufferMs && bStart - bufferMs < winEnd) {
+          busy.add(b.unitId);
+        }
+      }
+      return unitIds.every((id) => busy.has(id));
+    });
+    if (everySlotBlocked) out.push(iso);
+  }
+  return out.sort();
+}

@@ -21,7 +21,6 @@ import {
   buildSlots,
   buildPickupSlots,
   calculatePrice,
-  fullyBookedDates,
   TIER_LABEL,
   validPickupSlots,
   validReturnSlots,
@@ -52,8 +51,6 @@ type RidingStyleId = "solo" | "with_passenger";
 
 type BookingStep = "dates" | "form" | "submitting" | "paying" | "done";
 type PayMode = "screenshot" | "deposit" | "full";
-
-type BlockedRange = { from: Date; to: Date };
 
 function toIsoDate(d: Date): string {
   // Local-time YYYY-MM-DD - DayPicker gives us Date objects in local TZ.
@@ -131,75 +128,34 @@ export default function BikeDetail({
     }
   }, [isSinglePassenger, ridingStyle]);
 
-  // Live availability from Supabase via /api/availability. Split so
-  // confirmed bookings expose pickup/return times (used to filter the
-  // time-slot pickers) while owner manual blocks stay full-day.
-  // `totalUnits` lets us be multi-unit aware: a date is only fully
-  // blocked when every active unit has an overlapping booking.
-  const [manualBlocks, setManualBlocks] = useState<BlockedRange[]>([]);
+  // Live availability from Supabase via /api/availability. Bookings
+  // feed the time-slot pickers; `blockedPickupDates` is the server-
+  // computed calendar truth (same engine as the submit check and the
+  // multi-booking fleet view) — the calendar paints it verbatim and
+  // never re-derives day status client-side.
   const [bookings, setBookings] = useState<ConfirmedBooking[]>([]);
   const [totalUnits, setTotalUnits] = useState(1);
+  const [blockedDates, setBlockedDates] = useState<string[]>([]);
   // Active bookable unit ids — passed to the slot filters so they can
   // count actual free units per candidate window (per-unit rather than
   // per-model), matching what findFreeUnit does server-side.
   const [activeUnitIds, setActiveUnitIds] = useState<string[]>([]);
-  // Virtual bookings derived from full-day manual blocks. Treating
-  // each effective-all-day block as a synthetic booking on its unit
-  // lets us reuse fullyBookedDates() to grey out a calendar day only
-  // when EVERY unit is unavailable — half-blocked days stay open.
-  const [blockBookings, setBlockBookings] = useState<ConfirmedBooking[]>([]);
   useEffect(() => {
     let cancelled = false;
     fetch(`/api/availability?bikeId=${encodeURIComponent(bike.id)}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(r)))
       .then(
         (json: {
-          manualBlocks: Array<{
-            from: string;
-            to: string;
-            startTime: string | null;
-            endTime: string | null;
-            unitId: string | null;
-            effectiveAllDay: boolean;
-          }>;
           bookings: ConfirmedBooking[];
           totalUnits: number;
           unitIds: string[];
+          blockedPickupDates?: string[];
         }) => {
           if (cancelled) return;
-          // Manual blocks shown on the calendar as full-grey are
-          // limited to "effectively all-day" entries (no times set,
-          // or end-time ≥ shop close). Partial blocks stay invisible
-          // on the calendar — the time-slot picker filters them out
-          // when the user picks a date.
-          const allDayBlocks = json.manualBlocks.filter((b) => b.effectiveAllDay);
-          setManualBlocks(
-            allDayBlocks.map((b) => ({
-              from: new Date(`${b.from}T00:00:00`),
-              to: new Date(`${b.to}T00:00:00`),
-            })),
-          );
-          // Build synthetic bookings out of all-day blocks. Whole-
-          // model blocks (unitId null) expand to one synthetic per
-          // active unit so the date counts as "every unit busy".
-          // Per-unit blocks become a single synthetic on that unit.
-          const synth: ConfirmedBooking[] = [];
-          for (const b of allDayBlocks) {
-            const targets = b.unitId ? [b.unitId] : json.unitIds ?? [];
-            for (const uid of targets) {
-              synth.push({
-                from: b.from,
-                to: b.to,
-                pickupTime: "09:00",
-                returnTime: "19:00",
-                unitId: uid,
-              });
-            }
-          }
-          setBlockBookings(synth);
           setBookings(json.bookings);
           setTotalUnits(json.totalUnits || 1);
           setActiveUnitIds(json.unitIds ?? []);
+          setBlockedDates(json.blockedPickupDates ?? []);
         },
       )
       .catch((err) => console.error("Failed to load availability", err));
@@ -225,34 +181,29 @@ export default function BikeDetail({
   todayMidnight.setHours(0, 0, 0, 0);
   const isFutureOrToday = (d: Date) => d.getTime() >= todayMidnight.getTime();
   if (totalUnits === 1) {
+    // Single-unit: keep the half-cell visual on edge days so
+    // back-to-back bookings still feel obvious. Day DISABLING comes
+    // from the server list below — these are visuals only.
     for (const b of bookings) {
       const from = new Date(`${b.from}T00:00:00`);
       const to = new Date(`${b.to}T00:00:00`);
       if (!isFutureOrToday(to)) continue;
-      if (isSameDay(from, to)) {
-        bookedFullDays.push(from);
-        continue;
-      }
+      if (isSameDay(from, to)) continue;
       if (isFutureOrToday(from)) bookedStartDays.push(from);
       bookedEndDays.push(to);
       if (differenceInCalendarDays(to, from) >= 2) {
         bookedMiddleRanges.push({ from: addDays(from, 1), to: addDays(to, -1) });
       }
     }
-  } else {
-    // Multi-unit: a day is fully grey only when every active unit
-    // has either a confirmed booking OR an effective-all-day block
-    // covering it. blockBookings carries the synthetic entries from
-    // manual blocks so the existing fullyBookedDates logic handles
-    // both with one call.
-    for (const iso of fullyBookedDates([...bookings, ...blockBookings], totalUnits)) {
-      const d = new Date(`${iso}T00:00:00`);
-      if (isFutureOrToday(d)) bookedFullDays.push(d);
-    }
   }
-  for (const m of manualBlocks) {
-    if (!isFutureOrToday(m.to)) continue;
-    bookedMiddleRanges.push({ from: m.from, to: m.to });
+  // Server-computed truth (same engine as findFreeUnit / the fleet
+  // view): every date with zero possible pickup slots is painted
+  // booked-red and disabled. No client-side re-derivation — that's
+  // how the single-bike calendar and the multi-booking used to drift
+  // apart.
+  for (const iso of blockedDates) {
+    const d = new Date(`${iso}T00:00:00`);
+    if (isFutureOrToday(d)) bookedFullDays.push(d);
   }
 
   // Single click on the calendar leaves range.to undefined — DayPicker
@@ -285,50 +236,6 @@ export default function BikeDetail({
       return d.getTime() > nowMs;
     });
   };
-
-  // Calendar-level check: is a day COMPLETELY unusable as a pickup day
-  // (no valid start slot at all, ignoring any current range)? Used to
-  // grey out days in the picker. MUST be context-free — the old bug was
-  // that a single-day click made every later day look "unbookable" here.
-  const dayHasNoPickupSlot = (day: Date): boolean => {
-    const base = validPickupSlots(day, bookings, totalUnits);
-    if (!mounted || !isSameDay(day, new Date())) return base.length === 0;
-    const nowMs = Date.now();
-    return (
-      base.filter((s) => {
-        const [h, min] = s.split(":").map(Number);
-        const d = new Date(day);
-        d.setHours(h, min, 0, 0);
-        return d.getTime() > nowMs;
-      }).length === 0
-    );
-  };
-
-  // Disable any day whose pickup dropdown would come up empty — otherwise
-  // the calendar lets you pick a date you can't get a start time for (e.g.
-  // today once its usable slots have passed). Only booking-touched days and
-  // today can be affected; a day with no bookings always has free slots.
-  {
-    const risky = new Set<string>([toIsoDate(new Date())]);
-    for (const b of bookings) {
-      let cur = new Date(`${b.from}T00:00:00`);
-      const end = new Date(`${b.to}T00:00:00`);
-      while (cur.getTime() <= end.getTime()) {
-        risky.add(toIsoDate(cur));
-        cur = addDays(cur, 1);
-      }
-    }
-    for (const iso of risky) {
-      const day = new Date(`${iso}T00:00:00`);
-      // Only grey out days that have NO valid pickup slot at all (looked at
-      // day-in-isolation). The dropdown does the window-scoped filtering
-      // — the calendar must stay range-agnostic or a single first click
-      // paints the whole tail of the month as "booked".
-      if (isFutureOrToday(day) && dayHasNoPickupSlot(day)) {
-        bookedFullDays.push(day);
-      }
-    }
-  }
 
   // Time-slot pickers count busy units at each candidate time and
   // reject slots only when every unit is busy (or in turnaround) at
