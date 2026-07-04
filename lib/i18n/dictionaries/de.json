@@ -356,7 +356,10 @@
       "appliedTier": "Anwendbarer Tarif",
       "total": "Gesamt",
       "continue": "Weiter zum Buchungsformular",
-      "selectDates": "Erst Abhol- und Rückgabedatum wählen"
+      "selectDates": "Erst Abhol- und Rückgabedatum wählen",
+      "notAvailableInWindow": "Im gewählten Zeitraum nicht verfügbar",
+      "notAvailableHint": "Wähle andere Daten oder öffne die Multi-Buchung für ein alternatives Bike.",
+      "notAvailableCta": "Zur Multi-Buchung"
     },
     "form": {
       "title": "Deine Daten",

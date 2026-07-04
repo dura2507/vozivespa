@@ -356,7 +356,10 @@
       "appliedTier": "Zastosowana stawka",
       "total": "Razem",
       "continue": "Przejdź do formularza rezerwacji",
-      "selectDates": "Najpierw wybierz daty odbioru i zwrotu"
+      "selectDates": "Najpierw wybierz daty odbioru i zwrotu",
+      "notAvailableInWindow": "Niedostępne w wybranym okresie",
+      "notAvailableHint": "Wybierz inne daty lub otwórz rezerwację grupową dla innego motoru.",
+      "notAvailableCta": "Otwórz rezerwację grupową"
     },
     "form": {
       "title": "Twoje dane",

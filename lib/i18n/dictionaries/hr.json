@@ -356,7 +356,10 @@
       "appliedTier": "Primijenjena cijena",
       "total": "Ukupno",
       "continue": "Nastavi na obrazac",
-      "selectDates": "Prvo odaberi datum preuzimanja i povrata"
+      "selectDates": "Prvo odaberi datum preuzimanja i povrata",
+      "notAvailableInWindow": "Nije dostupno u odabranom razdoblju",
+      "notAvailableHint": "Odaberi druge datume ili otvori grupnu rezervaciju za drugi motor.",
+      "notAvailableCta": "Otvori grupnu rezervaciju"
     },
     "form": {
       "title": "Tvoji podaci",

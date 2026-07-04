@@ -356,7 +356,10 @@
       "appliedTier": "Použitá sadzba",
       "total": "Spolu",
       "continue": "Pokračovať na rezervačný formulár",
-      "selectDates": "Najprv vyber dátum vyzdvihnutia a vrátenia"
+      "selectDates": "Najprv vyber dátum vyzdvihnutia a vrátenia",
+      "notAvailableInWindow": "Vo zvolenom období nedostupné",
+      "notAvailableHint": "Vyber iné dátumy alebo otvor multi-rezerváciu pre iný motor.",
+      "notAvailableCta": "Otvoriť multi-rezerváciu"
     },
     "form": {
       "title": "Tvoje údaje",

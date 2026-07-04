@@ -356,7 +356,10 @@
       "appliedTier": "Tarifa aplicada",
       "total": "Total",
       "continue": "Continuar para o formulário de reserva",
-      "selectDates": "Selecione primeiro as datas de retirada e devolução"
+      "selectDates": "Selecione primeiro as datas de retirada e devolução",
+      "notAvailableInWindow": "Indisponível no período selecionado",
+      "notAvailableHint": "Escolha outras datas ou abra a reserva múltipla para outra moto.",
+      "notAvailableCta": "Abrir reserva múltipla"
     },
     "form": {
       "title": "Seus dados",

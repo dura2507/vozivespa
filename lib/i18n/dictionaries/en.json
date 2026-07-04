@@ -356,7 +356,10 @@
       "appliedTier": "Applied rate",
       "total": "Total",
       "continue": "Continue to booking form",
-      "selectDates": "Select pickup and return dates first"
+      "selectDates": "Select pickup and return dates first",
+      "notAvailableInWindow": "Not available in this window",
+      "notAvailableHint": "Pick different dates or open the multi-booking for an alternative bike.",
+      "notAvailableCta": "Open multi-booking"
     },
     "form": {
       "title": "Your details",

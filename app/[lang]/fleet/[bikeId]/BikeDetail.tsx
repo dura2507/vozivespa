@@ -1019,34 +1019,57 @@ export default function BikeDetail({
                       {tF.calendar.shopHours}{pickupSlots.length < buildSlots().length || returnSlots.length < buildSlots().length ? tF.calendar.tooClose : ""}.
                     </p>
 
-                    <div className="mt-4 bg-sand px-5 py-4 flex flex-wrap items-center justify-between gap-4">
-                      <div className="text-sm text-ink">
-                        <span className="font-semibold">
-                          {format(effectiveRange.from, "dd MMM", { locale: dateLocale })} {pickupTime}
-                        </span>
-                        {" → "}
-                        <span className="font-semibold">
-                          {format(effectiveRange.to, "dd MMM yyyy", { locale: dateLocale })} {returnTime}
-                        </span>
-                        {billableDays > 0 && (
-                          <span className="text-muted ml-2">
-                            ({billableDays === 1 ? tF.calendar.totalDay : tF.calendar.totalDays.replace("{n}", String(billableDays))})
-                          </span>
-                        )}
+                    {pickupSlots.length === 0 || returnSlots.length === 0 ? (
+                      // Range picked but no single unit is free for the whole window
+                      // (matches the multi-booking view's "0 free" state). Show the same
+                      // "not available in this window" copy and push the customer to the
+                      // multi-booking view where alternative bikes are surfaced.
+                      <div className="mt-4 bg-red-50 border border-red-200 px-5 py-4 flex flex-wrap items-center justify-between gap-4">
+                        <div className="min-w-0">
+                          <p className="text-red-700 font-bold text-sm uppercase tracking-wide">
+                            {tF.calendar.notAvailableInWindow}
+                          </p>
+                          <p className="text-red-800/80 text-xs mt-1">
+                            {tF.calendar.notAvailableHint}
+                          </p>
+                        </div>
+                        <Link
+                          href={`/${lang}/group`}
+                          className="bg-red text-white font-bold text-xs tracking-widest uppercase px-5 py-3 hover:bg-red-dark transition-colors whitespace-nowrap"
+                        >
+                          {tF.calendar.notAvailableCta} →
+                        </Link>
                       </div>
-                      {totalPrice > 0 && (
-                        <div className="text-right">
-                          <div className="font-barlow font-black text-red text-2xl leading-none">
-                            {totalPrice}€
-                          </div>
-                          {appliedTier && appliedTier !== "day" && (
-                            <p className="text-[10px] tracking-[0.15em] uppercase text-muted font-bold mt-1">
-                              {tF.tierLabel[appliedTier]}
-                            </p>
+                    ) : (
+                      <div className="mt-4 bg-sand px-5 py-4 flex flex-wrap items-center justify-between gap-4">
+                        <div className="text-sm text-ink">
+                          <span className="font-semibold">
+                            {format(effectiveRange.from, "dd MMM", { locale: dateLocale })} {pickupTime}
+                          </span>
+                          {" → "}
+                          <span className="font-semibold">
+                            {format(effectiveRange.to, "dd MMM yyyy", { locale: dateLocale })} {returnTime}
+                          </span>
+                          {billableDays > 0 && (
+                            <span className="text-muted ml-2">
+                              ({billableDays === 1 ? tF.calendar.totalDay : tF.calendar.totalDays.replace("{n}", String(billableDays))})
+                            </span>
                           )}
                         </div>
-                      )}
-                    </div>
+                        {totalPrice > 0 && (
+                          <div className="text-right">
+                            <div className="font-barlow font-black text-red text-2xl leading-none">
+                              {totalPrice}€
+                            </div>
+                            {appliedTier && appliedTier !== "day" && (
+                              <p className="text-[10px] tracking-[0.15em] uppercase text-muted font-bold mt-1">
+                                {tF.tierLabel[appliedTier]}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </>
                 )}
                 </div>

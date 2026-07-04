@@ -356,7 +356,10 @@
       "appliedTier": "Tariffa applicata",
       "total": "Totale",
       "continue": "Continua al modulo",
-      "selectDates": "Scegli prima data ritiro e riconsegna"
+      "selectDates": "Scegli prima data ritiro e riconsegna",
+      "notAvailableInWindow": "Non disponibile in questo periodo",
+      "notAvailableHint": "Scegli altre date o apri la prenotazione multipla per un'altra moto.",
+      "notAvailableCta": "Apri prenotazione multipla"
     },
     "form": {
       "title": "I tuoi dati",

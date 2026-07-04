@@ -356,7 +356,10 @@
       "appliedTier": "Alkalmazott tarifa",
       "total": "Összesen",
       "continue": "Tovább a foglalási űrlapra",
-      "selectDates": "Először válaszd ki az átvételi és visszaadási dátumokat"
+      "selectDates": "Először válaszd ki az átvételi és visszaadási dátumokat",
+      "notAvailableInWindow": "A kiválasztott időszakban nem elérhető",
+      "notAvailableHint": "Válassz másik dátumot vagy nyisd meg a többes foglalást másik motorért.",
+      "notAvailableCta": "Többes foglalás megnyitása"
     },
     "form": {
       "title": "Az adataid",
