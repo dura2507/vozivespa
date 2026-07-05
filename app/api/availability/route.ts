@@ -95,7 +95,7 @@ export async function GET(request: Request) {
     unitId: row.bike_unit_id, // null = whole-model block
     effectiveAllDay: isEffectivelyAllDay(row.start_time, row.end_time),
   }));
-  const bookings = (bookingsRes.data ?? []).map((row) => ({
+  const allBookings = (bookingsRes.data ?? []).map((row) => ({
     from: row.date_from,
     to: row.date_to,
     pickupTime: trimT(row.pickup_time),
@@ -103,6 +103,18 @@ export async function GET(request: Request) {
     unitId: row.bike_unit_id,
   }));
   const unitIds = (unitsRes.data ?? []).map((u) => (u as { id: string }).id);
+  // Reserve / backup units are off-the-books online (the ghost-bike flow
+  // parks a booking on a hidden reserve unit). Their bookings must never
+  // shrink PUBLIC availability. blockedPickupDates already scopes to
+  // unitIds, but we also drop reserve-unit rows from the payload so the
+  // returned `bookings` stays self-consistent with `unitIds` — otherwise a
+  // client slot filter can count a reserve booking against regular capacity
+  // (the same-day empty-pickup bug). Keep legacy null-unit rows (they
+  // conservatively block the whole model).
+  const publicUnitIds = new Set(unitIds);
+  const bookings = allBookings.filter(
+    (b) => !b.unitId || publicUnitIds.has(b.unitId),
+  );
 
   return NextResponse.json({
     manualBlocks,

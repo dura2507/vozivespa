@@ -152,7 +152,22 @@ export default function BikeDetail({
           blockedPickupDates?: string[];
         }) => {
           if (cancelled) return;
-          setBookings(json.bookings);
+          // Backup / reserve units are off-the-books online (the ghost-bike
+          // flow parks a booking on a hidden reserve unit). Their bookings
+          // must never shrink PUBLIC slot availability. The server's
+          // blockedPickupDates already excludes them; the client-side pickup
+          // / return pickers must do the same, else a booking on the reserve
+          // unit gets counted against regular capacity and empties the
+          // dropdown even while a real unit is free (e.g. a same-day pick
+          // while the ghost bike is out). Drop any booking whose unit isn't
+          // in the public unitIds list; keep legacy null-unit bookings (they
+          // conservatively block the whole model).
+          const publicUnitIds = new Set(json.unitIds ?? []);
+          setBookings(
+            (json.bookings ?? []).filter(
+              (b) => !b.unitId || publicUnitIds.has(b.unitId),
+            ),
+          );
           setTotalUnits(json.totalUnits || 1);
           setActiveUnitIds(json.unitIds ?? []);
           setBlockedDates(json.blockedPickupDates ?? []);
