@@ -237,10 +237,20 @@ export default function BikeDetail({
   // filter think every other day is a "start after end" window and hide
   // every later day as unbookable.
   const pickupSlotsFor = (day: Date): string[] => {
+    // Always pass activeUnitIds so the pickup filter counts free units
+    // per-unit (the authoritative engine, same as the calendar / the
+    // server submit check). For a real range we scope to the whole window;
+    // for a single-day (same-day) pick we scope to that day up to close.
+    // Passing activeUnitIds even on the same-day path keeps the dropdown
+    // in lockstep with the calendar instead of falling back to the coarser
+    // totalUnits-minus-busy count.
+    const to = effectiveRange?.to;
+    const isRange =
+      effectiveRange?.from && to && !isSameDay(effectiveRange.from, to);
     const ctx =
-      effectiveRange?.from && effectiveRange?.to && !isSameDay(effectiveRange.from, effectiveRange.to)
-        ? { returnDate: effectiveRange.to, returnTime: returnTime || "19:00", activeUnitIds }
-        : undefined;
+      isRange && to
+        ? { returnDate: to, returnTime: returnTime || "19:00", activeUnitIds }
+        : { returnDate: day, returnTime: "19:00", activeUnitIds };
     const base = validPickupSlots(day, bookings, totalUnits, ctx);
     if (!mounted || !isSameDay(day, new Date())) return base;
     const nowMs = Date.now();
