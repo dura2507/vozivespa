@@ -21,7 +21,7 @@ Der Bot ist gebaut, mehrsprachig und **live**: Key in Vercel gesetzt, redeployt,
 
 - [x] **`ANTHROPIC_API_KEY` in Vercel gesetzt + redeployed** (Team `dura2507s-projects` → vozivespa).
 - [ ] **Guthaben low:** Konto hatte nur ~1,14 $ drauf (reicht grob 250-500 Antworten = Testphase). Vor der Peak-Saison Auto-Reload aktivieren oder auf 10-20 $ aufladen, damit der Bot nicht mitten in der Saison ausgeht.
-- [ ] Offene Frage: läuft der Key über **Kristians** oder **Thomas'** Anthropic-Konto (wer trägt die Kosten)?
+- [x] Konto geklärt: der Key läuft **erstmal über Kristians** Anthropic-Konto (Kristian trägt die Cent-Kosten vorerst). Ggf. später auf Thomas' Konto umziehen.
 
 ### 5 inhaltliche Fragen an Thomas (aus WhatsApp-Backup-Analyse 04.07, Bot hat dafür schon eine Sicherheits-Guardrail, blockiert also nicht)
 Details + Belege in Memory `project_chatbot_content`. Wo Thomas' offizielle FAQ und echte Laden-Praxis sich widersprechen:
