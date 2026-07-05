@@ -53,29 +53,47 @@ function ownerChatIds(): string[] {
     .filter((s) => s.length > 0);
 }
 
-// The "Rent Amoto" supergroup with topics. Bookings go to the "Booking
-// Requests" topic, contact-form messages to the "Contact form" topic.
-// Kept here (not secret) so the routing is explicit. The old per-person
-// DM chat IDs in TELEGRAM_OWNER_CHAT_ID still get a copy during the
-// transition — clear that env var to drop them once the group is proven.
+// The "Rent Amoto" supergroup with forum topics. Each notification kind
+// routes to its own topic so the owner can triage at a glance:
+//   2  = Single Bookings   (website single-bike requests)
+//   85 = Group Bookings    (website multi-booking requests)
+//   84 = Riderly Bookings  (bookings pulled from the Riderly inbox)
+//   3  = Contact form
+// Thread ids come from the topic's message link (t.me/c/<chat>/<threadId>/…).
+// Kept here (not secret) so the routing is explicit. The old per-person DM
+// chat IDs in TELEGRAM_OWNER_CHAT_ID still get a copy during the transition —
+// clear that env var to drop them once the group is proven.
 const GROUP_CHAT_ID = "-1004305871084";
-const TOPIC_BOOKINGS = 2;
+const TOPIC_BOOKINGS = 2; // Single Bookings
+const TOPIC_GROUP = 85; // Group Bookings
+const TOPIC_RIDERLY = 84; // Riderly Bookings
 const TOPIC_CONTACT = 3;
 
 type NotifyTarget = { chatId: string; threadId?: number };
 
-function bookingTargets(): NotifyTarget[] {
+// Owner DMs (kept during the group transition) + the supergroup topic for
+// this notification kind.
+function targetsForTopic(threadId: number): NotifyTarget[] {
   return [
     ...ownerChatIds().map((chatId) => ({ chatId }) as NotifyTarget),
-    { chatId: GROUP_CHAT_ID, threadId: TOPIC_BOOKINGS },
+    { chatId: GROUP_CHAT_ID, threadId },
   ];
 }
 
+function bookingTargets(): NotifyTarget[] {
+  return targetsForTopic(TOPIC_BOOKINGS);
+}
+
+function groupBookingTargets(): NotifyTarget[] {
+  return targetsForTopic(TOPIC_GROUP);
+}
+
+function riderlyTargets(): NotifyTarget[] {
+  return targetsForTopic(TOPIC_RIDERLY);
+}
+
 function contactTargets(): NotifyTarget[] {
-  return [
-    ...ownerChatIds().map((chatId) => ({ chatId }) as NotifyTarget),
-    { chatId: GROUP_CHAT_ID, threadId: TOPIC_CONTACT },
-  ];
+  return targetsForTopic(TOPIC_CONTACT);
 }
 
 function fmtDate(iso: string): string {
@@ -402,7 +420,7 @@ export async function sendOwnerGroupBookingTelegram(
 ): Promise<Array<{ chatId: string; messageId: number }>> {
   if (bookings.length === 0) return [];
   const primary = bookings[0];
-  const targets = bookingTargets();
+  const targets = groupBookingTargets();
 
   const { note: rawNote } = splitNotes(primary.notes);
   let translatedNote: string | null = null;
@@ -637,7 +655,7 @@ function formatReceived(d: Date | null): string {
 // inline buttons . owner taps Accept directly, Riderly's API processes
 // the response, no portal switch.
 export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<void> {
-  const targets = bookingTargets();
+  const targets = riderlyTargets();
 
   if (email.kind === "booking") {
     const b = email.booking;
