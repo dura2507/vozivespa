@@ -10,12 +10,12 @@ import { getCategoriesWithPricing, getUnitCounts, getAvailableNowCounts } from "
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 
-// ISR: serve the marketing page from cache and refresh availability every
-// 2 min instead of rendering server-side on every request. The live unit
-// check still runs at booking submit, so a slightly stale "available now"
-// count can never cause a double booking. Keeps Fluid Active CPU low under
-// ad traffic (this page was the top CPU consumer as force-dynamic).
-export const revalidate = 120;
+// Render on every request so the "available now" pills and any deployed fix
+// are always current. ISR (revalidate=120) was a Hobby-plan CPU workaround;
+// on Pro there's no hard CPU cap, and caching the HTML shell risked serving a
+// stale bundle after a deploy. The live unit check still runs at booking
+// submit, so nothing here can cause a double booking either way.
+export const dynamic = "force-dynamic";
 
 function fmt(template: string, vars: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, key) => String(vars[key] ?? ""));
