@@ -32,6 +32,9 @@ Details + Belege in Memory `project_chatbot_content`. Wo Thomas' offizielle FAQ 
 
 ## Kleinere offene Punkte
 
+### Audit-Log für Buchungen (Folge aus Leon-Vorfall 05.07)
+- [ ] `bookings` hat nur `created_at`, KEIN `updated_at`/Status-History. Als am 05.07 eine Buchung (Leon) aus der Verfügbarkeit verschwand (wahrscheinlich versehentlicher "Mark as returned"-Tipp, jetzt mit Rückfrage abgesichert, Commit 50b85f4), war NICHT rekonstruierbar wer/wann. Empfehlung: kleine `booking_events`-Tabelle (booking_id, event, old->new, actor, created_at) oder mind. `updated_at` + Log in status/fulfillment-Routes. Dann ist so ein Vorfall künftig nachvollziehbar. Braucht DB-Migration, mit Kristian timen.
+
 ### Niedrig-Prio aus Site-Audit 05.07 (alles LOW, nicht kundenwirksam)
 - [ ] **Same-Day Zeitzonen-Kante:** der "vergangene Slots"-Filter in `BikeDetail.tsx` (`pickupSlotsFor`) nutzt die **Browser-lokale** Uhr (`new Date()`/`Date.now()`), nicht Zadar-Zeit. Kunde in weit voraus liegender Zeitzone (UTC+8/+10) könnte "heute" als schon vorbei sehen und leeren Dropdown bekommen obwohl in Zadar noch Nachmittag. Server bleibt korrekt. Fix: auf `Europe/Zagreb`-Wandzeit keyen (wie Server `zagrebNow()`).
 - [ ] **Null-Unit-Legacy-Buchungen** (bike_unit_id=null): Client-`pricing.ts` behandelt sie als Ganz-Modell-Block, Server-`findFreeUnit` zählt sie gar nicht. Aktuell ZERO Impact (keine solchen Buchungen existieren). Vor Wiedereinführung reconcilen + Test dagegen. Details in Memory `project_booking_logic_rules`.
