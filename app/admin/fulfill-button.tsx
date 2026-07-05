@@ -18,6 +18,21 @@ export function FulfillButton({
 
   async function run() {
     if (busy) return;
+    // Guard the one-tap actions with a confirm. "Mark as returned" sets
+    // returned_at, which frees the unit on the public calendar IMMEDIATELY
+    // (even before the scheduled return) — an accidental tap here silently
+    // released a bike a customer still had, which read as a phantom
+    // "overbooking" when the next request came in. A quick prompt stops the
+    // mis-tap without slowing down the real action.
+    const n = ids.length;
+    const subject = n > 1 ? `${n} bikes` : "this bike";
+    const msg =
+      action === "return"
+        ? `Mark ${subject} as RETURNED now? This frees ${
+            n > 1 ? "them" : "it"
+          } on the calendar immediately, even before the scheduled return time.`
+        : `Mark ${subject} as picked up?`;
+    if (!window.confirm(msg)) return;
     setBusy(true);
     try {
       await Promise.all(
