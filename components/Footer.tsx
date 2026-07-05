@@ -132,11 +132,11 @@ export default function Footer({
             by
           </p>
           <a
-            href="https://krileo.com"
+            href="https://krileo.de"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block opacity-80 hover:opacity-100 transition-opacity"
-            aria-label="Krileo — krileo.com"
+            aria-label="Krileo - krileo.de"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
