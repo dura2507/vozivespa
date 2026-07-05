@@ -6,6 +6,33 @@ import type { Locale } from "@/lib/i18n/config";
 
 type Turn = { role: "user" | "assistant"; content: string };
 
+// Small round brand avatar shown in the header and next to each bot reply.
+// A red disc with a white chat glyph — reads as "assistant" without needing
+// a photo, and matches the site's red/ink palette.
+function BotAvatar({ size = 28 }: { size?: number }) {
+  return (
+    <span
+      className="shrink-0 rounded-full bg-gradient-to-br from-red to-red-dark flex items-center justify-center text-white shadow-sm"
+      style={{ width: size, height: size }}
+      aria-hidden
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        style={{ width: size * 0.55, height: size * 0.55 }}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.87 9.87 0 01-4-.8L3 21l1.3-4A7.94 7.94 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+        />
+      </svg>
+    </span>
+  );
+}
+
 // Floating chat widget. Mounted once on every page via the [lang] layout.
 // The panel opens with a single tap; on mobile it fills a comfortable chunk
 // of the screen without going full-screen so the page behind is still
@@ -81,53 +108,88 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
 
   return (
     <>
-      {/* Floating button, bottom-right */}
+      {/* Floating launcher, bottom-right */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? t.close : t.openLabel}
-        className={`fixed z-40 bottom-5 right-5 w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-white transition-all ${
-          open ? "bg-ink hover:bg-ink/90" : "bg-red hover:bg-red-dark"
+        className={`group fixed z-40 bottom-5 right-5 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg shadow-red/25 transition-transform duration-200 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-4 focus-visible:ring-red/30 ${
+          open
+            ? "bg-ink"
+            : "bg-gradient-to-br from-red to-red-dark"
         }`}
       >
-        {open ? (
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6L6 18" />
-          </svg>
-        ) : (
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.87 9.87 0 01-4-.8L3 21l1.3-4A7.94 7.94 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-            />
-          </svg>
+        {/* Soft pulse ring while closed, to gently invite a tap. */}
+        {!open && (
+          <span className="chat-ring absolute inset-0 rounded-full bg-red/40" aria-hidden />
         )}
+        <span className="relative">
+          {open ? (
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          ) : (
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.87 9.87 0 01-4-.8L3 21l1.3-4A7.94 7.94 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+          )}
+        </span>
       </button>
 
       {open && (
         <div
-          className="fixed z-40 bottom-24 right-5 left-5 sm:left-auto sm:w-[380px] bg-white shadow-2xl border border-ink/10 flex flex-col overflow-hidden"
-          style={{ maxHeight: "min(560px, calc(100vh - 8rem))" }}
+          className="chat-pop fixed z-40 bottom-24 right-5 left-5 sm:left-auto sm:w-[400px] bg-white rounded-3xl shadow-2xl ring-1 ring-ink/10 flex flex-col overflow-hidden"
+          style={{ maxHeight: "min(600px, calc(100vh - 8rem))" }}
         >
           {/* Header */}
-          <div className="bg-ink text-white px-4 py-3">
-            <p className="font-bold text-sm">{t.title}</p>
-            <p className="text-[11px] text-white/60 mt-0.5 leading-snug">{t.subtitle}</p>
+          <div className="relative bg-gradient-to-br from-ink to-[#2b2b2b] text-white px-4 py-3.5 flex items-center gap-3">
+            <div className="relative">
+              <BotAvatar size={38} />
+              {/* Online dot */}
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 ring-2 ring-ink" aria-hidden />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-sm leading-tight truncate">{t.title}</p>
+              <p className="text-[11px] text-white/55 mt-0.5 leading-snug line-clamp-2">{t.subtitle}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label={t.close}
+              className="shrink-0 -mr-1 w-8 h-8 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-3 text-sm bg-off-white">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto px-3.5 py-4 space-y-3 text-sm bg-off-white">
             {messages.length === 0 && (
-              <div className="text-ink/60 leading-relaxed">
-                <p>{t.greeting}</p>
-                <div className="mt-3 space-y-1.5">
+              <div className="chat-msg">
+                {/* Greeting bubble with avatar */}
+                <div className="flex items-end gap-2">
+                  <BotAvatar size={28} />
+                  <div className="max-w-[85%] bg-white text-ink px-3.5 py-2.5 rounded-2xl rounded-bl-md shadow-sm ring-1 ring-ink/5 leading-snug">
+                    {t.greeting}
+                  </div>
+                </div>
+                {/* Suggestion chips */}
+                <div className="mt-3 flex flex-wrap gap-2 pl-9">
                   {t.suggestions.map((s) => (
                     <button
                       key={s}
                       type="button"
-                      onClick={() => setDraft(s)}
-                      className="block text-left text-xs bg-white border border-ink/10 px-3 py-1.5 hover:border-red hover:text-red transition-colors w-full"
+                      onClick={() => {
+                        setDraft(s);
+                        inputRef.current?.focus();
+                      }}
+                      className="text-left text-xs bg-white text-ink/80 border border-ink/10 rounded-full px-3 py-1.5 hover:border-red hover:text-red hover:shadow-sm transition-all"
                     >
                       {s}
                     </button>
@@ -138,13 +200,16 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
             {messages.map((m, i) => (
               <div
                 key={i}
-                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                className={`chat-msg flex items-end gap-2 ${
+                  m.role === "user" ? "justify-end" : "justify-start"
+                }`}
               >
+                {m.role === "assistant" && <BotAvatar size={28} />}
                 <div
-                  className={`max-w-[85%] px-3 py-2 leading-snug whitespace-pre-wrap ${
+                  className={`max-w-[80%] px-3.5 py-2.5 leading-snug whitespace-pre-wrap ${
                     m.role === "user"
-                      ? "bg-red text-white"
-                      : "bg-white text-ink border border-ink/10"
+                      ? "bg-gradient-to-br from-red to-red-dark text-white rounded-2xl rounded-br-md shadow-sm shadow-red/20"
+                      : "bg-white text-ink rounded-2xl rounded-bl-md shadow-sm ring-1 ring-ink/5"
                   }`}
                 >
                   {m.content}
@@ -152,39 +217,51 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
               </div>
             ))}
             {busy && (
-              <div className="flex justify-start">
-                <div className="bg-white border border-ink/10 px-3 py-2 text-ink/40">
-                  <span className="inline-block animate-pulse">•••</span>
+              <div className="chat-msg flex items-end gap-2 justify-start">
+                <BotAvatar size={28} />
+                <div className="bg-white rounded-2xl rounded-bl-md shadow-sm ring-1 ring-ink/5 px-4 py-3 flex items-center gap-1">
+                  <span className="chat-dot w-1.5 h-1.5 rounded-full bg-ink/40" style={{ animationDelay: "0ms" }} />
+                  <span className="chat-dot w-1.5 h-1.5 rounded-full bg-ink/40" style={{ animationDelay: "150ms" }} />
+                  <span className="chat-dot w-1.5 h-1.5 rounded-full bg-ink/40" style={{ animationDelay: "300ms" }} />
                 </div>
               </div>
             )}
             {error && (
-              <p className="text-xs text-red font-medium">{error}</p>
+              <div className="flex justify-center">
+                <p className="text-xs text-red font-medium bg-red/5 border border-red/15 rounded-full px-3 py-1.5 text-center">
+                  {error}
+                </p>
+              </div>
             )}
           </div>
 
           {/* Composer */}
-          <div className="border-t border-ink/10 px-3 py-2 bg-white">
+          <div className="border-t border-ink/10 px-3 py-3 bg-white">
             <div className="flex items-end gap-2">
-              <textarea
-                ref={inputRef}
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                onKeyDown={onKeyDown}
-                rows={1}
-                placeholder={t.placeholder}
-                className="flex-1 resize-none border border-ink/15 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red max-h-32"
-              />
+              <div className="flex-1 flex items-end rounded-2xl bg-off-white border border-ink/10 focus-within:border-red/40 focus-within:ring-2 focus-within:ring-red/20 transition-colors">
+                <textarea
+                  ref={inputRef}
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  onKeyDown={onKeyDown}
+                  rows={1}
+                  placeholder={t.placeholder}
+                  className="flex-1 resize-none bg-transparent px-3.5 py-2.5 text-sm focus:outline-none max-h-32 placeholder:text-ink/35"
+                />
+              </div>
               <button
                 type="button"
                 onClick={send}
                 disabled={busy || !draft.trim()}
-                className="bg-red text-white font-bold text-xs tracking-widest uppercase px-3 py-2.5 hover:bg-red-dark disabled:opacity-30 shrink-0"
+                aria-label={t.send}
+                className="shrink-0 w-11 h-11 rounded-full bg-gradient-to-br from-red to-red-dark text-white flex items-center justify-center shadow-sm shadow-red/25 hover:brightness-110 active:scale-95 disabled:opacity-30 disabled:shadow-none transition-all"
               >
-                {t.send}
+                <svg className="w-5 h-5 -ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.5 4.5a.5.5 0 01.68-.62l15.5 7.2a.5.5 0 010 .9l-15.5 7.2a.5.5 0 01-.68-.62L6 12zm0 0h7" />
+                </svg>
               </button>
             </div>
-            <p className="text-[10px] text-ink/40 mt-1.5">{t.disclaimer}</p>
+            <p className="text-[10px] text-ink/35 mt-2 text-center">{t.disclaimer}</p>
           </div>
         </div>
       )}

@@ -52,6 +52,33 @@ html { scrollbar-width: none; -ms-overflow-style: none; }
   .success-draw { animation: none; stroke-dashoffset: 0; }
 }
 
+/* Chatbot widget: gentle entrance + bubble/typing motion. Kept here so the
+   panel scales up from its bottom-right anchor instead of just appearing. */
+@keyframes chat-pop {
+  0% { opacity: 0; transform: translateY(14px) scale(0.94); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.chat-pop { animation: chat-pop 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: bottom right; }
+@keyframes chat-msg {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.chat-msg { animation: chat-msg 0.22s ease-out both; }
+@keyframes chat-typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+.chat-dot { animation: chat-typing 1.2s infinite ease-in-out; }
+/* Slow attention ring behind the closed launcher. */
+@keyframes chat-ring {
+  0% { transform: scale(1); opacity: 0.45; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+.chat-ring { animation: chat-ring 2.6s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .chat-pop, .chat-msg, .chat-dot, .chat-ring { animation: none; }
+}
+
 /* react-day-picker override for new design */
 .rdp-root {
   --rdp-accent-color: #B61F36;
