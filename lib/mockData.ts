@@ -264,6 +264,13 @@ export const REVIEWS: Review[] = [
     photos: ["/reviews/reinhard-griephan-photo-1.jpg"],
   },
   {
+    id: "17",
+    name: "Askan Yilmaz",
+    date: "Jun 2026",
+    rating: 5,
+    text: "Wir haben die Duke 390 für einen Tag gebucht und es war super. Der Service war exzellent und freundlich. Als wir ein kleines Problem hatten, ist der Eigentümer so schnell wie möglich gekommen und hat uns geholfen. Sehr empfehlenswert und preiswert. ;-)",
+  },
+  {
     id: "15",
     name: "Eike",
     date: "May 2026",
