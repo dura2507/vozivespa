@@ -262,7 +262,14 @@ function Section({
 }
 
 function FleetCard({ entry }: { entry: FleetEntry }) {
-  const fullyOut = entry.totalUnits > 0 && entry.outUnits >= entry.totalUnits;
+  // Lead with FREE, not OUT. Owners kept reading "3 / 4 out" and having to
+  // subtract in their head to know if anything was bookable — which caused
+  // the recurring "there's no scooter / overbooking?!" false alarms when the
+  // last free unit got booked. "1 / 4 free" (green) vs "0 / 4 fully booked"
+  // (red) answers the only question that matters at a glance: can I hand this
+  // bike out right now? free = total minus committed (out + reserved-soon).
+  const freeUnits = Math.max(0, entry.totalUnits - entry.outUnits);
+  const fullyOut = entry.totalUnits > 0 && freeUnits === 0;
   return (
     <Link
       href={`/admin?bike=${entry.bikeId}`}
@@ -270,19 +277,28 @@ function FleetCard({ entry }: { entry: FleetEntry }) {
       className={`block p-4 border transition-colors ${
         fullyOut
           ? "bg-red/10 border-red"
-          : entry.outUnits > 0
+          : freeUnits < entry.totalUnits
           ? "bg-yellow-50 border-yellow-300"
-          : "bg-white border-ink/10"
+          : "bg-emerald-50 border-emerald-300"
       } hover:border-red`}
     >
       <p className="text-xs font-bold text-ink truncate">{entry.bikeName}</p>
       <p className="font-bold text-2xl text-ink mt-1 leading-none tabular-nums">
-        {entry.outUnits}
+        {freeUnits}
         <span className="text-ink/40 text-base"> / {entry.totalUnits}</span>
       </p>
-      <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mt-1">
-        out
+      <p
+        className={`text-[10px] tracking-[0.15em] uppercase font-bold mt-1 ${
+          fullyOut ? "text-red" : "text-emerald-700"
+        }`}
+      >
+        {fullyOut ? "fully booked" : "free now"}
       </p>
+      {entry.outUnits > 0 && !fullyOut && (
+        <p className="text-[11px] text-ink/50 mt-0.5 leading-tight">
+          {entry.outUnits} out
+        </p>
+      )}
       {entry.reservedSoonCount > 0 && (
         <p className="text-[11px] text-amber-700 font-bold mt-1 leading-tight">
           {entry.reservedSoonCount} reserved · pickup soon
