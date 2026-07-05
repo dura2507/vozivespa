@@ -9,18 +9,19 @@ Reihenfolge zum Bauen (Vorschlag): 1 Multi-Buchung → 2 Chatbot → 3 Apple Pay
 | # | Feature | Aufwand | Status |
 |---|---|---|---|
 | 1 | Multi-Buchung (eigene Seite, Bikes aus ganzer Flotte wählen, Kalender-Abgleich + Smart-Vorschläge) | 6-8 Tage | freigegeben, noch nicht begonnen |
-| 2 | KI-Chatbot (6 Top-Fragen, mehrsprachig) | 2-3 Tage | **GEBAUT + deployed.** Wartet NUR noch auf `ANTHROPIC_API_KEY` in Vercel (siehe unten). Bis dahin sauberer WhatsApp-Fallback. |
+| 2 | KI-Chatbot (6 Top-Fragen, mehrsprachig) | 2-3 Tage | **LIVE seit 05.07.** Key in Vercel gesetzt + redeployed, live gegen Produktion verifiziert (EN/DE + Versicherungs-Guardrail antworten echt via Haiku 4.5). |
 | 3 | Apple Pay / Online-Zahlung | 3-5 Tage | freigegeben. Provider Mollie/Viva statt Stripe; eigener Meilenstein (Risiko-Stück) |
 | 4 | Aufpreis außerhalb Geschäftszeiten (7-9 / 19-22 Uhr) | 1-2 Tage | freigegeben |
 
 Hinweis Preis: alle 4 = grob 12-18 Tage Aufwand; 1000-1500 € ist deutlich unter dem alten Freundschaftspreis (2000 € + 20 €/Mon). Bei Folge-Features nicht weiter runter.
 
-## Chatbot scharfschalten (NÄCHSTER SCHRITT, wartet auf Key)
+## Chatbot LIVE (scharfgeschaltet 05.07)
 
-Der Bot ist fertig gebaut, deployed und mehrsprachig. Er antwortet echt, sobald der Key da ist.
+Der Bot ist gebaut, mehrsprachig und **live**: Key in Vercel gesetzt, redeployt, am 05.07 gegen Produktion (`/api/chatbot`) verifiziert - echte Antworten in EN + DE, Versicherungs-Guardrail greift (verweist auf WhatsApp statt Zahlen zu erfinden). Modell Haiku 4.5, ~0,4 Cent/Antwort.
 
-- [ ] **`ANTHROPIC_API_KEY` in Vercel setzen** (Team `dura2507s-projects` → vozivespa → Settings → Environment Variables). Key aus einem Anthropic-Konto (console.anthropic.com, Zahlung hinterlegt). Kosten mit Haiku < 0,001 € pro Antwort. Danach kurz redeployen (leerer Commit reicht), dann ist der Bot live. Kristian kam am 04.07 nicht in die Console rein → auf später verschoben.
-- [ ] Offene Frage: läuft der Key über **Kristians** oder **Thomas'** Anthropic-Konto (wer trägt die Mini-Kosten)?
+- [x] **`ANTHROPIC_API_KEY` in Vercel gesetzt + redeployed** (Team `dura2507s-projects` → vozivespa).
+- [ ] **Guthaben low:** Konto hatte nur ~1,14 $ drauf (reicht grob 250-500 Antworten = Testphase). Vor der Peak-Saison Auto-Reload aktivieren oder auf 10-20 $ aufladen, damit der Bot nicht mitten in der Saison ausgeht.
+- [ ] Offene Frage: läuft der Key über **Kristians** oder **Thomas'** Anthropic-Konto (wer trägt die Kosten)?
 
 ### 5 inhaltliche Fragen an Thomas (aus WhatsApp-Backup-Analyse 04.07, Bot hat dafür schon eine Sicherheits-Guardrail, blockiert also nicht)
 Details + Belege in Memory `project_chatbot_content`. Wo Thomas' offizielle FAQ und echte Laden-Praxis sich widersprechen:
