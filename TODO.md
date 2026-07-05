@@ -9,11 +9,26 @@ Reihenfolge zum Bauen (Vorschlag): 1 Multi-Buchung → 2 Chatbot → 3 Apple Pay
 | # | Feature | Aufwand | Status |
 |---|---|---|---|
 | 1 | Multi-Buchung (eigene Seite, Bikes aus ganzer Flotte wählen, Kalender-Abgleich + Smart-Vorschläge) | 6-8 Tage | freigegeben, noch nicht begonnen |
-| 2 | KI-Chatbot (6 Top-Fragen, mehrsprachig) | 2-3 Tage | freigegeben. Laufende LLM-Kosten via 20 €/Mon decken (günstiges Modell + Caching) |
+| 2 | KI-Chatbot (6 Top-Fragen, mehrsprachig) | 2-3 Tage | **GEBAUT + deployed.** Wartet NUR noch auf `ANTHROPIC_API_KEY` in Vercel (siehe unten). Bis dahin sauberer WhatsApp-Fallback. |
 | 3 | Apple Pay / Online-Zahlung | 3-5 Tage | freigegeben. Provider Mollie/Viva statt Stripe; eigener Meilenstein (Risiko-Stück) |
 | 4 | Aufpreis außerhalb Geschäftszeiten (7-9 / 19-22 Uhr) | 1-2 Tage | freigegeben |
 
 Hinweis Preis: alle 4 = grob 12-18 Tage Aufwand; 1000-1500 € ist deutlich unter dem alten Freundschaftspreis (2000 € + 20 €/Mon). Bei Folge-Features nicht weiter runter.
+
+## Chatbot scharfschalten (NÄCHSTER SCHRITT, wartet auf Key)
+
+Der Bot ist fertig gebaut, deployed und mehrsprachig. Er antwortet echt, sobald der Key da ist.
+
+- [ ] **`ANTHROPIC_API_KEY` in Vercel setzen** (Team `dura2507s-projects` → vozivespa → Settings → Environment Variables). Key aus einem Anthropic-Konto (console.anthropic.com, Zahlung hinterlegt). Kosten mit Haiku < 0,001 € pro Antwort. Danach kurz redeployen (leerer Commit reicht), dann ist der Bot live. Kristian kam am 04.07 nicht in die Console rein → auf später verschoben.
+- [ ] Offene Frage: läuft der Key über **Kristians** oder **Thomas'** Anthropic-Konto (wer trägt die Mini-Kosten)?
+
+### 5 inhaltliche Fragen an Thomas (aus WhatsApp-Backup-Analyse 04.07, Bot hat dafür schon eine Sicherheits-Guardrail, blockiert also nicht)
+Details + Belege in Memory `project_chatbot_content`. Wo Thomas' offizielle FAQ und echte Laden-Praxis sich widersprechen:
+1. Diebstahl/Motorschaden: FAQ sagt "gedeckt", Chats sagen bei großen Bikes "geht auf Mieter". Was gilt, für alle Bikes gleich?
+2. Schäden allgemein: "Basisversicherung inkl." vs "alle Schäden zahlt Kunde"?
+3. Extra-Stunden-Gebühr (390er 6€/h) rein oder weglassen?
+4. Pannenhilfe (bis 20km gratis, Inseln teurer, Schlüssel 50€): in Bot nennen oder intern?
+5. Storno/Erstattung: klare Regel die der Bot sagen darf?
 
 ## Kleinere offene Punkte
 
