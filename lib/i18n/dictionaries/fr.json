@@ -350,6 +350,7 @@
       "pickupTime": "Heure de retrait",
       "returnTime": "Heure de restitution",
       "shopHours": "Horaires de la boutique 09:00 à 19:00. Les horaires hors de cette plage ne sont pas disponibles",
+      "timezone": "heure de Zadar",
       "tooClose": " (ou trop proche d'une autre réservation, il nous faut 1h entre les réservations)",
       "totalDays": "{n} jours",
       "totalDay": "1 jour",

@@ -350,6 +350,7 @@
       "pickupTime": "Átvétel ideje",
       "returnTime": "Visszaadás ideje",
       "shopHours": "Nyitvatartás 09:00 és 19:00 között. Az ezen kívüli időpontok nem elérhetők",
+      "timezone": "zadari idő",
       "tooClose": " (vagy túl közel egy másik foglaláshoz, 1 óra kell a foglalások között)",
       "totalDays": "{n} nap",
       "totalDay": "1 nap",

@@ -350,6 +350,7 @@
       "pickupTime": "Hora de recogida",
       "returnTime": "Hora de devolución",
       "shopHours": "Horario 09:00 a 19:00. Horas fuera de este rango no están disponibles",
+      "timezone": "hora de Zadar",
       "tooClose": " (o demasiado cerca de otra reserva, necesitamos 1h entre reservas)",
       "totalDays": "{n} días",
       "totalDay": "1 día",

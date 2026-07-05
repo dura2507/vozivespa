@@ -350,6 +350,7 @@
       "pickupTime": "Čas vyzdvihnutia",
       "returnTime": "Čas vrátenia",
       "shopHours": "Otváracie hodiny 09:00 až 19:00. Časy mimo tohto okna nie sú dostupné",
+      "timezone": "zadarský čas",
       "tooClose": " (alebo príliš blízko inej rezervácie, medzi rezerváciami potrebujeme 1h)",
       "totalDays": "{n} dní",
       "totalDay": "1 deň",

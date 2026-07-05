@@ -350,6 +350,7 @@
       "pickupTime": "Godzina odbioru",
       "returnTime": "Godzina zwrotu",
       "shopHours": "Godziny otwarcia 09:00 do 19:00. Godziny poza tym oknem nie są dostępne",
+      "timezone": "czas w Zadarze",
       "tooClose": " (lub zbyt blisko innej rezerwacji, potrzebujemy 1h przerwy między rezerwacjami)",
       "totalDays": "{n} dni",
       "totalDay": "1 dzień",

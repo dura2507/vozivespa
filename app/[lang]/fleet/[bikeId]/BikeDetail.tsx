@@ -26,7 +26,7 @@ import {
   validReturnSlots,
   type ConfirmedBooking,
 } from "@/lib/pricing";
-import { SEASON_END_DATE } from "@/lib/season";
+import { SEASON_END_DATE, zagrebNow } from "@/lib/season";
 import SumUpCardWidget from "@/components/SumUpCardWidget";
 
 type CustomerForm = {
@@ -252,13 +252,16 @@ export default function BikeDetail({
         ? { returnDate: to, returnTime: returnTime || "19:00", activeUnitIds }
         : { returnDate: day, returnTime: "19:00", activeUnitIds };
     const base = validPickupSlots(day, bookings, totalUnits, ctx);
-    if (!mounted || !isSameDay(day, new Date())) return base;
-    const nowMs = Date.now();
+    // "Is this day today, and which slots are already past" must be judged in
+    // Zadar wall-clock (Europe/Zagreb), NOT the visitor's browser clock — else
+    // a rider in a far-ahead timezone (UTC+8/+10) sees Zadar's afternoon slots
+    // as "past" and gets an empty dropdown. Mirror the server (zagrebNow).
+    if (!mounted) return base;
+    const zn = zagrebNow();
+    if (format(day, "yyyy-MM-dd") !== zn.isoDate) return base;
     return base.filter((s) => {
       const [h, min] = s.split(":").map(Number);
-      const d = new Date(day);
-      d.setHours(h, min, 0, 0);
-      return d.getTime() > nowMs;
+      return h * 60 + min > zn.minutesOfDay;
     });
   };
 
@@ -948,7 +951,7 @@ export default function BikeDetail({
                       </label>
                     </div>
                     <p className="text-muted text-xs mt-2">
-                      {tF.calendar.shopHours}{pickupSlots.length < buildSlots().length || returnSlots.length < buildSlots().length ? tF.calendar.tooClose : ""}.
+                      {tF.calendar.shopHours}{pickupSlots.length < buildSlots().length || returnSlots.length < buildSlots().length ? tF.calendar.tooClose : ""}. ({tF.calendar.timezone})
                     </p>
 
                     {pickupSlots.length === 0 || returnSlots.length === 0 ? (
