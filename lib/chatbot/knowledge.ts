@@ -5,19 +5,34 @@ import type { Locale } from "@/lib/i18n/config";
 // tells a customer, in one place, so the model doesn't have to "guess".
 // Consumed by /api/chatbot as the system prompt.
 
-const LOCALE_INSTRUCTION: Record<Locale, string> = {
-  en: "Reply in English.",
-  de: "Antworte auf Deutsch. Duze den Kunden.",
-  hr: "Odgovaraj na hrvatskom, obraćaj se s ti.",
-  it: "Rispondi in italiano, dando del tu.",
-  pl: "Odpowiadaj po polsku, per ty.",
-  fr: "Réponds en français, tutoie le client.",
-  es: "Responde en español, tuteando al cliente.",
-  hu: "Válaszolj magyarul, tegezve az ügyfelet.",
-  sk: "Odpovedaj po slovensky, tykaj zákazníkovi.",
-  cs: "Odpovídej česky, tykej zákazníkovi.",
-  pt: "Responda em português brasileiro, tratando por você.",
+// The language the site is CURRENTLY shown in (from the top-right switcher),
+// plus the informal tone we use in that language. This is only the DEFAULT:
+// the global LANGUAGE RULE below makes the bot always mirror whatever
+// language the visitor actually writes in.
+const LOCALE_DEFAULT: Record<Locale, string> = {
+  en: "The site is currently shown in English, so default to English.",
+  de: "Die Website ist aktuell auf Deutsch. Standardmäßig auf Deutsch antworten und den Kunden duzen.",
+  hr: "Stranica je trenutačno na hrvatskom, pa standardno odgovaraj na hrvatskom i obraćaj se s ti.",
+  it: "Il sito è attualmente in italiano, quindi per impostazione predefinita rispondi in italiano dando del tu.",
+  pl: "Strona jest obecnie po polsku, więc domyślnie odpowiadaj po polsku, zwracając się per ty.",
+  fr: "Le site est actuellement en français, donc par défaut réponds en français en tutoyant le client.",
+  es: "El sitio está actualmente en español, así que por defecto responde en español tuteando al cliente.",
+  hu: "Az oldal jelenleg magyarul jelenik meg, ezért alapértelmezetten magyarul válaszolj, tegezve az ügyfelet.",
+  sk: "Stránka je momentálne v slovenčine, preto štandardne odpovedaj po slovensky a tykaj zákazníkovi.",
+  cs: "Stránka je momentálně v češtině, proto standardně odpovídej česky a tykej zákazníkovi.",
+  pt: "O site está atualmente em português, então por padrão responda em português (do Brasil), tratando o cliente por você.",
 };
+
+// Language behaviour, in English so it applies no matter which locale is
+// active. Mirror the visitor's written language; fall back to the site
+// default only when their message is too short to tell.
+const LANGUAGE_RULE = `
+LANGUAGE
+- You are fully multilingual. All 11 site languages are supported: English, German, Croatian, Italian, Polish, French, Spanish, Hungarian, Slovak, Czech and Brazilian Portuguese.
+- Always reply in the SAME language the visitor writes their message in. If they switch language mid-conversation, switch with them from that message on. Never answer in a different language than the one the visitor just used.
+- Only when a message is too short to tell (e.g. a single word, a number, an emoji), use the site's current default language stated below.
+- Always address the visitor informally (du / tu / ti / per ty / você ...). Never mix two languages in one reply.
+`.trim();
 
 function fleetSummary(): string {
   return CATEGORIES.map((c) => {
@@ -151,7 +166,8 @@ You are the friendly on-site assistant for the SickMotos / Rent a Moto Zadar sco
 
 STYLE
 - Warm, informal, concise. 1-4 short sentences unless the visitor asks for detail.
-- Use the visitor's language. Never switch languages mid-reply.
+- Match the visitor's language (see the LANGUAGE section). Never mix two languages in one reply.
+- Plain text. No markdown headings, tables or code blocks. You may put a single key value in **bold** and use simple "-" bullet lines; keep formatting minimal.
 - When a fact lives on a specific page, point at it: /fleet (bikes), /fleet/{bike-id} (a specific bike), /group (multi-booking), /info (info page), /faq (FAQ), /contact (WhatsApp / email).
 - Prices, deposit, hours, licence rules: quote the exact values from FLEET / DEPOSIT / HOURS above. Never invent numbers.
 - Never promise availability without a real check: link the visitor to the bike page or /group where the live calendar is.
@@ -167,7 +183,7 @@ BOUNDARIES
 export function buildSystemPrompt(locale: Locale): string {
   return [
     ROLE_INSTRUCTIONS,
-    "\n\n" + LOCALE_INSTRUCTION[locale],
+    "\n\n" + LANGUAGE_RULE + "\n- Default language for this session: " + LOCALE_DEFAULT[locale],
     "\n\n## OWNER-PROVIDED FAQ (authoritative)\n" + THOMAS_FAQ,
     "\n\n## SITE FACTS\n" + SITE_FACTS,
   ].join("");

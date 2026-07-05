@@ -33,6 +33,23 @@ function BotAvatar({ size = 28 }: { size?: number }) {
   );
 }
 
+// Renders a message: turns **bold** into real bold and strips any stray
+// markdown asterisks so raw ** never shows in a bubble. Everything else stays
+// plain text (React escapes it); newlines are kept by the pre-wrap class.
+function renderRich(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) => {
+    const bold = /^\*\*([^*]+)\*\*$/.exec(part);
+    if (bold) {
+      return (
+        <strong key={i} className="font-semibold">
+          {bold[1]}
+        </strong>
+      );
+    }
+    return <span key={i}>{part.replace(/\*\*/g, "")}</span>;
+  });
+}
+
 // Floating chat widget. Mounted once on every page via the [lang] layout.
 // The panel opens with a single tap; on mobile it fills a comfortable chunk
 // of the screen without going full-screen so the page behind is still
@@ -113,7 +130,7 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? t.close : t.openLabel}
-        className={`group fixed z-40 bottom-5 right-5 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg shadow-red/25 transition-transform duration-200 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-4 focus-visible:ring-red/30 ${
+        className={`group fixed z-[60] bottom-5 right-5 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg shadow-red/25 transition-transform duration-200 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-4 focus-visible:ring-red/30 ${
           open
             ? "bg-ink"
             : "bg-gradient-to-br from-red to-red-dark"
@@ -142,8 +159,8 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
 
       {open && (
         <div
-          className="chat-pop fixed z-40 bottom-24 right-5 left-5 sm:left-auto sm:w-[400px] bg-white rounded-3xl shadow-2xl ring-1 ring-ink/10 flex flex-col overflow-hidden"
-          style={{ maxHeight: "min(600px, calc(100vh - 8rem))" }}
+          className="chat-pop fixed z-[60] bottom-24 right-5 left-5 sm:left-auto sm:w-[400px] bg-white rounded-3xl shadow-2xl ring-1 ring-ink/10 flex flex-col overflow-hidden"
+          style={{ maxHeight: "min(600px, calc(100vh - 13rem))" }}
         >
           {/* Header */}
           <div className="relative bg-gradient-to-br from-ink to-[#2b2b2b] text-white px-4 py-3.5 flex items-center gap-3">
@@ -212,7 +229,7 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
                       : "bg-white text-ink rounded-2xl rounded-bl-md shadow-sm ring-1 ring-ink/5"
                   }`}
                 >
-                  {m.content}
+                  {renderRich(m.content)}
                 </div>
               </div>
             ))}
