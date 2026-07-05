@@ -32,6 +32,12 @@ Details + Belege in Memory `project_chatbot_content`. Wo Thomas' offizielle FAQ 
 
 ## Kleinere offene Punkte
 
+### Niedrig-Prio aus Site-Audit 05.07 (alles LOW, nicht kundenwirksam)
+- [ ] **Same-Day Zeitzonen-Kante:** der "vergangene Slots"-Filter in `BikeDetail.tsx` (`pickupSlotsFor`) nutzt die **Browser-lokale** Uhr (`new Date()`/`Date.now()`), nicht Zadar-Zeit. Kunde in weit voraus liegender Zeitzone (UTC+8/+10) könnte "heute" als schon vorbei sehen und leeren Dropdown bekommen obwohl in Zadar noch Nachmittag. Server bleibt korrekt. Fix: auf `Europe/Zagreb`-Wandzeit keyen (wie Server `zagrebNow()`).
+- [ ] **Null-Unit-Legacy-Buchungen** (bike_unit_id=null): Client-`pricing.ts` behandelt sie als Ganz-Modell-Block, Server-`findFreeUnit` zählt sie gar nicht. Aktuell ZERO Impact (keine solchen Buchungen existieren). Vor Wiedereinführung reconcilen + Test dagegen. Details in Memory `project_booking_logic_rules`.
+- Erledigt 05.07: Same-Day-Pickup nutzt jetzt immer die Per-Unit-Engine (Commit 085fd38); Ghost-/Backup-Buchungen aus öffentlicher Verfügbarkeit gefiltert (Commit f53af0b).
+
+
 ### Tage-Berechnung bei knapp über 24h + Nachzahlung bei verspäteter Rückgabe
 Beide mit Thomas geklärt (2026-06-25):
 
