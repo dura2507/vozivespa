@@ -33,21 +33,54 @@ function BotAvatar({ size = 28 }: { size?: number }) {
   );
 }
 
-// Renders a message: turns **bold** into real bold and strips any stray
-// markdown asterisks so raw ** never shows in a bubble. Everything else stays
-// plain text (React escapes it); newlines are kept by the pre-wrap class.
-function renderRich(text: string) {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) => {
-    const bold = /^\*\*([^*]+)\*\*$/.exec(part);
-    if (bold) {
-      return (
-        <strong key={i} className="font-semibold">
-          {bold[1]}
-        </strong>
+// Renders a message: turns [text](url) and bare URLs into clickable links,
+// **bold** into real bold, and strips any stray markdown asterisks so raw **
+// never shows. Everything else stays plain text (React escapes it); newlines
+// are kept by the pre-wrap class.
+function renderRich(text: string): React.ReactNode[] {
+  const token =
+    /(\[[^\]]+\]\(https?:\/\/[^\s)]+\))|(https?:\/\/[^\s)]+)|(\*\*[^*]+\*\*)/g;
+  const linkClass =
+    "font-medium underline underline-offset-2 break-words text-current hover:opacity-80";
+  const nodes: React.ReactNode[] = [];
+  let last = 0;
+  let key = 0;
+  let m: RegExpExecArray | null;
+  while ((m = token.exec(text)) !== null) {
+    if (m.index > last) {
+      nodes.push(<span key={key++}>{text.slice(last, m.index).replace(/\*\*/g, "")}</span>);
+    }
+    const [full, mdLink, bareUrl, bold] = m;
+    if (mdLink) {
+      const parts = /^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/.exec(mdLink)!;
+      nodes.push(
+        <a key={key++} href={parts[2]} target="_blank" rel="noopener noreferrer" className={linkClass}>
+          {parts[1]}
+        </a>,
+      );
+    } else if (bareUrl) {
+      // Don't swallow trailing sentence punctuation into the href.
+      const trail = /[.,;:!?]+$/.exec(bareUrl);
+      const clean = trail ? bareUrl.slice(0, bareUrl.length - trail[0].length) : bareUrl;
+      nodes.push(
+        <a key={key++} href={clean} target="_blank" rel="noopener noreferrer" className={linkClass}>
+          {clean.replace(/^https?:\/\//, "")}
+        </a>,
+      );
+      if (trail) nodes.push(<span key={key++}>{trail[0]}</span>);
+    } else if (bold) {
+      nodes.push(
+        <strong key={key++} className="font-semibold">
+          {bold.slice(2, -2)}
+        </strong>,
       );
     }
-    return <span key={i}>{part.replace(/\*\*/g, "")}</span>;
-  });
+    last = m.index + full.length;
+  }
+  if (last < text.length) {
+    nodes.push(<span key={key++}>{text.slice(last).replace(/\*\*/g, "")}</span>);
+  }
+  return nodes;
 }
 
 // Floating chat widget. Mounted once on every page via the [lang] layout.
