@@ -89,6 +89,10 @@ export default function GroupBooking({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+  // Outside-hours add-on (Thomas 06.07): flat 30€ each for early pickup and/or
+  // late return, applied once to the whole group booking (per rental).
+  const [earlyPickup, setEarlyPickup] = useState(false);
+  const [lateReturn, setLateReturn] = useState(false);
   const [driversLicence, setDriversLicence] = useState<string>("");
   const [licenceCountry, setLicenceCountry] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod["id"]>("paypal_ff");
@@ -200,6 +204,7 @@ export default function GroupBooking({
     (a, arr) => a + arr.reduce((s, rs) => s + (rs === "with_passenger" ? 2 : 1), 0),
     0,
   );
+  const OUTSIDE_HOURS_SURCHARGE = 30;
   const cartTotal = useMemo(() => {
     let sum = 0;
     for (const bike of bikes) {
@@ -208,8 +213,15 @@ export default function GroupBooking({
       const p = priceFor(bike);
       if (p != null) sum += p * qty;
     }
+    // Flat 30€ each for early pickup / late return, applied once per booking
+    // (not per bike) and only when there is an actual cart. Folded into the
+    // group total so the 20% fee, the live total and the submit all match.
+    if (sum > 0) {
+      if (earlyPickup) sum += OUTSIDE_HOURS_SURCHARGE;
+      if (lateReturn) sum += OUTSIDE_HOURS_SURCHARGE;
+    }
     return sum;
-  }, [cart, bikes, priceFor]);
+  }, [cart, bikes, priceFor, earlyPickup, lateReturn]);
 
   function setQty(bikeId: string, qty: number) {
     const free = avail?.[bikeId]?.freeUnits ?? 0;
@@ -274,7 +286,12 @@ export default function GroupBooking({
       fd.set("name", name.trim());
       fd.set("email", email.trim());
       fd.set("phone", phone.trim());
-      if (notes.trim()) fd.set("notes", notes.trim());
+      const addonNote = [
+        earlyPickup ? "Early pickup 07:00-08:59 (+30€)" : null,
+        lateReturn ? "Late return 19:00-22:00 (+30€)" : null,
+      ].filter(Boolean).join(", ");
+      const notesOut = [notes.trim(), addonNote].filter(Boolean).join(" | ");
+      if (notesOut) fd.set("notes", notesOut);
       if (licenceCountry.trim()) fd.set("licenceCountry", licenceCountry.trim());
       fd.set("from", from);
       fd.set("to", to);
@@ -868,6 +885,33 @@ export default function GroupBooking({
                   <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.lblNotes}</span>
                   <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
                 </label>
+
+                {/* Outside-hours add-on (Thomas): 30€ each, applied once per booking, folded into total */}
+                <div className="border border-ink/10 bg-off-white/60 px-4 py-3">
+                  <p className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em] mb-2">
+                    {dict.fleet.form.outsideHoursTitle}
+                  </p>
+                  <label className="flex items-center gap-2.5 py-1 cursor-pointer text-sm">
+                    <input
+                      type="checkbox"
+                      checked={earlyPickup}
+                      onChange={(e) => setEarlyPickup(e.target.checked)}
+                      className="w-4 h-4 accent-red"
+                    />
+                    <span className="text-ink">{dict.fleet.form.earlyPickup}</span>
+                    <span className="ml-auto text-muted text-xs font-semibold">+{OUTSIDE_HOURS_SURCHARGE}€</span>
+                  </label>
+                  <label className="flex items-center gap-2.5 py-1 cursor-pointer text-sm">
+                    <input
+                      type="checkbox"
+                      checked={lateReturn}
+                      onChange={(e) => setLateReturn(e.target.checked)}
+                      className="w-4 h-4 accent-red"
+                    />
+                    <span className="text-ink">{dict.fleet.form.lateReturn}</span>
+                    <span className="ml-auto text-muted text-xs font-semibold">+{OUTSIDE_HOURS_SURCHARGE}€</span>
+                  </label>
+                </div>
 
                 <div className="border-t border-ink/10 pt-4">
                   <p className="text-sm text-ink mb-1">
