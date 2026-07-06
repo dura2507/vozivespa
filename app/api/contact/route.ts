@@ -5,6 +5,7 @@ import {
   sendCustomerContactReceivedEmail,
 } from "@/lib/email";
 import { markEmailReadByHeader } from "@/lib/imap-mark";
+import { isLocale } from "@/lib/i18n/config";
 
 export const dynamic = "force-dynamic";
 
@@ -37,8 +38,11 @@ export async function POST(request: Request) {
   const phone = asString(body.phone);
   const message = asString(body.message);
   const localeRaw = asString(body.locale);
-  const locale =
-    localeRaw && ["en", "de", "es", "it", "hr", "pl", "fr"].includes(localeRaw) ? localeRaw : "en";
+  // Accept every site locale (the old hardcoded list dropped hu/sk/cs/pt, so
+  // those visitors got an English acknowledgement). This drives the customer
+  // ack-email language; the owner-notification translation now auto-detects
+  // the message language regardless of this value.
+  const locale = localeRaw && isLocale(localeRaw) ? localeRaw : "en";
 
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
   if (!email) return NextResponse.json({ error: "Email is required" }, { status: 400 });

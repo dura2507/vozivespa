@@ -515,12 +515,15 @@ export async function sendOwnerContactMessage(input: {
 }): Promise<void> {
   const targets = contactTargets();
 
-  // Same EN-target translation as the booking notes — Thomas wanted a
-  // single language to glance at, no matter what locale the visitor
-  // wrote in.
+  // Thomas wanted a single language to glance at, no matter what locale the
+  // visitor wrote in. Always translate with auto-detect: the site locale is
+  // only a weak hint for a free-text message (a Croatian speaker on the
+  // English site, or a locale the API never mapped, would otherwise be
+  // treated as English and skipped). translate() returns null for
+  // already-English messages, so no redundant block is appended.
   let translatedMessage: string | null = null;
-  if (input.message && needsTranslationForOwner(input.locale)) {
-    const tr = await translate(input.message, { from: input.locale ?? undefined, to: "EN-GB" });
+  if (input.message) {
+    const tr = await translate(input.message, { to: "EN-GB" });
     if (tr) translatedMessage = tr.text;
   }
 

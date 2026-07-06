@@ -837,15 +837,16 @@ export async function sendOwnerContactEmail(input: {
     return null;
   }
 
-  // Auto-translate the contact message into English when the visitor
-  // wrote in a language other than DE/EN. Same convention as booking
-  // notes — Thomas gets the original above the translation.
+  // Always translate the contact message with auto-detect. The site locale
+  // is only a weak hint for a free-text message: a Croatian speaker on the
+  // English site (or a locale the API never mapped) would otherwise be
+  // treated as English and skipped. Passing no source lets DeepL/Google
+  // detect the real language; translate() returns null for already-English
+  // messages, so we never append a redundant block. Thomas gets the
+  // original above the translation.
   let translatedMessage: string | null = null;
-  if (input.message && needsTranslationForOwner(input.locale)) {
-    const tr = await translate(input.message, {
-      from: input.locale ?? undefined,
-      to: "EN-GB",
-    });
+  if (input.message) {
+    const tr = await translate(input.message, { to: "EN-GB" });
     if (tr) translatedMessage = tr.text;
   }
 
