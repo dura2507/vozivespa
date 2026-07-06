@@ -7,9 +7,11 @@ import { getCategoriesWithPricing } from "@/lib/bike-pricing";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Small model = fast + cheap enough to be free-ish per conversation.
-// Haiku handles all 11 site languages fluently.
-const MODEL = "claude-haiku-4-5-20251001";
+// Sonnet 5: prices are treated as BINDING, and the failure mode was always
+// arithmetic / tier-selection reasoning, not knowledge or language — Sonnet is
+// markedly more reliable there. The large static system prompt is cached (see
+// below) so the input cost stays low despite the bigger model.
+const MODEL = "claude-sonnet-5";
 const MAX_HISTORY = 12; // recent turns kept for context
 const MAX_MESSAGE_LEN = 1000;
 
@@ -153,8 +155,12 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 400,
-        system,
+        max_tokens: 500,
+        // Cache the big static system prompt (FAQ + fleet + tours + pricing
+        // rules). It's identical across requests for a given locale/price set,
+        // so repeat requests within the 5-min TTL only pay ~10% of the input
+        // cost — keeps Sonnet cheap. Prompt caching is GA (no beta header).
+        system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
         messages,
       }),
     });
