@@ -1,6 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { isValidSlot, isValidPickupSlot, parseTime, calculatePrice } from "@/lib/pricing";
+import { isBookableReturnSlot, isBookablePickupSlot, parseTime, calculatePrice, outsideHoursSurcharge } from "@/lib/pricing";
 import { isBookingInSeason, isPickupInPast, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
 import { findFreeUnits } from "@/lib/availability";
 import { getBikeWithPricing } from "@/lib/bike-pricing";
@@ -44,12 +44,14 @@ function asIsoDate(v: FormDataEntryValue | null): string | null {
   const d = new Date(`${v}T00:00:00Z`);
   return Number.isNaN(d.getTime()) ? null : v;
 }
+// Accepts in-hours return slots plus the late-return add-on slots (19:30-22:00).
 function asSlot(v: FormDataEntryValue | null): string | null {
-  return typeof v === "string" && isValidSlot(v) ? v : null;
+  return typeof v === "string" && isBookableReturnSlot(v) ? v : null;
 }
-// Pickup can't be at closing (19:00) — see isValidPickupSlot.
+// Accepts in-hours pickup slots (never 19:00) plus the early-pickup add-on
+// slots (07:00-08:30) — see isBookablePickupSlot.
 function asPickupSlot(v: FormDataEntryValue | null): string | null {
-  return typeof v === "string" && isValidPickupSlot(v) ? v : null;
+  return typeof v === "string" && isBookablePickupSlot(v) ? v : null;
 }
 function inSet<T extends readonly string[]>(set: T, v: FormDataEntryValue | null): T[number] | null {
   return typeof v === "string" && (set as readonly string[]).includes(v) ? (v as T[number]) : null;
@@ -264,6 +266,16 @@ export async function POST(request: Request) {
       locale,
     })),
   );
+
+  // Outside-hours add-on: a flat 30€ per early pickup / late return, once for
+  // the whole group (not per unit). Re-derived server-side from the submitted
+  // times so it can't be tampered with, and baked into the first row so the
+  // summed group total (used by the 20% deposit / online checkout) includes it.
+  const surchargeCents = outsideHoursSurcharge(pickupTime, returnTime) * 100;
+  if (surchargeCents > 0 && rows.length > 0) {
+    rows[0].total_price_cents += surchargeCents;
+    groupTotalCents += surchargeCents;
+  }
 
   const { data: inserted, error: insertError } = await supabase
     .from("bookings")

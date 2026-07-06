@@ -99,6 +99,40 @@ export function isValidPickupSlot(t: string): boolean {
   return mins !== null && isValidSlot(t) && mins <= LAST_PICKUP_MINUTES;
 }
 
+// Outside-hours add-on (Thomas, 2026-07-06): the shop can hand a bike out
+// before opening or take it back after closing for a flat fee. These are
+// bookable directly in the pickup/return dropdowns and priced as a flat
+// surcharge PER RENTAL, never as an extra billable day (see billableDays,
+// which clamps to shop hours). Early = before 09:00, late = after 19:00.
+export const OUTSIDE_HOURS_SURCHARGE = 30;
+export const EARLY_PICKUP_SLOTS = ["07:00", "07:30", "08:00", "08:30"];
+export const LATE_RETURN_SLOTS = ["19:30", "20:00", "20:30", "21:00", "21:30", "22:00"];
+
+export function isEarlyPickup(t: string): boolean {
+  const mins = parseTime(t);
+  return mins !== null && mins < SHOP_OPEN_HOUR * 60;
+}
+export function isLateReturn(t: string): boolean {
+  const mins = parseTime(t);
+  return mins !== null && mins > SHOP_CLOSE_HOUR * 60;
+}
+// Flat surcharge in euros for the chosen window (0, 30 or 60).
+export function outsideHoursSurcharge(pickupTime: string, returnTime: string): number {
+  return (
+    (isEarlyPickup(pickupTime) ? OUTSIDE_HOURS_SURCHARGE : 0) +
+    (isLateReturn(returnTime) ? OUTSIDE_HOURS_SURCHARGE : 0)
+  );
+}
+// Server-side validation that ALSO accepts the outside-hours slots. Used by
+// the booking routes so a legitimately-chosen 08:00 pickup / 21:00 return
+// isn't rejected as an invalid slot.
+export function isBookablePickupSlot(t: string): boolean {
+  return isValidPickupSlot(t) || EARLY_PICKUP_SLOTS.includes(t);
+}
+export function isBookableReturnSlot(t: string): boolean {
+  return isValidSlot(t) || LATE_RETURN_SLOTS.includes(t);
+}
+
 // Confirmed booking on a bike, used to compute time-slot constraints.
 // `unitId` identifies which physical bike unit holds this booking; null
 // for legacy bookings created before the multi-unit migration.
@@ -323,9 +357,19 @@ export function billableDays(
   pickupTime: string,
   returnTime: string,
 ): number {
-  const pickup = combineDateTime(fromDate, pickupTime).getTime();
-  const ret = combineDateTime(toDate, returnTime).getTime();
-  const diffMin = (ret - pickup) / 60_000 - GRACE_MINUTES;
+  // An outside-hours pickup/return carries a flat surcharge, not an extra
+  // billable day, so the day count is computed on the shop-hours window: a
+  // pickup before 09:00 counts from 09:00, a return after 19:00 counts to
+  // 19:00. This is a no-op for every in-hours time (09:00-19:00).
+  const openMin = SHOP_OPEN_HOUR * 60;
+  const closeMin = SHOP_CLOSE_HOUR * 60;
+  const pMin = Math.max(parseTime(pickupTime) ?? openMin, openMin);
+  const rMin = Math.min(parseTime(returnTime) ?? closeMin, closeMin);
+  const pickup = new Date(fromDate);
+  pickup.setHours(Math.floor(pMin / 60), pMin % 60, 0, 0);
+  const ret = new Date(toDate);
+  ret.setHours(Math.floor(rMin / 60), rMin % 60, 0, 0);
+  const diffMin = (ret.getTime() - pickup.getTime()) / 60_000 - GRACE_MINUTES;
   if (diffMin <= 0) return 1;
   return Math.max(1, Math.ceil(diffMin / (24 * 60)));
 }

@@ -24,6 +24,11 @@ import {
   TIER_LABEL,
   validPickupSlots,
   validReturnSlots,
+  EARLY_PICKUP_SLOTS,
+  LATE_RETURN_SLOTS,
+  isEarlyPickup,
+  isLateReturn,
+  outsideHoursSurcharge,
   type ConfirmedBooking,
 } from "@/lib/pricing";
 import { SEASON_END_DATE, zagrebNow } from "@/lib/season";
@@ -268,10 +273,10 @@ export default function BikeDetail({
   // Time-slot pickers count busy units at each candidate time and
   // reject slots only when every unit is busy (or in turnaround) at
   // that moment.
-  const pickupSlots = effectiveRange?.from
+  const pickupBase = effectiveRange?.from
     ? pickupSlotsFor(effectiveRange.from)
     : buildPickupSlots();
-  const returnSlots =
+  const returnBase =
     effectiveRange?.from && effectiveRange?.to && pickupTime
       ? validReturnSlots(effectiveRange.to, bookings, totalUnits, {
           pickupDate: effectiveRange.from,
@@ -279,6 +284,25 @@ export default function BikeDetail({
           activeUnitIds,
         })
       : buildSlots();
+
+  // Outside-hours slots (before 09:00 / after 19:00) are offered as +30€
+  // add-on options whenever the in-hours window is bookable. Early slots on
+  // "today" are past-filtered against Zadar wall-clock, same as the base.
+  const earlyExtras = (() => {
+    if (!pickupBase.length) return [] as string[];
+    if (mounted && effectiveRange?.from) {
+      const zn = zagrebNow();
+      if (format(effectiveRange.from, "yyyy-MM-dd") === zn.isoDate) {
+        return EARLY_PICKUP_SLOTS.filter((s) => {
+          const [h, m] = s.split(":").map(Number);
+          return h * 60 + m > zn.minutesOfDay;
+        });
+      }
+    }
+    return EARLY_PICKUP_SLOTS;
+  })();
+  const pickupSlots = [...earlyExtras, ...pickupBase];
+  const returnSlots = returnBase.length ? [...returnBase, ...LATE_RETURN_SLOTS] : returnBase;
 
   // If the active selection got invalidated by a date change, snap to
   // the closest valid slot rather than sending an unbookable request.
@@ -289,34 +313,33 @@ export default function BikeDetail({
     if (pickupSlots.length === 0) {
       if (pickupTime !== "") setPickupTime("");
     } else if (!pickupSlots.includes(pickupTime)) {
-      setPickupTime(pickupSlots[0]);
+      // Default to the first IN-HOURS slot, never an early (+30€) slot —
+      // the surcharge is always an explicit choice by the customer.
+      setPickupTime(pickupSlots.find((s) => !isEarlyPickup(s)) ?? pickupSlots[0]);
     }
   }, [pickupSlots, pickupTime]);
   useEffect(() => {
     if (returnSlots.length === 0) {
       if (returnTime !== "") setReturnTime("");
     } else if (!returnSlots.includes(returnTime)) {
-      setReturnTime(returnSlots[returnSlots.length - 1]);
+      // Default to the last IN-HOURS slot, never a late (+30€) slot.
+      const normals = returnSlots.filter((s) => !isLateReturn(s));
+      const list = normals.length ? normals : returnSlots;
+      setReturnTime(list[list.length - 1]);
     }
   }, [returnSlots, returnTime]);
-
-  const [earlyPickup, setEarlyPickup] = useState(false);
-  const [lateReturn, setLateReturn] = useState(false);
 
   const priceResult =
     effectiveRange?.from && effectiveRange?.to && pickupTime && returnTime
       ? calculatePrice(effectiveRange.from, effectiveRange.to, pickupTime, returnTime, bike.pricing)
       : null;
   const basePrice = priceResult?.totalPrice ?? 0;
-  // Outside-hours add-ons (Thomas): flat 30€ each for an early pickup
-  // (07:00-08:59) or a late return (19:00-22:00), per rental. Folded into
-  // totalPrice so it flows through the 20% fee, the summary and the online
-  // charge; the choice is also appended to the booking notes for the owner.
-  const OUTSIDE_HOURS_SURCHARGE = 30;
-  const surcharge =
-    basePrice > 0
-      ? (earlyPickup ? OUTSIDE_HOURS_SURCHARGE : 0) + (lateReturn ? OUTSIDE_HOURS_SURCHARGE : 0)
-      : 0;
+  // Outside-hours add-on (Thomas): a pickup before 09:00 or a return after
+  // 19:00 is chosen straight in the time dropdowns and adds a flat 30€ each,
+  // per rental. billableDays already clamps to shop hours, so the base rate
+  // never gains a day; the surcharge is layered on top and flows through the
+  // 20% fee, the summary and the online charge.
+  const surcharge = basePrice > 0 ? outsideHoursSurcharge(pickupTime, returnTime) : 0;
   const totalPrice = basePrice + surcharge;
   const appliedTier = priceResult?.appliedTier ?? null;
   const billableDays = priceResult?.billableDays ?? 0;
@@ -350,11 +373,12 @@ export default function BikeDetail({
       fd.set("name", form.name);
       fd.set("email", form.email);
       fd.set("phone", form.phone);
-      // Fold the outside-hours add-on into the notes so it reaches the owner's
-      // Telegram/email (the surcharge is already in totalPriceCents).
+      // Flag the outside-hours add-on in the notes so it reaches the owner's
+      // Telegram/email (the surcharge is already in totalPriceCents, and the
+      // exact time is also the stored pickup_time / return_time).
       const addonNote = [
-        earlyPickup ? "Early pickup 07:00-08:59 (+30€)" : null,
-        lateReturn ? "Late return 19:00-22:00 (+30€)" : null,
+        isEarlyPickup(pickupTime) ? `Early pickup ${pickupTime} (+30€)` : null,
+        isLateReturn(returnTime) ? `Late return ${returnTime} (+30€)` : null,
       ]
         .filter(Boolean)
         .join("; ");
@@ -943,7 +967,7 @@ export default function BikeDetail({
                         >
                           {pickupSlots.map((s) => (
                             <option key={s} value={s}>
-                              {s}
+                              {isEarlyPickup(s) ? `${s}  (+30€)` : s}
                             </option>
                           ))}
                           {pickupSlots.length === 0 && (
@@ -963,7 +987,7 @@ export default function BikeDetail({
                         >
                           {returnSlots.map((s) => (
                             <option key={s} value={s}>
-                              {s}
+                              {isLateReturn(s) ? `${s}  (+30€)` : s}
                             </option>
                           ))}
                           {returnSlots.length === 0 && (
@@ -973,7 +997,7 @@ export default function BikeDetail({
                       </label>
                     </div>
                     <p className="text-muted text-xs mt-2">
-                      {tF.calendar.shopHours}{pickupSlots.length < buildSlots().length || returnSlots.length < buildSlots().length ? tF.calendar.tooClose : ""}. ({tF.calendar.timezone})
+                      {tF.calendar.shopHours}{pickupBase.length < buildPickupSlots().length || returnBase.length < buildSlots().length ? tF.calendar.tooClose : ""}. ({tF.calendar.timezone})
                     </p>
 
                     {pickupSlots.length === 0 || returnSlots.length === 0 ? (
@@ -1246,33 +1270,6 @@ export default function BikeDetail({
                       className={`${inputClass} resize-none`}
                     />
                   </label>
-
-                  {/* Outside-hours add-on (Thomas): 30€ each, folded into total */}
-                  <div className="border border-ink/10 bg-off-white/60 px-4 py-3">
-                    <p className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em] mb-2">
-                      {tF.form.outsideHoursTitle}
-                    </p>
-                    <label className="flex items-center gap-2.5 py-1 cursor-pointer text-sm">
-                      <input
-                        type="checkbox"
-                        checked={earlyPickup}
-                        onChange={(e) => setEarlyPickup(e.target.checked)}
-                        className="w-4 h-4 accent-red"
-                      />
-                      <span className="text-ink">{tF.form.earlyPickup}</span>
-                      <span className="ml-auto text-muted text-xs font-semibold">+{OUTSIDE_HOURS_SURCHARGE}€</span>
-                    </label>
-                    <label className="flex items-center gap-2.5 py-1 cursor-pointer text-sm">
-                      <input
-                        type="checkbox"
-                        checked={lateReturn}
-                        onChange={(e) => setLateReturn(e.target.checked)}
-                        className="w-4 h-4 accent-red"
-                      />
-                      <span className="text-ink">{tF.form.lateReturn}</span>
-                      <span className="ml-auto text-muted text-xs font-semibold">+{OUTSIDE_HOURS_SURCHARGE}€</span>
-                    </label>
-                  </div>
 
                   {/* Reservation / payment section */}
                   <div className="border-t border-ink/10 pt-7 mt-2">

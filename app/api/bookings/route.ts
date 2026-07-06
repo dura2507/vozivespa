@@ -3,7 +3,7 @@ import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail, sendOwnerBookingEmail } from "@/lib/email";
 import { markEmailReadByHeader } from "@/lib/imap-mark";
-import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
+import { isBookableReturnSlot, isBookablePickupSlot, parseTime } from "@/lib/pricing";
 import { isBookingInSeason, isPickupInPast, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
 import { onlinePaymentEnabled } from "@/lib/payments";
 import { describeConflict, findFreeUnit, getBikeUnitLabel } from "@/lib/availability";
@@ -36,15 +36,17 @@ function asIsoDate(v: FormDataEntryValue | null): string | null {
   return Number.isNaN(d.getTime()) ? null : v;
 }
 
+// Accepts in-hours return slots plus the late-return add-on slots (19:30-22:00).
 function asSlot(v: FormDataEntryValue | null): string | null {
   if (typeof v !== "string") return null;
-  return isValidSlot(v) ? v : null;
+  return isBookableReturnSlot(v) ? v : null;
 }
 
-// Pickup can't be at closing (19:00) — see isValidPickupSlot.
+// Accepts in-hours pickup slots (never 19:00) plus the early-pickup add-on
+// slots (07:00-08:30) — see isBookablePickupSlot.
 function asPickupSlot(v: FormDataEntryValue | null): string | null {
   if (typeof v !== "string") return null;
-  return isValidPickupSlot(v) ? v : null;
+  return isBookablePickupSlot(v) ? v : null;
 }
 
 function asPaymentMethod(v: FormDataEntryValue | null): PaymentMethod | null {

@@ -14,7 +14,17 @@ import Footer from "@/components/Footer";
 import { BRAND, LICENCE_BADGE, type Category, type PaymentMethod } from "@/lib/mockData";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { buildSlots, buildPickupSlots, calculatePrice, LAST_PICKUP_MINUTES } from "@/lib/pricing";
+import {
+  buildSlots,
+  buildPickupSlots,
+  calculatePrice,
+  LAST_PICKUP_MINUTES,
+  EARLY_PICKUP_SLOTS,
+  LATE_RETURN_SLOTS,
+  isEarlyPickup,
+  isLateReturn,
+  outsideHoursSurcharge,
+} from "@/lib/pricing";
 import { SEASON_END_DATE } from "@/lib/season";
 import SumUpCardWidget from "@/components/SumUpCardWidget";
 
@@ -89,10 +99,6 @@ export default function GroupBooking({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
-  // Outside-hours add-on (Thomas 06.07): flat 30€ each for early pickup and/or
-  // late return, applied once to the whole group booking (per rental).
-  const [earlyPickup, setEarlyPickup] = useState(false);
-  const [lateReturn, setLateReturn] = useState(false);
   const [driversLicence, setDriversLicence] = useState<string>("");
   const [licenceCountry, setLicenceCountry] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod["id"]>("paypal_ff");
@@ -120,20 +126,25 @@ export default function GroupBooking({
   // have already passed are dropped (after mount, hydration-safe). Same
   // rule the single-bike page uses, so no past pickup can be selected.
   const pickupOptions = useMemo(() => {
-    if (!mounted || !effFrom || !isSameDay(effFrom, new Date())) return PICKUP_SLOTS;
+    // Early-pickup slots (before 09:00) are offered as +30€ add-on options.
+    const withEarly = [...EARLY_PICKUP_SLOTS, ...PICKUP_SLOTS];
+    if (!mounted || !effFrom || !isSameDay(effFrom, new Date())) return withEarly;
     const nowMs = Date.now();
-    return PICKUP_SLOTS.filter((s) => {
+    return withEarly.filter((s) => {
       const [h, m] = s.split(":").map(Number);
       const d = new Date(effFrom);
       d.setHours(h, m, 0, 0);
       return d.getTime() > nowMs;
     });
   }, [mounted, effFrom]);
+  // Late-return slots (after 19:00) are offered as +30€ add-on options.
+  const returnOptions = useMemo(() => [...SLOTS, ...LATE_RETURN_SLOTS], []);
 
   // Keep the selected pickup time valid as options shrink through the day.
+  // Default to the first IN-HOURS slot, never an early (+30€) one.
   useEffect(() => {
     if (pickupOptions.length > 0 && !pickupOptions.includes(pickupTime)) {
-      setPickupTime(pickupOptions[0]);
+      setPickupTime(pickupOptions.find((s) => !isEarlyPickup(s)) ?? pickupOptions[0]);
     }
   }, [pickupOptions, pickupTime]);
 
@@ -204,7 +215,11 @@ export default function GroupBooking({
     (a, arr) => a + arr.reduce((s, rs) => s + (rs === "with_passenger" ? 2 : 1), 0),
     0,
   );
-  const OUTSIDE_HOURS_SURCHARGE = 30;
+  // Outside-hours add-on (Thomas): a pickup before 09:00 or a return after
+  // 19:00 (chosen in the time dropdowns) adds a flat 30€ each, once per group
+  // booking. Folded into the group total so the 20% fee, the live total and
+  // the submit all match; the server re-applies it from the same times.
+  const outsideSurcharge = outsideHoursSurcharge(pickupTime, returnTime);
   const cartTotal = useMemo(() => {
     let sum = 0;
     for (const bike of bikes) {
@@ -213,15 +228,9 @@ export default function GroupBooking({
       const p = priceFor(bike);
       if (p != null) sum += p * qty;
     }
-    // Flat 30€ each for early pickup / late return, applied once per booking
-    // (not per bike) and only when there is an actual cart. Folded into the
-    // group total so the 20% fee, the live total and the submit all match.
-    if (sum > 0) {
-      if (earlyPickup) sum += OUTSIDE_HOURS_SURCHARGE;
-      if (lateReturn) sum += OUTSIDE_HOURS_SURCHARGE;
-    }
+    if (sum > 0) sum += outsideSurcharge;
     return sum;
-  }, [cart, bikes, priceFor, earlyPickup, lateReturn]);
+  }, [cart, bikes, priceFor, outsideSurcharge]);
 
   function setQty(bikeId: string, qty: number) {
     const free = avail?.[bikeId]?.freeUnits ?? 0;
@@ -287,8 +296,8 @@ export default function GroupBooking({
       fd.set("email", email.trim());
       fd.set("phone", phone.trim());
       const addonNote = [
-        earlyPickup ? "Early pickup 07:00-08:59 (+30€)" : null,
-        lateReturn ? "Late return 19:00-22:00 (+30€)" : null,
+        isEarlyPickup(pickupTime) ? `Early pickup ${pickupTime} (+30€)` : null,
+        isLateReturn(returnTime) ? `Late return ${returnTime} (+30€)` : null,
       ].filter(Boolean).join(", ");
       const notesOut = [notes.trim(), addonNote].filter(Boolean).join(" | ");
       if (notesOut) fd.set("notes", notesOut);
@@ -502,7 +511,7 @@ export default function GroupBooking({
                   className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all"
                 >
                   {pickupOptions.map((s) => (
-                    <option key={s} value={s}>{s}</option>
+                    <option key={s} value={s}>{isEarlyPickup(s) ? `${s}  (+30€)` : s}</option>
                   ))}
                 </select>
               </label>
@@ -515,8 +524,8 @@ export default function GroupBooking({
                   onChange={(e) => setReturnTime(e.target.value)}
                   className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all"
                 >
-                  {SLOTS.map((s) => (
-                    <option key={s} value={s}>{s}</option>
+                  {returnOptions.map((s) => (
+                    <option key={s} value={s}>{isLateReturn(s) ? `${s}  (+30€)` : s}</option>
                   ))}
                 </select>
               </label>
@@ -885,33 +894,6 @@ export default function GroupBooking({
                   <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.lblNotes}</span>
                   <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm" />
                 </label>
-
-                {/* Outside-hours add-on (Thomas): 30€ each, applied once per booking, folded into total */}
-                <div className="border border-ink/10 bg-off-white/60 px-4 py-3">
-                  <p className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em] mb-2">
-                    {dict.fleet.form.outsideHoursTitle}
-                  </p>
-                  <label className="flex items-center gap-2.5 py-1 cursor-pointer text-sm">
-                    <input
-                      type="checkbox"
-                      checked={earlyPickup}
-                      onChange={(e) => setEarlyPickup(e.target.checked)}
-                      className="w-4 h-4 accent-red"
-                    />
-                    <span className="text-ink">{dict.fleet.form.earlyPickup}</span>
-                    <span className="ml-auto text-muted text-xs font-semibold">+{OUTSIDE_HOURS_SURCHARGE}€</span>
-                  </label>
-                  <label className="flex items-center gap-2.5 py-1 cursor-pointer text-sm">
-                    <input
-                      type="checkbox"
-                      checked={lateReturn}
-                      onChange={(e) => setLateReturn(e.target.checked)}
-                      className="w-4 h-4 accent-red"
-                    />
-                    <span className="text-ink">{dict.fleet.form.lateReturn}</span>
-                    <span className="ml-auto text-muted text-xs font-semibold">+{OUTSIDE_HOURS_SURCHARGE}€</span>
-                  </label>
-                </div>
 
                 <div className="border-t border-ink/10 pt-4">
                   <p className="text-sm text-ink mb-1">
