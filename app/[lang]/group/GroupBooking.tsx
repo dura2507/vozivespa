@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
-import { format, isSameDay } from "date-fns";
+import { format } from "date-fns";
 import { enUS, de, es, it, hr, hu, sk, cs, ptBR } from "date-fns/locale";
 import type { Locale as DateFnsLocale } from "date-fns";
 import "react-day-picker/style.css";
@@ -25,7 +25,7 @@ import {
   isLateReturn,
   outsideHoursSurcharge,
 } from "@/lib/pricing";
-import { SEASON_END_DATE } from "@/lib/season";
+import { SEASON_END_DATE, zagrebNow } from "@/lib/season";
 import SumUpCardWidget from "@/components/SumUpCardWidget";
 
 // Return may be at closing (19:00); pickup never is (buildPickupSlots).
@@ -128,13 +128,15 @@ export default function GroupBooking({
   const pickupOptions = useMemo(() => {
     // Early-pickup slots (before 09:00) are offered as +30€ add-on options.
     const withEarly = [...EARLY_PICKUP_SLOTS, ...PICKUP_SLOTS];
-    if (!mounted || !effFrom || !isSameDay(effFrom, new Date())) return withEarly;
-    const nowMs = Date.now();
+    // "Today" and "which slots are past" must be judged in Zadar wall-clock
+    // (Europe/Zagreb), not the visitor's browser clock — else a far-timezone
+    // rider sees the wrong slots. Mirrors the single-bike page + the server.
+    if (!mounted || !effFrom) return withEarly;
+    const zn = zagrebNow();
+    if (toIsoDate(effFrom) !== zn.isoDate) return withEarly;
     return withEarly.filter((s) => {
       const [h, m] = s.split(":").map(Number);
-      const d = new Date(effFrom);
-      d.setHours(h, m, 0, 0);
-      return d.getTime() > nowMs;
+      return h * 60 + m > zn.minutesOfDay;
     });
   }, [mounted, effFrom]);
   // Late-return slots (after 19:00) are offered as +30€ add-on options.
@@ -151,7 +153,7 @@ export default function GroupBooking({
   // Once past the last pickup slot (18:30), today can't be a start day —
   // disable it in the calendar so it isn't selectable with no valid time.
   const disableTodayNoSlots =
-    mounted && new Date().getHours() * 60 + new Date().getMinutes() > LAST_PICKUP_MINUTES;
+    mounted && zagrebNow().minutesOfDay > LAST_PICKUP_MINUTES;
 
   // Fetch whole-fleet availability for the chosen window. Re-runs on any
   // change to dates / times. The endpoint returns every model with its
@@ -165,7 +167,10 @@ export default function GroupBooking({
     setLoadingAvail(true);
     const qs = new URLSearchParams({ from, to, pickupTime, returnTime });
     fetch(`/api/availability/fleet?${qs}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`fleet availability ${r.status}`);
+        return r.json();
+      })
       .then((data: { bikes?: Array<{ bikeId: string } & FleetAvail> }) => {
         if (cancelled) return;
         const map: Record<string, FleetAvail> = {};
@@ -326,9 +331,12 @@ export default function GroupBooking({
         setStep("done");
         return;
       }
-      // Online path: reserved booking is in, create the checkout.
-      const okBody = (await res.json()) as { bookingId?: string };
-      const bookingId = okBody.bookingId;
+      // Online path: reserved booking is in, create the checkout. The group
+      // route returns bookingIds[] (one row per unit) — the checkout keys off
+      // any row in the group and sums the whole group's total, so use the
+      // first id. (The single-bike route returns a scalar bookingId.)
+      const okBody = (await res.json()) as { bookingId?: string; bookingIds?: string[] };
+      const bookingId = okBody.bookingId ?? okBody.bookingIds?.[0];
       if (!bookingId) throw new Error("Missing bookingId");
       setPendingBookingId(bookingId);
       const coRes = await fetch("/api/payments/checkout", {

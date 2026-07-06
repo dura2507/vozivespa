@@ -24,6 +24,7 @@ import {
   TIER_LABEL,
   validPickupSlots,
   validReturnSlots,
+  isWindowFree,
   EARLY_PICKUP_SLOTS,
   LATE_RETURN_SLOTS,
   isEarlyPickup,
@@ -286,23 +287,37 @@ export default function BikeDetail({
       : buildSlots();
 
   // Outside-hours slots (before 09:00 / after 19:00) are offered as +30€
-  // add-on options whenever the in-hours window is bookable. Early slots on
-  // "today" are past-filtered against Zadar wall-clock, same as the base.
+  // add-on options only when a unit is genuinely free for the REAL extended
+  // window (an early pickup starts the window earlier, a late return ends it
+  // later — regions the in-hours base never validated), so the dropdown never
+  // advertises a slot the server's findFreeUnit would reject. Early slots on
+  // "today" are also past-filtered against Zadar wall-clock, same as the base.
   const earlyExtras = (() => {
-    if (!pickupBase.length) return [] as string[];
-    if (mounted && effectiveRange?.from) {
+    const from = effectiveRange?.from;
+    if (!pickupBase.length || !from) return [] as string[];
+    const returnDate = effectiveRange?.to ?? from;
+    let slots = EARLY_PICKUP_SLOTS;
+    if (mounted) {
       const zn = zagrebNow();
-      if (format(effectiveRange.from, "yyyy-MM-dd") === zn.isoDate) {
-        return EARLY_PICKUP_SLOTS.filter((s) => {
+      if (format(from, "yyyy-MM-dd") === zn.isoDate) {
+        slots = slots.filter((s) => {
           const [h, m] = s.split(":").map(Number);
           return h * 60 + m > zn.minutesOfDay;
         });
       }
     }
-    return EARLY_PICKUP_SLOTS;
+    return slots.filter((s) =>
+      isWindowFree(from, s, returnDate, returnTime || "19:00", bookings, totalUnits, activeUnitIds),
+    );
   })();
+  const lateExtras =
+    returnBase.length && effectiveRange?.from && effectiveRange?.to && pickupTime
+      ? LATE_RETURN_SLOTS.filter((s) =>
+          isWindowFree(effectiveRange.from!, pickupTime, effectiveRange.to!, s, bookings, totalUnits, activeUnitIds),
+        )
+      : [];
   const pickupSlots = [...earlyExtras, ...pickupBase];
-  const returnSlots = returnBase.length ? [...returnBase, ...LATE_RETURN_SLOTS] : returnBase;
+  const returnSlots = [...returnBase, ...lateExtras];
 
   // If the active selection got invalidated by a date change, snap to
   // the closest valid slot rather than sending an unbookable request.

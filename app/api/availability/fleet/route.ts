@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
-import { isValidSlot } from "@/lib/pricing";
+import { isBookablePickupSlot, isBookableReturnSlot } from "@/lib/pricing";
 import { SEASON_END_ISO } from "@/lib/season";
 import { findFreeUnits, nextFreeWindow, earliestFreePickupSameDay, latestFreeReturnSameDay } from "@/lib/availability";
 import { getUnitCounts } from "@/lib/bike-pricing";
@@ -28,7 +28,10 @@ export async function GET(request: Request) {
   if (!from || !to || !ISO_DATE.test(from) || !ISO_DATE.test(to) || from > to) {
     return NextResponse.json({ error: "Valid from/to dates are required" }, { status: 400 });
   }
-  if (!pickupTime || !returnTime || !isValidSlot(pickupTime) || !isValidSlot(returnTime)) {
+  // Accept the outside-hours add-on slots too (07:00-08:30 / 19:30-22:00) — the
+  // group dropdowns offer them and findFreeUnits works off real timestamps, so
+  // a legit early/late selection must not 400 the availability lookup.
+  if (!pickupTime || !returnTime || !isBookablePickupSlot(pickupTime) || !isBookableReturnSlot(returnTime)) {
     return NextResponse.json({ error: "Valid pickup/return times are required" }, { status: 400 });
   }
 

@@ -226,6 +226,26 @@ function unitsFreeForWindow(
   return -busy.size;
 }
 
+// Is at least one unit free for an ARBITRARY window? Used to validate the
+// outside-hours add-on slots (07:00-08:30 / 19:30-22:00) against their real
+// extended window before offering them, so the dropdown never advertises an
+// early/late time the server's findFreeUnit would then reject. Mirrors the
+// totalUnits<=0 optimism and the free-count logic of validPickupSlots.
+export function isWindowFree(
+  pickupDate: Date,
+  pickupTime: string,
+  returnDate: Date,
+  returnTime: string,
+  bookings: ConfirmedBooking[],
+  totalUnits: number,
+  activeUnitIds?: string[] | null,
+): boolean {
+  if (totalUnits <= 0) return true;
+  const ids = activeUnitIds ?? null;
+  const free = unitsFreeForWindow(pickupDate, pickupTime, returnDate, returnTime, bookings, ids);
+  return ids ? free > 0 : totalUnits + free > 0;
+}
+
 // Pickup slots that leave a bookable window ending at returnTime (on the
 // return date). We check the FULL window against every candidate slot,
 // so a pickup that would clash later is dropped up-front — no more

@@ -226,6 +226,10 @@ export async function findUnitConflict(
 > {
   const newStart = toMs(args.dateFrom, args.pickupTime);
   const newEnd = toMs(args.dateTo, args.returnTime);
+  // Same 30-min turnaround buffer the public engine (findFreeUnit/
+  // findFreeUnits) applies, so admin/Telegram bookings honour the same
+  // gap between two rentals on one unit. Blocks below stay unbuffered.
+  const bufferMs = TURNAROUND_MINUTES * 60_000;
 
   let bq = supabase
     .from("bookings")
@@ -251,7 +255,7 @@ export async function findUnitConflict(
   }>) {
     const bStart = toMs(b.date_from, b.pickup_time);
     const bEnd = toMs(b.date_to, b.return_time);
-    if (newStart < bEnd && bStart < newEnd) {
+    if (newStart < bEnd + bufferMs && bStart - bufferMs < newEnd) {
       return {
         kind: "booking",
         customerName: b.customer_name,
