@@ -37,6 +37,8 @@ function safeInternalUrl(path: string, fallbackLocale: string): string {
   const home = `${SITE}/${locale}#fleet`;
   // Homepage (optionally with an anchor such as #fleet).
   if (rest.length === 0) return `${SITE}/${locale}${hash}`;
+  // Static files under /docs (hosted PDFs) are real, non-localized assets — pass through.
+  if (rest[0] === "docs") return `${SITE}/${rest.join("/")}${hash}`;
   // Bike page: ONLY /fleet/<known-bike-id> exists — a bare /fleet or a wrong id 404s.
   if (rest[0] === "fleet") {
     if (rest.length === 2 && VALID_BIKE_IDS.has(rest[1])) {
