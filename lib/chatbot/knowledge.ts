@@ -1,4 +1,4 @@
-import { BRAND, CATEGORIES } from "@/lib/mockData";
+import { BRAND, CATEGORIES, type Category } from "@/lib/mockData";
 import type { Locale } from "@/lib/i18n/config";
 
 // All the business knowledge the chatbot answers from. Everything the site
@@ -34,8 +34,8 @@ LANGUAGE
 - Always address the visitor informally (du / tu / ti / per ty / você ...). Never mix two languages in one reply.
 `.trim();
 
-function fleetSummary(): string {
-  return CATEGORIES.map((c) => {
+function fleetSummary(cats: Category[]): string {
+  return cats.map((c) => {
     const p = c.pricing;
     const parts = [
       `- **${c.model}** (${c.shortName ?? c.model})`,
@@ -188,7 +188,7 @@ MULTI-BOOKING
 - Same dates for every bike in the group.
 
 FLEET (models, licence, top speed, seats, pricing)
-${fleetSummary()}
+__FLEET_PLACEHOLDER__
 
 LICENCE HELP
 - AM/B: any driving licence (car licence works for 50cc AM/B category scooters).
@@ -267,12 +267,15 @@ function pageLinks(locale: Locale): string {
   ].join("\n");
 }
 
-export function buildSystemPrompt(locale: Locale): string {
+// `cats` MUST be the override-merged catalogue (getCategoriesWithPricing) so
+// the bot quotes Thomas's CURRENT admin-edited prices, not the static mockData
+// base — the bot's price is treated as binding, so a stale price is a real bug.
+export function buildSystemPrompt(locale: Locale, cats: Category[] = CATEGORIES): string {
   return [
     ROLE_INSTRUCTIONS,
     "\n\n" + LANGUAGE_RULE + "\n- Default language for this session: " + LOCALE_DEFAULT[locale],
     "\n\n## " + pageLinks(locale),
     "\n\n## OWNER-PROVIDED FAQ (authoritative)\n" + THOMAS_FAQ,
-    "\n\n## SITE FACTS\n" + SITE_FACTS,
+    "\n\n## SITE FACTS\n" + SITE_FACTS.replace("__FLEET_PLACEHOLDER__", fleetSummary(cats)),
   ].join("");
 }

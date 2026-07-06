@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isLocale, type Locale, DEFAULT_LOCALE, LOCALES } from "@/lib/i18n/config";
 import { buildSystemPrompt } from "@/lib/chatbot/knowledge";
 import { CATEGORIES } from "@/lib/mockData";
+import { getCategoriesWithPricing } from "@/lib/bike-pricing";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -136,7 +137,10 @@ export async function POST(request: Request) {
       content: t.content.slice(0, MAX_MESSAGE_LEN),
     }));
 
-  const system = buildSystemPrompt(locale);
+  // Merge Thomas's current admin price overrides (same source the website
+  // uses) so the bot quotes live, binding prices — not the stale mockData base.
+  const categories = await getCategoriesWithPricing();
+  const system = buildSystemPrompt(locale, categories);
   const messages = [...history, { role: "user" as const, content: message }];
 
   try {
