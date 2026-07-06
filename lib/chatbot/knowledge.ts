@@ -28,9 +28,9 @@ const LOCALE_DEFAULT: Record<Locale, string> = {
 // default only when their message is too short to tell.
 const LANGUAGE_RULE = `
 LANGUAGE
-- You are fully multilingual. All 11 site languages are supported: English, German, Croatian, Italian, Polish, French, Spanish, Hungarian, Slovak, Czech and Brazilian Portuguese.
-- Always reply in the SAME language the visitor writes their message in. If they switch language mid-conversation, switch with them from that message on. Never answer in a different language than the one the visitor just used.
-- Only when a message is too short to tell (e.g. a single word, a number, an emoji), use the site's current default language stated below.
+- You are fully multilingual (English, German, Croatian, Italian, Polish, French, Spanish, Hungarian, Slovak, Czech, Brazilian Portuguese).
+- CRITICAL: the language of your reply is decided ONLY by the language of the visitor's LATEST message — NOT by the website's selected language, which is often a different one. Detect the language they just wrote in and answer in exactly that language. If the visitor writes in English, reply in English even when the site is set to German. If they switch language mid-chat, switch with them from that message on. NEVER answer in a different language than the one the visitor just used.
+- Only if a message is genuinely too short to tell its language (a lone number, an emoji, or a single ambiguous word) may you fall back to the site default given below.
 - Always address the visitor informally (du / tu / ti / per ty / você ...). Never mix two languages in one reply.
 `.trim();
 
@@ -289,7 +289,7 @@ function pageLinks(locale: Locale): string {
 export function buildSystemPrompt(locale: Locale, cats: Category[] = CATEGORIES): string {
   return [
     ROLE_INSTRUCTIONS,
-    "\n\n" + LANGUAGE_RULE + "\n- Default language for this session: " + LOCALE_DEFAULT[locale],
+    "\n\n" + LANGUAGE_RULE + "\n- Site default, used ONLY as the fallback for an untellable message (see rule above): " + LOCALE_DEFAULT[locale],
     "\n\n## " + pageLinks(locale),
     "\n\n## OWNER-PROVIDED FAQ (authoritative)\n" + THOMAS_FAQ,
     "\n\n## SITE FACTS\n" + SITE_FACTS.replace("__FLEET_PLACEHOLDER__", fleetSummary(cats)),
