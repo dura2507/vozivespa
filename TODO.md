@@ -38,7 +38,9 @@ Thomas hat am 06.07 in "Monitoring RentAMoto" alles beantwortet (per Krileo-Moni
 - [x] **Aufpreis-Add-on Einzel-Buchung** (Commit a3f9e40): 2 Checkboxen (früh 7-8:59 / spät 19-22, je 30€) im Bike-Buchungsformular, fließt in Total/20%-Gebühr/Online-Charge, steht in der Notiz für den Owner. Verfügbarkeits-Engine NICHT angefasst (reines Add-on).
 - [ ] **Aufpreis-Add-on auch in GroupBooking** (`/group`) nachziehen (gleiche Logik, pro Anmietung).
 - [ ] Add-on live gegen Produktion gegenchecken (lokal nicht bis ins Formular fahrbar wegen fehlender DB).
-- [ ] Vertrag-Template (leer) von Thomas kommt noch zum Hinterlegen (als Link im Bot/FAQ).
+- [x] **Vertrag + FAQ als Doku hinterlegt** (Commit 5855959): Thomas hat 2 PDFs geschickt (reservation-terms + offizielle FAQ mit den echten Pannendienst-/Schlüssel-/Schaden-Zahlen). Beide unter `/public/docs/` gehostet (`/docs/reservation-terms.pdf`, `/docs/sickmotos-faq-de.pdf`), Zahlen in `knowledge.ts` eingebaut (Bot kann sie jetzt sagen + verlinkt die Docs), Sanitizer lässt `/docs` durch.
+- [ ] **FAQ-PDF ist nur DE.** Inhalt ist im Bot (mehrsprachig), aber die Seiten-`/faq` (11 Sprachen) zeigt noch Thomas' alte 15 Q&A, nicht die neue offizielle FAQ (9 Q&A, detaillierter). Optional: `/faq`-Seite auf die offizielle FAQ aktualisieren.
+- [ ] **NEU (Priscilla 06.07 10:51):** Banküberweisung für die **Kaution** entfernen (für die Reservierung/Gebühr ist Banküberweisung ok). Payment-Optionen anpassen.
 - [ ] PayPal-Frage von Thomas: F&F (ohne Gebühr) und/oder Company (mit Gebühr) hinzufügen? (Ja/Nein.)
 
 ## Kleinere offene Punkte
