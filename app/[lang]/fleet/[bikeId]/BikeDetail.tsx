@@ -12,7 +12,6 @@ import "react-day-picker/style.css";
 import { QRCodeSVG } from "qrcode.react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Flag, type FlagCode } from "@/components/Flag";
 import { BRAND, LICENCE_BADGE, type Category } from "@/lib/mockData";
 import type { PaymentMethod } from "@/lib/mockData";
 import type { Locale } from "@/lib/i18n/config";
@@ -1614,7 +1613,9 @@ export default function BikeDetail({
             )}
           </section>
 
-          {/* Bottom WhatsApp CTA - only when not in done state */}
+          {/* Bottom CTA: push visitors into the on-page assistant first
+              (Thomas: bot conversation is the funnel, WhatsApp lives only in
+              the contact area as the last escalation). */}
           {bookingStep !== "done" && (
             <section className="bg-red text-white px-8 md:px-12 py-12 md:py-16 flex flex-col md:flex-row md:items-center justify-between gap-8">
               <div>
@@ -1622,36 +1623,20 @@ export default function BikeDetail({
                   {dict.faq.eyebrow}
                 </p>
                 <h2 className="font-barlow font-black uppercase text-[clamp(2rem,5vw,3.5rem)] leading-[0.95] tracking-tight">
-                  WhatsApp
+                  {dict.chatbot.title}
                 </h2>
-                <div className="flex gap-1.5 mt-3">
-                  {BRAND.languages.map((c) => (
-                    <Flag key={c} code={c as FlagCode} className="w-5 h-3.5" />
-                  ))}
-                </div>
+                <p className="text-white/70 text-sm mt-3 max-w-md leading-snug">
+                  {dict.chatbot.subtitle}
+                </p>
               </div>
-              {/* Two buttons — one per contact, so customers can pick the
-                  number matching their language. Single full-width button
-                  on mobile, side-by-side on desktop. */}
-              <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full md:w-auto">
-                {BRAND.contacts.map((contact) => (
-                  <a
-                    key={contact.phoneRaw}
-                    href={`https://wa.me/${contact.phoneRaw}?text=${encodeURIComponent(
-                      `Hi, I'm interested in the ${bike.model}. Is it available?`,
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-3 bg-white text-red font-bold text-sm tracking-widest uppercase px-6 py-4 hover:bg-off-white transition-colors"
-                  >
-                    <span className="flex gap-1">
-                      {contact.languages.map((c) => (
-                        <Flag key={c} code={c as FlagCode} className="w-4 h-3" />
-                      ))}
-                    </span>
-                    {contact.phone} →
-                  </a>
-                ))}
+              <div className="shrink-0 w-full md:w-auto">
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new Event("open-chatbot"))}
+                  className="inline-flex items-center justify-center gap-3 bg-white text-red font-bold text-sm tracking-widest uppercase px-8 py-4 hover:bg-off-white transition-colors w-full md:w-auto"
+                >
+                  {dict.chatbot.openLabel} →
+                </button>
               </div>
             </section>
           )}
