@@ -11,7 +11,7 @@ Reihenfolge zum Bauen (Vorschlag): 1 Multi-Buchung → 2 Chatbot → 3 Apple Pay
 | 1 | Multi-Buchung (eigene Seite, Bikes aus ganzer Flotte wählen, Kalender-Abgleich) | 6-8 Tage | **GEBAUT + live als `/group`-Seite** (Fleet-Picker, Ganzflotten-Verfügbarkeit `/api/availability/fleet`, geteiltes Datumsfenster, Kaution pro Bike). "Smart-Vorschläge" minimal. |
 | 2 | KI-Chatbot (6 Top-Fragen, mehrsprachig) | 2-3 Tage | **LIVE seit 05.07.** Key in Vercel gesetzt + redeployed, live gegen Produktion verifiziert (EN/DE + Versicherungs-Guardrail antworten echt via Haiku 4.5). |
 | 3 | Apple Pay / Online-Zahlung | 3-5 Tage | freigegeben. Provider Mollie/Viva statt Stripe; eigener Meilenstein (Risiko-Stück) |
-| 4 | Aufpreis außerhalb Geschäftszeiten | 1-2 Tage | **SPEC'D (Thomas 06.07): 30€ pauschal pro Anmietung** für früh 7:00-8:59 ODER spät 19:00-22:00, direkt dazubuchbar. Bot nennt es schon; das Buchungs-Add-on im Flow ist noch zu bauen. |
+| 4 | Aufpreis außerhalb Geschäftszeiten | 1-2 Tage | **GEBAUT + live verifiziert (06.07): 30€ pauschal pro Anmietung** für früh 7:00-8:59 ODER spät 19:00-22:00, direkt dazubuchbar. Als Add-on in BEIDEN Flows (Einzel-Bike + `/group`), Bot nennt es. Live gegen Produktion geprüft: 90€ → 150€, Gebühr 30€ / Rest 120€ stimmen. |
 
 Hinweis Preis: alle 4 = grob 12-18 Tage Aufwand; 1000-1500 € ist deutlich unter dem alten Freundschaftspreis (2000 € + 20 €/Mon). Bei Folge-Features nicht weiter runter.
 
@@ -36,8 +36,8 @@ Thomas hat am 06.07 in "Monitoring RentAMoto" alles beantwortet (per Krileo-Moni
 - [x] **WhatsApp-Funnel im Kontaktbereich** (Commit ab90de4): Bot-CTA prominent oben (öffnet Chat via `open-chatbot`-Event), WhatsApp/Anruf-Karten erst unten + erst nach ~30 Sek. sichtbar, Intro in allen 11 Sprachen auf "frag den Assistenten" umgeschrieben.
 - [x] **iPhone-Problem war in Wahrheit ein 404-Link-Bug** (Commits 9eeeac5 + 57fc19f): der Bot schickte `/en/fleet` (existiert nicht) → 404. Priscillas Screenshots zeigten genau das. PAGE-LINKS gefixt: `#fleet` + echte Bike-IDs aus dem Katalog generiert. Fenster-Platzierung war schon durch z-index-Fix ok.
 - [x] **Aufpreis-Add-on Einzel-Buchung** (Commit a3f9e40): 2 Checkboxen (früh 7-8:59 / spät 19-22, je 30€) im Bike-Buchungsformular, fließt in Total/20%-Gebühr/Online-Charge, steht in der Notiz für den Owner. Verfügbarkeits-Engine NICHT angefasst (reines Add-on).
-- [ ] **Aufpreis-Add-on auch in GroupBooking** (`/group`) nachziehen (gleiche Logik, pro Anmietung).
-- [ ] Add-on live gegen Produktion gegenchecken (lokal nicht bis ins Formular fahrbar wegen fehlender DB).
+- [x] **Aufpreis-Add-on auch in GroupBooking** (`/group`) nachgezogen (Commit cf01fc0): gleiche 2 Checkboxen, 30€ je, einmal pro Gruppen-Buchung, in cartTotal gefaltet (Total/20%-Gebühr/Submit matchen), steht in der Notiz.
+- [x] **Add-on live gegen Produktion gegengecheckt** (06.07, `/en/group` im User-Chrome): Checkboxen rendern, Total 90€ → 150€, Zahlzeile "Pay 30€ now (20% of 150€), rest 120€" stimmt. Nicht abgeschickt (keine echte Buchung erzeugt).
 - [x] **Vertrag + FAQ als Doku hinterlegt** (Commit 5855959): Thomas hat 2 PDFs geschickt (reservation-terms + offizielle FAQ mit den echten Pannendienst-/Schlüssel-/Schaden-Zahlen). Beide unter `/public/docs/` gehostet (`/docs/reservation-terms.pdf`, `/docs/sickmotos-faq-de.pdf`), Zahlen in `knowledge.ts` eingebaut (Bot kann sie jetzt sagen + verlinkt die Docs), Sanitizer lässt `/docs` durch.
 - [ ] **FAQ-PDF ist nur DE.** Inhalt ist im Bot (mehrsprachig), aber die Seiten-`/faq` (11 Sprachen) zeigt noch Thomas' alte 15 Q&A, nicht die neue offizielle FAQ (9 Q&A, detaillierter). Optional: `/faq`-Seite auf die offizielle FAQ aktualisieren.
 - [ ] **NEU (Priscilla 06.07 10:51):** Banküberweisung für die **Kaution** entfernen (für die Reservierung/Gebühr ist Banküberweisung ok). Payment-Optionen anpassen.
