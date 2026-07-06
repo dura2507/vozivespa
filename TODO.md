@@ -32,10 +32,12 @@ Thomas hat am 06.07 in "Monitoring RentAMoto" alles beantwortet (per Krileo-Moni
 - **Zweiter Fahrer** erlaubt (mit Erfahrung + gültigem Führerschein).
 - Touren-Empfehlungen je Fahrzeug + Thomas' Maps-Links eingebaut. Preise verbindlich, 24h ab Abholung. WhatsApp nur noch als letzte Eskalation.
 
-### Noch offene Bot-nahe Aufgaben (Thomas 06.07, NICHT reines Bot-Wissen → eigene Surfaces)
-- [ ] **WhatsApp-Funnel im Kontaktbereich:** WhatsApp-Buttons nur noch ganz unten im Kontaktformular; Ablauf Bot → Formular → WhatsApp erst nach ~30 Sek. als letzte Eskalation; "direkt-Chat"-Button zurück in den Bot. (Frontend Kontakt-Seite, nicht knowledge.ts.)
-- [ ] **Aufpreis-Add-on** im Buchungs-Flow (30€ pauschal, siehe Feature 4).
-- [ ] **iPhone-14-Pro:** Thomas fand Fenster-Platzierung + Zurück-Button des Chat-Widgets "bissl hackelig". Platzierung tw. schon durch z-index-Fix; "Zurück-Button" prüfen.
+### Bot-nahe Aufgaben (Thomas 06.07) — Stand 06.07
+- [x] **WhatsApp-Funnel im Kontaktbereich** (Commit ab90de4): Bot-CTA prominent oben (öffnet Chat via `open-chatbot`-Event), WhatsApp/Anruf-Karten erst unten + erst nach ~30 Sek. sichtbar, Intro in allen 11 Sprachen auf "frag den Assistenten" umgeschrieben.
+- [x] **iPhone-Problem war in Wahrheit ein 404-Link-Bug** (Commits 9eeeac5 + 57fc19f): der Bot schickte `/en/fleet` (existiert nicht) → 404. Priscillas Screenshots zeigten genau das. PAGE-LINKS gefixt: `#fleet` + echte Bike-IDs aus dem Katalog generiert. Fenster-Platzierung war schon durch z-index-Fix ok.
+- [x] **Aufpreis-Add-on Einzel-Buchung** (Commit a3f9e40): 2 Checkboxen (früh 7-8:59 / spät 19-22, je 30€) im Bike-Buchungsformular, fließt in Total/20%-Gebühr/Online-Charge, steht in der Notiz für den Owner. Verfügbarkeits-Engine NICHT angefasst (reines Add-on).
+- [ ] **Aufpreis-Add-on auch in GroupBooking** (`/group`) nachziehen (gleiche Logik, pro Anmietung).
+- [ ] Add-on live gegen Produktion gegenchecken (lokal nicht bis ins Formular fahrbar wegen fehlender DB).
 - [ ] Vertrag-Template (leer) von Thomas kommt noch zum Hinterlegen (als Link im Bot/FAQ).
 - [ ] PayPal-Frage von Thomas: F&F (ohne Gebühr) und/oder Company (mit Gebühr) hinzufügen? (Ja/Nein.)
 
