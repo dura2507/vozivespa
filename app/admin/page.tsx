@@ -299,11 +299,6 @@ function FleetCard({ entry }: { entry: FleetEntry }) {
           {entry.outUnits} out
         </p>
       )}
-      {entry.reservedSoonCount > 0 && (
-        <p className="text-[11px] text-amber-700 font-bold mt-1 leading-tight">
-          {entry.reservedSoonCount} reserved · pickup soon
-        </p>
-      )}
       {(entry.pendingCount > 0 || entry.upcomingCount > 0) && (
         <p className="text-xs text-muted mt-2 leading-tight">
           {entry.pendingCount > 0 && (
@@ -342,17 +337,9 @@ function UnitAvailabilityPanel({
           const tone =
             u.status === "free"
               ? "bg-emerald-50 border-emerald-300"
-              : u.status === "reserved"
-              ? "bg-amber-50 border-amber-300"
               : "bg-red/10 border-red/40";
-          const label =
-            u.status === "free" ? "Free now" : u.status === "reserved" ? "Reserved" : "Out";
-          const labelTone =
-            u.status === "free"
-              ? "text-emerald-700"
-              : u.status === "reserved"
-              ? "text-amber-700"
-              : "text-red";
+          const label = u.status === "free" ? "Free now" : "Out";
+          const labelTone = u.status === "free" ? "text-emerald-700" : "text-red";
           return (
             <div key={u.unitLabel} className={`border p-3 ${tone}`}>
               <div className="flex items-center justify-between gap-2">

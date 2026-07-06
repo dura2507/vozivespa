@@ -12,13 +12,6 @@ import {
   SLOT_MINUTES,
   LAST_PICKUP_MINUTES,
 } from "@/lib/pricing";
-
-// OWNER-DASHBOARD ONLY heads-up threshold. The public booking flow has NO
-// minimum-gap rule (a walk-in may take any free window), so this does NOT
-// gate any customer booking. It only lets the fleet dashboard flag a bike as
-// "committed soon" when its next pickup is under this many minutes away, so
-// on-site staff know not to hand it to a walk-in. Purely informational.
-const RESERVED_SOON_MINUTES = 8 * 60;
 import { SEASON_END_ISO } from "@/lib/season";
 
 export type EnrichedBooking = BookingRow & {
@@ -58,14 +51,10 @@ export type FleetEntry = {
   bikeId: string;
   bikeName: string;
   totalUnits: number;
-  // Physically out now, PLUS the owner-only "committed soon" heads-up
-  // (a pickup coming up shortly). The public site has no minimum-gap rule,
-  // so the "committed soon" part is a dashboard aid only, not a booking gate.
+  // Units physically out with a customer right now. Matches the public
+  // availability exactly (a booking that only starts later leaves the unit
+  // free now — the site has no minimum-gap rule).
   outUnits: number;
-  // Of those, how many are NOT physically out yet but committed for a
-  // pickup coming up soon. Shown as a "reserved" note so the owner can
-  // tell the transitional state apart from bikes already handed over.
-  reservedSoonCount: number;
   pendingCount: number;
   upcomingCount: number;
 };
@@ -294,20 +283,13 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     bookableUnitIds.add(u.id);
   }
 
-  type Acc = { outUnits: Set<string>; reservedUnits: Set<string>; pending: number; upcoming: number };
-  const makeAcc = (): Acc => ({ outUnits: new Set(), reservedUnits: new Set(), pending: 0, upcoming: 0 });
+  type Acc = { outUnits: Set<string>; pending: number; upcoming: number };
+  const makeAcc = (): Acc => ({ outUnits: new Set(), pending: 0, upcoming: 0 });
   const getAcc = (bikeId: string, map: Map<string, Acc>): Acc => {
     let e = map.get(bikeId);
     if (!e) { e = makeAcc(); map.set(bikeId, e); }
     return e;
   };
-  // OWNER heads-up only: a pickup coming up this soon means the unit is
-  // effectively committed, so staff shouldn't hand it to a walk-in. This is
-  // NOT a public booking rule (the site has no minimum-gap rule) — it just
-  // colours the dashboard.
-  const bufferMs = TURNAROUND_MINUTES * 60_000;
-  const usefulMs = RESERVED_SOON_MINUTES * 60_000;
-
   const out = new Map<string, Acc>();
   for (const b of (bookingsRes.data ?? []) as Array<{
     id: string;
@@ -341,13 +323,10 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       if (start <= nowMs && end >= nowMs) {
         entry.outUnits.add(key);
       } else if (start > nowMs) {
-        // Imminent pickup with no useful gap → reserved (counts as out).
-        // Otherwise a genuine future booking → upcoming.
-        if (start - bufferMs - nowMs < usefulMs) {
-          entry.reservedUnits.add(key);
-        } else {
-          entry.upcoming++;
-        }
+        // A future booking that hasn't started yet → upcoming, NOT out. The
+        // site has no minimum-gap rule, so the unit is free until the pickup
+        // (dashboard matches the public availability).
+        entry.upcoming++;
       }
     }
   }
@@ -384,22 +363,11 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
 
   return CATEGORIES.map<FleetEntry>((cat) => {
     const entry = out.get(cat.id);
-    // Committed = physically out ∪ reserved-for-imminent-pickup. Reserved
-    // units already physically out (back-to-back) are only counted once.
-    const committed = new Set(entry?.outUnits);
-    let reservedSoon = 0;
-    for (const key of entry?.reservedUnits ?? []) {
-      if (!committed.has(key)) {
-        committed.add(key);
-        reservedSoon++;
-      }
-    }
     return {
       bikeId: cat.id,
       bikeName: cat.shortName ?? cat.model,
       totalUnits: unitsByBike.get(cat.id) ?? 0,
-      outUnits: committed.size,
-      reservedSoonCount: reservedSoon,
+      outUnits: entry?.outUnits.size ?? 0,
       pendingCount: entry?.pending ?? 0,
       upcomingCount: entry?.upcoming ?? 0,
     };
@@ -410,10 +378,11 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
 
 export type UnitAvailability = {
   unitLabel: string;
-  // out = physically with a customer now; reserved = free but committed
-  // for a pickup coming up soon; free = available to a walk-in right now.
-  status: "out" | "reserved" | "free";
-  // When it comes back (out) or when the imminent pickup is (reserved).
+  // out = physically with a customer now; free = available right now. Matches
+  // the public site (no minimum-gap rule, so an upcoming booking doesn't make
+  // an otherwise-free unit "out").
+  status: "out" | "free";
+  // When it comes back, for an out unit. Null when free.
   busyUntilMs: number | null;
   // Next moment this unit can be handed to a walk-in: shop hours, 30-min
   // turnaround, no 19:00 pickup. Equals now when free right now.
@@ -496,7 +465,6 @@ export async function listUnitAvailability(
 
   const unitIds = (unitsRes.data ?? []).map((u) => (u as { id: string }).id);
   const bufferMs = TURNAROUND_MINUTES * 60_000;
-  const usefulMs = RESERVED_SOON_MINUTES * 60_000;
   const seasonCutoff = toMs(SEASON_END_ISO, "23:59");
 
   // Collect busy intervals per unit. Whole-model blocks (unit_id null)
@@ -525,19 +493,9 @@ export async function listUnitAvailability(
   const units: UnitAvailability[] = unitIds.map((id) => {
     const intervals = (perUnit.get(id) ?? []).sort((a, b) => a.start - b.start);
     const current = intervals.find((iv) => nowMs >= iv.start && nowMs < iv.end) ?? null;
-    const nextUpcoming = intervals.find((iv) => iv.start > nowMs) ?? null;
-    // OWNER heads-up only (not a public booking rule): a pickup coming up
-    // this soon flags the unit as committed so staff don't walk-in rent it.
-    const reserved =
-      !current && nextUpcoming && nextUpcoming.start - bufferMs - nowMs < usefulMs
-        ? nextUpcoming
-        : null;
-
-    // Where to start hunting for a free pickup: after whatever the unit is
-    // committed to right now (current rental or an imminent reserved one),
-    // otherwise now. This stops us advertising the tiny dead gap before a
-    // reserved pickup as if it were bookable.
-    const blocker = current ?? reserved;
+    // Where to start hunting for a free pickup: after the current rental if
+    // the unit is out right now, otherwise from now.
+    const blocker = current;
     const searchFrom = blocker ? blocker.end + bufferMs : nowMs;
     let candidate = bumpToPickupSlot(searchFrom);
     for (let guard = 0; guard < 800 && candidate <= seasonCutoff; guard++) {
@@ -547,18 +505,8 @@ export async function listUnitAvailability(
     }
     const freeUntil = intervals.find((iv) => iv.start > candidate)?.start ?? null;
 
-    let status: UnitAvailability["status"];
-    let busyUntil: number | null;
-    if (current) {
-      status = "out";
-      busyUntil = current.end;
-    } else if (reserved) {
-      status = "reserved";
-      busyUntil = reserved.start;
-    } else {
-      status = "free";
-      busyUntil = null;
-    }
+    const status: UnitAvailability["status"] = current ? "out" : "free";
+    const busyUntil = current ? current.end : null;
 
     return {
       unitLabel: labels.get(id) ?? id.slice(0, 6),
@@ -569,9 +517,9 @@ export async function listUnitAvailability(
     };
   });
 
-  // Sort: free first, then reserved, then out — owner scans for what's
-  // available now. Within a status, earliest next-free first.
-  const order = { free: 0, reserved: 1, out: 2 };
+  // Sort: free first, then out — owner scans for what's available now.
+  // Within a status, earliest next-free first.
+  const order = { free: 0, out: 1 };
   units.sort((a, b) => order[a.status] - order[b.status] || a.nextFreePickupMs - b.nextFreePickupMs);
 
   return { bikeId, bikeName: bikeName(bikeId), units };
