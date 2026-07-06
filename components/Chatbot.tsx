@@ -305,7 +305,7 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
                   onKeyDown={onKeyDown}
                   rows={1}
                   placeholder={t.placeholder}
-                  className="flex-1 resize-none bg-transparent px-3.5 py-2.5 text-sm focus:outline-none max-h-32 placeholder:text-ink/35"
+                  className="flex-1 resize-none bg-transparent px-3.5 py-2.5 text-base sm:text-sm focus:outline-none max-h-32 placeholder:text-ink/35"
                 />
               </div>
               <button
