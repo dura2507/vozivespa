@@ -300,11 +300,24 @@ export default function BikeDetail({
     }
   }, [returnSlots, returnTime]);
 
+  const [earlyPickup, setEarlyPickup] = useState(false);
+  const [lateReturn, setLateReturn] = useState(false);
+
   const priceResult =
     effectiveRange?.from && effectiveRange?.to && pickupTime && returnTime
       ? calculatePrice(effectiveRange.from, effectiveRange.to, pickupTime, returnTime, bike.pricing)
       : null;
-  const totalPrice = priceResult?.totalPrice ?? 0;
+  const basePrice = priceResult?.totalPrice ?? 0;
+  // Outside-hours add-ons (Thomas): flat 30€ each for an early pickup
+  // (07:00-08:59) or a late return (19:00-22:00), per rental. Folded into
+  // totalPrice so it flows through the 20% fee, the summary and the online
+  // charge; the choice is also appended to the booking notes for the owner.
+  const OUTSIDE_HOURS_SURCHARGE = 30;
+  const surcharge =
+    basePrice > 0
+      ? (earlyPickup ? OUTSIDE_HOURS_SURCHARGE : 0) + (lateReturn ? OUTSIDE_HOURS_SURCHARGE : 0)
+      : 0;
+  const totalPrice = basePrice + surcharge;
   const appliedTier = priceResult?.appliedTier ?? null;
   const billableDays = priceResult?.billableDays ?? 0;
 
@@ -337,7 +350,16 @@ export default function BikeDetail({
       fd.set("name", form.name);
       fd.set("email", form.email);
       fd.set("phone", form.phone);
-      if (form.notes) fd.set("notes", form.notes);
+      // Fold the outside-hours add-on into the notes so it reaches the owner's
+      // Telegram/email (the surcharge is already in totalPriceCents).
+      const addonNote = [
+        earlyPickup ? "Early pickup 07:00-08:59 (+30€)" : null,
+        lateReturn ? "Late return 19:00-22:00 (+30€)" : null,
+      ]
+        .filter(Boolean)
+        .join("; ");
+      const notesOut = [(form.notes ?? "").trim(), addonNote].filter(Boolean).join(" | ");
+      if (notesOut) fd.set("notes", notesOut);
       fd.set("from", toIsoDate(effectiveRange.from));
       fd.set("to", toIsoDate(effectiveRange.to));
       fd.set("pickupTime", pickupTime);
@@ -1224,6 +1246,33 @@ export default function BikeDetail({
                       className={`${inputClass} resize-none`}
                     />
                   </label>
+
+                  {/* Outside-hours add-on (Thomas): 30€ each, folded into total */}
+                  <div className="border border-ink/10 bg-off-white/60 px-4 py-3">
+                    <p className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em] mb-2">
+                      {tF.form.outsideHoursTitle}
+                    </p>
+                    <label className="flex items-center gap-2.5 py-1 cursor-pointer text-sm">
+                      <input
+                        type="checkbox"
+                        checked={earlyPickup}
+                        onChange={(e) => setEarlyPickup(e.target.checked)}
+                        className="w-4 h-4 accent-red"
+                      />
+                      <span className="text-ink">{tF.form.earlyPickup}</span>
+                      <span className="ml-auto text-muted text-xs font-semibold">+{OUTSIDE_HOURS_SURCHARGE}€</span>
+                    </label>
+                    <label className="flex items-center gap-2.5 py-1 cursor-pointer text-sm">
+                      <input
+                        type="checkbox"
+                        checked={lateReturn}
+                        onChange={(e) => setLateReturn(e.target.checked)}
+                        className="w-4 h-4 accent-red"
+                      />
+                      <span className="text-ink">{tF.form.lateReturn}</span>
+                      <span className="ml-auto text-muted text-xs font-semibold">+{OUTSIDE_HOURS_SURCHARGE}€</span>
+                    </label>
+                  </div>
 
                   {/* Reservation / payment section */}
                   <div className="border-t border-ink/10 pt-7 mt-2">
