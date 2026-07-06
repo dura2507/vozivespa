@@ -235,16 +235,22 @@ const SITE_URL = "https://rentamotozadar.com";
 // so the bot must paste the whole URL — never a bare "/fleet" path, which
 // shows up as unclickable text a customer won't understand.
 function pageLinks(locale: Locale): string {
-  const p = (path: string) => `${SITE_URL}/${locale}${path}`;
+  const base = `${SITE_URL}/${locale}`;
+  // Bike-page links are generated from the real catalogue so the id is always
+  // valid — a wrong or invented path gives the customer a 404. NOTE: there is
+  // NO bare "/fleet" listing page; browsing all bikes is the homepage #fleet
+  // section, and each bike has its own /fleet/<id> page.
+  const bikeLinks = CATEGORIES.map((c) => `    ${c.model}: ${base}/fleet/${c.id}`).join("\n");
   return [
-    "PAGE LINKS (always paste the full URL directly, never a bare /path):",
-    `- All bikes + live availability: ${p("/fleet")}`,
-    `- A specific bike: ${p("/fleet")}/<bike-id>  (e.g. ${p("/fleet")}/scooter-50)`,
-    `- Multi-booking (several bikes at once): ${p("/group")}`,
-    `- Info page: ${p("/info")}`,
-    `- FAQ: ${p("/faq")}`,
-    `- Photo gallery: ${p("/gallery")}`,
-    `- Contact (WhatsApp / email): ${p("/contact")}`,
+    "PAGE LINKS (paste the full URL directly, never a bare /path; use ONLY these exact URLs and NEVER invent a path — a wrong link gives the customer a 404):",
+    `- Browse all bikes (homepage fleet section): ${base}#fleet`,
+    `- Live availability + book one or several bikes at once: ${base}/group`,
+    "- A specific bike's own page (with its live calendar) — use the EXACT url for that model:",
+    bikeLinks,
+    `- Info: ${base}/info`,
+    `- FAQ: ${base}/faq`,
+    `- Photo gallery: ${base}/gallery`,
+    `- Contact (WhatsApp / email): ${base}/contact`,
   ].join("\n");
 }
 
