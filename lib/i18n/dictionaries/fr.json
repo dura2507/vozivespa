@@ -248,9 +248,10 @@
     ]
   },
   "contact": {
+    "directContact": "Vous préférez nous contacter directement ?",
     "eyebrow": "Écrivez-nous",
     "title": "Contact",
-    "intro": "Contactez-nous sur WhatsApp pour une réponse rapide, ou envoyez un message et nous reviendrons vers vous en quelques heures.",
+    "intro": "Posez toutes vos questions à notre assistant ou écrivez-nous ci-dessous. Nous répondons en quelques heures.",
     "form": {
       "name": "Nom",
       "email": "Email",

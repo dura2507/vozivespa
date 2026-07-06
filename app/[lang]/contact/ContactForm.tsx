@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { BRAND } from "@/lib/mockData";
@@ -20,6 +20,14 @@ export default function ContactForm({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  // WhatsApp / phone are a LAST-RESORT escalation (Thomas): keep them out of
+  // sight at first so visitors use the assistant or the form, then reveal them
+  // at the bottom after ~30s for anyone who still wants a human.
+  const [showDirect, setShowDirect] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setShowDirect(true), 30000);
+    return () => clearTimeout(timer);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -66,47 +74,24 @@ export default function ContactForm({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
 
             <div className="flex flex-col gap-4">
-              {BRAND.contacts.map((contact, i) => (
-                <div
-                  key={i}
-                  className="bg-sand px-5 py-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5"
-                >
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="w-12 h-12 bg-ink flex items-center justify-center shrink-0">
-                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                      </svg>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-bold text-ink text-sm flex items-center gap-2">
-                        {contact.label}
-                        <span className="flex gap-1 leading-none">
-                          {contact.languages.map((c) => (
-                            <Flag key={c} code={c as FlagCode} className="w-4 h-3" />
-                          ))}
-                        </span>
-                      </p>
-                      <p className="text-muted text-sm truncate">{contact.phone}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 shrink-0">
-                    <a
-                      href={`tel:+${contact.phoneRaw}`}
-                      className="flex items-center justify-center gap-1.5 bg-ink text-white text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-2.5 hover:bg-red transition-colors"
-                    >
-                      {dict.footer.call}
-                    </a>
-                    <a
-                      href={`https://wa.me/${contact.phoneRaw}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-1.5 bg-[#25D366] text-white text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-2.5 hover:bg-[#1EBD5A] transition-colors"
-                    >
-                      {dict.footer.whatsapp}
-                    </a>
-                  </div>
+              {/* Primary path: steer the visitor into the assistant conversation
+                  (Thomas wants the conversion to happen in the bot). */}
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new Event("open-chatbot"))}
+                className="bg-ink text-white text-left flex items-start gap-4 px-5 py-5 w-full hover:bg-red transition-colors group"
+              >
+                <div className="w-12 h-12 bg-white/10 flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.87 9.87 0 01-4-.8L3 21l1.3-4A7.94 7.94 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
                 </div>
-              ))}
+                <div className="min-w-0">
+                  <p className="font-bold text-sm">{dict.chatbot.title}</p>
+                  <p className="text-white/60 text-xs mt-0.5 leading-snug">{dict.chatbot.subtitle}</p>
+                  <p className="text-[10px] tracking-[0.15em] uppercase font-bold mt-2 group-hover:underline">{dict.chatbot.openLabel} →</p>
+                </div>
+              </button>
 
               <div className="bg-sand overflow-hidden">
                 <a
@@ -235,6 +220,47 @@ export default function ContactForm({
               )}
             </div>
           </div>
+
+          {showDirect && (
+            <div className="mt-12 pt-8 border-t border-ink/10">
+              <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-4">
+                {t.directContact}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {BRAND.contacts.map((contact, i) => (
+                  <div key={i} className="bg-sand px-5 py-4 flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="font-bold text-ink text-sm flex items-center gap-2">
+                        {contact.label}
+                        <span className="flex gap-1 leading-none">
+                          {contact.languages.map((c) => (
+                            <Flag key={c} code={c as FlagCode} className="w-4 h-3" />
+                          ))}
+                        </span>
+                      </p>
+                      <p className="text-muted text-xs truncate">{contact.phone}</p>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <a
+                        href={`tel:+${contact.phoneRaw}`}
+                        className="flex items-center justify-center bg-ink text-white text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-2.5 hover:bg-red transition-colors"
+                      >
+                        {dict.footer.call}
+                      </a>
+                      <a
+                        href={`https://wa.me/${contact.phoneRaw}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center bg-[#25D366] text-white text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-2.5 hover:bg-[#1EBD5A] transition-colors"
+                      >
+                        {dict.footer.whatsapp}
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
       <Footer lang={lang} t={dict.footer} nav={dict.nav} />

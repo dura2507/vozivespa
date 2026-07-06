@@ -248,9 +248,10 @@
     ]
   },
   "contact": {
+    "directContact": "Radije nas kontaktirajte izravno?",
     "eyebrow": "Piši nam",
     "title": "Kontakt",
-    "intro": "Za najbrži odgovor piši nam na WhatsApp. Možeš nam i poslati poruku, javljamo se u roku nekoliko sati.",
+    "intro": "Pitaj našeg asistenta bilo što ili nam pošalji poruku ispod. Javljamo se u roku od nekoliko sati.",
     "form": {
       "name": "Ime",
       "email": "Email",

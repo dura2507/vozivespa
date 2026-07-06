@@ -248,9 +248,10 @@
     ]
   },
   "contact": {
+    "directContact": "Inkább közvetlenül keresne minket?",
     "eyebrow": "Lépj kapcsolatba velünk",
     "title": "Kapcsolat",
-    "intro": "A leggyorsabb válaszért írj nekünk WhatsApp-on, vagy küldj üzenetet, és néhány órán belül jelentkezünk.",
+    "intro": "Kérdezz bármit az asszisztensünktől, vagy írj nekünk alább. Néhány órán belül válaszolunk.",
     "form": {
       "name": "Név",
       "email": "E-mail",

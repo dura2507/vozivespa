@@ -248,9 +248,10 @@
     ]
   },
   "contact": {
+    "directContact": "Raději nás kontaktujte přímo?",
     "eyebrow": "Ozvi se nám",
     "title": "Kontakt",
-    "intro": "Nejrychleji nás zastihneš na WhatsApp, nebo nám pošli zprávu a my se ti ozveme během pár hodin.",
+    "intro": "Zeptej se našeho asistenta na cokoli nebo nám napiš níže. Ozveme se do několika hodin.",
     "form": {
       "name": "Jméno",
       "email": "E-mail",

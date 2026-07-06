@@ -98,6 +98,15 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
+    // Let other parts of the site open the chat — e.g. the contact page's
+    // "chat with our assistant" button dispatches this event, so we steer
+    // visitors into the bot conversation instead of straight to WhatsApp.
+    const openChat = () => setOpen(true);
+    window.addEventListener("open-chatbot", openChat);
+    return () => window.removeEventListener("open-chatbot", openChat);
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
     // Focus the input when the panel opens.
     setTimeout(() => inputRef.current?.focus(), 100);

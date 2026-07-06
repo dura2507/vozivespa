@@ -248,9 +248,10 @@
     ]
   },
   "contact": {
+    "directContact": "Prefere falar diretamente conosco?",
     "eyebrow": "Entre em contato",
     "title": "Contato",
-    "intro": "Fale com a gente no WhatsApp para uma resposta mais rápida, ou envie uma mensagem e retornamos em poucas horas.",
+    "intro": "Pergunte qualquer coisa ao nosso assistente ou nos envie uma mensagem abaixo. Respondemos em poucas horas.",
     "form": {
       "name": "Nome",
       "email": "Email",
