@@ -1,7 +1,6 @@
 import { CATEGORIES, type Category } from "@/lib/mockData";
 import { getServiceClient } from "@/lib/supabase";
 import {
-  MIN_USEFUL_RENTAL_MINUTES,
   SHOP_CLOSE_HOUR,
   SHOP_OPEN_HOUR,
   SLOT_MINUTES,
@@ -316,7 +315,6 @@ export async function getAvailableNowCounts(): Promise<
   // currently-rented units AND look ahead to compute when a busy unit
   // next becomes free (chained through back-to-back bookings).
   const turnaroundMs = TURNAROUND_MINUTES * 60_000;
-  const usefulRentalMs = MIN_USEFUL_RENTAL_MINUTES * 60_000;
   const unitBookings = new Map<string, Array<{ start: number; end: number }>>();
   const rentedUnitIds = new Set<string>();
   for (const b of ((bookingsRes.data ?? []) as B[])) {
@@ -329,14 +327,12 @@ export async function getAvailableNowCounts(): Promise<
       unitBookings.set(b.bike_unit_id, arr);
     }
     arr.push({ start, end });
-    // Currently inside the rental window?
+    // Currently inside the rental window? (A booking that only starts
+    // later leaves the unit free now — the booking engine has no minimum
+    // gap rule, so the pill agrees: available until the rental starts.)
     if (nowMs >= start && nowMs < end) {
       rentedUnitIds.add(b.bike_unit_id);
       continue;
-    }
-    // Or upcoming so soon that no useful rental fits in the gap?
-    if (start > nowMs && start - turnaroundMs - nowMs < usefulRentalMs) {
-      rentedUnitIds.add(b.bike_unit_id);
     }
   }
 
@@ -375,19 +371,9 @@ export async function getAvailableNowCounts(): Promise<
         candidate = conflict.end + turnaroundMs;
         continue;
       }
-      // Not in a conflict — but the booking system won't OFFER this
-      // slot unless it leaves a useful rental window before the unit's
-      // next booking (the same 8h lookahead validPickupSlots applies).
-      // Without this, the pill would advertise "frei 15:30" for a unit
-      // that re-rents at 19:00 while the booking form rejects every
-      // slot that day — exactly the pill-vs-system mismatch Thomas hit.
-      const upcoming = sortedBookings.find(
-        (iv) => iv.start > candidate && iv.start - turnaroundMs - candidate < usefulRentalMs,
-      );
-      if (upcoming) {
-        candidate = upcoming.end + turnaroundMs;
-        continue;
-      }
+      // Not in a conflict — the booking engine will offer this slot (it
+      // has no minimum-gap rule), so the pill returns it as the free-from
+      // moment.
       return candidate;
     }
     return null;
@@ -401,16 +387,7 @@ export async function getAvailableNowCounts(): Promise<
     if (current) {
       return nextPickupableMoment(sorted, current.end + turnaroundMs);
     }
-    // Unit is free right now — but if the next booking starts within
-    // the useful-rental window we treat it as "rented now" (see the
-    // earlier add to rentedUnitIds) and need to surface when the unit
-    // becomes useful again, i.e. after that imminent booking ends.
-    const imminent = sorted.find(
-      (iv) => iv.start > nowMs && iv.start - turnaroundMs - nowMs < usefulRentalMs,
-    );
-    if (imminent) {
-      return nextPickupableMoment(sorted, imminent.end + turnaroundMs);
-    }
+    // Not inside any rental window → the unit is free right now.
     return null;
   }
 

@@ -14,14 +14,6 @@ const GRACE_MINUTES = 60;
 // renter. Applied as a buffer in the time-aware overlap check.
 export const TURNAROUND_MINUTES = 30;
 
-// Shortest rental window we treat as a "real" rental on the public
-// site. Owner policy (Thomas): standard rentals are 24h, walk-ins
-// between two reservations only get offered if there's at least 8h of
-// daylight between the slot and the next booking — anything shorter
-// isn't worth the turnaround for either side. Used as a forward
-// lookahead in the slot picker AND the homepage availability badge.
-export const MIN_USEFUL_RENTAL_MINUTES = 8 * 60;
-
 export type AppliedTier =
   | "day"
   | "weekend"
@@ -151,48 +143,10 @@ function toIsoDate(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-// Number of physical units busy at a given moment. A unit is "busy" if
-// any of its bookings overlaps the moment within the turnaround buffer,
-// or — when lookaheadMs > 0 — if the unit's next booking starts within
-// that lookahead window (no useful rental fits in the remaining gap).
-function countBusyUnitsAt(
-  date: Date,
-  time: string,
-  bookings: ConfirmedBooking[],
-  lookaheadMs = 0,
-): number {
-  const slotMs = combineDateTime(date, time).getTime();
-  const bufferMs = TURNAROUND_MINUTES * 60_000;
-  const occupied = new Set<string>();
-  for (const b of bookings) {
-    if (!b.unitId) continue;
-    const bStart = combineDateTime(new Date(`${b.from}T00:00:00`), b.pickupTime).getTime();
-    const bEnd = combineDateTime(new Date(`${b.to}T00:00:00`), b.returnTime).getTime();
-    if (bStart - bufferMs <= slotMs && slotMs < bEnd + bufferMs) {
-      occupied.add(b.unitId);
-      continue;
-    }
-    if (
-      lookaheadMs > 0 &&
-      bStart > slotMs &&
-      bStart - bufferMs - slotMs < lookaheadMs
-    ) {
-      occupied.add(b.unitId);
-    }
-  }
-  return occupied.size;
-}
-
-// Slots a customer may pick as their pickup time on `pickupDate`. A
-// slot is bookable when at least one unit is free for the next useful
-// rental window (no booking conflict + no upcoming booking within
-// MIN_USEFUL_RENTAL_MINUTES). Prevents the "09:00 looks free but the
-// unit has a 10:00 reservation" trap.
 // Count of units that are free for the WHOLE window (with turnaround
 // buffer on both sides). Mirrors server-side findFreeUnit so the slot
-// filters and the submit check never disagree — the earlier per-instant
-// countBusyUnitsAt could let a slot pass that findFreeUnit would then
-// reject, giving the customer a bogus "time conflict" on submit.
+// filters and the submit check never disagree — a slot the picker offers
+// is always one findFreeUnit will accept.
 function unitsFreeForWindow(
   pickupDate: Date,
   pickupTime: string,

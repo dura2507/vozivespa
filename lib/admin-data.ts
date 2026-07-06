@@ -8,11 +8,17 @@ import {
 import { signedReceiptUrl } from "@/lib/storage";
 import {
   TURNAROUND_MINUTES,
-  MIN_USEFUL_RENTAL_MINUTES,
   SHOP_OPEN_HOUR,
   SLOT_MINUTES,
   LAST_PICKUP_MINUTES,
 } from "@/lib/pricing";
+
+// OWNER-DASHBOARD ONLY heads-up threshold. The public booking flow has NO
+// minimum-gap rule (a walk-in may take any free window), so this does NOT
+// gate any customer booking. It only lets the fleet dashboard flag a bike as
+// "committed soon" when its next pickup is under this many minutes away, so
+// on-site staff know not to hand it to a walk-in. Purely informational.
+const RESERVED_SOON_MINUTES = 8 * 60;
 import { SEASON_END_ISO } from "@/lib/season";
 
 export type EnrichedBooking = BookingRow & {
@@ -52,10 +58,9 @@ export type FleetEntry = {
   bikeId: string;
   bikeName: string;
   totalUnits: number;
-  // Units that are unavailable to a walk-in right now: physically out OR
-  // reserved for an imminent pickup with no useful gap before it. Matches
-  // the public availability logic so the dashboard ratio and the website
-  // ("ausgebucht") never contradict each other.
+  // Physically out now, PLUS the owner-only "committed soon" heads-up
+  // (a pickup coming up shortly). The public site has no minimum-gap rule,
+  // so the "committed soon" part is a dashboard aid only, not a booking gate.
   outUnits: number;
   // Of those, how many are NOT physically out yet but committed for a
   // pickup coming up soon. Shown as a "reserved" note so the owner can
@@ -296,11 +301,12 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     if (!e) { e = makeAcc(); map.set(bikeId, e); }
     return e;
   };
-  // A pickup this soon (with no useful rental fitting in the gap) means the
-  // unit is effectively committed — a walk-in can't have it. Same rule the
-  // public homepage uses, so the dashboard agrees with the website.
+  // OWNER heads-up only: a pickup coming up this soon means the unit is
+  // effectively committed, so staff shouldn't hand it to a walk-in. This is
+  // NOT a public booking rule (the site has no minimum-gap rule) — it just
+  // colours the dashboard.
   const bufferMs = TURNAROUND_MINUTES * 60_000;
-  const usefulMs = MIN_USEFUL_RENTAL_MINUTES * 60_000;
+  const usefulMs = RESERVED_SOON_MINUTES * 60_000;
 
   const out = new Map<string, Acc>();
   for (const b of (bookingsRes.data ?? []) as Array<{
@@ -490,7 +496,7 @@ export async function listUnitAvailability(
 
   const unitIds = (unitsRes.data ?? []).map((u) => (u as { id: string }).id);
   const bufferMs = TURNAROUND_MINUTES * 60_000;
-  const usefulMs = MIN_USEFUL_RENTAL_MINUTES * 60_000;
+  const usefulMs = RESERVED_SOON_MINUTES * 60_000;
   const seasonCutoff = toMs(SEASON_END_ISO, "23:59");
 
   // Collect busy intervals per unit. Whole-model blocks (unit_id null)
@@ -520,8 +526,8 @@ export async function listUnitAvailability(
     const intervals = (perUnit.get(id) ?? []).sort((a, b) => a.start - b.start);
     const current = intervals.find((iv) => nowMs >= iv.start && nowMs < iv.end) ?? null;
     const nextUpcoming = intervals.find((iv) => iv.start > nowMs) ?? null;
-    // A pickup this soon leaves no useful window before it — treat the
-    // unit as committed to that booking, same as the dashboard's OUT.
+    // OWNER heads-up only (not a public booking rule): a pickup coming up
+    // this soon flags the unit as committed so staff don't walk-in rent it.
     const reserved =
       !current && nextUpcoming && nextUpcoming.start - bufferMs - nowMs < usefulMs
         ? nextUpcoming
