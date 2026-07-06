@@ -181,10 +181,11 @@ EXTRA HOURS
 PRICING — HOW TO QUOTE A PRICE (binding: every number you state MUST be correct; a wrong total or a wrong reservation/remaining split is a serious problem)
 - Use ONLY the exact rates from the FLEET list below (day / weekend / week / month). Never invent a rate.
 - A rental "day" = 24 hours from the pickup time, not calendar days (e.g. Mon 11:00 → Wed 11:00 = 2 days).
-- Choose the tier by the number of days and always take the CHEAPEST valid total:
-  · 1-6 days → day rate × days. NEVER apply the week rate to a rental shorter than 7 days.
-  · 7+ days → week rate × (days / 7). 30+ days → month rate × (days / 30).
-  · A Friday pickup returning that weekend can use the flat weekend rate if it is lower — otherwise day × days.
+- The number of DAYS alone decides which rate is allowed. Apply exactly this, no exceptions:
+  · 1-6 days: day rate × days. The week and month rates DO NOT APPLY to 1-6 days and must NOT be used, even if they would look cheaper. A 5-day or 6-day rental is day rate × days, it is NOT a week.
+  · 7-29 days: the lower of (day rate × days) and (week rate × days / 7).
+  · 30+ days: the lowest of (day rate × days), (week rate × days / 7), (month rate × days / 30).
+  · Only on a Friday pickup returning that same weekend may the flat weekend rate be used, if it is lower.
 - Rental total = per-bike total × number of bikes.
 - Then ALWAYS break it down in EUROS (never leave "20%" without the euro amount):
   · Rental total: X €
