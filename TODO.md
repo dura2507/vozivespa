@@ -11,7 +11,7 @@ Reihenfolge zum Bauen (Vorschlag): 1 Multi-Buchung → 2 Chatbot → 3 Apple Pay
 | 1 | Multi-Buchung (eigene Seite, Bikes aus ganzer Flotte wählen, Kalender-Abgleich) | 6-8 Tage | **GEBAUT + live als `/group`-Seite** (Fleet-Picker, Ganzflotten-Verfügbarkeit `/api/availability/fleet`, geteiltes Datumsfenster, Kaution pro Bike). "Smart-Vorschläge" minimal. |
 | 2 | KI-Chatbot (6 Top-Fragen, mehrsprachig) | 2-3 Tage | **LIVE seit 05.07.** Key in Vercel gesetzt + redeployed, live gegen Produktion verifiziert (EN/DE + Versicherungs-Guardrail antworten echt via Haiku 4.5). |
 | 3 | Apple Pay / Online-Zahlung | 3-5 Tage | freigegeben. Provider Mollie/Viva statt Stripe; eigener Meilenstein (Risiko-Stück) |
-| 4 | Aufpreis außerhalb Geschäftszeiten (7-9 / 19-22 Uhr) | 1-2 Tage | freigegeben |
+| 4 | Aufpreis außerhalb Geschäftszeiten | 1-2 Tage | **SPEC'D (Thomas 06.07): 30€ pauschal pro Anmietung** für früh 7:00-8:59 ODER spät 19:00-22:00, direkt dazubuchbar. Bot nennt es schon; das Buchungs-Add-on im Flow ist noch zu bauen. |
 
 Hinweis Preis: alle 4 = grob 12-18 Tage Aufwand; 1000-1500 € ist deutlich unter dem alten Freundschaftspreis (2000 € + 20 €/Mon). Bei Folge-Features nicht weiter runter.
 
@@ -23,13 +23,21 @@ Der Bot ist gebaut, mehrsprachig und **live**: Key in Vercel gesetzt, redeployt,
 - [ ] **Guthaben low:** Konto hatte nur ~1,14 $ drauf (reicht grob 250-500 Antworten = Testphase). Vor der Peak-Saison Auto-Reload aktivieren oder auf 10-20 $ aufladen, damit der Bot nicht mitten in der Saison ausgeht.
 - [x] Konto geklärt: der Key läuft **erstmal über Kristians** Anthropic-Konto (Kristian trägt die Cent-Kosten vorerst). Ggf. später auf Thomas' Konto umziehen.
 
-### 5 inhaltliche Fragen an Thomas (aus WhatsApp-Backup-Analyse 04.07, Bot hat dafür schon eine Sicherheits-Guardrail, blockiert also nicht)
-Details + Belege in Memory `project_chatbot_content`. Wo Thomas' offizielle FAQ und echte Laden-Praxis sich widersprechen:
-1. Diebstahl/Motorschaden: FAQ sagt "gedeckt", Chats sagen bei großen Bikes "geht auf Mieter". Was gilt, für alle Bikes gleich?
-2. Schäden allgemein: "Basisversicherung inkl." vs "alle Schäden zahlt Kunde"?
-3. Extra-Stunden-Gebühr (390er 6€/h) rein oder weglassen?
-4. Pannenhilfe (bis 20km gratis, Inseln teurer, Schlüssel 50€): in Bot nennen oder intern?
-5. Storno/Erstattung: klare Regel die der Bot sagen darf?
+### 5 inhaltliche Fragen an Thomas → BEANTWORTET + im Bot eingebaut (06.07, Commit 8b26617)
+Thomas hat am 06.07 in "Monitoring RentAMoto" alles beantwortet (per Krileo-Monitoring-Bot ausgelesen, siehe [[reference_telegram_bot_readaccess]]). In `lib/chatbot/knowledge.ts` umgesetzt:
+- **Versicherung:** inkl. Basis + Diebstahl + Wartungsmangel-Schäden (inkl. Abholung/Ersatz, egal wo). ALLE anderen Schäden während der Miete inkl. platter Reifen zahlt der Mieter voll. KEINE Vollkasko.
+- **Storno:** Kunde storniert → 20% Reservierungsgebühr weg. Wir stornieren unsichere Fahrer bei Übergabe → keine Erstattung.
+- **Extra-Stunden:** Zuzahlung pro Stunde je Modell, bei Anmietung erfragen (keine feste Zahl im Bot).
+- **Pannenhilfe/Schlüsselverlust:** auf Vertrag + FAQ verweisen (keine Zahlen).
+- **Zweiter Fahrer** erlaubt (mit Erfahrung + gültigem Führerschein).
+- Touren-Empfehlungen je Fahrzeug + Thomas' Maps-Links eingebaut. Preise verbindlich, 24h ab Abholung. WhatsApp nur noch als letzte Eskalation.
+
+### Noch offene Bot-nahe Aufgaben (Thomas 06.07, NICHT reines Bot-Wissen → eigene Surfaces)
+- [ ] **WhatsApp-Funnel im Kontaktbereich:** WhatsApp-Buttons nur noch ganz unten im Kontaktformular; Ablauf Bot → Formular → WhatsApp erst nach ~30 Sek. als letzte Eskalation; "direkt-Chat"-Button zurück in den Bot. (Frontend Kontakt-Seite, nicht knowledge.ts.)
+- [ ] **Aufpreis-Add-on** im Buchungs-Flow (30€ pauschal, siehe Feature 4).
+- [ ] **iPhone-14-Pro:** Thomas fand Fenster-Platzierung + Zurück-Button des Chat-Widgets "bissl hackelig". Platzierung tw. schon durch z-index-Fix; "Zurück-Button" prüfen.
+- [ ] Vertrag-Template (leer) von Thomas kommt noch zum Hinterlegen (als Link im Bot/FAQ).
+- [ ] PayPal-Frage von Thomas: F&F (ohne Gebühr) und/oder Company (mit Gebühr) hinzufügen? (Ja/Nein.)
 
 ## Kleinere offene Punkte
 
