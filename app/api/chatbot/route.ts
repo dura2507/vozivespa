@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { isLocale, type Locale, DEFAULT_LOCALE } from "@/lib/i18n/config";
+import { isLocale, type Locale, DEFAULT_LOCALE, LOCALES } from "@/lib/i18n/config";
 import { buildSystemPrompt } from "@/lib/chatbot/knowledge";
+import { CATEGORIES } from "@/lib/mockData";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -10,6 +11,57 @@ export const dynamic = "force-dynamic";
 const MODEL = "claude-haiku-4-5-20251001";
 const MAX_HISTORY = 12; // recent turns kept for context
 const MAX_MESSAGE_LEN = 1000;
+
+// Hard guarantee against dead links. The model is told to use only the exact
+// PAGE LINKS, but an LLM can still slip a wrong path. Every rentamotozadar.com
+// URL in the reply is checked against the REAL routes (and real bike ids) and
+// rewritten to a valid link (the homepage fleet section) if the path doesn't
+// exist — so a customer can never receive a 404 from the bot.
+const VALID_PAGE_SEGMENTS = new Set([
+  "group", "info", "faq", "gallery", "contact", "bookings", "impressum", "privacy", "terms",
+]);
+const VALID_BIKE_IDS = new Set(CATEGORIES.map((c) => c.id));
+const SITE = "https://rentamotozadar.com";
+
+function safeInternalUrl(path: string, fallbackLocale: string): string {
+  const hashIdx = path.indexOf("#");
+  const hash = hashIdx >= 0 ? path.slice(hashIdx) : "";
+  const cleanPath = hashIdx >= 0 ? path.slice(0, hashIdx) : path;
+  const segs = cleanPath.split("/").filter(Boolean);
+  let locale = fallbackLocale;
+  let rest = segs;
+  if (segs.length > 0 && (LOCALES as readonly string[]).includes(segs[0])) {
+    locale = segs[0];
+    rest = segs.slice(1);
+  }
+  const home = `${SITE}/${locale}#fleet`;
+  // Homepage (optionally with an anchor such as #fleet).
+  if (rest.length === 0) return `${SITE}/${locale}${hash}`;
+  // Bike page: ONLY /fleet/<known-bike-id> exists — a bare /fleet or a wrong id 404s.
+  if (rest[0] === "fleet") {
+    if (rest.length === 2 && VALID_BIKE_IDS.has(rest[1])) {
+      return `${SITE}/${locale}/fleet/${rest[1]}${hash}`;
+    }
+    return home;
+  }
+  // A single known page.
+  if (rest.length === 1 && VALID_PAGE_SEGMENTS.has(rest[0])) {
+    return `${SITE}/${locale}/${rest[0]}${hash}`;
+  }
+  return home;
+}
+
+function sanitizeInternalLinks(text: string, locale: string): string {
+  return text.replace(
+    /https?:\/\/(?:www\.)?rentamotozadar\.com([^\s)]*)/gi,
+    (_full, path: string) => {
+      const trail = /[.,;:!?]+$/.exec(path || "");
+      const trailing = trail ? trail[0] : "";
+      const clean = trailing ? path.slice(0, path.length - trailing.length) : (path || "");
+      return safeInternalUrl(clean, locale) + trailing;
+    },
+  );
+}
 
 // Very light per-IP rate limit so a single visitor can't burn tokens.
 // Enough for a real conversation (a burst of 20 messages then a cool-down)
@@ -122,7 +174,7 @@ export async function POST(request: Request) {
         { status: 502 },
       );
     }
-    return NextResponse.json({ reply: text });
+    return NextResponse.json({ reply: sanitizeInternalLinks(text, locale) });
   } catch (err) {
     console.error("[/api/chatbot] network", err);
     return NextResponse.json(
