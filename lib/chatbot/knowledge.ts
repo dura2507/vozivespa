@@ -201,12 +201,13 @@ SEASON
 TOURS & LOCAL TIPS (a conversion booster — when a visitor has picked or is choosing a vehicle, warmly suggest 1-3 fitting spots/routes and share the matching map link)
 - 50cc scooter (stay closer to Zadar): the Ugljan island loop (take the ferry Zadar → Preko, then ride the island), Vransko Lake nature park, plus nearby beaches, secret spots and good food in and around Zadar.
 - 125cc scooter / motorbike (can go further): everything above PLUS the Pag island loop and coastal road, and the Zrmanja river with its waterfalls (rafting and kayak spots).
-- Map links to share as relevant:
-  Beaches/nature: Sand Beach https://maps.app.goo.gl/gpCiGWXiGZQcVok79 · Vransko Lake nature park https://maps.app.goo.gl/uATzEgM7wDivaYXX8 · Nature-park konoba https://maps.app.goo.gl/r4ghrzNzsrMKq32u5 · Island Pag https://maps.app.goo.gl/5rmrakPJvbjiZ6TH7
-  Food in Zadar: meat restaurant https://maps.app.goo.gl/HMwjviB2ibLQGhY46 · grill https://maps.app.goo.gl/nJjnSA3pdVxJnyTr9 · best burek https://maps.app.goo.gl/NZeRee5zwVDK7KEr5 · sushi https://maps.app.goo.gl/xh4MG2MjSSgYjCSP7 · Asian https://maps.app.goo.gl/dprCe9ff1mBUv5hC8 · Croatian https://maps.app.goo.gl/CmxyTmm61fVTnbMf8 · wine https://maps.app.goo.gl/cZXvueFB3yeq69Yy9
-  Ugljan / Preko island: beach bar https://maps.app.goo.gl/e519SCemf1siFMPLA · garden bar (near ferry) https://maps.app.goo.gl/xx9ih2ksVKqmyC9p9 · castle fort https://maps.app.goo.gl/owMYaYwDwyT7Dq1r5 · beach https://maps.app.goo.gl/nAFfFcvRfwT74xY56
-  Routes (125cc+): Pag island loop https://maps.app.goo.gl/wdvepHLGENtUEAAg9 · Island loop via ferries https://maps.app.goo.gl/9aJuFyfWvnCwdg5i9
-  (The owner has many more local tips if the visitor wants extras.)
+- Map links (all owner-provided; share the ones that fit, and reproduce each URL EXACTLY — never edit or shorten it):
+  Beaches & nature (ideal for 50cc): Sand Beach https://maps.app.goo.gl/gpCiGWXiGZQcVok79 · Vransko Lake nature park https://maps.app.goo.gl/uATzEgM7wDivaYXX8 · nature-park konoba (restaurant) https://maps.app.goo.gl/r4ghrzNzsrMKq32u5 · river spot https://maps.app.goo.gl/1wb3Q2hm2TeWp3xY9 · Island Pag https://maps.app.goo.gl/5rmrakPJvbjiZ6TH7
+  Food & drink in Zadar: meat restaurant https://maps.app.goo.gl/HMwjviB2ibLQGhY46 · grill https://maps.app.goo.gl/nJjnSA3pdVxJnyTr9 · best burek https://maps.app.goo.gl/NZeRee5zwVDK7KEr5 · sushi https://maps.app.goo.gl/xh4MG2MjSSgYjCSP7 · Asian https://maps.app.goo.gl/dprCe9ff1mBUv5hC8 · Croatian https://maps.app.goo.gl/CmxyTmm61fVTnbMf8 · breakfast buffet https://maps.app.goo.gl/s2GvWEoQPf527KoL7 · fast food https://maps.app.goo.gl/oXBUQypXgahDsp9B9 · wine bar https://maps.app.goo.gl/cZXvueFB3yeq69Yy9 · wine bar https://maps.app.goo.gl/ksshZqidYuewxR9b8
+  Things to do: tank experience https://maps.app.goo.gl/8ap5nMUZCKofxkZ48 · massage https://maps.app.goo.gl/vBM4726msoTcdsAD8 · bowling https://maps.app.goo.gl/PccFC3Hd9htkLHa18
+  Ugljan / Preko island (ferry Zadar → Preko): Preko https://maps.app.goo.gl/W1HdrHtrkdMGqM9v6 · beach bar https://maps.app.goo.gl/e519SCemf1siFMPLA · garden bar (near ferry) https://maps.app.goo.gl/xx9ih2ksVKqmyC9p9 · castle fort https://maps.app.goo.gl/owMYaYwDwyT7Dq1r5 · beach https://maps.app.goo.gl/nAFfFcvRfwT74xY56
+  Routes (125cc / motorbike): Pag island loop https://maps.app.goo.gl/wdvepHLGENtUEAAg9 · Karlobag coastal road https://maps.app.goo.gl/nEno8zph7i9U9YYG7
+  Ferry ports (for the island / Pag loops): Zadar https://maps.app.goo.gl/9aJuFyfWvnCwdg5i9 · Tkon https://maps.app.goo.gl/V8FK7xYg2MdbsJQ56 · Biograd na Moru https://maps.app.goo.gl/6vTHTWpfAsHU4D8LA · Pag-loop ferry https://maps.app.goo.gl/My93fgNkQJKG1rZM7 · Pag-loop ferry https://maps.app.goo.gl/tG4rSAuJBt38GfTZ7
 
 LANGUAGES
 - The site is available in English, German, Croatian, Italian, Polish, French, Spanish, Hungarian, Slovak, Czech and Brazilian Portuguese.
