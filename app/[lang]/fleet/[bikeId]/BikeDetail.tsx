@@ -901,7 +901,16 @@ export default function BikeDetail({
                   </p>
                 </div>
 
-                <div className="grid lg:grid-cols-[auto_1fr] gap-6 items-start">
+                {/* Fixed calendar column (was `auto`): with `auto` the track
+                    grew to the widest child, so once a day is picked the time
+                    selects + price summary rendered below the calendar (their
+                    one-line max-content is wider than the calendar) ballooned
+                    the column and crushed the bike image beside it (958px vs
+                    170px image). Pinning the column to the two-month calendar's
+                    natural width keeps it — and the image — stable when a day is
+                    clicked; the sub-content just wraps within it. `overflow-x-auto`
+                    on the calendar box stays as a safety net for wide locales. */}
+                <div className="grid lg:grid-cols-[46rem_1fr] gap-6 items-start">
                 <div>
                 <div className="bg-white border border-ink/10 p-4 sm:p-6 overflow-x-auto flex justify-center">
                   <DayPicker
