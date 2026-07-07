@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
-import { format, addDays, differenceInCalendarDays, isSameDay } from "date-fns";
+import { format, isSameDay } from "date-fns";
 import { enUS, de, es, it, hr, hu, sk, cs, ptBR } from "date-fns/locale";
 import type { Locale as DateFnsLocale } from "date-fns";
 import "react-day-picker/style.css";
@@ -184,47 +184,78 @@ export default function BikeDetail({
     };
   }, [bike.id]);
 
-  // Calendar markers depend on whether the bike model has one physical
-  // unit or several. Single-unit: keep the half-cell visual on edge
-  // days so back-to-back bookings still feel obvious. Multi-unit: the
-  // calendar shows a date as fully blocked only when every unit is
-  // occupied that day; partial booking is invisible to the customer
-  // because some unit is still free.
-  const bookedStartDays: Date[] = [];
-  const bookedEndDays: Date[] = [];
-  const bookedMiddleRanges: { from: Date; to: Date }[] = [];
-  const bookedFullDays: Date[] = [];
-  // Past dates are already disabled by { before: new Date() }; don't
-  // add a "booked" overlay on top of yesterday's bookings or it looks
-  // like the day was unavailable for booking reasons.
-  const todayMidnight = new Date();
-  todayMidnight.setHours(0, 0, 0, 0);
-  const isFutureOrToday = (d: Date) => d.getTime() >= todayMidnight.getTime();
-  if (totalUnits === 1) {
-    // Single-unit: keep the half-cell visual on edge days so
-    // back-to-back bookings still feel obvious. Day DISABLING comes
-    // from the server list below — these are visuals only.
+  // Calendar day shading, unit-count agnostic. Every day is one of:
+  //   RED       no unit has any bookable pickup slot (server blockedDates)
+  //   GREEN     a pickup is possible across the whole opening day
+  //   HALF-RED  bookable, but not the whole day. Morning blocked (free only
+  //             from later), afternoon blocked (free only until earlier), or
+  //             only a window in the middle. The shape is derived from the
+  //             SAME pickup-slot check the time dropdown uses, so the calendar
+  //             and the picker can never disagree. This replaces the old
+  //             single-unit-only half-cell: a multi-unit day where the last
+  //             free unit only opens up midday (e.g. 3 of 4 out, the 4th back
+  //             at 12:00) is now correctly half-red instead of full green.
+  const { bookedFullDays, amRedDays, pmRedDays, middleOnlyDays } = useMemo(() => {
+    const full: Date[] = [];
+    const amRed: Date[] = []; // morning blocked -> free from later (left red)
+    const pmRed: Date[] = []; // afternoon blocked -> free until earlier (right red)
+    const middleOnly: Date[] = []; // only a mid-day window free (both ends red)
+    const todayMidnight = new Date();
+    todayMidnight.setHours(0, 0, 0, 0);
+    const futureOrToday = (d: Date) => d.getTime() >= todayMidnight.getTime();
+
+    // Fully-out days come verbatim from the server (same engine as the submit
+    // check). Never re-derived here — that's how the calendar and the
+    // multi-booking used to drift apart. Past dates are already disabled by
+    // { before: new Date() }, so skip them.
+    const blockedSet = new Set(blockedDates);
+    for (const iso of blockedDates) {
+      const d = new Date(`${iso}T00:00:00`);
+      if (futureOrToday(d)) full.push(d);
+    }
+
+    // A day can only be PART free where a booking starts or ends — that's what
+    // leaves a boundary. A day with no boundary is either fully free (green) or
+    // fully out (already blocked above). Judge each candidate with the
+    // dropdown's own same-day pickup check so calendar and picker stay locked
+    // together. This is booking-driven, not clock-driven: "today" is shaped by
+    // its bookings, not by the current time (past slots are the dropdown's job).
+    const allPickup = buildPickupSlots();
+    const firstSlot = allPickup[0];
+    const lastSlot = allPickup[allPickup.length - 1];
+    const seen = new Set<string>();
     for (const b of bookings) {
-      const from = new Date(`${b.from}T00:00:00`);
-      const to = new Date(`${b.to}T00:00:00`);
-      if (!isFutureOrToday(to)) continue;
-      if (isSameDay(from, to)) continue;
-      if (isFutureOrToday(from)) bookedStartDays.push(from);
-      bookedEndDays.push(to);
-      if (differenceInCalendarDays(to, from) >= 2) {
-        bookedMiddleRanges.push({ from: addDays(from, 1), to: addDays(to, -1) });
+      for (const iso of [b.from, b.to]) {
+        if (seen.has(iso) || blockedSet.has(iso)) continue;
+        seen.add(iso);
+        const d = new Date(`${iso}T00:00:00`);
+        if (!futureOrToday(d)) continue;
+        // Bookable pickup slots for the day: a slot counts if some valid
+        // return exists after it (a unit is free for a window starting there).
+        const slots = allPickup.filter(
+          (s) =>
+            validReturnSlots(d, bookings, totalUnits, {
+              pickupDate: d,
+              pickupTime: s,
+              activeUnitIds,
+            }).length > 0,
+        );
+        if (slots.length === 0) continue; // fully out -> server already reds it
+        const morningBlocked = slots[0] !== firstSlot;
+        const afternoonBlocked = slots[slots.length - 1] !== lastSlot;
+        if (morningBlocked && afternoonBlocked) middleOnly.push(d);
+        else if (morningBlocked) amRed.push(d);
+        else if (afternoonBlocked) pmRed.push(d);
+        // else: pickup possible across the whole day -> plain green.
       }
     }
-  }
-  // Server-computed truth (same engine as findFreeUnit / the fleet
-  // view): every date with zero possible pickup slots is painted
-  // booked-red and disabled. No client-side re-derivation — that's
-  // how the single-bike calendar and the multi-booking used to drift
-  // apart.
-  for (const iso of blockedDates) {
-    const d = new Date(`${iso}T00:00:00`);
-    if (isFutureOrToday(d)) bookedFullDays.push(d);
-  }
+    return {
+      bookedFullDays: full,
+      amRedDays: amRed,
+      pmRedDays: pmRed,
+      middleOnlyDays: middleOnly,
+    };
+  }, [bookings, totalUnits, activeUnitIds, blockedDates]);
 
   // Single click on the calendar leaves range.to undefined — DayPicker
   // is waiting for a second click to complete the range. We treat
@@ -929,14 +960,14 @@ export default function BikeDetail({
                       { before: new Date() },
                       { after: SEASON_END_DATE },
                       ...bookedFullDays,
-                      ...bookedMiddleRanges,
                     ]}
                     excludeDisabled
                     min={1}
                     modifiers={{
-                      bookedFull: [...bookedFullDays, ...bookedMiddleRanges],
-                      bookedStart: bookedStartDays,
-                      bookedEnd: bookedEndDays,
+                      bookedFull: bookedFullDays,
+                      amRed: amRedDays,
+                      pmRed: pmRedDays,
+                      middleOnly: middleOnlyDays,
                     }}
                     modifiersClassNames={{
                       // Booked = red tint + strike so it reads as
@@ -946,10 +977,20 @@ export default function BikeDetail({
                       // CSS specificity.
                       bookedFull:
                         "[&_button:disabled]:!bg-red-100 [&_button:disabled]:!text-red-700 [&_button:disabled]:!line-through",
-                      bookedStart:
-                        "[&_button]:!bg-[linear-gradient(135deg,_rgba(16,185,129,0.25)_50%,_rgba(220,38,38,0.25)_50%)]",
-                      bookedEnd:
-                        "[&_button]:!bg-[linear-gradient(135deg,_rgba(220,38,38,0.25)_50%,_rgba(16,185,129,0.25)_50%)]",
+                      // Half-red = bookable, but not the whole day. Horizontal
+                      // split reads as a mini day-timeline: left = morning,
+                      // right = evening. Red = no pickup possible then. Stronger
+                      // tints than the old faint wash so it actually shows on a
+                      // 36px cell.
+                      // morning blocked, free from later -> left half red
+                      amRed:
+                        "[&_button]:!bg-[linear-gradient(to_right,#FCA5A5_0%,#FCA5A5_50%,#A7F3D0_50%,#A7F3D0_100%)]",
+                      // afternoon blocked, free until earlier -> right half red
+                      pmRed:
+                        "[&_button]:!bg-[linear-gradient(to_right,#A7F3D0_0%,#A7F3D0_50%,#FCA5A5_50%,#FCA5A5_100%)]",
+                      // only a mid-day window free -> both ends red, middle green
+                      middleOnly:
+                        "[&_button]:!bg-[linear-gradient(to_right,#FCA5A5_0%,#FCA5A5_28%,#A7F3D0_28%,#A7F3D0_72%,#FCA5A5_72%,#FCA5A5_100%)]",
                     }}
                     classNames={{
                       root: "font-sans",
