@@ -121,11 +121,8 @@ async function translateFallback(
   }
 }
 
-// Should we add an English translation under the original? Everything
-// that isn't already English is a candidate — German included (owner
-// asked for all non-English content, incl. German, rendered in English
-// below the original). Unknown locale → attempt (auto-detect skips it
-// if it turns out to be English).
-export function needsTranslationForOwner(locale: string | null | undefined): boolean {
-  return locale !== "en";
-}
+// NOTE: the old needsTranslationForOwner(siteLocale) gate was removed — it
+// keyed on the SITE language the visitor had selected, so a note written in
+// German/Czech on an English-set site was never translated. All owner
+// notifications now call translate() with auto-detect (no `from`), which
+// returns null for already-English text, so the site locale is irrelevant.

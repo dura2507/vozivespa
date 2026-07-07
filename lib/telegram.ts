@@ -2,7 +2,7 @@ import { CATEGORIES, BRAND } from "@/lib/mockData";
 import { retry } from "@/lib/retry";
 import { billableDays } from "@/lib/pricing";
 import type { BookingRow } from "@/lib/supabase";
-import { translate, needsTranslationForOwner } from "@/lib/translate";
+import { translate } from "@/lib/translate";
 
 const TG_API = "https://api.telegram.org";
 
@@ -307,10 +307,14 @@ export async function sendOwnerBookingTelegram(
   // Translate the customer's note into English whenever it isn't already
   // English (German included). Best-effort: DeepL if a key is set, else
   // a keyless fallback; silently shows just the original on any failure.
+  // Auto-detect the language the customer actually WROTE in — NOT the site
+  // locale they had selected (a visitor can browse in English and still write
+  // the note in German/Czech/Croatian). translate() returns null for text
+  // that is already English, so an English note is never double-rendered.
   const { note: rawCustomerNote } = splitNotes(booking.notes);
   let translatedNote: string | null = null;
-  if (rawCustomerNote && needsTranslationForOwner(booking.locale)) {
-    const tr = await translate(rawCustomerNote, { from: booking.locale, to: "EN-GB" });
+  if (rawCustomerNote) {
+    const tr = await translate(rawCustomerNote, { to: "EN-GB" });
     if (tr) translatedNote = tr.text;
   }
 
@@ -422,10 +426,12 @@ export async function sendOwnerGroupBookingTelegram(
   const primary = bookings[0];
   const targets = groupBookingTargets();
 
+  // Auto-detect the written language (not the selected site locale) so a note
+  // in any language reaches the owner in English. null = already English.
   const { note: rawNote } = splitNotes(primary.notes);
   let translatedNote: string | null = null;
-  if (rawNote && needsTranslationForOwner(primary.locale)) {
-    const tr = await translate(rawNote, { from: primary.locale, to: "EN-GB" });
+  if (rawNote) {
+    const tr = await translate(rawNote, { to: "EN-GB" });
     if (tr) translatedNote = tr.text;
   }
 

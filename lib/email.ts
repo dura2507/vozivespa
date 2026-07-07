@@ -5,7 +5,7 @@ import { billableDays } from "@/lib/pricing";
 import type { BookingRow } from "@/lib/supabase";
 import { getDictionary, type Dictionary } from "@/lib/i18n/dictionaries";
 import { type Locale, isLocale } from "@/lib/i18n/config";
-import { translate, needsTranslationForOwner } from "@/lib/translate";
+import { translate } from "@/lib/translate";
 import { bookingRef } from "@/lib/booking-ref";
 
 // Prominent booking-number block for the customer "received" emails so
@@ -298,10 +298,12 @@ export async function sendOwnerBookingEmail(
   const fee = bookingFeeEur(booking);
   const { country: licenceCountry, note: cleanNote } = splitNotes(booking.notes);
 
-  // Auto-translate non-DE/EN customer notes into English for the owner.
+  // Auto-detect the language the customer WROTE the note in (not the selected
+  // site locale — a visitor can browse in English yet write in German/Czech).
+  // translate() returns null for already-English text, so it's never doubled.
   let translatedNote: string | null = null;
-  if (cleanNote && needsTranslationForOwner(booking.locale)) {
-    const tr = await translate(cleanNote, { from: booking.locale, to: "EN-GB" });
+  if (cleanNote) {
+    const tr = await translate(cleanNote, { to: "EN-GB" });
     if (tr) translatedNote = tr.text;
   }
 
@@ -793,12 +795,21 @@ export async function sendOwnerGroupBookingEmail(bookings: BookingRow[]): Promis
   const primary = bookings[0];
   const dict = await getDictionary("en");
   const phoneDigits = primary.customer_phone.replace(/[^\d]/g, "");
+  // Customer note (shared across the group). Auto-detect the written language
+  // (not the site locale) and add an English translation for the owner.
+  const { note: cleanNote } = splitNotes(primary.notes);
+  let translatedNote: string | null = null;
+  if (cleanNote) {
+    const tr = await translate(cleanNote, { to: "EN-GB" });
+    if (tr) translatedNote = tr.text;
+  }
   const bodyHtml = `
     <p style="margin:0 0 14px;font-size:15px;line-height:1.6;"><strong>${escape(primary.customer_name)}</strong> &middot; ${bookings.length} bikes</p>
     ${groupSummaryHtml(bookings, dict.emails.summary)}
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px;font-size:14px;line-height:1.6;background:#f6f5f1;padding:18px;">
       <tr><td style="padding:4px 0;color:#6b6b6b;width:120px;">Phone</td><td style="padding:4px 0;font-weight:600;">${escape(primary.customer_phone)}</td></tr>
       <tr><td style="padding:4px 0;color:#6b6b6b;">Email</td><td style="padding:4px 0;font-weight:600;">${escape(primary.customer_email)}</td></tr>
+      ${cleanNote ? `<tr><td style="padding:4px 0;color:#6b6b6b;vertical-align:top;">Notes</td><td style="padding:4px 0;white-space:pre-wrap;">${escape(cleanNote)}${translatedNote ? `<br><span style="color:#6b6b6b;font-style:italic;">↳ EN: ${escape(translatedNote)}</span>` : ""}</td></tr>` : ""}
     </table>
     ${phoneDigits ? `<p style="margin:16px 0 0;font-size:13px;"><a href="https://wa.me/${phoneDigits}" style="color:#B61F36;">WhatsApp customer</a></p>` : ""}
   `;
@@ -813,7 +824,7 @@ export async function sendOwnerGroupBookingEmail(bookings: BookingRow[]): Promis
     to: ownerEmail,
     subject: `New group booking · ${primary.customer_name} · ${bookings.length} bikes · ${fmtDate(primary.date_from)} → ${fmtDate(primary.date_to)}`,
     html,
-    text: `New group booking from ${primary.customer_name} (${bookings.length} bikes)\n${fmtDate(primary.date_from)} → ${fmtDate(primary.date_to)}\nPhone: ${primary.customer_phone}\nEmail: ${primary.customer_email}`,
+    text: `New group booking from ${primary.customer_name} (${bookings.length} bikes)\n${fmtDate(primary.date_from)} → ${fmtDate(primary.date_to)}\nPhone: ${primary.customer_phone}\nEmail: ${primary.customer_email}${cleanNote ? `\nNotes: ${cleanNote}` : ""}${translatedNote ? `\n  ↳ EN: ${translatedNote}` : ""}`,
     replyTo: primary.customer_email,
   });
 }
