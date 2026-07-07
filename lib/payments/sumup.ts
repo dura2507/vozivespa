@@ -72,9 +72,20 @@ export const sumupProvider: PaymentProvider = {
       data = {};
     }
     if (!res.ok) {
-      const err = (data as { message?: string; error_message?: string }) ?? {};
+      const err = (data as { message?: string; error_message?: string; error_code?: string }) ?? {};
+      // Dump the full body + code so we can tell WHY a 403 happens: a bare
+      // "forbidden" means the account isn't enabled for the online Checkouts
+      // API (a SumUp product activation, not a key/scope issue), whereas a
+      // structured error_code points at a permission/merchant problem.
+      console.error(
+        "[sumup] createCheckout failed",
+        res.status,
+        JSON.stringify(err),
+        text.slice(0, 500),
+      );
+      const code = err.error_code ? `[${err.error_code}] ` : "";
       throw new Error(
-        `SumUp createCheckout ${res.status}: ${err.message ?? err.error_message ?? text.slice(0, 200)}`,
+        `SumUp createCheckout ${res.status}: ${code}${err.message ?? err.error_message ?? text.slice(0, 300)}`,
       );
     }
     const d = data as { id?: string; status?: string };
