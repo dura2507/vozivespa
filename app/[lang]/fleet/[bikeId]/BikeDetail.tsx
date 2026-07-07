@@ -252,11 +252,29 @@ export default function BikeDetail({
     const to = effectiveRange?.to;
     const isRange =
       effectiveRange?.from && to && !isSameDay(effectiveRange.from, to);
-    const ctx =
+    const base =
       isRange && to
-        ? { returnDate: to, returnTime: returnTime || "19:00", activeUnitIds }
-        : { returnDate: day, returnTime: "19:00", activeUnitIds };
-    const base = validPickupSlots(day, bookings, totalUnits, ctx);
+        ? // Multi-day: scope pickups to the whole chosen window so we never
+          // advertise a start time that clashes later in the rental.
+          validPickupSlots(day, bookings, totalUnits, {
+            returnDate: to,
+            returnTime: returnTime || "19:00",
+            activeUnitIds,
+          })
+        : // Same-day: a pickup is bookable if ANY valid return exists after it
+          // (a unit is free for some window starting there) — NOT only if the
+          // unit stays free until 19:00. Otherwise a short morning gap before a
+          // later booking would offer no pickup at all, even though the bike is
+          // genuinely free then (the "free in the pill but unbookable" bug).
+          // Uses the same engine as the return dropdown, so they stay in lockstep.
+          buildPickupSlots().filter(
+            (s) =>
+              validReturnSlots(day, bookings, totalUnits, {
+                pickupDate: day,
+                pickupTime: s,
+                activeUnitIds,
+              }).length > 0,
+          );
     // "Is this day today, and which slots are already past" must be judged in
     // Zadar wall-clock (Europe/Zagreb), NOT the visitor's browser clock — else
     // a rider in a far-ahead timezone (UTC+8/+10) sees Zadar's afternoon slots
