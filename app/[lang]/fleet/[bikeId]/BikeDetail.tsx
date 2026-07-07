@@ -1029,6 +1029,13 @@ export default function BikeDetail({
                     {tF.calendar.legendFree}
                   </span>
                   <span className="inline-flex items-center gap-1.5">
+                    <span
+                      className="w-2.5 h-2.5 border border-ink/20 bg-[linear-gradient(to_right,#FCA5A5_50%,#A7F3D0_50%)]"
+                      aria-hidden
+                    />
+                    {tF.calendar.legendPartial}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 bg-red-100 border border-red-300" aria-hidden />
                     {tF.calendar.legendBooked}
                   </span>

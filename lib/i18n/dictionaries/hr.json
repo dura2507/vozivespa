@@ -346,6 +346,7 @@
       "eyebrow": "Odaberi termine",
       "legendFree": "Dostupno",
       "legendBooked": "Zauzeto",
+      "legendPartial": "Djelomično",
       "pickupDate": "Datum preuzimanja",
       "returnDate": "Datum povrata",
       "pickupTime": "Vrijeme preuzimanja",

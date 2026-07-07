@@ -346,6 +346,7 @@
       "eyebrow": "Válaszd ki a dátumokat",
       "legendFree": "Elérhető",
       "legendBooked": "Foglalt",
+      "legendPartial": "Részben",
       "pickupDate": "Átvétel dátuma",
       "returnDate": "Visszaadás dátuma",
       "pickupTime": "Átvétel ideje",

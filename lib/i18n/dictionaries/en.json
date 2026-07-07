@@ -346,6 +346,7 @@
       "eyebrow": "Pick your dates",
       "legendFree": "Available",
       "legendBooked": "Booked",
+      "legendPartial": "Partly free",
       "pickupDate": "Pickup date",
       "returnDate": "Return date",
       "pickupTime": "Pickup time",
