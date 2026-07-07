@@ -977,20 +977,20 @@ export default function BikeDetail({
                       // CSS specificity.
                       bookedFull:
                         "[&_button:disabled]:!bg-red-100 [&_button:disabled]:!text-red-700 [&_button:disabled]:!line-through",
-                      // Half-red = bookable, but not the whole day. Horizontal
-                      // split reads as a mini day-timeline: left = morning,
-                      // right = evening. Red = no pickup possible then. Stronger
-                      // tints than the old faint wash so it actually shows on a
-                      // 36px cell.
-                      // morning blocked, free from later -> left half red
+                      // Half-red = bookable, but not the whole day. A DIAGONAL
+                      // split reads as a mini day-timeline along the bottom-left
+                      // (morning) to top-right (evening) axis; the red corner is
+                      // the part with no pickup. Soft rose / sage so it's a
+                      // gentle hint, not an alarm.
+                      // morning blocked, free from later -> red in the bottom-left
                       amRed:
-                        "[&_button]:!bg-[linear-gradient(to_right,#FCA5A5_0%,#FCA5A5_50%,#A7F3D0_50%,#A7F3D0_100%)]",
-                      // afternoon blocked, free until earlier -> right half red
+                        "[&_button]:!bg-[linear-gradient(45deg,#FBC4C4_0%,#FBC4C4_50%,#CDEEDB_50%,#CDEEDB_100%)]",
+                      // afternoon blocked, free until earlier -> red in the top-right
                       pmRed:
-                        "[&_button]:!bg-[linear-gradient(to_right,#A7F3D0_0%,#A7F3D0_50%,#FCA5A5_50%,#FCA5A5_100%)]",
-                      // only a mid-day window free -> both ends red, middle green
+                        "[&_button]:!bg-[linear-gradient(45deg,#CDEEDB_0%,#CDEEDB_50%,#FBC4C4_50%,#FBC4C4_100%)]",
+                      // only a mid-day window free -> red both corners, green middle band
                       middleOnly:
-                        "[&_button]:!bg-[linear-gradient(to_right,#FCA5A5_0%,#FCA5A5_28%,#A7F3D0_28%,#A7F3D0_72%,#FCA5A5_72%,#FCA5A5_100%)]",
+                        "[&_button]:!bg-[linear-gradient(45deg,#FBC4C4_0%,#FBC4C4_30%,#CDEEDB_30%,#CDEEDB_70%,#FBC4C4_70%,#FBC4C4_100%)]",
                     }}
                     classNames={{
                       root: "font-sans",
@@ -1030,7 +1030,7 @@ export default function BikeDetail({
                   </span>
                   <span className="inline-flex items-center gap-1.5">
                     <span
-                      className="w-2.5 h-2.5 border border-ink/20 bg-[linear-gradient(to_right,#FCA5A5_50%,#A7F3D0_50%)]"
+                      className="w-2.5 h-2.5 border border-ink/20 bg-[linear-gradient(45deg,#FBC4C4_50%,#CDEEDB_50%)]"
                       aria-hidden
                     />
                     {tF.calendar.legendPartial}
