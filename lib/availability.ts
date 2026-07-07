@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { TURNAROUND_MINUTES, buildSlots, buildPickupSlots } from "@/lib/pricing";
+import { TURNAROUND_MINUTES, SLOT_MINUTES, buildSlots, buildPickupSlots } from "@/lib/pricing";
 
 // A booking's time window . used to find a free physical unit on the
 // requested bike model.
@@ -784,7 +784,12 @@ export function blockedPickupDates(
         if (h * 60 + mm <= now.minutesOfDay) return true; // already passed
       }
       const winStart = toMs(iso, slot);
-      const winEnd = closeMs;
+      // A slot is bookable if a unit is free for at least a MINIMAL window
+      // starting here (one slot) — NOT necessarily until closing. Otherwise a
+      // short free gap before a later booking (unit free 09-13, booked 13+)
+      // would mark the whole day as fully booked in the calendar, even though
+      // a short same-day rental is genuinely possible then.
+      const winEnd = Math.min(winStart + SLOT_MINUTES * 60_000, closeMs);
       if (winEnd <= winStart) return true;
 
       const busy = new Set<string>();
