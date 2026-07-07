@@ -45,15 +45,16 @@ function zagrebParts(ms: number) {
 }
 
 // Pick one of three pill templates so the visitor sees relative time
-// for today/tomorrow ("heute 16:30" / "morgen 09:00") and a plain date
-// for anything further out — full timestamp on a far-off day is noise.
+// for today/tomorrow ("heute 16:30" / "morgen 09:00") and date + time
+// for anything further out ("09.07 12:30") — the exact free-from time,
+// so the pill agrees with the calendar's half-red cell to the minute.
 function bookedUntilInfo(
   targetMs: number,
   nowMs: number,
 ):
   | { kind: "today"; time: string }
   | { kind: "tomorrow"; time: string }
-  | { kind: "later"; date: string } {
+  | { kind: "later"; date: string; time: string } {
   const t = zagrebParts(targetMs);
   const n = zagrebParts(nowMs);
   const tomorrow = zagrebParts(nowMs + 86_400_000);
@@ -67,7 +68,7 @@ function bookedUntilInfo(
   ) {
     return { kind: "tomorrow", time: `${t.hour}:${t.minute}` };
   }
-  return { kind: "later", date: `${t.day}.${t.month}` };
+  return { kind: "later", date: `${t.day}.${t.month}`, time: `${t.hour}:${t.minute}` };
 }
 
 export default async function HomePage({
@@ -359,7 +360,7 @@ export default async function HomePage({
                         if (info.kind === "tomorrow") {
                           return fmt(t.fleet.bookedUntilTomorrow, { time: info.time });
                         }
-                        return fmt(t.fleet.bookedUntil, { date: info.date });
+                        return fmt(t.fleet.bookedUntil, { date: info.date, time: info.time });
                       })()}
                     </p>
                   )}

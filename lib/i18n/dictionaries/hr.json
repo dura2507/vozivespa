@@ -47,7 +47,7 @@
       "availableNow": "Dostupno odmah",
       "availableNowCount": "{n} dostupno odmah",
       "notAvailableNow": "Na servisu",
-      "bookedUntil": "Na servisu do {date}",
+      "bookedUntil": "Na servisu do {date} {time}",
       "bookedUntilToday": "Na servisu do danas {time}",
       "bookedUntilTomorrow": "Na servisu do sutra {time}",
       "availableFrom": "Dostupno od {time}",

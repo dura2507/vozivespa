@@ -47,7 +47,7 @@
       "availableNow": "Dostupné teraz",
       "availableNowCount": "{n} dostupných teraz",
       "notAvailableNow": "V servise",
-      "bookedUntil": "V servise do {date}",
+      "bookedUntil": "V servise do {date} {time}",
       "bookedUntilToday": "V servise do dnes {time}",
       "bookedUntilTomorrow": "V servise do zajtra {time}",
       "availableFrom": "Dostupné od {time}",

@@ -47,7 +47,7 @@
       "availableNow": "Disponible maintenant",
       "availableNowCount": "{n} disponibles maintenant",
       "notAvailableNow": "En révision",
-      "bookedUntil": "En révision jusqu'au {date}",
+      "bookedUntil": "En révision jusqu'au {date} {time}",
       "bookedUntilToday": "En révision jusqu'à aujourd'hui {time}",
       "bookedUntilTomorrow": "En révision jusqu'à demain {time}",
       "availableFrom": "Disponible à partir de {time}",

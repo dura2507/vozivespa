@@ -47,7 +47,7 @@
       "availableNow": "Most elérhető",
       "availableNowCount": "{n} db most elérhető",
       "notAvailableNow": "Szervizben",
-      "bookedUntil": "Szervizben eddig: {date}",
+      "bookedUntil": "Szervizben eddig: {date} {time}",
       "bookedUntilToday": "Szervizben ma eddig: {time}",
       "bookedUntilTomorrow": "Szervizben holnap eddig: {time}",
       "availableFrom": "Elérhető ettől: {time}",

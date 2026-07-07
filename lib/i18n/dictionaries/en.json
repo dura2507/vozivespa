@@ -47,7 +47,7 @@
       "availableNow": "Available now",
       "availableNowCount": "{n} available now",
       "notAvailableNow": "In service",
-      "bookedUntil": "In service until {date}",
+      "bookedUntil": "In service until {date} {time}",
       "bookedUntilToday": "In service until today {time}",
       "bookedUntilTomorrow": "In service until tomorrow {time}",
       "availableFrom": "Available from {time}",

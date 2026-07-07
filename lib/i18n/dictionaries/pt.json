@@ -47,7 +47,7 @@
       "availableNow": "Disponível agora",
       "availableNowCount": "{n} disponíveis agora",
       "notAvailableNow": "Em manutenção",
-      "bookedUntil": "Em manutenção até {date}",
+      "bookedUntil": "Em manutenção até {date} {time}",
       "bookedUntilToday": "Em manutenção até hoje {time}",
       "bookedUntilTomorrow": "Em manutenção até amanhã {time}",
       "availableFrom": "Disponível a partir das {time}",
