@@ -683,5 +683,13 @@
     ],
     "errorNotConfigured": "The chatbot isn't ready yet. Please contact us on WhatsApp or by email.",
     "errorRateLimited": "Too many messages, please try again in a few minutes."
+  },
+  "payment": {
+    "depositLabel": "20% deposit online",
+    "depositHint": "{amount}€ now, rest on-site",
+    "fullLabel": "Full amount online",
+    "fullHint": "{amount}€ now, nothing on-site",
+    "manualLabel": "Manual transfer",
+    "manualHint": "PayPal / Revolut + screenshot"
   }
 }

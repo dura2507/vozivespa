@@ -683,5 +683,13 @@
     ],
     "errorNotConfigured": "Chatbot ještě není připravený. Napiš nám na WhatsApp nebo e-mailem.",
     "errorRateLimited": "Příliš mnoho zpráv. Zkus to znovu za pár minut."
+  },
+  "payment": {
+    "depositLabel": "Záloha 20% online",
+    "depositHint": "{amount}€ nyní, zbytek na místě",
+    "fullLabel": "Celá částka online",
+    "fullHint": "{amount}€ nyní, nic na místě",
+    "manualLabel": "Ruční převod",
+    "manualHint": "PayPal / Revolut + snímek obrazovky"
   }
 }

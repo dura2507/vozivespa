@@ -683,5 +683,13 @@
     ],
     "errorNotConfigured": "Der Chatbot ist noch nicht bereit. Bitte kontaktiere uns auf WhatsApp oder per E-Mail.",
     "errorRateLimited": "Zu viele Nachrichten. Bitte versuche es in ein paar Minuten erneut."
+  },
+  "payment": {
+    "depositLabel": "20% Anzahlung online",
+    "depositHint": "{amount}€ jetzt, Rest vor Ort",
+    "fullLabel": "Gesamtbetrag online",
+    "fullHint": "{amount}€ jetzt, nichts vor Ort",
+    "manualLabel": "Manuelle Überweisung",
+    "manualHint": "PayPal / Revolut + Screenshot"
   }
 }

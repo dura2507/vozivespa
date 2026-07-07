@@ -683,5 +683,13 @@
     ],
     "errorNotConfigured": "A chatbot még nem elérhető. Kérjük, keress minket WhatsAppon vagy e-mailben.",
     "errorRateLimited": "Túl sok üzenet. Próbáld újra pár perc múlva."
+  },
+  "payment": {
+    "depositLabel": "20% előleg online",
+    "depositHint": "{amount}€ most, a többi a helyszínen",
+    "fullLabel": "Teljes összeg online",
+    "fullHint": "{amount}€ most, semmi a helyszínen",
+    "manualLabel": "Kézi átutalás",
+    "manualHint": "PayPal / Revolut + képernyőkép"
   }
 }

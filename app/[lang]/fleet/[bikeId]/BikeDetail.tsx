@@ -1386,9 +1386,9 @@ export default function BikeDetail({
                     {onlinePayment && (
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-6">
                         {([
-                          { id: "deposit" as const, label: `Deposit 20% online`, hint: `${bookingFee}€ now, rest on-site` },
-                          { id: "full" as const, label: `Full amount online`, hint: `${totalPrice}€ now, nothing on-site` },
-                          { id: "screenshot" as const, label: `Manual transfer`, hint: `PayPal / Revolut + screenshot` },
+                          { id: "deposit" as const, label: dict.payment.depositLabel, hint: dict.payment.depositHint.replace("{amount}", String(bookingFee)) },
+                          { id: "full" as const, label: dict.payment.fullLabel, hint: dict.payment.fullHint.replace("{amount}", String(totalPrice)) },
+                          { id: "screenshot" as const, label: dict.payment.manualLabel, hint: dict.payment.manualHint },
                         ] satisfies Array<{ id: PayMode; label: string; hint: string }>).map((opt) => {
                           const selected = payMode === opt.id;
                           return (

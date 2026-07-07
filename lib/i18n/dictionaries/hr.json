@@ -683,5 +683,13 @@
     ],
     "errorNotConfigured": "Chatbot još nije spreman. Kontaktiraj nas na WhatsApp ili e-mailom.",
     "errorRateLimited": "Previše poruka. Pokušaj ponovno za nekoliko minuta."
+  },
+  "payment": {
+    "depositLabel": "20% predujam online",
+    "depositHint": "{amount}€ sada, ostatak na licu mjesta",
+    "fullLabel": "Puni iznos online",
+    "fullHint": "{amount}€ sada, ništa na licu mjesta",
+    "manualLabel": "Ručna uplata",
+    "manualHint": "PayPal / Revolut + snimka zaslona"
   }
 }

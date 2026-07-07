@@ -683,5 +683,13 @@
     ],
     "errorNotConfigured": "O chatbot ainda não está pronto. Fale com a gente pelo WhatsApp ou email.",
     "errorRateLimited": "Muitas mensagens. Tente novamente em alguns minutos."
+  },
+  "payment": {
+    "depositLabel": "Sinal 20% online",
+    "depositHint": "{amount}€ agora, resto no local",
+    "fullLabel": "Valor total online",
+    "fullHint": "{amount}€ agora, nada no local",
+    "manualLabel": "Transferência manual",
+    "manualHint": "PayPal / Revolut + captura de ecrã"
   }
 }

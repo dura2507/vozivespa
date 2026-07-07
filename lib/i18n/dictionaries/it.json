@@ -683,5 +683,13 @@
     ],
     "errorNotConfigured": "Il chatbot non è ancora attivo. Contattaci su WhatsApp o via email.",
     "errorRateLimited": "Troppi messaggi. Riprova tra qualche minuto."
+  },
+  "payment": {
+    "depositLabel": "Acconto 20% online",
+    "depositHint": "{amount}€ ora, resto in loco",
+    "fullLabel": "Importo totale online",
+    "fullHint": "{amount}€ ora, niente in loco",
+    "manualLabel": "Bonifico manuale",
+    "manualHint": "PayPal / Revolut + screenshot"
   }
 }
