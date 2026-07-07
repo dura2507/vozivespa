@@ -8,6 +8,8 @@
 // for a small rental's booking volume. API docs:
 // https://developers.deepl.com/docs/api-reference/translate
 
+import { retry } from "@/lib/retry";
+
 const DEEPL_URL = "https://api-free.deepl.com/v2/translate";
 
 // Map our UI locales to DeepL source language codes. Booking rows
@@ -56,14 +58,27 @@ export async function translate(
     params.append("target_lang", targetLang);
     if (sourceLang) params.append("source_lang", sourceLang);
 
-    const res = await fetch(DEEPL_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `DeepL-Auth-Key ${key}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+    // Retry transient DeepL failures (429 rate-limit, 5xx, network) with
+    // backoff — same resilience every other outbound call here already has.
+    // Permanent errors (bad key 401/403, quota-exhausted 456) are NOT retried;
+    // they fall through to the keyless fallback below. If the retries are
+    // exhausted the throw is caught by the outer catch → fallback.
+    const res = await retry(
+      "translate-deepl",
+      async () => {
+        const r = await fetch(DEEPL_URL, {
+          method: "POST",
+          headers: {
+            Authorization: `DeepL-Auth-Key ${key}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: params.toString(),
+        });
+        if (r.status === 429 || r.status >= 500) throw new Error(`DeepL ${r.status}`);
+        return r;
       },
-      body: params.toString(),
-    });
+      { attempts: 3, baseDelayMs: 400 },
+    );
     if (!res.ok) {
       console.error("[translate] DeepL returned", res.status, await res.text().catch(() => ""));
       return translateFallback(text, options);
@@ -103,8 +118,19 @@ async function translateFallback(
     const url =
       "https://translate.googleapis.com/translate_a/single?client=gtx" +
       `&sl=${encodeURIComponent(source)}&tl=${target}&dt=t&q=${encodeURIComponent(text)}`;
-    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
-    if (!res.ok) return null;
+    // Retry the throttle-prone keyless endpoint (429/403/5xx → transient on
+    // Vercel's shared egress IPs) instead of silently giving up first try.
+    // On final failure the throw is caught below → null (contract preserved),
+    // and now it's logged so the intermittency is diagnosable.
+    const res = await retry(
+      "translate-google",
+      async () => {
+        const r = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+        if (!r.ok) throw new Error(`Google translate ${r.status}`);
+        return r;
+      },
+      { attempts: 3, baseDelayMs: 400 },
+    );
     // Shape: [[["translated","original",...], ...], ..., "detectedSrc"]
     const data = (await res.json()) as [Array<[string, string]>, unknown, string];
     const segments = Array.isArray(data?.[0]) ? data[0] : [];
