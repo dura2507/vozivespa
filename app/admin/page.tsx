@@ -357,7 +357,7 @@ function UnitAvailabilityPanel({
                 {u.status === "free" && u.nextFreePickupMs <= nowMs + 60_000 ? (
                   <span>Available for walk-in now</span>
                 ) : (
-                  <span>Next pickup {fmtDateTimeMs(u.nextFreePickupMs)}</span>
+                  <span>Free from {fmtDateTimeMs(u.nextFreePickupMs)}</span>
                 )}
               </p>
               {u.freeUntilMs && (
