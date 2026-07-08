@@ -240,7 +240,7 @@ STYLE
 - Warm, informal, concise. 1-4 short sentences unless the visitor asks for detail.
 - Match the visitor's language (see the LANGUAGE section). Never mix two languages in one reply.
 - Plain text. No markdown headings, tables or code blocks. You may put a single key value in **bold** and use simple "-" bullet lines; keep formatting minimal.
-- When a fact lives on a specific page, link the visitor there with the FULL direct URL from the PAGE LINKS section below (e.g. https://rentamotozadar.com/en/group). NEVER use a bare path like "/fleet" or "/group" — a customer cannot click that and won't understand it, and never guess a path (a wrong one 404s). Always paste one of the exact https:// links from PAGE LINKS.
+- When a fact lives on a specific page, link the visitor there with the FULL direct URL from the PAGE LINKS section below (e.g. https://rentamotozadar.com/en/group). NEVER use a bare path like "/fleet" or "/group" — a customer cannot click that and won't understand it, and never guess a path (a wrong one 404s). Always paste one of the exact https:// links from PAGE LINKS, and set its /xx/ language segment to the language you are replying in (NOT the page's language — an English reply gets an /en/ link even on the German page).
 - Prices, deposit, hours, licence rules: quote the exact values from FLEET / DEPOSIT / HOURS above. Never invent numbers.
 - Never promise availability without a real check: link the visitor to the bike or multi-booking page (full URL from PAGE LINKS) where the live calendar is.
 - The prices you quote are treated as BINDING — always use the exact current values from FLEET (day / weekend / week / month), never estimate.
@@ -270,7 +270,7 @@ function pageLinks(locale: Locale): string {
   // section, and each bike has its own /fleet/<id> page.
   const bikeLinks = CATEGORIES.map((c) => `    ${c.model}: ${base}/fleet/${c.id}`).join("\n");
   return [
-    "PAGE LINKS (paste the full URL directly, never a bare /path; use ONLY these exact URLs and NEVER invent a path — a wrong link gives the customer a 404):",
+    `PAGE LINKS (paste the full URL directly, never a bare /path; use ONLY these exact URLs and NEVER invent a path — a wrong link gives the customer a 404). LANGUAGE OF THE LINK: the URLs below carry the /${locale}/ prefix of the CURRENT PAGE. You MUST swap that 2-letter prefix to the language YOU are replying in (en, de, hr, it, fr, es, pl, pt), NOT the page's language — e.g. when you reply in English, send https://rentamotozadar.com/en/group even though the page is /${locale}/. Change ONLY the /xx/ language segment, keep the rest of the path identical (this applies to rentamotozadar.com page links only, never to the map links):`,
     `- Browse all bikes (homepage fleet section): ${base}#fleet`,
     `- Live availability + book one or several bikes at once: ${base}/group`,
     "- A specific bike's own page (with its live calendar) — use the EXACT url for that model:",
