@@ -22,12 +22,23 @@ export async function GET(request: Request) {
   if (url.searchParams.get("t") !== TOKEN) {
     return NextResponse.json({ error: "not found" }, { status: 404 });
   }
+  const supabase = getServiceClient();
+  // Undo: restore a wrongly-cancelled booking back to pending.
+  const restoreId = url.searchParams.get("restore");
+  if (restoreId) {
+    const { error } = await supabase
+      .from("bookings")
+      .update({ status: "pending" })
+      .eq("id", restoreId)
+      .select("id, customer_name, status");
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ restored: restoreId, status: "pending" });
+  }
   const execute = url.searchParams.get("execute") === "1";
   // Age override for the one-time manual sweep (?age=0 = any age). The cron
   // uses the safe default so a customer mid-payment is never cancelled.
   const ageParam = Number(url.searchParams.get("age"));
   const ageMinutes = Number.isFinite(ageParam) && ageParam >= 0 ? ageParam : AGE_MINUTES;
-  const supabase = getServiceClient();
   const cutoff = new Date(Date.now() - ageMinutes * 60_000).toISOString();
 
   const { data, error } = await supabase
