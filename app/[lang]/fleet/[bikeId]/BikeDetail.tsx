@@ -65,6 +65,18 @@ function toIsoDate(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
+// Inline copy for the "range shortened" note (not in the shared dict, so it
+// never blocks on translating all 11 dictionaries). Keyed by locale with an
+// English fallback; {date} is replaced with the formatted boundary day.
+const TRIM_HINT: Record<string, string> = {
+  de: "Ab {date} ist kein Fahrzeug mehr durchgehend frei. Auf die verfügbaren Tage gekürzt.",
+  en: "No single vehicle is free continuously from {date}. Shortened to the available days.",
+  hr: "Od {date} nijedno vozilo nije slobodno bez prekida. Skraćeno na dostupne dane.",
+  it: "Dal {date} nessun veicolo è libero senza interruzioni. Ridotto ai giorni disponibili.",
+  fr: "À partir du {date}, aucun véhicule n'est libre en continu. Réduit aux jours disponibles.",
+  es: "Desde el {date}, ningún vehículo está libre de forma continua. Recortado a los días disponibles.",
+};
+
 export default function BikeDetail({
   bike,
   lang,
@@ -86,6 +98,9 @@ export default function BikeDetail({
   const [pickupTime, setPickupTime] = useState("09:00");
   const [returnTime, setReturnTime] = useState("19:00");
   const [bookingStep, setBookingStep] = useState<BookingStep>("dates");
+  // First day from which no single vehicle is free continuously (set when the
+  // picked range had to be shortened), so we can explain WHY it snapped back.
+  const [trimBoundary, setTrimBoundary] = useState<Date | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [form, setForm] = useState<CustomerForm>({
     name: "",
@@ -443,9 +458,11 @@ export default function BikeDetail({
       const maxTo = longestBookableEnd(next.from, next.to);
       if (maxTo.getTime() < next.to.getTime()) {
         setRange({ from: next.from, to: maxTo });
+        setTrimBoundary(addDays(maxTo, 1)); // first day continuity breaks
         return;
       }
     }
+    setTrimBoundary(null);
     setRange(next);
   }
 
@@ -1074,6 +1091,17 @@ export default function BikeDetail({
 
                 {effectiveRange?.from && effectiveRange?.to && (
                   <>
+                    {trimBoundary && (
+                      <div className="mt-4 bg-red-50 border border-red-200 px-4 py-3 flex items-start gap-2.5">
+                        <span className="text-red-500 text-sm leading-none mt-[3px]">●</span>
+                        <p className="text-red-800 text-xs leading-relaxed">
+                          {(TRIM_HINT[lang] ?? TRIM_HINT.en).replace(
+                            "{date}",
+                            format(trimBoundary, "EEE dd MMM", { locale: dateLocale }),
+                          )}
+                        </p>
+                      </div>
+                    )}
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <label className="block">
                         <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
