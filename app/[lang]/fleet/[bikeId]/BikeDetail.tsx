@@ -326,13 +326,20 @@ export default function BikeDetail({
     ? pickupSlotsFor(effectiveRange.from)
     : buildPickupSlots();
   const returnBase =
-    effectiveRange?.from && effectiveRange?.to && pickupTime
-      ? validReturnSlots(effectiveRange.to, bookings, totalUnits, {
-          pickupDate: effectiveRange.from,
-          pickupTime,
-          activeUnitIds,
-        })
-      : buildSlots();
+    effectiveRange?.from && effectiveRange?.to
+      ? // A full range is chosen: the return options must reflect the SAME
+        // availability as the pickup. When the window has no bookable pickup
+        // (pickupTime got cleared to ""), there is no valid return either — do
+        // NOT fall back to the full slot list, or the return dropdown would
+        // stay enabled (showing 19:00) while the pickup dropdown is greyed out.
+        pickupTime
+        ? validReturnSlots(effectiveRange.to, bookings, totalUnits, {
+            pickupDate: effectiveRange.from,
+            pickupTime,
+            activeUnitIds,
+          })
+        : []
+      : buildSlots(); // no range picked yet → default list (time pickers hidden)
 
   // Outside-hours slots (before 09:00 / after 19:00) are offered as +30€
   // add-on options only when a unit is genuinely free for the REAL extended
