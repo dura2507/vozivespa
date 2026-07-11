@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
@@ -89,6 +89,17 @@ export default function GroupBooking({
   // bikeId → one riding style per booked unit. Array length = quantity.
   const [cart, setCart] = useState<Record<string, RidingStyle[]>>({});
   const [step, setStep] = useState<"select" | "details" | "paying" | "done">("select");
+  // Advance to the data-entry step and scroll the form into view so it's obvious the
+  // customer now needs to fill in their details (the form renders further down the
+  // page). Mirrors the single-bike flow's handleContinueToForm: the small timeout
+  // lets the form mount first, and the global scroll-padding-top clears the navbar.
+  const detailsRef = useRef<HTMLFormElement>(null);
+  function goToDetails() {
+    setStep("details");
+    setTimeout(() => {
+      detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  }
   const [payMode, setPayMode] = useState<PayMode>(onlinePayment ? "deposit" : "screenshot");
   const [pendingBookingId, setPendingBookingId] = useState<string | null>(null);
   const [checkoutId, setCheckoutId] = useState<string | null>(null);
@@ -812,7 +823,7 @@ export default function GroupBooking({
                 <button
                   type="button"
                   disabled={cartCount === 0}
-                  onClick={() => setStep("details")}
+                  onClick={goToDetails}
                   className="bg-red text-white font-bold text-xs tracking-widest uppercase px-5 py-3 hover:bg-red-dark disabled:opacity-40"
                 >
                   {g.continue} →
@@ -821,7 +832,7 @@ export default function GroupBooking({
             </div>
 
             {step === "details" && (
-              <form onSubmit={handleSubmit} className="mt-6 bg-white border border-ink/10 p-5 space-y-5">
+              <form ref={detailsRef} onSubmit={handleSubmit} className="mt-6 bg-white border border-ink/10 p-5 space-y-5">
                 <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">
                   {dict.fleet.form.title}
                 </p>
