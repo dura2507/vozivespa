@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
-import { format, isSameDay } from "date-fns";
+import { format, isSameDay, addDays } from "date-fns";
 import { enUS, de, es, it, hr, hu, sk, cs, ptBR } from "date-fns/locale";
 import type { Locale as DateFnsLocale } from "date-fns";
 import "react-day-picker/style.css";
@@ -416,6 +416,37 @@ export default function BikeDetail({
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 50);
+  }
+
+  // The calendar disables only fully-booked days, so individually-free days
+  // can still be chained into a range that no single unit can serve for the
+  // WHOLE span (e.g. 23-27: every unit has a booking somewhere in between).
+  // On selecting such a range, snap the end back to the longest span that IS
+  // bookable (23-27 -> 23-25), so an unbookable range can't be picked at all.
+  // This lives in the onSelect event handler (NOT a render effect), so it can
+  // never oscillate the time pickers. Bookability uses the narrowest offered
+  // window (latest pickup -> earliest return), the easiest to satisfy, which
+  // matches "is this range bookable at any time" and stays in lockstep with
+  // the same isWindowFree engine the pickers and the server submit check use.
+  function longestBookableEnd(from: Date, requestedTo: Date): Date {
+    let best = from;
+    for (let d = addDays(from, 1); d.getTime() <= requestedTo.getTime(); d = addDays(d, 1)) {
+      if (!isWindowFree(from, "18:30", d, "09:00", bookings, totalUnits, activeUnitIds)) {
+        break; // monotonic: once a day breaks continuity, longer spans stay unbookable
+      }
+      best = d;
+    }
+    return best;
+  }
+  function handleRangeSelect(next: DateRange | undefined) {
+    if (next?.from && next?.to && !isSameDay(next.from, next.to)) {
+      const maxTo = longestBookableEnd(next.from, next.to);
+      if (maxTo.getTime() < next.to.getTime()) {
+        setRange({ from: next.from, to: maxTo });
+        return;
+      }
+    }
+    setRange(next);
   }
 
   async function handleFormSubmit(e: React.FormEvent) {
@@ -948,7 +979,7 @@ export default function BikeDetail({
                     mode="range"
                     locale={dateLocale}
                     selected={range}
-                    onSelect={setRange}
+                    onSelect={handleRangeSelect}
                     weekStartsOn={1}
                     numberOfMonths={isMobile ? 1 : 2}
                     // Cap navigation: no scrolling into past months, no
