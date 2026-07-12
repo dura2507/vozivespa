@@ -571,7 +571,10 @@ export async function nextFreeWindow(
       const slotMs = toMs(dateFrom, slot);
       if (slotMs >= endMs) break;
 
-      const occupied = new Set<string>();
+      // Capacity count (conservative): overlapping bookings (incl. unassigned)
+      // + per-unit blocks. Free iff below fleet size, so this never advertises
+      // a window the real findFreeUnits gate would reject.
+      let demand = 0;
       let wholeModelBlocked = false;
       for (const m of blockRows) {
         const overlaps =
@@ -580,19 +583,17 @@ export async function nextFreeWindow(
             : slotMs < toMs(m.date_to, m.end_time) && toMs(m.date_from, m.start_time) < endMs;
         if (!overlaps) continue;
         if (m.bike_unit_id === null) { wholeModelBlocked = true; break; }
-        occupied.add(m.bike_unit_id);
+        demand++;
       }
       if (wholeModelBlocked) continue;
 
       for (const b of bookingRows) {
         const cStart = toMs(b.date_from, b.pickup_time);
         const cEnd = toMs(b.date_to, b.return_time);
-        if (slotMs < cEnd + bufferMs && cStart - bufferMs < endMs) {
-          if (b.bike_unit_id) occupied.add(b.bike_unit_id);
-        }
+        if (slotMs < cEnd + bufferMs && cStart - bufferMs < endMs) demand++;
       }
 
-      if (unitIds.some((id) => !occupied.has(id))) return { dateFrom, dateTo, pickupTime: slot };
+      if (demand < unitIds.length) return { dateFrom, dateTo, pickupTime: slot };
     }
   }
   return null;
@@ -648,7 +649,7 @@ export async function earliestFreePickupSameDay(
     if (slotMs <= reqPickupMs) continue; // only later than what they asked
     if (slotMs >= endMs) break; // pickup must stay before the return moment
 
-    const occupied = new Set<string>();
+    let demand = 0;
     let wholeModelBlocked = false;
     for (const m of (blocks ?? []) as Array<{
       date_from: string; date_to: string; start_time: string | null; end_time: string | null; bike_unit_id: string | null;
@@ -659,7 +660,7 @@ export async function earliestFreePickupSameDay(
           : slotMs < toMs(m.date_to, m.end_time) && toMs(m.date_from, m.start_time) < endMs;
       if (!overlaps) continue;
       if (m.bike_unit_id === null) { wholeModelBlocked = true; break; }
-      occupied.add(m.bike_unit_id);
+      demand++;
     }
     if (wholeModelBlocked) continue;
 
@@ -668,12 +669,12 @@ export async function earliestFreePickupSameDay(
     }>) {
       const cStart = toMs(b.date_from, b.pickup_time);
       const cEnd = toMs(b.date_to, b.return_time);
-      if (slotMs < cEnd + bufferMs && cStart - bufferMs < endMs) {
-        if (b.bike_unit_id) occupied.add(b.bike_unit_id);
-      }
+      if (slotMs < cEnd + bufferMs && cStart - bufferMs < endMs) demand++;
     }
 
-    if (unitIds.some((id) => !occupied.has(id))) return slot;
+    // Conservative capacity count (counts unassigned): never suggests a slot
+    // the real gate would reject.
+    if (demand < unitIds.length) return slot;
   }
   return null;
 }
@@ -730,7 +731,7 @@ export async function latestFreeReturnSameDay(
     if (slotMs >= reqReturnMs) continue; // only EARLIER than requested
     if (slotMs <= startMs) break; // return must stay after pickup
 
-    const occupied = new Set<string>();
+    let demand = 0;
     let wholeModelBlocked = false;
     for (const m of (blocks ?? []) as Array<{
       date_from: string; date_to: string; start_time: string | null; end_time: string | null; bike_unit_id: string | null;
@@ -741,7 +742,7 @@ export async function latestFreeReturnSameDay(
           : startMs < toMs(m.date_to, m.end_time) && toMs(m.date_from, m.start_time) < slotMs;
       if (!overlaps) continue;
       if (m.bike_unit_id === null) { wholeModelBlocked = true; break; }
-      occupied.add(m.bike_unit_id);
+      demand++;
     }
     if (wholeModelBlocked) continue;
 
@@ -750,12 +751,12 @@ export async function latestFreeReturnSameDay(
     }>) {
       const cStart = toMs(b.date_from, b.pickup_time);
       const cEnd = toMs(b.date_to, b.return_time);
-      if (startMs < cEnd + bufferMs && cStart - bufferMs < slotMs) {
-        if (b.bike_unit_id) occupied.add(b.bike_unit_id);
-      }
+      if (startMs < cEnd + bufferMs && cStart - bufferMs < slotMs) demand++;
     }
 
-    if (unitIds.some((id) => !occupied.has(id))) return slot;
+    // Conservative capacity count (counts unassigned): never suggests a return
+    // the real gate would reject.
+    if (demand < unitIds.length) return slot;
   }
   return null;
 }
