@@ -201,10 +201,17 @@ export async function POST(request: Request) {
         returnTime: booking.return_time,
         excludeBookingId: booking.id,
       }, { includeBackup: true });
-      if (!availability.unitId) {
+      // Capacity model: reject ONLY when the window is genuinely over
+      // capacity (conflict set). A null unitId with no conflict means the
+      // window fits but no single unit spans it end to end - confirm it
+      // UNPINNED (bike_unit_id = null) and it gets a physical bike at
+      // pickup, exactly like every other surface. The old `!unitId` gate
+      // here wrongly rejected those, so tapping Confirm aborted and the
+      // message stayed stuck on "pending" for everyone in the group.
+      if (availability.conflict) {
         await answerTelegramCallback(
           cb.id,
-          `Conflict . ${availability.conflict ? describeConflict(availability.conflict) : "no free unit"}`,
+          `Conflict - ${describeConflict(availability.conflict)}`,
         );
         return NextResponse.json({ ok: true });
       }
