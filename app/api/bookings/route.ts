@@ -231,7 +231,7 @@ export async function POST(request: Request) {
     console.error("[/api/bookings] availability lookup error", err);
     return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
   }
-  if (availability.conflict || !availability.unitId) {
+  if (availability.conflict) {
     const c = availability.conflict;
     const message =
       c?.kind === "manual"

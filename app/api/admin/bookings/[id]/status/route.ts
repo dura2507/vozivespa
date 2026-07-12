@@ -66,7 +66,7 @@ export async function POST(
         returnTime: booking.return_time,
         excludeBookingId: booking.id,
       }, { includeBackup: true });
-      if (!availability.unitId) {
+      if (availability.conflict) {
         return NextResponse.json(
           {
             error: "Time conflict . can't confirm",

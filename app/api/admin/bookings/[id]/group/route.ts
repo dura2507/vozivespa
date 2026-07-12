@@ -67,9 +67,9 @@ export async function POST(
     console.error("[admin group add] availability", err);
     return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
   }
-  if (!free.unitId) {
+  if (free.conflict) {
     return NextResponse.json(
-      { error: free.conflict ? describeConflict(free.conflict) : "No free unit for this window" },
+      { error: describeConflict(free.conflict) },
       { status: 409 },
     );
   }
@@ -238,7 +238,7 @@ export async function PATCH(
     returnTime: booking.return_time,
   };
 
-  let targetUnitId: string;
+  let targetUnitId: string | null;
   if (toGhost) {
     // The Ghost Bike is the model's hidden reserve unit (is_backup=true).
     const { data: ghost, error: gErr } = await supabase
@@ -276,13 +276,13 @@ export async function PATCH(
     // Move back onto a free regular (non-backup) unit.
     let free;
     try {
-      free = await findFreeUnit(supabase, window);
+      free = await findFreeUnit(supabase, { ...window, excludeBookingId: booking.id });
     } catch {
       return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
     }
-    if (!free.unitId) {
+    if (free.conflict) {
       return NextResponse.json(
-        { error: free.conflict ? describeConflict(free.conflict) : "No free regular unit for this window" },
+        { error: describeConflict(free.conflict) },
         { status: 409 },
       );
     }

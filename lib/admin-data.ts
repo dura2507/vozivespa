@@ -471,12 +471,19 @@ export async function listUnitAvailability(
   // apply to every unit.
   const perUnit = new Map<string, Array<{ start: number; end: number }>>();
   for (const id of unitIds) perUnit.set(id, []);
+  // Pinned bookings go on their unit; unassigned (bike_unit_id null) ones are
+  // placed onto free units below (units are interchangeable), so this per-unit
+  // view can't show a unit "free" while the fleet is actually at capacity.
+  const unassignedIvs: Array<{ start: number; end: number }> = [];
   for (const b of (bookingsRes.data ?? []) as Array<{
     bike_unit_id: string | null; date_from: string; date_to: string; pickup_time: string; return_time: string;
   }>) {
-    if (!b.bike_unit_id) continue;
-    const arr = perUnit.get(b.bike_unit_id);
-    if (arr) arr.push({ start: toMs(b.date_from, b.pickup_time), end: toMs(b.date_to, b.return_time) });
+    const iv = { start: toMs(b.date_from, b.pickup_time), end: toMs(b.date_to, b.return_time) };
+    if (b.bike_unit_id) {
+      perUnit.get(b.bike_unit_id)?.push(iv);
+    } else {
+      unassignedIvs.push(iv);
+    }
   }
   for (const m of (blocksRes.data ?? []) as Array<{
     bike_unit_id: string | null; date_from: string; date_to: string; start_time: string | null; end_time: string | null;
@@ -488,6 +495,18 @@ export async function listUnitAvailability(
       const arr = perUnit.get(id);
       if (arr) arr.push({ start, end });
     }
+  }
+
+  // Distribute unassigned bookings onto units for display: first unit with no
+  // clashing interval (buffer-aware). A valid placement always exists because
+  // capacity is enforced at booking time (peak <= number of units).
+  for (const iv of unassignedIvs) {
+    const target =
+      unitIds.find((id) => {
+        const arr = perUnit.get(id)!;
+        return !arr.some((x) => iv.start < x.end + bufferMs && x.start - bufferMs < iv.end);
+      }) ?? unitIds[0];
+    if (target) perUnit.get(target)?.push(iv);
   }
 
   const units: UnitAvailability[] = unitIds.map((id) => {

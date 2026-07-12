@@ -8,7 +8,7 @@ import {
   parseCallbackData,
   NEW_STATUS,
 } from "@/lib/telegram";
-import { findFreeUnit, findUnitConflict, describeConflict } from "@/lib/availability";
+import { findFreeUnit, findFreeUnits, describeConflict } from "@/lib/availability";
 
 export const dynamic = "force-dynamic";
 
@@ -103,19 +103,23 @@ export async function POST(request: Request) {
     // window (another booking could have taken one while this group sat
     // pending). Any conflict aborts the whole group — owner sorts it out.
     if (groupStatus === "confirmed") {
-      for (const r of rows) {
-        if (!r.bike_unit_id) continue;
+      // Capacity re-check per bike model, excluding THIS group's own rows
+      // (they all share one window). Counts unassigned bookings + blocks, so
+      // a new booking that took a slot while this group sat pending is caught.
+      const win = {
+        dateFrom: rows[0].date_from,
+        dateTo: rows[0].date_to,
+        pickupTime: rows[0].pickup_time,
+        returnTime: rows[0].return_time,
+      };
+      const qtyByBike = new Map<string, number>();
+      for (const r of rows) qtyByBike.set(r.bike_id, (qtyByBike.get(r.bike_id) ?? 0) + 1);
+      const groupId = booking.booking_group_id ?? undefined;
+      for (const [bikeId, qty] of qtyByBike) {
         try {
-          const conflict = await findUnitConflict(supabase, {
-            bikeUnitId: r.bike_unit_id,
-            dateFrom: r.date_from,
-            dateTo: r.date_to,
-            pickupTime: r.pickup_time,
-            returnTime: r.return_time,
-            excludeBookingId: r.id,
-          });
-          if (conflict) {
-            await answerTelegramCallback(cb.id, "Conflict - one bike is no longer free for these dates");
+          const free = await findFreeUnits(supabase, { bikeId, ...win, excludeGroupId: groupId }, qty);
+          if (free.totalFree < qty) {
+            await answerTelegramCallback(cb.id, "Conflict - not enough bikes free for these dates");
             return NextResponse.json({ ok: true });
           }
         } catch (err) {

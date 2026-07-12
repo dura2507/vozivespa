@@ -197,7 +197,7 @@ export async function POST(request: Request) {
     console.error("[/api/admin/bookings/manual] availability lookup", err);
     return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
   }
-  if (availability.conflict || !availability.unitId) {
+  if (availability.conflict) {
     const c = availability.conflict;
     const message =
       c?.kind === "manual"
@@ -255,24 +255,20 @@ export async function POST(request: Request) {
     if (unitIds.length === 0) {
       return NextResponse.json({ error: "This bike has no active units" }, { status: 404 });
     }
-    // Every unit needs to be free for the same window — otherwise we
-    // can't fulfil the group booking. Time-aware so a 2h service
-    // block in the morning doesn't kill an afternoon group booking.
-    const conflicts: string[] = [];
-    for (const uid of unitIds) {
-      const c = await findUnitConflict(supabase, {
-        bikeUnitId: uid,
-        dateFrom,
-        dateTo,
-        pickupTime,
-        returnTime,
-      });
-      if (c) conflicts.push(uid);
-    }
-    if (conflicts.length > 0) {
+    // Booking the WHOLE fleet: every unit must be free. Use the capacity
+    // engine (which counts unassigned bike_unit_id = null bookings + service
+    // blocks) rather than a per-unit findUnitConflict loop, which is
+    // structurally blind to null-unit rows and could over-book.
+    const free = await findFreeUnits(
+      supabase,
+      { bikeId, dateFrom, dateTo, pickupTime, returnTime },
+      unitIds.length,
+      { includeBackup: true },
+    );
+    if (free.totalFree < unitIds.length) {
       return NextResponse.json(
         {
-          error: `Can't book all units — ${conflicts.length} of ${unitIds.length} unavailable for this window`,
+          error: `Can't book all units — only ${free.totalFree} of ${unitIds.length} free for this window`,
         },
         { status: 409 },
       );

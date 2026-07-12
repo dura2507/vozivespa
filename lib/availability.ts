@@ -11,6 +11,9 @@ export type BookingWindow = {
   returnTime: string;
   // Confirm-time check: ignore the booking itself (avoid self-conflict).
   excludeBookingId?: string;
+  // Group re-validation: ignore an ENTIRE booking group (all its rows) so a
+  // group confirm doesn't count its own pending rows against itself.
+  excludeGroupId?: string;
 };
 
 export type Conflict =
@@ -136,6 +139,7 @@ export async function findFreeUnit(
     .lte("date_from", w.dateTo)
     .gte("date_to", w.dateFrom);
   if (w.excludeBookingId) q = q.neq("id", w.excludeBookingId);
+  if (w.excludeGroupId) q = q.neq("booking_group_id", w.excludeGroupId);
   const { data: candidates, error: bookErr } = await q;
   if (bookErr) throw new Error(`booking overlap lookup: ${bookErr.message}`);
 
@@ -409,6 +413,7 @@ export async function findFreeUnits(
     .lte("date_from", w.dateTo)
     .gte("date_to", w.dateFrom);
   if (w.excludeBookingId) q = q.neq("id", w.excludeBookingId);
+  if (w.excludeGroupId) q = q.neq("booking_group_id", w.excludeGroupId);
   const { data: candidates, error: bookErr } = await q;
   if (bookErr) throw new Error(`booking overlap lookup: ${bookErr.message}`);
 

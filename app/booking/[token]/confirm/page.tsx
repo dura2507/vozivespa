@@ -60,7 +60,7 @@ export default async function ConfirmBookingPage({
       returnTime: booking.return_time,
       excludeBookingId: booking.id,
     });
-    if (!availability.unitId) {
+    if (availability.conflict) {
       return (
         <DecisionView
           tone="error"

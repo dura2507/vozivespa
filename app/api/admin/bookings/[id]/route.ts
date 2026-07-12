@@ -122,7 +122,7 @@ export async function PATCH(
       // the new model has no effect.
       excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined,
     }, { includeBackup: true });
-    if (!availability.unitId) {
+    if (availability.conflict) {
       return NextResponse.json(
         {
           error:
