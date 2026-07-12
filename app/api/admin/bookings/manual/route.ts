@@ -216,7 +216,7 @@ export async function POST(request: Request) {
   //     - bikeUnitIds array → those N specific units (quantity-based path)
   //     - <unit-id>         → exactly that unit, must be free
   //     - undefined         → just the auto-picked free unit (single)
-  const unitsToBook: string[] = [];
+  const unitsToBook: (string | null)[] = [];
   if (requestedUnitIds && requestedUnitIds.length > 0) {
     // Owner asked for N units of this model (the client picks N
     // unit-ids from the front of the list, but those IDs are only

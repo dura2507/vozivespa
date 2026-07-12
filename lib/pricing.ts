@@ -159,25 +159,28 @@ function unitsFreeForWindow(
   const winStart = combineDateTime(pickupDate, pickupTime).getTime();
   const winEnd = combineDateTime(returnDate, returnTime).getTime();
   if (winEnd <= winStart) return 0;
-  const busy = new Set<string>();
+  // Capacity model, mirrors findFreeUnit: customers aren't pinned to a bike, so
+  // "free units" = K minus the PEAK number of bookings needed at once inside the
+  // window (any unit, incl. unassigned), not the count of distinct units touched.
+  const ov: Array<{ s: number; e: number }> = [];
   for (const b of bookings) {
-    if (!b.unitId) continue;
     const bStart = combineDateTime(new Date(`${b.from}T00:00:00`), b.pickupTime).getTime();
     const bEnd = combineDateTime(new Date(`${b.to}T00:00:00`), b.returnTime).getTime();
-    // Same overlap check as findFreeUnit: [winStart, winEnd) overlaps
-    // [bStart - buffer, bEnd + buffer)?
-    if (winStart < bEnd + bufferMs && bStart - bufferMs < winEnd) {
-      busy.add(b.unitId);
-    }
+    if (winStart < bEnd + bufferMs && bStart - bufferMs < winEnd) ov.push({ s: bStart, e: bEnd });
   }
-  if (activeUnitIds && activeUnitIds.length > 0) {
-    let free = 0;
-    for (const id of activeUnitIds) if (!busy.has(id)) free++;
-    return free;
+  const instants = [winStart];
+  for (const b of ov) instants.push(b.s - bufferMs);
+  let peak = 0;
+  for (const t of instants) {
+    if (t < winStart || t >= winEnd) continue;
+    let dem = 0;
+    for (const b of ov) if (b.s - bufferMs <= t && t < b.e + bufferMs) dem++;
+    if (dem > peak) peak = dem;
   }
-  // Fallback when unit ids aren't available client-side: whatever count
-  // of distinct unit-owning bookings we saw, subtract from totalUnits.
-  return -busy.size;
+  if (activeUnitIds && activeUnitIds.length > 0) return activeUnitIds.length - peak;
+  // Fallback when unit ids aren't available client-side: negative peak so the
+  // caller can do totalUnits + (-peak) > 0.
+  return -peak;
 }
 
 // Is at least one unit free for an ARBITRARY window? Used to validate the

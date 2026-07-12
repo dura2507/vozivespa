@@ -195,7 +195,9 @@ export async function POST(request: Request) {
   // booking.
   type Planned = {
     bikeId: string;
-    unitIds: string[];
+    // null = allowed by capacity but not pinned to a physical bike (the
+    // customer just gets one of the fleet). The DB column is nullable.
+    unitIds: (string | null)[];
     perUnitCents: number;
     ridingStyles: RidingStyle[];
   };

@@ -139,68 +139,94 @@ export async function findFreeUnit(
   const { data: candidates, error: bookErr } = await q;
   if (bookErr) throw new Error(`booking overlap lookup: ${bookErr.message}`);
 
-  // 4. Filter to time-overlapping (with 1h buffer); collect the unit
-  //    ids those bookings hold.
+  // 4. Capacity model (NOT "one fixed free unit"). A customer is never pinned
+  //    to a physical bike — they get any one of the K units and keep it for the
+  //    rental. So a booking is allowed as long as at no instant of its window
+  //    are MORE bikes needed at once than exist. Demand at an instant =
+  //    overlapping bookings (with turnaround buffer, ANY unit incl. unassigned)
+  //    + per-unit service blocks active then. (Whole-model blocks were already
+  //    rejected in step 1.) This is the interval-overlap rule: peak <= K means
+  //    a valid assignment always exists, so greedy fragmentation never wrongly
+  //    rejects a booking that actually fits.
   const bufferMs = TURNAROUND_MINUTES * 60_000;
   const newStart = toMs(w.dateFrom, w.pickupTime);
   const newEnd = toMs(w.dateTo, w.returnTime);
-  const occupied = new Set<string>();
-  let lastConflict: {
-    id: string;
-    bike_unit_id: string | null;
-    date_from: string;
-    date_to: string;
-    pickup_time: string;
-    return_time: string;
-    customer_name: string;
-  } | null = null;
+  const K = units.length;
 
-  for (const c of candidates ?? []) {
+  type Cand = {
+    id: string; bike_unit_id: string | null; date_from: string; date_to: string;
+    pickup_time: string; return_time: string; customer_name: string;
+  };
+  const overlapping: Cand[] = [];
+  const occupied = new Set<string>();
+  for (const c of (candidates ?? []) as Cand[]) {
     const cStart = toMs(c.date_from, c.pickup_time);
     const cEnd = toMs(c.date_to, c.return_time);
     if (newStart < cEnd + bufferMs && cStart - bufferMs < newEnd) {
+      overlapping.push(c);
       if (c.bike_unit_id) occupied.add(c.bike_unit_id);
-      lastConflict = c;
     }
   }
 
-  // 5. First active unit that nobody else holds (and that isn't
-  //    flagged for service / repair via a per-unit manual block).
-  const free = units.find((u) => !occupied.has(u.id) && !occupiedByManual.has(u.id));
-  if (free) return { unitId: free.id, conflict: null };
-
-  // 5b. Every unit free of bookings is service-blocked → surface that
-  //     instead of "Time conflict with another booking".
-  const onlyServiceBusy = units.every((u) => occupiedByManual.has(u.id) || occupied.has(u.id));
-  if (onlyServiceBusy && occupiedByManual.size > 0 && !lastConflict) {
-    // We don't know which exact row to point at — pick the first
-    // overlapping manual so the message still has a date range.
-    const first = (manuals ?? []).find((m) => m.bike_unit_id);
-    if (first) {
-      return {
-        unitId: null,
-        conflict: { kind: "manual", from: first.date_from, to: first.date_to },
-      };
-    }
+  // Per-unit service blocks overlapping the window, with their time span.
+  const blockSpans: Array<{ start: number; end: number }> = [];
+  for (const m of (manuals ?? []) as Array<{
+    date_from: string; date_to: string; start_time: string | null; end_time: string | null; bike_unit_id: string | null;
+  }>) {
+    if (!m.bike_unit_id || !occupiedByManual.has(m.bike_unit_id)) continue; // whole-model handled above
+    const ms = m.start_time ? toMs(m.date_from, m.start_time) : toMs(m.date_from, "00:00");
+    const me = m.end_time ? toMs(m.date_to, m.end_time) : toMs(m.date_to, "23:59");
+    blockSpans.push({ start: ms, end: me });
   }
 
-  // 6. Every unit is busy → return a representative conflict.
-  if (lastConflict) {
+  // Peak simultaneous demand inside [newStart, newEnd). Demand can only rise at
+  // a booking start (buffered) or a block start, so evaluate exactly there.
+  const instants = [newStart];
+  for (const c of overlapping) instants.push(toMs(c.date_from, c.pickup_time) - bufferMs);
+  for (const b of blockSpans) instants.push(b.start);
+  let existingPeak = 0;
+  for (const t of instants) {
+    if (t < newStart || t >= newEnd) continue;
+    let demand = 0;
+    for (const c of overlapping) {
+      if (toMs(c.date_from, c.pickup_time) - bufferMs <= t && t < toMs(c.date_to, c.return_time) + bufferMs) demand++;
+    }
+    for (const b of blockSpans) {
+      if (b.start <= t && t < b.end) demand++;
+    }
+    if (demand > existingPeak) existingPeak = demand;
+  }
+
+  // 5. Room for THIS booking on top of the peak? Assign a genuinely-free unit
+  //    when one exists (handy for the owner / ghost-bike / service tracking);
+  //    otherwise leave it unassigned (null) — capacity is proven, we just don't
+  //    pin a physical bike. Either way the booking is allowed.
+  if (existingPeak + 1 <= K) {
+    const free = units.find((u) => !occupied.has(u.id) && !occupiedByManual.has(u.id));
+    return { unitId: free ? free.id : null, conflict: null };
+  }
+
+  // 6. Genuinely full (a K+1-th bike would be needed at some instant). Surface
+  //    a representative conflict for the message.
+  const rep = overlapping.length ? overlapping[overlapping.length - 1] : null;
+  if (rep) {
     return {
       unitId: null,
       conflict: {
         kind: "booking",
-        id: lastConflict.id,
-        customerName: lastConflict.customer_name,
-        dateFrom: lastConflict.date_from,
-        dateTo: lastConflict.date_to,
-        pickupTime: lastConflict.pickup_time.slice(0, 5),
-        returnTime: lastConflict.return_time.slice(0, 5),
+        id: rep.id,
+        customerName: rep.customer_name,
+        dateFrom: rep.date_from,
+        dateTo: rep.date_to,
+        pickupTime: rep.pickup_time.slice(0, 5),
+        returnTime: rep.return_time.slice(0, 5),
       },
     };
   }
-  // No conflict info but still no free unit . shouldn't happen unless
-  // every unit was deactivated mid-flight. Treat as no_units.
+  const firstBlock = (manuals ?? []).find((m) => m.bike_unit_id);
+  if (firstBlock) {
+    return { unitId: null, conflict: { kind: "manual", from: firstBlock.date_from, to: firstBlock.date_to } };
+  }
   return { unitId: null, conflict: { kind: "no_units" } };
 }
 
@@ -306,7 +332,7 @@ export async function findFreeUnits(
   w: BookingWindow,
   count: number,
   opts: { includeBackup?: boolean } = {},
-): Promise<{ unitIds: string[]; totalFree: number; totalUnits: number; conflict: Conflict | null }> {
+): Promise<{ unitIds: (string | null)[]; totalFree: number; totalUnits: number; conflict: Conflict | null }> {
   // Reuse the same conflict-collection logic as findFreeUnit, just
   // keep walking past the first match.
   const { data: manuals, error: manualErr } = await supabase
@@ -395,24 +421,55 @@ export async function findFreeUnits(
     return_time: string;
     customer_name: string;
   };
+  // Capacity model (same as findFreeUnit): how many MORE bikes fit on top of
+  // the peak simultaneous demand inside the window? Count every overlapping
+  // booking (any unit incl. unassigned) + per-unit service blocks.
   const bufferMs = TURNAROUND_MINUTES * 60_000;
+  const K = allUnits.length;
+  const overlapping: Cand[] = [];
   const occupied = new Set<string>();
   let lastBookingConflict: Cand | null = null;
   for (const c of ((candidates ?? []) as Cand[])) {
     const cStart = toMs(c.date_from, c.pickup_time);
     const cEnd = toMs(c.date_to, c.return_time);
     if (newStart < cEnd + bufferMs && cStart - bufferMs < newEnd) {
+      overlapping.push(c);
       if (c.bike_unit_id) occupied.add(c.bike_unit_id);
       lastBookingConflict = c;
     }
   }
+  const blockSpans: Array<{ start: number; end: number }> = [];
+  for (const m of (manuals ?? []) as Array<{
+    date_from: string; date_to: string; start_time: string | null; end_time: string | null; bike_unit_id: string | null;
+  }>) {
+    if (!m.bike_unit_id || !blockedUnitIds.has(m.bike_unit_id)) continue;
+    const ms = m.start_time ? toMs(m.date_from, m.start_time) : toMs(m.date_from, "00:00");
+    const me = m.end_time ? toMs(m.date_to, m.end_time) : toMs(m.date_to, "23:59");
+    blockSpans.push({ start: ms, end: me });
+  }
+  const instants = [newStart];
+  for (const c of overlapping) instants.push(toMs(c.date_from, c.pickup_time) - bufferMs);
+  for (const b of blockSpans) instants.push(b.start);
+  let existingPeak = 0;
+  for (const t of instants) {
+    if (t < newStart || t >= newEnd) continue;
+    let dem = 0;
+    for (const c of overlapping) if (toMs(c.date_from, c.pickup_time) - bufferMs <= t && t < toMs(c.date_to, c.return_time) + bufferMs) dem++;
+    for (const b of blockSpans) if (b.start <= t && t < b.end) dem++;
+    if (dem > existingPeak) existingPeak = dem;
+  }
 
-  const freeUnits = allUnits.filter(
-    (u) => !occupied.has(u.id) && !blockedUnitIds.has(u.id),
-  );
-  const picked = freeUnits.slice(0, count).map((u) => u.id);
+  const remaining = Math.max(0, K - existingPeak);
+  const fits = Math.min(count, remaining);
+  // Assign a genuinely-free physical unit where one exists, pad the rest with
+  // null (unassigned) — the customer just gets one of the K bikes.
+  const freeReal = allUnits
+    .filter((u) => !occupied.has(u.id) && !blockedUnitIds.has(u.id))
+    .map((u) => u.id);
+  const picked: (string | null)[] = [];
+  for (let i = 0; i < fits; i++) picked.push(i < freeReal.length ? freeReal[i] : null);
   let conflict: Conflict | null = null;
-  if (picked.length < count && lastBookingConflict) {
+  if (fits < count && lastBookingConflict) {
     conflict = {
       kind: "booking",
       id: lastBookingConflict.id,
@@ -425,7 +482,7 @@ export async function findFreeUnits(
   }
   return {
     unitIds: picked,
-    totalFree: freeUnits.length,
+    totalFree: remaining,
     totalUnits: allUnits.length,
     conflict,
   };
@@ -792,7 +849,11 @@ export function blockedPickupDates(
       const winEnd = Math.min(winStart + SLOT_MINUTES * 60_000, closeMs);
       if (winEnd <= winStart) return true;
 
-      const busy = new Set<string>();
+      // Capacity: the slot is blocked only when as many bikes are already
+      // needed at once as exist (no room for one more). Count overlapping
+      // bookings (ANY unit incl. unassigned) + per-unit service blocks; a
+      // whole-model block takes the day out entirely.
+      let demand = 0;
       for (const m of blocks) {
         const overlaps =
           !m.startTime || !m.endTime
@@ -801,17 +862,14 @@ export function blockedPickupDates(
               toMs(m.from, m.startTime) < winEnd;
         if (!overlaps) continue;
         if (m.unitId === null) return true; // whole model down
-        busy.add(m.unitId);
+        demand++;
       }
       for (const b of bookings) {
-        if (!b.unitId) continue;
         const bStart = toMs(b.from, b.pickupTime);
         const bEnd = toMs(b.to, b.returnTime);
-        if (winStart < bEnd + bufferMs && bStart - bufferMs < winEnd) {
-          busy.add(b.unitId);
-        }
+        if (winStart < bEnd + bufferMs && bStart - bufferMs < winEnd) demand++;
       }
-      return unitIds.every((id) => busy.has(id));
+      return demand >= unitIds.length;
     });
     if (everySlotBlocked) out.push(iso);
   }
