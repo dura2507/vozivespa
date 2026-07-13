@@ -270,7 +270,7 @@ export async function getAvailableNowCounts(): Promise<
       .eq("is_backup", false),
     supabase
       .from("bookings")
-      .select("bike_unit_id, date_from, date_to, pickup_time, return_time")
+      .select("bike_id, bike_unit_id, date_from, date_to, pickup_time, return_time")
       .in("status", ["confirmed", "pending"])
       // Pull every booking from today onwards, not just the ones
       // currently covering today. The unitFreeAt chain walks forward
@@ -296,6 +296,7 @@ export async function getAvailableNowCounts(): Promise<
   }
 
   type B = {
+    bike_id: string;
     bike_unit_id: string | null;
     date_from: string;
     date_to: string;
@@ -317,10 +318,25 @@ export async function getAvailableNowCounts(): Promise<
   const turnaroundMs = TURNAROUND_MINUTES * 60_000;
   const unitBookings = new Map<string, Array<{ start: number; end: number }>>();
   const rentedUnitIds = new Set<string>();
+  // Capacity model: a booking may be UNPINNED (bike_unit_id = NULL) and still
+  // consumes one of the model's K units — we just can't say WHICH physical
+  // unit yet. Bucket these by bike_id and subtract them from the model's free
+  // count below. The old code did `if (!b.bike_unit_id) continue`, which made
+  // the badge show "Available now" while every bike was actually out (an
+  // unpinned rental was invisible to the count).
+  const unpinnedByBike = new Map<string, Array<{ start: number; end: number }>>();
   for (const b of ((bookingsRes.data ?? []) as B[])) {
-    if (!b.bike_unit_id) continue;
     const start = zagrebWallToMs(b.date_from, b.pickup_time);
     const end = zagrebWallToMs(b.date_to, b.return_time);
+    if (!b.bike_unit_id) {
+      let arr = unpinnedByBike.get(b.bike_id);
+      if (!arr) {
+        arr = [];
+        unpinnedByBike.set(b.bike_id, arr);
+      }
+      arr.push({ start, end });
+      continue;
+    }
     let arr = unitBookings.get(b.bike_unit_id);
     if (!arr) {
       arr = [];
@@ -441,6 +457,29 @@ export async function getAvailableNowCounts(): Promise<
       continue;
     }
     c.available += 1;
+  }
+
+  // Fold in UNPINNED demand: each unpinned booking covering "now" eats one of
+  // the model's currently-free units. Move it from available into rented, and
+  // factor its return into the "back at" look-ahead so a model that is out
+  // only because of unpinned bookings still shows a real time, not green.
+  for (const [bikeId, arr] of unpinnedByBike) {
+    const c = counts[bikeId];
+    if (!c) continue;
+    const activeNow = arr.filter((iv) => nowMs >= iv.start && nowMs < iv.end);
+    if (activeNow.length === 0) continue;
+    const absorb = Math.min(activeNow.length, c.available);
+    c.available -= absorb;
+    c.rented += absorb;
+    if (c.available === 0) {
+      for (const iv of activeNow) {
+        const freeAt = nextPickupableMoment([iv], iv.end + turnaroundMs);
+        if (freeAt !== null) {
+          c.earliestFreeMs =
+            c.earliestFreeMs === null ? freeAt : Math.min(c.earliestFreeMs, freeAt);
+        }
+      }
+    }
   }
 
   // Reduce to the public shape: cause is "service" only when every
