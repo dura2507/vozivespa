@@ -39,6 +39,21 @@ whole-day, set = time-bounded).
 > models occupancy as a per-unit "is this exact unit rented" set, under-counts
 > demand and over-books.
 
+## Booking rules (owner spec, 2026-07-13)
+
+The business rules the calendar must obey. Status: [live] already coded, [NEW] not yet built.
+
+- **R1 Turnaround [live].** Keep >= 30 min free between two bookings on a unit so the bike is fresh for the next customer. (`TURNAROUND_MINUTES`.)
+- **R2 Minimum interior gap = 8h [NEW].** A free window that sits BETWEEN two full-capacity periods (all K out on both sides) and is shorter than 8h is shown as occupied, and not offered. Reason: nobody rents a few hours at day-price, and it is not worth the owner's handover effort. Edge windows (before the first / after the last full-capacity period of the day) stay bookable at any length. For single-stock models (K=1) this is literally "between two bookings"; for multi-stock it is "between two all-K-out periods". Public display + slot offering only; admin/walk-in is exempt (Thomas can book shorter).
+- **R3 Capacity, no fixed assignment [live].** A model with K units is red only when all K are out at that instant. Customers are never pinned to a specific physical bike; each gets one of the K and keeps it for the whole rental. No mid-rental switching. An upgrade/switch is handled by Thomas editing the booking in the admin panel (customer pays the surcharge).
+- **R4 Day-cell colour, split at 12:00 [NEW UI].** Red means "all K out, nothing free" for that part of the day.
+  - whole day full, or the only free time is a <8h interior gap -> full red
+  - morning full (all K out until midday), afternoon has a free unit -> red bottom-left
+  - afternoon full, morning has a free unit -> red bottom-right
+  - a free unit is available across the day -> green
+- **R5 Outside-hours pickup/return [live].** 07:00-08:30 and 19:30-22:00 (+30 euro) stay supported; do not break them.
+- **R6 Everything stays in sync [partly live].** Homepage/fleet pills match the real date+time state; multi-booking "available from" suggestions obey R2-R4; admin dashboard agrees with public; Ghost Bike = hidden 5th/backup unit, admin-only, excluded from public capacity, must stay consistent (see open issue #2).
+
 ## Core engine (lib/availability.ts, lib/pricing.ts)
 
 | Function | file:line | Computes | Demand counting |
