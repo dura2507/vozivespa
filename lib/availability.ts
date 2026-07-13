@@ -156,6 +156,13 @@ export async function findFreeUnit(
   const newStart = toMs(w.dateFrom, w.pickupTime);
   const newEnd = toMs(w.dateTo, w.returnTime);
   const K = units.length;
+  // Units that count toward THIS pool. A booking pinned to a unit not in the
+  // pool (a backup/ghost unit when !includeBackup, or an inactive unit) is
+  // off-the-books here: the reserve is excluded from K, so its bookings must
+  // not count against K either. Without this, a ghost-parked rental inflates
+  // demand and falsely rejects a regular booking, even though every display
+  // already treats the regular unit as free.
+  const poolUnitIds = new Set(units.map((u) => u.id));
 
   type Cand = {
     id: string; bike_unit_id: string | null; date_from: string; date_to: string;
@@ -164,6 +171,7 @@ export async function findFreeUnit(
   const overlapping: Cand[] = [];
   const occupied = new Set<string>();
   for (const c of (candidates ?? []) as Cand[]) {
+    if (c.bike_unit_id && !poolUnitIds.has(c.bike_unit_id)) continue;
     const cStart = toMs(c.date_from, c.pickup_time);
     const cEnd = toMs(c.date_to, c.return_time);
     if (newStart < cEnd + bufferMs && cStart - bufferMs < newEnd) {
@@ -431,10 +439,15 @@ export async function findFreeUnits(
   // booking (any unit incl. unassigned) + per-unit service blocks.
   const bufferMs = TURNAROUND_MINUTES * 60_000;
   const K = allUnits.length;
+  // See findFreeUnit: a booking pinned to a unit outside this pool (backup/
+  // ghost when !includeBackup, or inactive) is off-the-books and must not
+  // count against K.
+  const poolUnitIds = new Set(allUnits.map((u) => u.id));
   const overlapping: Cand[] = [];
   const occupied = new Set<string>();
   let lastBookingConflict: Cand | null = null;
   for (const c of ((candidates ?? []) as Cand[])) {
+    if (c.bike_unit_id && !poolUnitIds.has(c.bike_unit_id)) continue;
     const cStart = toMs(c.date_from, c.pickup_time);
     const cEnd = toMs(c.date_to, c.return_time);
     if (newStart < cEnd + bufferMs && cStart - bufferMs < newEnd) {
@@ -588,6 +601,7 @@ export async function nextFreeWindow(
       if (wholeModelBlocked) continue;
 
       for (const b of bookingRows) {
+        if (b.bike_unit_id && !unitIds.includes(b.bike_unit_id)) continue; // ghost/backup-parked: off-the-books for regular K
         const cStart = toMs(b.date_from, b.pickup_time);
         const cEnd = toMs(b.date_to, b.return_time);
         if (slotMs < cEnd + bufferMs && cStart - bufferMs < endMs) demand++;
@@ -667,6 +681,7 @@ export async function earliestFreePickupSameDay(
     for (const b of (bookings ?? []) as Array<{
       bike_unit_id: string | null; date_from: string; date_to: string; pickup_time: string; return_time: string;
     }>) {
+      if (b.bike_unit_id && !unitIds.includes(b.bike_unit_id)) continue; // ghost/backup-parked: off-the-books for regular K
       const cStart = toMs(b.date_from, b.pickup_time);
       const cEnd = toMs(b.date_to, b.return_time);
       if (slotMs < cEnd + bufferMs && cStart - bufferMs < endMs) demand++;
@@ -749,6 +764,7 @@ export async function latestFreeReturnSameDay(
     for (const b of (bookings ?? []) as Array<{
       bike_unit_id: string | null; date_from: string; date_to: string; pickup_time: string; return_time: string;
     }>) {
+      if (b.bike_unit_id && !unitIds.includes(b.bike_unit_id)) continue; // ghost/backup-parked: off-the-books for regular K
       const cStart = toMs(b.date_from, b.pickup_time);
       const cEnd = toMs(b.date_to, b.return_time);
       if (startMs < cEnd + bufferMs && cStart - bufferMs < slotMs) demand++;
