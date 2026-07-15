@@ -3,9 +3,10 @@ import { getServiceClient, type BookingRow } from "@/lib/supabase";
 import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail, sendOwnerBookingEmail } from "@/lib/email";
 import { markEmailReadByHeader } from "@/lib/imap-mark";
-import { isBookableReturnSlot, isBookablePickupSlot, parseTime } from "@/lib/pricing";
+import { isBookableReturnSlot, isBookablePickupSlot, parseTime, calculatePrice, outsideHoursSurcharge } from "@/lib/pricing";
 import { isBookingInSeason, isPickupInPast, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
 import { onlinePaymentEnabled } from "@/lib/payments";
+import { getBikeWithPricing } from "@/lib/bike-pricing";
 import { describeConflict, findFreeUnit, getBikeUnitLabel } from "@/lib/availability";
 import {
   isAllowedReceiptMime,
@@ -119,11 +120,9 @@ export async function POST(request: Request) {
   const paymentMethod = asPaymentMethod(form.get("paymentMethod"));
   const driversLicence = asLicence(form.get("driversLicence"));
   const ridingStyle = asRidingStyle(form.get("ridingStyle"));
-  const totalPriceRaw = form.get("totalPriceCents");
-  const totalPriceCents =
-    typeof totalPriceRaw === "string" && /^\d+$/.test(totalPriceRaw)
-      ? parseInt(totalPriceRaw, 10)
-      : null;
+  // NOTE: the client also sends totalPriceCents, but it is ignored. The price
+  // is recomputed server-side below from the model's real pricing, because
+  // this value drives the deposit and the card charge.
   const localeRaw = form.get("locale");
   const locale: "en" | "de" | "es" | "it" | "hr" | "pl" | "fr" =
     typeof localeRaw === "string" &&
@@ -213,6 +212,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Bike not available" }, { status: 404 });
   }
 
+  // 1b. Authoritative price. Recompute from the model's real pricing instead
+  //     of trusting the client total (it drives the deposit + card charge).
+  //     Same computation the group route uses.
+  const priced = await getBikeWithPricing(bikeId);
+  const calc = priced
+    ? calculatePrice(
+        new Date(`${from}T00:00:00`),
+        new Date(`${to}T00:00:00`),
+        pickupTime,
+        returnTime,
+        priced.pricing,
+      )
+    : null;
+  if (!priced || !calc) {
+    return NextResponse.json({ error: "Could not price this booking" }, { status: 400 });
+  }
+  const serverTotalCents =
+    Math.round(calc.totalPrice * 100) + outsideHoursSurcharge(pickupTime, returnTime) * 100;
+
   // 2. Find a free physical unit for this window. Manual blocks shut
   //    down the whole model; confirmed bookings hold a single unit and
   //    only block their unit (with 1h turnaround buffer). The same
@@ -259,7 +277,7 @@ export async function POST(request: Request) {
       date_to: to,
       pickup_time: pickupTime,
       return_time: returnTime,
-      total_price_cents: totalPriceCents,
+      total_price_cents: serverTotalCents,
       payment_method: paymentMethod,
       bike_unit_id: assignedUnitId,
       drivers_licence: driversLicence,

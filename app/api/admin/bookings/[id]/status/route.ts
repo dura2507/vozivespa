@@ -1,12 +1,14 @@
 import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findFreeUnit, getBikeUnitLabel, describeConflict } from "@/lib/availability";
+import { findFreeUnit, findFreeUnits, getBikeUnitLabel, describeConflict } from "@/lib/availability";
 import {
   sendCustomerBookingDecidedEmail,
+  sendCustomerGroupBookingDecidedEmail,
   sendOwnerCancellationEmail,
 } from "@/lib/email";
 import {
   editTelegramMessageForBooking,
+  editTelegramMessageForGroup,
   sendOwnerCancellationTelegram,
 } from "@/lib/telegram";
 
@@ -53,6 +55,90 @@ export async function POST(
 
   if (booking.status === decision) {
     return NextResponse.json({ ok: true, unchanged: true });
+  }
+
+  // Group booking: apply the decision to the WHOLE group, not just this row,
+  // otherwise the other bikes keep the old status and the calendar disagrees
+  // with the customer's booking. The consolidated Telegram card + group email
+  // cover the whole group.
+  if (booking.booking_group_id) {
+    const { data: groupData, error: gErr } = await supabase
+      .from("bookings")
+      .select("*")
+      .eq("booking_group_id", booking.booking_group_id);
+    if (gErr || !groupData || groupData.length === 0) {
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+    const groupRows = groupData as BookingRow[];
+    const active = groupRows.filter((r) => r.status !== "cancelled");
+
+    if (decision === "confirmed") {
+      const win = {
+        dateFrom: booking.date_from,
+        dateTo: booking.date_to,
+        pickupTime: booking.pickup_time,
+        returnTime: booking.return_time,
+      };
+      const qtyByBike = new Map<string, number>();
+      for (const r of active) qtyByBike.set(r.bike_id, (qtyByBike.get(r.bike_id) ?? 0) + 1);
+      for (const [bId, qty] of qtyByBike) {
+        try {
+          const free = await findFreeUnits(
+            supabase,
+            { bikeId: bId, ...win, excludeGroupId: booking.booking_group_id },
+            qty,
+            { includeBackup: true },
+          );
+          if (free.totalFree < qty) {
+            return NextResponse.json(
+              { error: `Time conflict, can't confirm the whole group (${bId}).` },
+              { status: 409 },
+            );
+          }
+        } catch (err) {
+          console.error("[/api/admin/bookings/status] group availability", err);
+          return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
+        }
+      }
+    }
+
+    const wasPendingGroup = booking.status === "pending";
+    const nowIso = new Date().toISOString();
+    const { error: upErr } = await supabase
+      .from("bookings")
+      .update({ status: decision, decided_at: nowIso })
+      .eq("booking_group_id", booking.booking_group_id)
+      .neq("status", "cancelled");
+    if (upErr) {
+      console.error("[/api/admin/bookings/status] group update", upErr);
+      return NextResponse.json({ error: "Update failed" }, { status: 500 });
+    }
+    const updatedRows = groupRows.map((r) =>
+      r.status === "cancelled" ? r : { ...r, status: decision, decided_at: nowIso },
+    );
+
+    after(async () => {
+      try {
+        if (wasPendingGroup && (decision === "confirmed" || decision === "declined")) {
+          await sendCustomerGroupBookingDecidedEmail(updatedRows, decision);
+        }
+        if (decision === "cancelled") {
+          await sendOwnerCancellationTelegram(booking);
+        }
+        const refs = (updatedRows[0].telegram_message_refs ?? []) as Array<{
+          chatId: string;
+          messageId: number;
+        }>;
+        if (refs.length > 0) {
+          await Promise.allSettled(
+            refs.map((r) => editTelegramMessageForGroup(r.chatId, r.messageId, updatedRows)),
+          );
+        }
+      } catch (err) {
+        console.error("[/api/admin/bookings/status] group notify", err);
+      }
+    });
+    return NextResponse.json({ ok: true, status: decision, group: true });
   }
 
   let assignedUnitId: string | null = booking.bike_unit_id;
