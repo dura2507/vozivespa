@@ -253,7 +253,12 @@ function buildKeyboard(booking: BookingRow): InlineKeyboard {
 
 function buildText(
   booking: BookingRow,
-  unitLabel?: string | null,
+  // Kept for call-site compatibility but no longer rendered: the Telegram
+  // card is the booking request, and under the capacity model the customer
+  // isn't tied to a specific physical unit (they get one of the K at pickup),
+  // so a "(Liberty50-2)" suffix was arbitrary noise. The physical unit + the
+  // Ghost Bike marker live in the admin panel, where they're actually used.
+  _unitLabel?: string | null,
   translatedNote?: string | null,
 ): string {
   const bikeName = bikeNameFor(booking);
@@ -261,9 +266,7 @@ function buildText(
   const pickup = fmtTimeOfDay(booking.pickup_time);
   const ret = fmtTimeOfDay(booking.return_time);
 
-  const bikeLine = unitLabel
-    ? `*Bike:* ${escapeMd(bikeName)} \\(${escapeMd(unitLabel)}\\)`
-    : `*Bike:* ${escapeMd(bikeName)}`;
+  const bikeLine = `*Bike:* ${escapeMd(bikeName)}`;
 
   const fee = bookingFeeEur(booking);
   const { country: licenceCountry, note: cleanNote } = splitNotes(booking.notes);
