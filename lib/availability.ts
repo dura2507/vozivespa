@@ -16,6 +16,15 @@ export type BookingWindow = {
   excludeGroupId?: string;
 };
 
+// One booking that is out at the peak instant (for the "why is it full" list).
+export type ConflictBooking = {
+  customerName: string;
+  dateFrom: string;
+  dateTo: string;
+  pickupTime: string;
+  returnTime: string;
+};
+
 export type Conflict =
   | { kind: "manual"; from: string; to: string }
   | {
@@ -26,6 +35,13 @@ export type Conflict =
       dateTo: string;
       pickupTime: string;
       returnTime: string;
+      // The moment the model is at capacity ("15.07 15:00") and EVERY booking
+      // out at that moment, so the owner sees exactly why there's no free bike
+      // instead of having to recompute the whole calendar by hand.
+      peakAt?: string;
+      peakBookings?: ConflictBooking[];
+      // Fleet size (K) at that moment, for "all 4 out" wording.
+      capacity?: number;
     }
   | { kind: "no_units" };
 
@@ -36,6 +52,20 @@ export type AvailabilityResult = {
   // a useful error message.
   conflict: Conflict | null;
 };
+
+// Render an epoch-ms (built by toMs, i.e. a Zagreb wall-clock instant) back to
+// "15.07. 15:00" in the shop's timezone, for conflict messages.
+const ZAGREB_INSTANT_FMT = new Intl.DateTimeFormat("de-DE", {
+  timeZone: "Europe/Zagreb",
+  day: "2-digit",
+  month: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+function fmtInstant(ms: number): string {
+  return ZAGREB_INSTANT_FMT.format(new Date(ms)).replace(",", "");
+}
 
 function toMs(date: string, time: string): number {
   const t = time.length === 5 ? `${time}:00` : time;
@@ -201,6 +231,7 @@ export async function findFreeUnit(
   for (const c of overlapping) instants.push(toMs(c.date_from, c.pickup_time) - bufferMs);
   for (const b of blockSpans) instants.push(b.start);
   let existingPeak = 0;
+  let peakT = newStart; // the instant where the peak happens (for the message)
   for (const t of instants) {
     if (t < newStart || t >= newEnd) continue;
     let demand = 0;
@@ -210,7 +241,10 @@ export async function findFreeUnit(
     for (const b of blockSpans) {
       if (b.start <= t && t < b.end) demand++;
     }
-    if (demand > existingPeak) existingPeak = demand;
+    if (demand > existingPeak) {
+      existingPeak = demand;
+      peakT = t;
+    }
   }
 
   // 5. Room for THIS booking on top of the peak? Assign a genuinely-free unit
@@ -223,8 +257,21 @@ export async function findFreeUnit(
   }
 
   // 6. Genuinely full (a K+1-th bike would be needed at some instant). Surface
-  //    a representative conflict for the message.
-  const rep = overlapping.length ? overlapping[overlapping.length - 1] : null;
+  //    the FULL picture: every booking out at the peak instant, so the owner
+  //    sees exactly why there's no free bike instead of recomputing by hand.
+  const peakOut = overlapping.filter(
+    (c) =>
+      toMs(c.date_from, c.pickup_time) - bufferMs <= peakT &&
+      peakT < toMs(c.date_to, c.return_time) + bufferMs,
+  );
+  const peakBookings = peakOut.map((c) => ({
+    customerName: c.customer_name,
+    dateFrom: c.date_from,
+    dateTo: c.date_to,
+    pickupTime: c.pickup_time.slice(0, 5),
+    returnTime: c.return_time.slice(0, 5),
+  }));
+  const rep = peakOut.length ? peakOut[peakOut.length - 1] : overlapping.length ? overlapping[overlapping.length - 1] : null;
   if (rep) {
     return {
       unitId: null,
@@ -236,6 +283,9 @@ export async function findFreeUnit(
         dateTo: rep.date_to,
         pickupTime: rep.pickup_time.slice(0, 5),
         returnTime: rep.return_time.slice(0, 5),
+        peakAt: fmtInstant(peakT),
+        peakBookings,
+        capacity: K,
       },
     };
   }
@@ -513,10 +563,24 @@ export async function findFreeUnits(
 }
 
 // Human-readable reason for showing in toasts / error pages.
+// Short DD.MM from an ISO date.
+function ddmm(iso: string): string {
+  return `${iso.slice(8, 10)}.${iso.slice(5, 7)}`;
+}
+
 export function describeConflict(c: Conflict): string {
-  if (c.kind === "manual") return `manual owner block ${c.from} → ${c.to}`;
+  if (c.kind === "manual") return `manual owner block ${ddmm(c.from)} → ${ddmm(c.to)}`;
   if (c.kind === "no_units") return "no physical units configured for this bike";
-  return `${c.customerName} (${c.dateFrom} ${c.pickupTime} → ${c.dateTo} ${c.returnTime})`;
+  // Full picture: at the peak moment every bike is out, list who has each one
+  // so the owner never has to recompute the calendar by hand.
+  if (c.peakBookings && c.peakBookings.length > 0) {
+    const cap = c.capacity ?? c.peakBookings.length;
+    const list = c.peakBookings
+      .map((b) => `${b.customerName} (${ddmm(b.dateFrom)} ${b.pickupTime} → ${ddmm(b.dateTo)} ${b.returnTime})`)
+      .join(", ");
+    return `All ${cap} out${c.peakAt ? ` at ${c.peakAt}` : ""}: ${list}`;
+  }
+  return `${c.customerName} (${ddmm(c.dateFrom)} ${c.pickupTime} → ${ddmm(c.dateTo)} ${c.returnTime})`;
 }
 
 function addDaysIso(iso: string, days: number): string {

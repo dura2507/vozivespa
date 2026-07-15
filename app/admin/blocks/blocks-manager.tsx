@@ -267,7 +267,13 @@ export function BlocksManager({
         });
         const body = await res.json().catch(() => ({}));
         if (!res.ok) {
-          setError(body?.error || "Could not save booking");
+          // Show the conflict detail (who has each bike at the peak moment) so
+          // the owner sees WHY it's full instead of recomputing by hand.
+          setError(
+            body?.detail
+              ? `${body.error || "Time conflict"} — ${body.detail}`
+              : body?.error || "Could not save booking",
+          );
           setBusy(false);
           return;
         }
