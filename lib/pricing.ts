@@ -168,13 +168,16 @@ function unitsFreeForWindow(
     const bEnd = combineDateTime(new Date(`${b.to}T00:00:00`), b.returnTime).getTime();
     if (winStart < bEnd + bufferMs && bStart - bufferMs < winEnd) ov.push({ s: bStart, e: bEnd });
   }
+  // A bike is committed [pickup, return + turnaround); the buffer is return-side
+  // ONLY, else two back-to-back rentals exactly one turnaround apart get
+  // double-counted (mirrors the findFreeUnit fix).
   const instants = [winStart];
-  for (const b of ov) instants.push(b.s - bufferMs);
+  for (const b of ov) instants.push(b.s);
   let peak = 0;
   for (const t of instants) {
     if (t < winStart || t >= winEnd) continue;
     let dem = 0;
-    for (const b of ov) if (b.s - bufferMs <= t && t < b.e + bufferMs) dem++;
+    for (const b of ov) if (b.s <= t && t < b.e + bufferMs) dem++;
     if (dem > peak) peak = dem;
   }
   if (activeUnitIds && activeUnitIds.length > 0) return activeUnitIds.length - peak;

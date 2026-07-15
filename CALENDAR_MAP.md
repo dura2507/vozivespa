@@ -139,6 +139,19 @@ Change a core function, re-check every surface listed.
 | `listUnitAvailability` ad:437 | AdminDashboard `?bike=` panel |
 | `telegram_message_refs` | set by POST /api/bookings + group route; NOT set by payments verify/webhook; read by admin status route + telegram webhook sync |
 
+## Turnaround buffer: return-side only (fixed 2026-07-15)
+
+A bike is committed for `[pickup, return + TURNAROUND_MINUTES)` - the 30-min
+buffer is the cleaning time AFTER the return, NEVER before the next pickup. The
+peak-concurrency counters (`findFreeUnit`, `findFreeUnits`, `unitsFreeForWindow`)
+used to model `[pickup - buffer, return + buffer)` (buffer on both sides), which
+double-counted two legit back-to-back rentals exactly one turnaround apart
+(A returns 11:00, B picks up 11:30) as needing two bikes at 11:00-11:30 -> phantom
+"Time conflict". When editing these counters: the demand test is
+`bookingStart <= t && t < bookingEnd + buffer` (front side has NO `- buffer`).
+The **adjacency filters** `x < cEnd + buffer && cStart - buffer < y` (one buffer
+per return->pickup transition) are a DIFFERENT, correct form - leave them.
+
 ## Change checklist
 
 Run on **every** change that touches availability, demand, booking writes, or unit/block queries:

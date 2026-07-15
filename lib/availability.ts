@@ -225,10 +225,15 @@ export async function findFreeUnit(
     blockSpans.push({ start: ms, end: me });
   }
 
-  // Peak simultaneous demand inside [newStart, newEnd). Demand can only rise at
-  // a booking start (buffered) or a block start, so evaluate exactly there.
+  // Peak simultaneous demand inside [newStart, newEnd). A bike is committed
+  // from its pickup until its return PLUS the 30-min turnaround (cleaning),
+  // i.e. [pickup, return + buffer). The buffer is ONLY after the return, never
+  // before the pickup - otherwise two legit back-to-back rentals exactly one
+  // turnaround apart (return 11:00, next pickup 11:30) get double-counted as
+  // needing two bikes. Demand can only rise at a booking's pickup or a block
+  // start, so evaluate exactly there.
   const instants = [newStart];
-  for (const c of overlapping) instants.push(toMs(c.date_from, c.pickup_time) - bufferMs);
+  for (const c of overlapping) instants.push(toMs(c.date_from, c.pickup_time));
   for (const b of blockSpans) instants.push(b.start);
   let existingPeak = 0;
   let peakT = newStart; // the instant where the peak happens (for the message)
@@ -236,7 +241,7 @@ export async function findFreeUnit(
     if (t < newStart || t >= newEnd) continue;
     let demand = 0;
     for (const c of overlapping) {
-      if (toMs(c.date_from, c.pickup_time) - bufferMs <= t && t < toMs(c.date_to, c.return_time) + bufferMs) demand++;
+      if (toMs(c.date_from, c.pickup_time) <= t && t < toMs(c.date_to, c.return_time) + bufferMs) demand++;
     }
     for (const b of blockSpans) {
       if (b.start <= t && t < b.end) demand++;
@@ -261,7 +266,7 @@ export async function findFreeUnit(
   //    sees exactly why there's no free bike instead of recomputing by hand.
   const peakOut = overlapping.filter(
     (c) =>
-      toMs(c.date_from, c.pickup_time) - bufferMs <= peakT &&
+      toMs(c.date_from, c.pickup_time) <= peakT &&
       peakT < toMs(c.date_to, c.return_time) + bufferMs,
   );
   const peakBookings = peakOut.map((c) => ({
@@ -522,13 +527,13 @@ export async function findFreeUnits(
     blockSpans.push({ start: ms, end: me });
   }
   const instants = [newStart];
-  for (const c of overlapping) instants.push(toMs(c.date_from, c.pickup_time) - bufferMs);
+  for (const c of overlapping) instants.push(toMs(c.date_from, c.pickup_time)); // buffer is return-side only
   for (const b of blockSpans) instants.push(b.start);
   let existingPeak = 0;
   for (const t of instants) {
     if (t < newStart || t >= newEnd) continue;
     let dem = 0;
-    for (const c of overlapping) if (toMs(c.date_from, c.pickup_time) - bufferMs <= t && t < toMs(c.date_to, c.return_time) + bufferMs) dem++;
+    for (const c of overlapping) if (toMs(c.date_from, c.pickup_time) <= t && t < toMs(c.date_to, c.return_time) + bufferMs) dem++;
     for (const b of blockSpans) if (b.start <= t && t < b.end) dem++;
     if (dem > existingPeak) existingPeak = dem;
   }
