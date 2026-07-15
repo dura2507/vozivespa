@@ -490,11 +490,14 @@ export async function editTelegramMessageForBooking(
   chatId: number | string,
   messageId: number,
   booking: BookingRow,
+  // Pass the (fresh) unit label so a status edit doesn't silently strip
+  // the "(Liberty50-2)" suffix the original send carried.
+  unitLabel?: string | null,
 ): Promise<void> {
   await callTelegram("editMessageText", {
     chat_id: chatId,
     message_id: messageId,
-    text: buildText(booking),
+    text: buildText(booking, unitLabel),
     parse_mode: "MarkdownV2",
     reply_markup: { inline_keyboard: buildKeyboard(booking) },
   });

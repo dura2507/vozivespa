@@ -1,6 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findFreeUnit, describeConflict } from "@/lib/availability";
+import { findFreeUnit, getBikeUnitLabel, describeConflict } from "@/lib/availability";
 import {
   sendCustomerBookingDecidedEmail,
   sendOwnerCancellationEmail,
@@ -132,9 +132,12 @@ export async function POST(
         messageId: number;
       }>;
       if (refs.length > 0) {
+        const unitLabel = await getBikeUnitLabel(supabase, updated.bike_unit_id).catch(
+          () => null,
+        );
         await Promise.allSettled(
           refs.map((r) =>
-            editTelegramMessageForBooking(r.chatId, r.messageId, updated),
+            editTelegramMessageForBooking(r.chatId, r.messageId, updated, unitLabel),
           ),
         );
       }

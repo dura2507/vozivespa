@@ -8,7 +8,7 @@ import {
   parseCallbackData,
   NEW_STATUS,
 } from "@/lib/telegram";
-import { findFreeUnit, findFreeUnits, describeConflict } from "@/lib/availability";
+import { findFreeUnit, findFreeUnits, getBikeUnitLabel, describeConflict } from "@/lib/availability";
 
 export const dynamic = "force-dynamic";
 
@@ -178,7 +178,8 @@ export async function POST(request: Request) {
   if (booking.status === newStatus) {
     await answerTelegramCallback(cb.id, `Already ${newStatus}`);
     // Make sure the keyboard reflects current state in case it drifted.
-    await editTelegramMessageForBooking(cb.message.chat.id, cb.message.message_id, booking);
+    const staleLabel = await getBikeUnitLabel(supabase, booking.bike_unit_id).catch(() => null);
+    await editTelegramMessageForBooking(cb.message.chat.id, cb.message.message_id, booking, staleLabel);
     return NextResponse.json({ ok: true });
   }
 
@@ -267,9 +268,12 @@ export async function POST(request: Request) {
     for (const ref of updated.telegram_message_refs ?? []) {
       if (ref?.messageId) edits.set(`${ref.chatId}:${ref.messageId}`, ref);
     }
+    const unitLabel = await getBikeUnitLabel(supabase, updated.bike_unit_id).catch(
+      () => null,
+    );
     await Promise.allSettled(
       [...edits.values()].map((e) =>
-        editTelegramMessageForBooking(e.chatId, e.messageId, updated),
+        editTelegramMessageForBooking(e.chatId, e.messageId, updated, unitLabel),
       ),
     );
     if (wasFromPending) {

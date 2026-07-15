@@ -115,9 +115,16 @@ export async function GET(request: Request) {
   const bookings = allBookings.filter(
     (b) => !b.unitId || publicUnitIds.has(b.unitId),
   );
+  // Same rule for manual blocks: a service block pinned to the ghost/backup
+  // reserve must never shrink PUBLIC capacity. blockedPickupDates guards
+  // internally too, but the payload has to stay self-consistent for the
+  // client-side slot filters. Whole-model blocks (unitId null) stay.
+  const publicBlocks = manualBlocks.filter(
+    (m) => !m.unitId || publicUnitIds.has(m.unitId),
+  );
 
   return NextResponse.json({
-    manualBlocks,
+    manualBlocks: publicBlocks,
     bookings,
     totalUnits: unitIds.length,
     unitIds,
@@ -127,6 +134,6 @@ export async function GET(request: Request) {
     // The frontend paints this list verbatim instead of re-deriving it,
     // so the single-bike calendar can never contradict the fleet view
     // or the submit check.
-    blockedPickupDates: blockedPickupDates(bookings, manualBlocks, unitIds, zagrebNow()),
+    blockedPickupDates: blockedPickupDates(bookings, publicBlocks, unitIds, zagrebNow()),
   });
 }

@@ -17,6 +17,10 @@ import { SEASON_END_ISO } from "@/lib/season";
 export type EnrichedBooking = BookingRow & {
   bikeName: string;
   unitLabel: string | null;
+  // True when this row is parked on the hidden Ghost Bike reserve unit —
+  // the customer physically rides the reserve vehicle, and the row must
+  // not read as a regular unit in any list.
+  onGhost: boolean;
   pickupAt: number; // ms
   returnAt: number;
   receiptUrl: string | null;
@@ -51,10 +55,16 @@ export type FleetEntry = {
   bikeId: string;
   bikeName: string;
   totalUnits: number;
-  // Units physically out with a customer right now. Matches the public
-  // availability exactly (a booking that only starts later leaves the unit
-  // free now — the site has no minimum-gap rule).
+  // Units COMMITTED right now (booking window covers this moment, or an
+  // active service block). Drives the free count: free = total - outUnits,
+  // because a committed unit can't be handed to a walk-in even when it's
+  // physically still parked outside (reserved for an arriving customer).
   outUnits: number;
+  // Of those, how many are physically WITH a customer (picked up, or past
+  // the 24h auto-fallback) or in service. outUnits - collectedOut = units
+  // reserved for a pickup that hasn't happened yet. Without this split the
+  // card said "2 out" while the operator could see bikes on the lot.
+  collectedOut: number;
   pendingCount: number;
   upcomingCount: number;
 };
@@ -111,13 +121,24 @@ function bikeName(id: string): string {
   return cat?.shortName ?? cat?.model ?? id;
 }
 
-async function listUnitLabelMap(): Promise<Map<string, string>> {
+async function listUnitLabelMap(): Promise<{
+  labels: Map<string, string>;
+  // Unit ids of the hidden Ghost Bike reserves (is_backup). Lists use this
+  // to badge ghost-parked rentals — without it a booking parked on the
+  // reserve renders like a regular unit and the dashboard reads "2 Liberty
+  // out" while one of them is physically the reserve vehicle.
+  ghostIds: Set<string>;
+}> {
   const supabase = getServiceClient();
-  const { data, error } = await supabase.from("bike_units").select("id, label");
+  const { data, error } = await supabase.from("bike_units").select("id, label, is_backup");
   if (error) throw new Error(error.message);
-  const out = new Map<string, string>();
-  for (const u of (data ?? []) as BikeUnitRow[]) out.set(u.id, u.label);
-  return out;
+  const labels = new Map<string, string>();
+  const ghostIds = new Set<string>();
+  for (const u of (data ?? []) as Array<BikeUnitRow & { is_backup: boolean }>) {
+    labels.set(u.id, u.label);
+    if (u.is_backup) ghostIds.add(u.id);
+  }
+  return { labels, ghostIds };
 }
 
 // Pull every booking with derived fields used across the admin pages.
@@ -126,7 +147,7 @@ async function listUnitLabelMap(): Promise<Map<string, string>> {
 // side so we don't double-fetch from inside loops.
 export async function listAllBookings(): Promise<EnrichedBooking[]> {
   const supabase = getServiceClient();
-  const [bookingsRes, unitLabels] = await Promise.all([
+  const [bookingsRes, { labels: unitLabels, ghostIds }] = await Promise.all([
     supabase.from("bookings").select("*").order("date_from", { ascending: false }),
     listUnitLabelMap(),
   ]);
@@ -156,6 +177,7 @@ export async function listAllBookings(): Promise<EnrichedBooking[]> {
       ...b,
       bikeName: bikeName(b.bike_id),
       unitLabel: b.bike_unit_id ? unitLabels.get(b.bike_unit_id) ?? null : null,
+      onGhost: b.bike_unit_id ? ghostIds.has(b.bike_unit_id) : false,
       pickupAt: toMs(b.date_from, b.pickup_time),
       returnAt: toMs(b.date_to, b.return_time),
       receiptUrl: null,
@@ -174,7 +196,7 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
     .maybeSingle<BookingRow>();
   if (error) throw new Error(error.message);
   if (!data) return null;
-  const [url, unitLabels, group, backupUnits] = await Promise.all([
+  const [url, { labels: unitLabels }, group, backupUnits] = await Promise.all([
     data.deposit_screenshot_path
       ? signedReceiptUrl(data.deposit_screenshot_path).catch(() => null)
       : Promise.resolve<string | null>(null),
@@ -233,6 +255,7 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
     ...data,
     bikeName: bikeName(data.bike_id),
     unitLabel: data.bike_unit_id ? unitLabels.get(data.bike_unit_id) ?? null : null,
+    onGhost: data.bike_unit_id ? backupUnitIds.has(data.bike_unit_id) : false,
     pickupAt: toMs(data.date_from, data.pickup_time),
     returnAt: toMs(data.date_to, data.return_time),
     receiptUrl: url,
@@ -261,7 +284,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       .eq("is_backup", false),
     supabase
       .from("bookings")
-      .select("id, bike_id, bike_unit_id, status, date_from, date_to, pickup_time, return_time, returned_at"),
+      .select("id, bike_id, bike_unit_id, status, date_from, date_to, pickup_time, return_time, returned_at, picked_up_at"),
     supabase
       .from("blocked_dates")
       .select("bike_id, bike_unit_id, date_from, date_to, start_time, end_time")
@@ -283,8 +306,8 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     bookableUnitIds.add(u.id);
   }
 
-  type Acc = { outUnits: Set<string>; pending: number; upcoming: number };
-  const makeAcc = (): Acc => ({ outUnits: new Set(), pending: 0, upcoming: 0 });
+  type Acc = { outUnits: Set<string>; collected: Set<string>; pending: number; upcoming: number };
+  const makeAcc = (): Acc => ({ outUnits: new Set(), collected: new Set(), pending: 0, upcoming: 0 });
   const getAcc = (bikeId: string, map: Map<string, Acc>): Acc => {
     let e = map.get(bikeId);
     if (!e) { e = makeAcc(); map.set(bikeId, e); }
@@ -301,6 +324,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     pickup_time: string;
     return_time: string;
     returned_at: string | null;
+    picked_up_at: string | null;
   }>) {
     const entry = getAcc(b.bike_id, out);
     if (b.status === "pending") entry.pending++;
@@ -322,6 +346,12 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       const key = b.bike_unit_id ?? `row:${b.id}`;
       if (start <= nowMs && end >= nowMs) {
         entry.outUnits.add(key);
+        // Physically with the customer only once collected (or past the
+        // same 24h auto-fallback bucketBookings uses). Otherwise the unit
+        // is committed-but-parked: reserved for an arriving pickup.
+        if (b.picked_up_at != null || nowMs > start + AUTO_FALLBACK_MS) {
+          entry.collected.add(key);
+        }
       } else if (start > nowMs) {
         // A future booking that hasn't started yet → upcoming, NOT out. The
         // site has no minimum-gap rule, so the unit is free until the pickup
@@ -353,11 +383,18 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
     }
     const entry = getAcc(m.bike_id, out);
     if (m.bike_unit_id) {
+      // A block pinned to a unit outside the bookable pool (the Ghost Bike
+      // reserve) is off-the-books here, same as ghost-parked bookings above.
+      if (!bookableUnitIds.has(m.bike_unit_id)) continue;
       entry.outUnits.add(m.bike_unit_id);
+      entry.collected.add(m.bike_unit_id); // in service = physically unavailable
     } else {
       // Whole-model block: every active unit is unavailable.
       const all = (unitsRes.data ?? []).filter((u) => u.bike_id === m.bike_id);
-      for (const u of all) entry.outUnits.add(u.id);
+      for (const u of all) {
+        entry.outUnits.add(u.id);
+        entry.collected.add(u.id);
+      }
     }
   }
 
@@ -368,6 +405,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       bikeName: cat.shortName ?? cat.model,
       totalUnits: unitsByBike.get(cat.id) ?? 0,
       outUnits: entry?.outUnits.size ?? 0,
+      collectedOut: entry?.collected.size ?? 0,
       pendingCount: entry?.pending ?? 0,
       upcomingCount: entry?.upcoming ?? 0,
     };
@@ -389,6 +427,10 @@ export type UnitAvailability = {
   nextFreePickupMs: number;
   // When that free window closes (next booking's pickup), null = open end.
   freeUntilMs: number | null;
+  // True for the hidden Ghost Bike reserve unit: shown here so a rental
+  // parked on the reserve stays visible, but badged so it never reads as
+  // part of the regular fleet.
+  isReserve: boolean;
 };
 
 export type FleetUnitAvailability = {
@@ -439,13 +481,12 @@ export async function listUnitAvailability(
   nowMs: number,
 ): Promise<FleetUnitAvailability> {
   const supabase = getServiceClient();
-  const [unitsRes, bookingsRes, blocksRes, labels] = await Promise.all([
+  const [unitsRes, bookingsRes, blocksRes, { labels, ghostIds }] = await Promise.all([
     supabase
       .from("bike_units")
-      .select("id")
+      .select("id, is_backup")
       .eq("bike_id", bikeId)
-      .eq("active", true)
-      .eq("is_backup", false),
+      .eq("active", true),
     supabase
       .from("bookings")
       .select("bike_unit_id, date_from, date_to, pickup_time, return_time, returned_at, status")
@@ -463,7 +504,12 @@ export async function listUnitAvailability(
   if (bookingsRes.error) throw new Error(bookingsRes.error.message);
   if (blocksRes.error) throw new Error(blocksRes.error.message);
 
-  const unitIds = (unitsRes.data ?? []).map((u) => (u as { id: string }).id);
+  const allUnits = (unitsRes.data ?? []) as Array<{ id: string; is_backup: boolean }>;
+  // Regular pool drives capacity semantics (distribution of unpinned rows);
+  // ghost/backup units get their OWN rows below so a rental parked on the
+  // reserve is visible here instead of silently vanishing from the panel.
+  const unitIds = allUnits.filter((u) => !u.is_backup).map((u) => u.id);
+  const ghostUnitIds = allUnits.filter((u) => u.is_backup).map((u) => u.id);
   const bufferMs = TURNAROUND_MINUTES * 60_000;
   const seasonCutoff = toMs(SEASON_END_ISO, "23:59");
 
@@ -471,6 +517,7 @@ export async function listUnitAvailability(
   // apply to every unit.
   const perUnit = new Map<string, Array<{ start: number; end: number }>>();
   for (const id of unitIds) perUnit.set(id, []);
+  for (const id of ghostUnitIds) perUnit.set(id, []);
   // Pinned bookings go on their unit; unassigned (bike_unit_id null) ones are
   // placed onto free units below (units are interchangeable), so this per-unit
   // view can't show a unit "free" while the fleet is actually at capacity.
@@ -490,7 +537,7 @@ export async function listUnitAvailability(
   }>) {
     const start = m.start_time ? toMs(m.date_from, m.start_time) : toMs(m.date_from, "00:00");
     const end = m.end_time ? toMs(m.date_to, m.end_time) : toMs(m.date_to, "23:59") + 60_000;
-    const targets = m.bike_unit_id ? [m.bike_unit_id] : unitIds;
+    const targets = m.bike_unit_id ? [m.bike_unit_id] : [...unitIds, ...ghostUnitIds];
     for (const id of targets) {
       const arr = perUnit.get(id);
       if (arr) arr.push({ start, end });
@@ -509,7 +556,7 @@ export async function listUnitAvailability(
     if (target) perUnit.get(target)?.push(iv);
   }
 
-  const units: UnitAvailability[] = unitIds.map((id) => {
+  const units: UnitAvailability[] = [...unitIds, ...ghostUnitIds].map((id) => {
     const intervals = (perUnit.get(id) ?? []).sort((a, b) => a.start - b.start);
     const current = intervals.find((iv) => nowMs >= iv.start && nowMs < iv.end) ?? null;
     // Where to start hunting for a free pickup: after the current rental if
@@ -533,20 +580,27 @@ export async function listUnitAvailability(
       busyUntilMs: busyUntil,
       nextFreePickupMs: candidate,
       freeUntilMs: freeUntil,
+      isReserve: ghostIds.has(id),
     };
   });
 
   // Sort: free first, then out — owner scans for what's available now.
-  // Within a status, earliest next-free first.
+  // Within a status, earliest next-free first. Reserve (Ghost Bike) rows
+  // always sink to the end: they're the off-the-books joker, not fleet.
   const order = { free: 0, out: 1 };
-  units.sort((a, b) => order[a.status] - order[b.status] || a.nextFreePickupMs - b.nextFreePickupMs);
+  units.sort(
+    (a, b) =>
+      Number(a.isReserve) - Number(b.isReserve) ||
+      order[a.status] - order[b.status] ||
+      a.nextFreePickupMs - b.nextFreePickupMs,
+  );
 
   return { bikeId, bikeName: bikeName(bikeId), units };
 }
 
 export async function listManualBlocks(): Promise<EnrichedBlock[]> {
   const supabase = getServiceClient();
-  const [{ data, error }, unitLabels] = await Promise.all([
+  const [{ data, error }, { labels: unitLabels }] = await Promise.all([
     supabase
       .from("blocked_dates")
       .select("*")
@@ -594,7 +648,7 @@ export async function listServiceBlocks(): Promise<ServiceBlock[]> {
 // lists both.
 export async function listWalkInBookings(): Promise<EnrichedBooking[]> {
   const supabase = getServiceClient();
-  const [{ data, error }, unitLabels] = await Promise.all([
+  const [{ data, error }, { labels: unitLabels, ghostIds }] = await Promise.all([
     supabase
       .from("bookings")
       .select("*")
@@ -620,6 +674,7 @@ export async function listWalkInBookings(): Promise<EnrichedBooking[]> {
       ...b,
       bikeName: bikeName(b.bike_id),
       unitLabel: b.bike_unit_id ? unitLabels.get(b.bike_unit_id) ?? null : null,
+      onGhost: b.bike_unit_id ? ghostIds.has(b.bike_unit_id) : false,
       pickupAt: toMs(b.date_from, b.pickup_time),
       returnAt: toMs(b.date_to, b.return_time),
       receiptUrl: null, // walk-ins never carry a receipt
@@ -649,6 +704,10 @@ export type BookingDisplay = {
   returnAt: number;
   status: BookingRow["status"];
   isGroup: boolean;
+  // True when any row of this display group is parked on the Ghost Bike
+  // reserve — the dashboard badges these so a ghost-parked rental never
+  // reads as a regular unit being out.
+  hasGhost: boolean;
 };
 
 // Collapse a list of bookings into BookingDisplay entries. Rows
@@ -691,6 +750,7 @@ export function groupBookingsForDisplay(rows: EnrichedBooking[]): BookingDisplay
       returnAt: head.returnAt,
       status: head.status,
       isGroup: group.length > 1,
+      hasGhost: group.some((b) => b.onGhost),
     };
   });
 }

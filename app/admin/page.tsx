@@ -141,6 +141,11 @@ function BookingRow({
               × {group.bookings.length} bikes
             </span>
           )}
+          {group.hasGhost && (
+            <span className="text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 bg-violet-200 text-violet-900">
+              ghost bike
+            </span>
+          )}
           {head.deposit_screenshot_path && (
             <span className="text-[10px] tracking-[0.15em] uppercase font-bold text-ink/40">
               receipt
@@ -294,9 +299,12 @@ function FleetCard({ entry }: { entry: FleetEntry }) {
       >
         {fullyOut ? "fully booked" : "free now"}
       </p>
-      {entry.outUnits > 0 && !fullyOut && (
+      {entry.outUnits > 0 && (
         <p className="text-[11px] text-ink/50 mt-0.5 leading-tight">
-          {entry.outUnits} out
+          {entry.collectedOut > 0 && `${entry.collectedOut} out`}
+          {entry.collectedOut > 0 && entry.outUnits > entry.collectedOut && " · "}
+          {entry.outUnits > entry.collectedOut &&
+            `${entry.outUnits - entry.collectedOut} reserved`}
         </p>
       )}
       {(entry.pendingCount > 0 || entry.upcomingCount > 0) && (
@@ -343,7 +351,14 @@ function UnitAvailabilityPanel({
           return (
             <div key={u.unitLabel} className={`border p-3 ${tone}`}>
               <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-xs font-bold text-ink">{u.unitLabel}</span>
+                <span className="font-mono text-xs font-bold text-ink inline-flex items-center gap-1.5">
+                  {u.unitLabel}
+                  {u.isReserve && (
+                    <span className="text-[9px] tracking-[0.15em] uppercase font-bold px-1 py-0.5 bg-violet-200 text-violet-900">
+                      ghost
+                    </span>
+                  )}
+                </span>
                 <span className={`text-[10px] tracking-[0.15em] uppercase font-bold ${labelTone}`}>
                   {label}
                 </span>

@@ -111,7 +111,10 @@ export async function POST(request: Request) {
   let targetUnitId = bikeUnitId;
   if (bikeUnitId) {
     const [unitsRes, bookingsRes, blocksRes] = await Promise.all([
-      supabase.from("bike_units").select("id").eq("bike_id", bikeId).eq("active", true),
+      // Only regular units: a floating service block must never auto-land on
+      // the hidden ghost/backup reserve — that would silently consume the
+      // owner's joker and (before the pool-filter fix) even public capacity.
+      supabase.from("bike_units").select("id").eq("bike_id", bikeId).eq("active", true).eq("is_backup", false),
       supabase
         .from("bookings")
         .select("bike_unit_id, customer_name, date_from, date_to, pickup_time, return_time")

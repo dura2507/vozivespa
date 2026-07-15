@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findFreeUnit, describeConflict } from "@/lib/availability";
+import { findFreeUnit, findUnitConflict, describeConflict } from "@/lib/availability";
 import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
 
 export const runtime = "nodejs";
@@ -137,6 +137,31 @@ export async function PATCH(
       );
     }
     assignedUnitId = availability.unitId;
+
+    // Keep a Ghost Bike parking in place: if this booking sits on the
+    // hidden reserve (Priscilla's ghost swap) and the model isn't
+    // changing, an edit must not silently move it back onto a regular
+    // unit — the customer is physically riding the reserve vehicle.
+    // Keep the pin as long as the reserve is still free for the NEW
+    // window; if it isn't, fall back to the fresh assignment above.
+    if (targetBikeId === booking.bike_id && booking.bike_unit_id) {
+      const { data: currentUnit } = await supabase
+        .from("bike_units")
+        .select("id, is_backup")
+        .eq("id", booking.bike_unit_id)
+        .maybeSingle<{ id: string; is_backup: boolean }>();
+      if (currentUnit?.is_backup) {
+        const clash = await findUnitConflict(supabase, {
+          bikeUnitId: booking.bike_unit_id,
+          dateFrom,
+          dateTo,
+          pickupTime,
+          returnTime,
+          excludeBookingId: booking.id,
+        });
+        if (!clash) assignedUnitId = booking.bike_unit_id;
+      }
+    }
   } catch (err) {
     console.error("[/api/admin/bookings] availability", err);
     return NextResponse.json({ error: "Database error" }, { status: 500 });

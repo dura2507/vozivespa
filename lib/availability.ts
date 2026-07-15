@@ -181,11 +181,15 @@ export async function findFreeUnit(
   }
 
   // Per-unit service blocks overlapping the window, with their time span.
+  // A block pinned to a unit OUTSIDE the pool (the ghost/backup reserve, or
+  // an inactive unit) must not consume regular capacity — mirror of the
+  // pool check on bookings above.
   const blockSpans: Array<{ start: number; end: number }> = [];
   for (const m of (manuals ?? []) as Array<{
     date_from: string; date_to: string; start_time: string | null; end_time: string | null; bike_unit_id: string | null;
   }>) {
     if (!m.bike_unit_id || !occupiedByManual.has(m.bike_unit_id)) continue; // whole-model handled above
+    if (!poolUnitIds.has(m.bike_unit_id)) continue;
     const ms = m.start_time ? toMs(m.date_from, m.start_time) : toMs(m.date_from, "00:00");
     const me = m.end_time ? toMs(m.date_to, m.end_time) : toMs(m.date_to, "23:59");
     blockSpans.push({ start: ms, end: me });
@@ -461,6 +465,8 @@ export async function findFreeUnits(
     date_from: string; date_to: string; start_time: string | null; end_time: string | null; bike_unit_id: string | null;
   }>) {
     if (!m.bike_unit_id || !blockedUnitIds.has(m.bike_unit_id)) continue;
+    // Blocks on out-of-pool units (ghost/backup reserve) don't consume K.
+    if (!poolUnitIds.has(m.bike_unit_id)) continue;
     const ms = m.start_time ? toMs(m.date_from, m.start_time) : toMs(m.date_from, "00:00");
     const me = m.end_time ? toMs(m.date_to, m.end_time) : toMs(m.date_to, "23:59");
     blockSpans.push({ start: ms, end: me });
@@ -596,6 +602,7 @@ export async function nextFreeWindow(
             : slotMs < toMs(m.date_to, m.end_time) && toMs(m.date_from, m.start_time) < endMs;
         if (!overlaps) continue;
         if (m.bike_unit_id === null) { wholeModelBlocked = true; break; }
+        if (!unitIds.includes(m.bike_unit_id)) continue; // ghost/backup block: off-the-books for regular K
         demand++;
       }
       if (wholeModelBlocked) continue;
@@ -674,6 +681,7 @@ export async function earliestFreePickupSameDay(
           : slotMs < toMs(m.date_to, m.end_time) && toMs(m.date_from, m.start_time) < endMs;
       if (!overlaps) continue;
       if (m.bike_unit_id === null) { wholeModelBlocked = true; break; }
+      if (!unitIds.includes(m.bike_unit_id)) continue; // ghost/backup block: off-the-books for regular K
       demand++;
     }
     if (wholeModelBlocked) continue;
@@ -757,6 +765,7 @@ export async function latestFreeReturnSameDay(
           : startMs < toMs(m.date_to, m.end_time) && toMs(m.date_from, m.start_time) < slotMs;
       if (!overlaps) continue;
       if (m.bike_unit_id === null) { wholeModelBlocked = true; break; }
+      if (!unitIds.includes(m.bike_unit_id)) continue; // ghost/backup block: off-the-books for regular K
       demand++;
     }
     if (wholeModelBlocked) continue;
@@ -787,11 +796,14 @@ export async function getBikeUnitLabel(
   if (!unitId) return null;
   const { data, error } = await supabase
     .from("bike_units")
-    .select("label")
+    .select("label, is_backup")
     .eq("id", unitId)
     .maybeSingle();
   if (error || !data) return null;
-  return (data as { label: string }).label;
+  const row = data as { label: string; is_backup: boolean };
+  // Mark the hidden reserve so an owner card for a ghost-parked booking
+  // never reads like a regular unit ("Liberty50-5" vs the actual Vespa).
+  return row.is_backup ? `${row.label} · GHOST BIKE` : row.label;
 }
 
 // ---------------------------------------------------------------------------
@@ -884,6 +896,7 @@ export function blockedPickupDates(
               toMs(m.from, m.startTime) < winEnd;
         if (!overlaps) continue;
         if (m.unitId === null) return true; // whole model down
+        if (!unitIds.includes(m.unitId)) continue; // ghost/backup block: off-the-books for regular K
         demand++;
       }
       for (const b of bookings) {

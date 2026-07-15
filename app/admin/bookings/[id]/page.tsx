@@ -103,6 +103,11 @@ export default async function AdminBookingDetail({
                         {gb.unitLabel}
                       </span>
                     )}
+                    {gb.onGhost && (
+                      <span className="text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 bg-violet-200 text-violet-900">
+                        ghost bike
+                      </span>
+                    )}
                     <span className="text-xs text-muted">
                       {gb.ridingStyle === "with_passenger" ? "with passenger" : "solo"}
                     </span>
@@ -135,6 +140,11 @@ export default async function AdminBookingDetail({
                   <span className="font-mono text-sm bg-ink/5 px-2 py-0.5">
                     {b.unitLabel}
                   </span>
+                  {b.onGhost && (
+                    <span className="ml-2 text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 bg-violet-200 text-violet-900">
+                      ghost bike
+                    </span>
+                  )}
                 </Field>
               )}
             </>
