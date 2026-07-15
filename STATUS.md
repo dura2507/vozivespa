@@ -10,7 +10,7 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-07-15.
+Last updated: 2026-07-15 (full-system audit + fixes).
 
 ## What this project is
 `rentamotozadar.com`: a scooter/motorbike rental platform for a shop in Zadar, Croatia.
@@ -55,22 +55,64 @@ anything that computes availability.**
   the ghost; admin PATCH edit keeps a ghost pin instead of silently un-ghosting.
   Full details: CALENDAR_MAP.md open-issues 2b.
 
+## Full-system audit 2026-07-15 (45 agents, adversarially verified)
+
+Fixed this pass (live bugs, the "different inconsistency every day" class):
+- Confirm/decline/CANCEL token pages mutated on GET. The cancel link is in every
+  customer email, so link-preview bots / mail scanners silently cancelled confirmed
+  bookings. Now read-only + click-to-confirm via POST /api/booking/[token]/decision
+  (status-guarded, capacity re-check + ghost-preserve on confirm, refuses cancel of a
+  picked-up rental, no PII leak to the customer).
+- sendOwnerCancellationTelegram: unescaped MarkdownV2 hyphen -> every cancellation
+  notification 400'd silently. Escaped.
+- Telegram "already <status>" edits could 500 -> Telegram retry-loop. Wrapped in catch.
+- Group confirm/decline judged from rows[0] (nondeterministic) and revived cancelled
+  rows. Now judges the tapped row, never revives cancelled.
+- Admin blocks form listed the Ghost Bike as blockable. Excluded (+ engine: service
+  blocks on out-of-pool units no longer consume regular K; done in the prior pass too).
+- POST /api/bookings recomputes total_price_cents server-side (was client-trusted;
+  drives deposit + card charge). Matches the group route.
+- Admin status flip is group-aware (whole group + group card/email) instead of one row.
+- Ghost Bike reserve now has its OWN dashboard tile (not folded into any model X/K).
+
+## MUST fix before enabling online payments (PAYMENT_PROVIDER=sumup) - not live yet
+These are dormant while payments run in "manual" mode, but are CRITICAL once the SumUp
+flag flips. Do not enable online payments until these are done:
+- [ ] /api/payments/verify never binds checkoutId/amount to the booking: any PAID
+      checkout confirms any pending booking. Bind reference + require amountCaptured >= expected.
+- [ ] /api/payments/checkout has no status gate + group deposit sums cancelled siblings.
+- [ ] /api/bookings/group has no payOnline branch -> every online group checkout 400s.
+- [ ] verify/webhook promote pending->confirmed with no findFreeUnit recheck (race -> two
+      confirmed on one unit) and don't persist paid amount/mode; payment_method diverges.
+- [ ] bookingRef is only 6 hex chars; checkout_reference not unique per merchant.
+
 ## Open backlog (none block the normal customer flow; operator-edge or display only)
-- [ ] `undo_return` (app/api/admin/bookings/[id]/fulfillment/route.ts): no capacity
-      re-check. Un-returning a booking whose slot was rebooked can briefly over-book.
-- [ ] Telegram confirm `includeBackup` asymmetry: single confirm passes `includeBackup:true`,
-      group confirm does not (app/api/telegram/webhook/route.ts). A group near capacity may
-      reject what a single booking would accept.
-- [ ] Payment confirm (app/api/payments/verify + webhook): no capacity re-check (low risk,
-      pending already counts as demand) and does NOT persist `telegram_message_refs`, so
-      online-paid owner cards go stale on later status edits.
-- [ ] Telegram card edit drops the unit label + English translation after a confirm
-      (lib/telegram.ts editTelegramMessageForBooking/Group). Cosmetic.
+- [ ] Timezone: BikeDetail + GroupBooking build "today" from the visitor's browser clock,
+      so a visitor behind Zagreb can select a Zagreb-past day (rejected only at submit).
+      Use zagrebNow().isoDate for the calendar boundary.
+- [ ] GroupBooking: cart qty not re-clamped when availability shrinks after a date change
+      (cart contradicts the card; sold-out overlay can lock the stepper); return-time
+      dropdown offers an inverted same-day window (server rejects, bad UX).
+- [ ] Riderly poller (lib/riderly.ts): marks ALL polled mail \Seen incl. non-allowlisted,
+      and marks \Seen BEFORE forward+insert -> can lose a Riderly booking and breaks the
+      "email stays unread if Telegram fails" safety net. Also the pending row it inserts is
+      not reconciled on Reject (blocks the bike).
+- [ ] Admin blocks route: overnight time-bounded block falsely rejected (start>=end without
+      dateFrom===dateTo check); per-unit block conflict blind to null-unit + pending bookings;
+      multi-unit block POSTs fan out concurrently (TOCTOU on the same unit).
+- [ ] Locale whitelist accepts 7 of 11 locales -> hu/sk/cs/pt customers stored as "en" and
+      get English emails. Needs a DB check-constraint migration too (bookings_locale_check).
+- [ ] Telegram: group/single card edits drop the English translation block; contact/riderly
+      code-span values double-escaped (tap-to-copy garbage); already-status paths sync only
+      the tapped copy.
+- [ ] cleanup-abandoned restore flips ANY id to pending (guard on status='cancelled'); token
+      hardcoded in source. poll-riderly auth fail-open when CRON_SECRET unset.
+- [x] DONE 2026-07-15: `undo_return` now re-checks capacity before reviving demand.
+- [x] DONE 2026-07-15: Telegram group confirm passes `includeBackup:true` (matches single).
+- [x] DONE 2026-07-15: payments verify/webhook persist `telegram_message_refs`.
 - [ ] TOCTOU: all write paths are check-then-write with no DB lock; two concurrent submits
       for the last unit can both pass. Low probability at this volume.
 - [ ] Dead code: `fullyBookedDates` (lib/pricing.ts), `fmtDateTime` (lib/telegram.ts).
-- [ ] Group online-payment path 400s (POST /api/bookings/group requires a receipt file,
-      no `payOnline` branch). Dormant until online payments are switched on.
 
 ## Deferred by owner (do LAST)
 - [ ] R2, the 8h minimum interior gap: a free gap that sits between two full-capacity
