@@ -10,7 +10,7 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-07-13.
+Last updated: 2026-07-15.
 
 ## What this project is
 `rentamotozadar.com`: a scooter/motorbike rental platform for a shop in Zadar, Croatia.
@@ -46,6 +46,14 @@ anything that computes availability.**
 - Admin edit path (owner extending a booking, e.g. David 24h): confirmed correct.
 - Availability pills confirmed synced to real-time state (`returned_at` reflected).
 - Half-day calendar cells (morning/afternoon red on the day picker): already existed and work.
+- 2026-07-15 (Priscilla: "2 liberty out but one is the Vespa"): ghost-parked rentals now
+  badged "ghost bike" in every admin list + booking detail; per-unit panel shows the
+  reserve as its own tagged row; fleet card splits "out" vs "reserved" (not yet picked
+  up); Telegram/owner-email unit label gets a "GHOST BIKE" suffix and survives status
+  edits. Counting: service blocks on the ghost unit no longer consume regular capacity
+  (engine fns + admin fleet card + public payload); floating blocks never auto-land on
+  the ghost; admin PATCH edit keeps a ghost pin instead of silently un-ghosting.
+  Full details: CALENDAR_MAP.md open-issues 2b.
 
 ## Open backlog (none block the normal customer flow; operator-edge or display only)
 - [ ] `undo_return` (app/api/admin/bookings/[id]/fulfillment/route.ts): no capacity
