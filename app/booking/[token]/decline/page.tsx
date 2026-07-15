@@ -1,10 +1,10 @@
-import { after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { sendCustomerBookingDecidedEmail } from "@/lib/email";
 import { DecisionView } from "@/app/booking/_components/decision-view";
 
 export const dynamic = "force-dynamic";
 
+// Owner decline link. Reads only and renders a decline button; the state
+// change happens on click via /api/booking/[token]/decision.
 export default async function DeclineBookingPage({
   params,
 }: {
@@ -21,56 +21,29 @@ export default async function DeclineBookingPage({
 
   if (error) {
     console.error("[booking/decline] lookup error", error);
-    return (
-      <DecisionView tone="error" message="We couldn't load this booking. Try again later." />
-    );
+    return <DecisionView tone="error" message="We couldn't load this booking. Try again later." />;
   }
-
   if (!booking) {
-    return (
-      <DecisionView
-        tone="error"
-        message="This decline link is invalid or expired."
-      />
-    );
+    return <DecisionView tone="error" message="This decline link is invalid or expired." />;
   }
-
   if (booking.status === "declined") {
     return <DecisionView tone="declined" booking={booking} alreadyDecided="declined" />;
   }
-
   if (booking.status !== "pending") {
     return (
       <DecisionView
         tone="error"
         booking={booking}
-        message={`This booking can no longer be declined - it is currently '${booking.status}'.`}
+        message={`This booking can no longer be declined, it is currently '${booking.status}'.`}
       />
     );
   }
 
-  const { data: updated, error: updateError } = await supabase
-    .from("bookings")
-    .update({ status: "declined", decided_at: new Date().toISOString() })
-    .eq("id", booking.id)
-    .select("*")
-    .maybeSingle<BookingRow>();
-
-  if (updateError || !updated) {
-    console.error("[booking/decline] update error", updateError);
-    return (
-      <DecisionView
-        tone="error"
-        booking={booking}
-        message="Could not update the booking. Please try again or use the dashboard."
-      />
-    );
-  }
-
-  // Notify customer after the page renders so it doesn't slow the owner.
-  after(async () => {
-    await sendCustomerBookingDecidedEmail(updated, "declined");
-  });
-
-  return <DecisionView tone="declined" booking={updated} />;
+  return (
+    <DecisionView
+      tone="prompt"
+      booking={booking}
+      confirm={{ token, action: "decline", intro: "Decline this booking? The dates stay open on the website." }}
+    />
+  );
 }

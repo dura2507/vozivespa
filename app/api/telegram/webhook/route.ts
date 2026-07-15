@@ -91,13 +91,19 @@ export async function POST(request: Request) {
     const rows = groupData as BookingRow[];
     const groupStatus = NEW_STATUS[parsed.action];
 
-    if (rows[0].status === groupStatus) {
+    // Judge state from the TAPPED row (booking), not rows[0]: created_at
+    // ascending is nondeterministic within one insert batch.
+    if (booking.status === groupStatus) {
       await answerTelegramCallback(cb.id, `Already ${groupStatus}`);
-      await editTelegramMessageForGroup(cb.message.chat.id, cb.message.message_id, rows);
+      // Best-effort: an identical re-render throws "message is not modified",
+      // which must not turn the webhook into a 500 (Telegram would retry-loop).
+      await editTelegramMessageForGroup(cb.message.chat.id, cb.message.message_id, rows).catch(
+        () => {},
+      );
       return NextResponse.json({ ok: true });
     }
 
-    const wasPending = rows[0].status === "pending";
+    const wasPending = booking.status === "pending";
 
     // On confirm, re-validate every assigned unit is still free for the
     // window (another booking could have taken one while this group sat
@@ -134,10 +140,13 @@ export async function POST(request: Request) {
     }
 
     const nowIso = new Date().toISOString();
+    // Never revive a row that was individually cancelled (e.g. a customer
+    // used their cancel link): a group confirm/decline must leave it alone.
     const { error: groupUpdErr } = await supabase
       .from("bookings")
       .update({ status: groupStatus, decided_at: nowIso })
-      .eq("booking_group_id", booking.booking_group_id);
+      .eq("booking_group_id", booking.booking_group_id)
+      .neq("status", "cancelled");
     if (groupUpdErr) {
       console.error("[telegram/webhook] group update error", groupUpdErr);
       await answerTelegramCallback(cb.id, "Update failed - try again");
@@ -155,7 +164,9 @@ export async function POST(request: Request) {
           : "✗ Declined - dates released",
     );
 
-    const updatedRows = rows.map((r) => ({ ...r, status: groupStatus, decided_at: nowIso }));
+    const updatedRows = rows.map((r) =>
+      r.status === "cancelled" ? r : { ...r, status: groupStatus, decided_at: nowIso },
+    );
     after(async () => {
       const edits = new Map<string, { chatId: string | number; messageId: number }>();
       edits.set(`${cb.message!.chat.id}:${cb.message!.message_id}`, {
@@ -182,7 +193,9 @@ export async function POST(request: Request) {
     await answerTelegramCallback(cb.id, `Already ${newStatus}`);
     // Make sure the keyboard reflects current state in case it drifted.
     const staleLabel = await getBikeUnitLabel(supabase, booking.bike_unit_id).catch(() => null);
-    await editTelegramMessageForBooking(cb.message.chat.id, cb.message.message_id, booking, staleLabel);
+    await editTelegramMessageForBooking(cb.message.chat.id, cb.message.message_id, booking, staleLabel).catch(
+      () => {},
+    );
     return NextResponse.json({ ok: true });
   }
 

@@ -13,6 +13,10 @@ async function listAllUnits(): Promise<BikeUnitRow[]> {
     .from("bike_units")
     .select("id, bike_id, label")
     .eq("active", true)
+    // The hidden Ghost Bike reserve is not a blockable public unit — the
+    // owner services/hands it out at their discretion. Keep it out of the
+    // blocks form so a service block can never land on it by mistake.
+    .eq("is_backup", false)
     .order("label", { ascending: true });
   if (error) throw new Error(error.message);
   return (data ?? []) as BikeUnitRow[];

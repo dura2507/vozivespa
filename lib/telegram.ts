@@ -596,7 +596,7 @@ export async function sendOwnerCancellationTelegram(booking: BookingRow): Promis
     `*Name:* ${escapeMd(booking.customer_name)}`,
     `*Phone:* ${escapeMd(booking.customer_phone)}`,
     "",
-    "_Dates are released - calendar updated automatically\\._",
+    "_Dates are released \\- calendar updated automatically\\._",
   ];
 
   const phoneDigits = booking.customer_phone.replace(/[^\d]/g, "");

@@ -5,8 +5,9 @@ import { CATEGORIES, BRAND } from "@/lib/mockData";
 import type { BookingRow, BookingStatus } from "@/lib/supabase";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { DEFAULT_LOCALE } from "@/lib/i18n/config";
+import { DecisionConfirm } from "./decision-confirm";
 
-type Tone = "confirmed" | "declined" | "error";
+type Tone = "confirmed" | "declined" | "error" | "prompt";
 
 const COPY: Record<Tone, { tag: string; title: string; sub: string; accent: string }> = {
   confirmed: {
@@ -27,6 +28,12 @@ const COPY: Record<Tone, { tag: string; title: string; sub: string; accent: stri
     sub: "Open the booking in the dashboard or use the alternative buttons.",
     accent: "#1a1a1a",
   },
+  prompt: {
+    tag: "One more step",
+    title: "Please confirm",
+    sub: "",
+    accent: "#B61F36",
+  },
 };
 
 function fmtDate(iso: string): string {
@@ -39,11 +46,18 @@ export async function DecisionView({
   booking,
   message,
   alreadyDecided,
+  confirm,
+  hidePii,
 }: {
   tone: Tone;
   booking?: BookingRow | null;
   message?: string;
   alreadyDecided?: BookingStatus;
+  // When set, render the action button (mutation happens only on click).
+  confirm?: { token: string; action: "confirm" | "decline" | "cancel"; intro: string };
+  // Customer-facing pages (cancel) must not show the owner PII block or the
+  // WhatsApp-the-customer button.
+  hidePii?: boolean;
 }) {
   const copy = COPY[tone];
   const bike = booking
@@ -69,9 +83,13 @@ export async function DecisionView({
             <h1 className="font-barlow font-black uppercase text-[clamp(2.5rem,7vw,4.5rem)] leading-[0.9] tracking-tight text-ink mb-4">
               {copy.title}
             </h1>
-            <p className="text-muted text-base leading-relaxed">
-              {message ?? copy.sub}
-            </p>
+            {confirm ? (
+              <DecisionConfirm token={confirm.token} action={confirm.action} intro={confirm.intro} />
+            ) : (
+              <p className="text-muted text-base leading-relaxed">
+                {message ?? copy.sub}
+              </p>
+            )}
             {alreadyDecided && (
               <p className="text-muted text-sm mt-3 italic">
                 This booking was already marked as {alreadyDecided} earlier.
@@ -79,7 +97,7 @@ export async function DecisionView({
             )}
           </div>
 
-          {booking && (
+          {booking && !hidePii && (
             <div className="bg-ink text-white p-6 mb-8">
               <p className="text-[10px] tracking-[0.25em] uppercase text-white/50 mb-3">
                 Booking summary
@@ -125,7 +143,7 @@ export async function DecisionView({
           )}
 
           <div className="flex flex-wrap gap-3">
-            {booking && (
+            {booking && !hidePii && (
               <a
                 href={`https://wa.me/${booking.customer_phone.replace(/[^\d]/g, "")}`}
                 target="_blank"

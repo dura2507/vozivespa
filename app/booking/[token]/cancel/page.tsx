@@ -1,14 +1,13 @@
-import { after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { sendOwnerCancellationTelegram } from "@/lib/telegram";
-import { sendOwnerCancellationEmail } from "@/lib/email";
 import { DecisionView } from "@/app/booking/_components/decision-view";
 
 export const dynamic = "force-dynamic";
 
-// Customer-initiated cancellation. Linked from the confirmation email so a
-// customer can free up the dates without writing a message. The DB trigger
-// removes the matching blocked_dates row when status leaves 'confirmed'.
+// Customer-initiated cancellation. This page ONLY reads and renders a
+// confirmation button - nothing changes until the customer clicks it (a POST
+// to /api/booking/[token]/decision). A GET-mutating version let mail scanners
+// and link-preview bots silently cancel confirmed bookings just by fetching
+// the link that sits in every confirmation email.
 export default async function CancelBookingPage({
   params,
 }: {
@@ -25,63 +24,37 @@ export default async function CancelBookingPage({
 
   if (error) {
     console.error("[booking/cancel] lookup error", error);
-    return (
-      <DecisionView tone="error" message="We couldn't load this booking. Try again later." />
-    );
+    return <DecisionView tone="error" message="We couldn't load this booking. Try again later." hidePii />;
   }
-
   if (!booking) {
-    return (
-      <DecisionView tone="error" message="This cancellation link is invalid or expired." />
-    );
+    return <DecisionView tone="error" message="This cancellation link is invalid or expired." hidePii />;
   }
-
   if (booking.status === "cancelled") {
-    return <DecisionView tone="declined" booking={booking} alreadyDecided="cancelled" />;
+    return <DecisionView tone="declined" hidePii message="This booking is already cancelled." />;
   }
-
   if (booking.status === "declined") {
-    return (
-      <DecisionView
-        tone="declined"
-        booking={booking}
-        message="This booking was already declined - nothing to cancel."
-      />
-    );
+    return <DecisionView tone="declined" hidePii message="This booking was already declined, nothing to cancel." />;
   }
-
-  // Allow cancelling pending or confirmed bookings.
-  const { data: updated, error: updateError } = await supabase
-    .from("bookings")
-    .update({ status: "cancelled", decided_at: new Date().toISOString() })
-    .eq("id", booking.id)
-    .select("*")
-    .maybeSingle<BookingRow>();
-
-  if (updateError || !updated) {
-    console.error("[booking/cancel] update error", updateError);
+  if (booking.picked_up_at) {
     return (
       <DecisionView
         tone="error"
-        booking={booking}
-        message="Could not cancel this booking. Please reach out to us on WhatsApp."
+        hidePii
+        message="This rental is already picked up and can't be cancelled here. Please contact us on WhatsApp."
       />
     );
   }
 
-  // Tell the owner via both channels - best effort, runs after response.
-  after(async () => {
-    await Promise.allSettled([
-      sendOwnerCancellationTelegram(updated),
-      sendOwnerCancellationEmail(updated, "customer"),
-    ]);
-  });
-
   return (
     <DecisionView
-      tone="declined"
-      booking={updated}
-      message="Your booking is cancelled and the dates are released. Sorry to see you go - drop us a line on WhatsApp anytime if plans change."
+      tone="prompt"
+      hidePii
+      confirm={{
+        token,
+        action: "cancel",
+        intro:
+          "Cancelling releases your dates. This can't be undone here - if you're not sure, message us on WhatsApp instead.",
+      }}
     />
   );
 }
