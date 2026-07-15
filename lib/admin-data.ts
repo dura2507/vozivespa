@@ -412,6 +412,76 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
   });
 }
 
+// ---- Ghost Bike reserve status (its own dashboard tile) --------------------
+//
+// The reserve (is_backup, physically the Vespa) is deliberately OUTSIDE every
+// model's X/K numbers — it isn't bookable online. So it gets its own tile:
+// free (walk-in joker available) or out with when it's back and who has it.
+export type ReserveEntry = {
+  unitId: string;
+  label: string;
+  // Which model this reserve backs (its bike_id / display name).
+  bikeId: string;
+  bikeName: string;
+  out: boolean;
+  // Current rental's customer + return moment when out.
+  customerName: string | null;
+  backMs: number | null;
+  // Next upcoming rental parked on the reserve (start), null when none.
+  nextMs: number | null;
+};
+
+export async function listReserveSummary(nowMs: number): Promise<ReserveEntry[]> {
+  const supabase = getServiceClient();
+  const { data: units, error } = await supabase
+    .from("bike_units")
+    .select("id, bike_id, label")
+    .eq("active", true)
+    .eq("is_backup", true);
+  if (error) throw new Error(error.message);
+  const reserves = (units ?? []) as Array<{ id: string; bike_id: string; label: string }>;
+  if (reserves.length === 0) return [];
+
+  const { data: bookings, error: bErr } = await supabase
+    .from("bookings")
+    .select("bike_unit_id, customer_name, date_from, date_to, pickup_time, return_time")
+    .in("bike_unit_id", reserves.map((u) => u.id))
+    .in("status", ["confirmed", "pending"])
+    .is("returned_at", null);
+  if (bErr) throw new Error(bErr.message);
+
+  type B = {
+    bike_unit_id: string;
+    customer_name: string;
+    date_from: string;
+    date_to: string;
+    pickup_time: string;
+    return_time: string;
+  };
+  const rows = (bookings ?? []) as B[];
+
+  return reserves.map((u) => {
+    const mine = rows.filter((b) => b.bike_unit_id === u.id);
+    const current =
+      mine.find(
+        (b) => toMs(b.date_from, b.pickup_time) <= nowMs && nowMs < toMs(b.date_to, b.return_time),
+      ) ?? null;
+    const next = mine
+      .filter((b) => toMs(b.date_from, b.pickup_time) > nowMs)
+      .sort((a, b) => toMs(a.date_from, a.pickup_time) - toMs(b.date_from, b.pickup_time))[0];
+    return {
+      unitId: u.id,
+      label: u.label,
+      bikeId: u.bike_id,
+      bikeName: bikeName(u.bike_id),
+      out: current !== null,
+      customerName: current?.customer_name ?? null,
+      backMs: current ? toMs(current.date_to, current.return_time) : null,
+      nextMs: next ? toMs(next.date_from, next.pickup_time) : null,
+    };
+  });
+}
+
 // ---- Per-vehicle availability (Thomas's ask: "next free slot per bike") ----
 
 export type UnitAvailability = {

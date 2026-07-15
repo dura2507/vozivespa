@@ -98,10 +98,24 @@ export async function POST(request: Request) {
         const single = rows[0];
         await sendCustomerBookingDecidedEmail(single, "confirmed");
         const unitLabel = await getBikeUnitLabel(supabase, single.bike_unit_id).catch(() => null);
-        await sendOwnerBookingTelegram(single, undefined, unitLabel);
+        // Persist the message refs like the request-flow path does — without
+        // them the owner card can never be status-synced later.
+        const refs = await sendOwnerBookingTelegram(single, undefined, unitLabel);
+        if (refs.length > 0) {
+          await supabase
+            .from("bookings")
+            .update({ telegram_message_refs: refs })
+            .eq("id", single.id);
+        }
       } else {
         await sendCustomerGroupBookingDecidedEmail(rows, "confirmed");
-        await sendOwnerGroupBookingTelegram(rows);
+        const refs = await sendOwnerGroupBookingTelegram(rows);
+        if (refs.length > 0 && rows[0].booking_group_id) {
+          await supabase
+            .from("bookings")
+            .update({ telegram_message_refs: refs })
+            .eq("booking_group_id", rows[0].booking_group_id);
+        }
       }
     } catch (err) {
       console.error("[/api/payments/verify] notify", err);

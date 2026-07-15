@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
+import { findFreeUnit, describeConflict } from "@/lib/availability";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,15 +33,70 @@ export async function POST(
   const supabase = getServiceClient();
   const { data: booking, error: lookupErr } = await supabase
     .from("bookings")
-    .select("id, status, picked_up_at")
+    .select("id, status, picked_up_at, returned_at, bike_id, date_from, date_to, pickup_time, return_time")
     .eq("id", id)
-    .maybeSingle<Pick<BookingRow, "id" | "status" | "picked_up_at">>();
+    .maybeSingle<
+      Pick<
+        BookingRow,
+        | "id"
+        | "status"
+        | "picked_up_at"
+        | "returned_at"
+        | "bike_id"
+        | "date_from"
+        | "date_to"
+        | "pickup_time"
+        | "return_time"
+      >
+    >();
   if (lookupErr) {
     console.error("[/api/admin/bookings/fulfillment] lookup", lookupErr);
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
   if (!booking) {
     return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+  }
+
+  // Undoing a return re-introduces this booking's demand (every capacity
+  // query filters `returned_at IS NULL`). If the freed slot was rebooked in
+  // the meantime, silently reviving it would over-book the fleet — so
+  // re-run the same capacity gate every booking write uses. Only the
+  // remaining window matters: for an already-started rental check from
+  // today, not from the original pickup date.
+  const revivesDemand =
+    (action === "undo_return" || action === "undo_pickup") &&
+    booking.returned_at != null &&
+    booking.status === "confirmed";
+  if (revivesDemand) {
+    const todayIso = new Date().toISOString().slice(0, 10);
+    const fromIso = booking.date_from > todayIso ? booking.date_from : todayIso;
+    if (booking.date_to >= fromIso) {
+      try {
+        const availability = await findFreeUnit(
+          supabase,
+          {
+            bikeId: booking.bike_id,
+            dateFrom: fromIso,
+            dateTo: booking.date_to,
+            pickupTime: booking.pickup_time,
+            returnTime: booking.return_time,
+            excludeBookingId: booking.id,
+          },
+          { includeBackup: true },
+        );
+        if (availability.conflict) {
+          return NextResponse.json(
+            {
+              error: `Can't undo the return — the freed slot was taken in the meantime (${describeConflict(availability.conflict)}).`,
+            },
+            { status: 409 },
+          );
+        }
+      } catch (err) {
+        console.error("[/api/admin/bookings/fulfillment] availability", err);
+        return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
+      }
+    }
   }
 
   const now = new Date().toISOString();

@@ -7,12 +7,14 @@ import {
   groupBookingsForDisplay,
   listAllBookings,
   listFleetSummary,
+  listReserveSummary,
   listServiceBlocks,
   listUnitAvailability,
   type BookingDisplay,
   type EnrichedBooking,
   type FleetEntry,
   type FleetUnitAvailability,
+  type ReserveEntry,
   type ServiceBlock,
 } from "@/lib/admin-data";
 
@@ -320,6 +322,51 @@ function FleetCard({ entry }: { entry: FleetEntry }) {
   );
 }
 
+// The Ghost Bike reserve (physically the Vespa) gets its OWN tile, fully
+// separate from the model X/K numbers — it isn't part of the bookable
+// fleet, so mixing it in would make every count lie in one direction or
+// the other. Violet = the ghost accent used everywhere else.
+function ReserveCard({ entry }: { entry: ReserveEntry }) {
+  return (
+    <div
+      className={`block p-4 border ${
+        entry.out ? "bg-violet-100 border-violet-400" : "bg-violet-50 border-violet-300"
+      }`}
+    >
+      <p className="text-xs font-bold text-ink truncate inline-flex items-center gap-1.5">
+        Ghost Bike
+        <span className="text-[9px] tracking-[0.15em] uppercase font-bold px-1 py-0.5 bg-violet-200 text-violet-900">
+          reserve
+        </span>
+      </p>
+      <p className="font-bold text-2xl text-ink mt-1 leading-none">
+        {entry.out ? "0" : "1"}
+        <span className="text-ink/40 text-base"> / 1</span>
+      </p>
+      <p
+        className={`text-[10px] tracking-[0.15em] uppercase font-bold mt-1 ${
+          entry.out ? "text-violet-900" : "text-emerald-700"
+        }`}
+      >
+        {entry.out ? "out" : "free now"}
+      </p>
+      <p className="text-[11px] text-ink/50 mt-0.5 leading-tight">
+        {entry.label} · backs {entry.bikeName}
+      </p>
+      {entry.out && entry.backMs && (
+        <p className="text-xs text-muted mt-2 leading-tight">
+          {entry.customerName ? `${entry.customerName} · ` : ""}back {fmtDateTimeMs(entry.backMs)}
+        </p>
+      )}
+      {!entry.out && entry.nextMs && (
+        <p className="text-xs text-muted mt-2 leading-tight">
+          next rental {fmtDateTimeMs(entry.nextMs)}
+        </p>
+      )}
+    </div>
+  );
+}
+
 // Per-vehicle availability grid for a single model. Answers the owner's
 // walk-in question at a glance: which specific bike is free now, and when
 // the busy ones come back / are next handable.
@@ -395,12 +442,13 @@ export default async function AdminDashboard({
 }) {
   const { bike: bikeFilter } = await searchParams;
   const nowMs = Date.now();
-  const [allRaw, fleet, blocksRaw, unitAvail] = await Promise.all([
+  const [allRaw, fleet, blocksRaw, unitAvail, reserves] = await Promise.all([
     listAllBookings(),
     listFleetSummary(nowMs),
     listServiceBlocks(),
     // Per-vehicle availability only matters on a single-model view.
     bikeFilter ? listUnitAvailability(bikeFilter, nowMs) : Promise.resolve(null),
+    listReserveSummary(nowMs),
   ]);
   const all = bikeFilter ? allRaw.filter((b) => b.bike_id === bikeFilter) : allRaw;
   const blocks = bikeFilter ? blocksRaw.filter((b) => b.bike_id === bikeFilter) : blocksRaw;
@@ -455,6 +503,9 @@ export default async function AdminDashboard({
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {fleet.map((entry) => (
               <FleetCard key={entry.bikeId} entry={entry} />
+            ))}
+            {reserves.map((entry) => (
+              <ReserveCard key={entry.unitId} entry={entry} />
             ))}
           </div>
         </section>

@@ -117,7 +117,10 @@ export async function POST(request: Request) {
       const groupId = booking.booking_group_id ?? undefined;
       for (const [bikeId, qty] of qtyByBike) {
         try {
-          const free = await findFreeUnits(supabase, { bikeId, ...win, excludeGroupId: groupId }, qty);
+          // includeBackup matches the single-booking confirm below — the
+          // owner's tap may dip into the reserve, so an identical fleet
+          // state must not confirm a solo booking but reject a group.
+          const free = await findFreeUnits(supabase, { bikeId, ...win, excludeGroupId: groupId }, qty, { includeBackup: true });
           if (free.totalFree < qty) {
             await answerTelegramCallback(cb.id, "Conflict - not enough bikes free for these dates");
             return NextResponse.json({ ok: true });
