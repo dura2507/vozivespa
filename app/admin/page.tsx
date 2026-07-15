@@ -351,7 +351,7 @@ function ReserveCard({ entry }: { entry: ReserveEntry }) {
         {entry.out ? "out" : "free now"}
       </p>
       <p className="text-[11px] text-ink/50 mt-0.5 leading-tight">
-        {entry.label} · backs {entry.bikeName}
+        {entry.label} · own vehicle, books &amp; prices as {entry.bikeName}
       </p>
       {entry.out && entry.backMs && (
         <p className="text-xs text-muted mt-2 leading-tight">
