@@ -344,12 +344,19 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       // twice); fall back to the row id so rows without an assigned unit
       // still count as one occupied slot, not zero.
       const key = b.bike_unit_id ?? `row:${b.id}`;
-      if (start <= nowMs && end >= nowMs) {
+      // A booking marked picked up is physically OUT no matter what its
+      // scheduled start says. Real case: a 2-bike group left at 11:00, but
+      // the second row's booked window started 11:30 - for 30 minutes the
+      // card said "1 free" while the bike was already gone.
+      if (b.picked_up_at != null && end >= nowMs) {
+        entry.outUnits.add(key);
+        entry.collected.add(key);
+      } else if (start <= nowMs && end >= nowMs) {
         entry.outUnits.add(key);
         // Physically with the customer only once collected (or past the
         // same 24h auto-fallback bucketBookings uses). Otherwise the unit
         // is committed-but-parked: reserved for an arriving pickup.
-        if (b.picked_up_at != null || nowMs > start + AUTO_FALLBACK_MS) {
+        if (nowMs > start + AUTO_FALLBACK_MS) {
           entry.collected.add(key);
         }
       } else if (start > nowMs) {
