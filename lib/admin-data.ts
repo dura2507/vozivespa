@@ -633,7 +633,12 @@ export async function listUnitAvailability(
     if (target) perUnit.get(target)?.push(iv);
   }
 
-  const units: UnitAvailability[] = [...unitIds, ...ghostUnitIds].map((id) => {
+  // Only the regular fleet is rendered here. The Ghost Bike (Vespa) used to
+  // get its own row too, but since it has its OWN dashboard tile that was a
+  // confusing duplicate - the panel now matches the model's "X / K" exactly.
+  // Ghost-parked rentals stay visible via the GHOST BIKE badges in the
+  // booking lists and the reserve tile.
+  const units: UnitAvailability[] = unitIds.map((id) => {
     const intervals = (perUnit.get(id) ?? []).sort((a, b) => a.start - b.start);
     const current = intervals.find((iv) => nowMs >= iv.start && nowMs < iv.end) ?? null;
     // Where to start hunting for a free pickup: after the current rental if
