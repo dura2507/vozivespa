@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
-import { findFreeUnit, findFreeUnits, findUnitConflict, describeConflict } from "@/lib/availability";
+import { findFreeUnit, findFreeUnits, findUnitConflict, describeConflict, buildConflictCard } from "@/lib/availability";
 import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
+import { SEASON_END_ISO } from "@/lib/season";
+import { CATEGORIES } from "@/lib/mockData";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -199,14 +201,16 @@ export async function POST(request: Request) {
   }
   if (availability.conflict) {
     const c = availability.conflict;
-    const message =
-      c?.kind === "manual"
-        ? "Selected dates are already blocked"
-        : c?.kind === "no_units"
-          ? "This bike has no active units"
-          : "Time conflict with another booking on this model";
+    const modelName = CATEGORIES.find((m) => m.id === bikeId)?.model ?? bikeId;
+    const card = await buildConflictCard(
+      supabase,
+      { bikeId, dateFrom, dateTo, pickupTime, returnTime },
+      c,
+      modelName,
+      { seasonEndIso: SEASON_END_ISO },
+    );
     return NextResponse.json(
-      { error: message, detail: c ? describeConflict(c) : undefined },
+      { error: card.headline, detail: describeConflict(c), conflict: card },
       { status: 409 },
     );
   }

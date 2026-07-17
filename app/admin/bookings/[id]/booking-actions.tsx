@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import type { EnrichedBooking } from "@/lib/admin-data";
 import { buildSlots, buildPickupSlots, isValidSlot } from "@/lib/pricing";
 import { CATEGORIES } from "@/lib/mockData";
+import { ConflictCard } from "@/app/admin/_components/conflict-card";
+import type { ConflictCardData } from "@/lib/availability";
 
 type Decision = "confirmed" | "declined" | "cancelled";
 type Fulfillment = "pickup" | "undo_pickup" | "return" | "undo_return";
@@ -42,6 +44,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
   const router = useRouter();
   const [busy, setBusy] = useState<Decision | "edit" | Fulfillment | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [conflictCard, setConflictCard] = useState<ConflictCardData | null>(null);
   const [info, setInfo] = useState<string | null>(null);
 
   const [editOpen, setEditOpen] = useState(false);
@@ -153,6 +156,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
       return;
     }
     setError(null);
+    setConflictCard(null);
     setInfo(null);
     setBusy("edit");
     try {
@@ -178,8 +182,13 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(body?.error || "Update failed");
-        if (body?.detail) setError((e) => `${e ?? ""} (${body.detail})`);
+        if (body?.conflict) {
+          setConflictCard(body.conflict as ConflictCardData);
+        } else {
+          setError(
+            body?.detail ? `${body?.error || "Update failed"} (${body.detail})` : body?.error || "Update failed",
+          );
+        }
         setBusy(null);
         return;
       }
@@ -570,6 +579,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
         )}
       </div>
 
+      {conflictCard && <ConflictCard data={conflictCard} />}
       {error && (
         <div className="bg-red/10 border border-red/30 px-4 py-3 text-sm text-red font-semibold">
           {error}

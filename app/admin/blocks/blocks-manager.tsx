@@ -9,6 +9,8 @@ import type { EnrichedBlock, EnrichedBooking } from "@/lib/admin-data";
 import type { PricingTiers } from "@/lib/mockData";
 import { LocaleFlag } from "@/components/Flag";
 import type { Locale } from "@/lib/i18n/config";
+import { ConflictCard } from "@/app/admin/_components/conflict-card";
+import type { ConflictCardData } from "@/lib/availability";
 
 type Bike = { id: string; name: string; pricing: PricingTiers };
 type Unit = { id: string; label: string };
@@ -124,6 +126,7 @@ export function BlocksManager({
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [conflictCard, setConflictCard] = useState<ConflictCardData | null>(null);
   const [info, setInfo] = useState<string | null>(null);
 
   const availableUnits = useMemo(
@@ -210,6 +213,7 @@ export function BlocksManager({
     e.preventDefault();
     if (!bikeId || !dateFrom || !dateTo) return;
     setError(null);
+    setConflictCard(null);
     setInfo(null);
     setBusy(true);
     try {
@@ -267,13 +271,17 @@ export function BlocksManager({
         });
         const body = await res.json().catch(() => ({}));
         if (!res.ok) {
-          // Show the conflict detail (who has each bike at the peak moment) so
-          // the owner sees WHY it's full instead of recomputing by hand.
-          setError(
-            body?.detail
-              ? `${body.error || "Time conflict"} — ${body.detail}`
-              : body?.error || "Could not save booking",
-          );
+          // Prefer the structured conflict card (who has each bike + what to do);
+          // fall back to a plain message for non-conflict errors.
+          if (body?.conflict) {
+            setConflictCard(body.conflict as ConflictCardData);
+          } else {
+            setError(
+              body?.detail
+                ? `${body.error || "Time conflict"} - ${body.detail}`
+                : body?.error || "Could not save booking",
+            );
+          }
           setBusy(false);
           return;
         }
@@ -817,6 +825,11 @@ export function BlocksManager({
         </div>
       </form>
 
+      {conflictCard && (
+        <div className="mb-4">
+          <ConflictCard data={conflictCard} />
+        </div>
+      )}
       {error && (
         <p className="text-red text-sm font-semibold mb-4">{error}</p>
       )}

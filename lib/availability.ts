@@ -35,10 +35,11 @@ export type Conflict =
       dateTo: string;
       pickupTime: string;
       returnTime: string;
-      // The moment the model is at capacity ("15.07 15:00") and EVERY booking
-      // out at that moment, so the owner sees exactly why there's no free bike
-      // instead of having to recompute the whole calendar by hand.
-      peakAt?: string;
+      // The moment the model is at capacity (epoch ms) and EVERY booking out at
+      // that moment, so the owner sees exactly why there's no free bike instead
+      // of having to recompute the whole calendar by hand. Stored raw so it can
+      // be formatted per locale at render time.
+      peakAtMs?: number;
       peakBookings?: ConflictBooking[];
       // Fleet size (K) at that moment, for "all 4 out" wording.
       capacity?: number;
@@ -54,17 +55,29 @@ export type AvailabilityResult = {
 };
 
 // Render an epoch-ms (built by toMs, i.e. a Zagreb wall-clock instant) back to
-// "15.07. 15:00" in the shop's timezone, for conflict messages.
-const ZAGREB_INSTANT_FMT = new Intl.DateTimeFormat("de-DE", {
+// "15 Jul 15:00" in the shop's timezone, for conflict messages (English - the
+// admin, incl. Priscilla, reads English).
+const ZAGREB_INSTANT_FMT = new Intl.DateTimeFormat("en-GB", {
   timeZone: "Europe/Zagreb",
-  day: "2-digit",
-  month: "2-digit",
+  day: "numeric",
+  month: "short",
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
 });
 function fmtInstant(ms: number): string {
   return ZAGREB_INSTANT_FMT.format(new Date(ms)).replace(",", "");
+}
+
+// "15 Jul" / "15 Jul 15:00" from an ISO date (+ optional HH:MM) - no timezone
+// math needed, the strings are already Zagreb wall-clock.
+const EN_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function enDate(iso: string): string {
+  const [, m, d] = iso.split("-");
+  return `${Number(d)} ${EN_MONTHS[Number(m) - 1]}`;
+}
+function enDateTime(iso: string, time: string): string {
+  return `${enDate(iso)} ${time.slice(0, 5)}`;
 }
 
 function toMs(date: string, time: string): number {
@@ -288,7 +301,7 @@ export async function findFreeUnit(
         dateTo: rep.date_to,
         pickupTime: rep.pickup_time.slice(0, 5),
         returnTime: rep.return_time.slice(0, 5),
-        peakAt: fmtInstant(peakT),
+        peakAtMs: peakT,
         peakBookings,
         capacity: K,
       },
@@ -567,25 +580,85 @@ export async function findFreeUnits(
   };
 }
 
-// Human-readable reason for showing in toasts / error pages.
-// Short DD.MM from an ISO date.
-function ddmm(iso: string): string {
-  return `${iso.slice(8, 10)}.${iso.slice(5, 7)}`;
-}
-
+// Human-readable one-line reason (fallback / toasts). The structured card
+// (buildConflictCard) is preferred where a UI can render it.
 export function describeConflict(c: Conflict): string {
-  if (c.kind === "manual") return `manual owner block ${ddmm(c.from)} → ${ddmm(c.to)}`;
-  if (c.kind === "no_units") return "no physical units configured for this bike";
-  // Full picture: at the peak moment every bike is out, list who has each one
-  // so the owner never has to recompute the calendar by hand.
+  if (c.kind === "manual") return `blocked for service ${enDate(c.from)} → ${enDate(c.to)}`;
+  if (c.kind === "no_units") return "no bikes configured for this model";
   if (c.peakBookings && c.peakBookings.length > 0) {
     const cap = c.capacity ?? c.peakBookings.length;
     const list = c.peakBookings
-      .map((b) => `${b.customerName} (${ddmm(b.dateFrom)} ${b.pickupTime} → ${ddmm(b.dateTo)} ${b.returnTime})`)
+      .map((b) => `${b.customerName} (until ${enDateTime(b.dateTo, b.returnTime)})`)
       .join(", ");
-    return `All ${cap} out${c.peakAt ? ` at ${c.peakAt}` : ""}: ${list}`;
+    return `all ${cap} out${c.peakAtMs ? ` at ${fmtInstant(c.peakAtMs)}` : ""}: ${list}`;
   }
-  return `${c.customerName} (${ddmm(c.dateFrom)} ${c.pickupTime} → ${ddmm(c.dateTo)} ${c.returnTime})`;
+  return `${c.customerName} (${enDateTime(c.dateFrom, c.pickupTime)} → ${enDateTime(c.dateTo, c.returnTime)})`;
+}
+
+// Data for the owner-facing conflict CARD: WHAT / WHY / WHO has each bike / a
+// concrete "would fit if" suggestion. Rendered mobile-first in the walk-in and
+// edit forms so a conflict is obvious at a glance.
+export type ConflictCardData = {
+  headline: string;
+  window: string;
+  reason: string;
+  out: Array<{ name: string; back: string }>;
+  suggestion: string | null;
+};
+
+export async function buildConflictCard(
+  supabase: SupabaseClient,
+  w: BookingWindow,
+  conflict: Conflict,
+  modelName: string,
+  opts: { seasonEndIso?: string } = {},
+): Promise<ConflictCardData> {
+  const window = `${enDateTime(w.dateFrom, w.pickupTime)} → ${enDateTime(w.dateTo, w.returnTime)}`;
+  if (conflict.kind === "manual") {
+    return {
+      headline: `${modelName} blocked`,
+      window,
+      reason: `This model is blocked for service ${enDate(conflict.from)} → ${enDate(conflict.to)}.`,
+      out: [],
+      suggestion: null,
+    };
+  }
+  if (conflict.kind === "no_units") {
+    return { headline: `No ${modelName}`, window, reason: "This model has no bookable bikes set up.", out: [], suggestion: null };
+  }
+  const cap = conflict.capacity ?? conflict.peakBookings?.length ?? 0;
+  const bookings = conflict.peakBookings ?? [
+    { customerName: conflict.customerName, dateFrom: conflict.dateFrom, dateTo: conflict.dateTo, pickupTime: conflict.pickupTime, returnTime: conflict.returnTime },
+  ];
+  const out = bookings.map((b) => ({ name: b.customerName, back: enDateTime(b.dateTo, b.returnTime) }));
+
+  // Concrete "would fit if" hint - same functions the fleet page uses.
+  let suggestion: string | null = null;
+  try {
+    const earliest = await earliestFreePickupSameDay(supabase, w);
+    if (earliest) suggestion = `Pick up from ${earliest} the same day`;
+    else {
+      const latest = await latestFreeReturnSameDay(supabase, w);
+      if (latest) suggestion = `Return by ${latest} the same day`;
+      else {
+        const next = await nextFreeWindow(supabase, w, { seasonEndIso: opts.seasonEndIso });
+        if (next) suggestion = `Next free: ${enDateTime(next.dateFrom, next.pickupTime)}`;
+      }
+    }
+  } catch {
+    // best-effort; a missing suggestion just omits that line.
+  }
+
+  return {
+    headline: `No free ${modelName}`,
+    window,
+    reason:
+      cap > 0
+        ? `All ${cap} bikes are out${conflict.peakAtMs ? ` at ${fmtInstant(conflict.peakAtMs)}` : ""} - none free for this window.`
+        : "No free bike for this window.",
+    out,
+    suggestion,
+  };
 }
 
 function addDaysIso(iso: string, days: number): string {

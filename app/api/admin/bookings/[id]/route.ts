@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findFreeUnit, findUnitConflict, describeConflict } from "@/lib/availability";
+import { findFreeUnit, findUnitConflict, describeConflict, buildConflictCard } from "@/lib/availability";
 import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
+import { SEASON_END_ISO } from "@/lib/season";
+import { CATEGORIES } from "@/lib/mockData";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -123,15 +125,22 @@ export async function PATCH(
       excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined,
     }, { includeBackup: true });
     if (availability.conflict) {
+      const modelName = CATEGORIES.find((m) => m.id === targetBikeId)?.model ?? targetBikeId;
+      const card = await buildConflictCard(
+        supabase,
+        { bikeId: targetBikeId, dateFrom, dateTo, pickupTime, returnTime, excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined },
+        availability.conflict,
+        modelName,
+        { seasonEndIso: SEASON_END_ISO },
+      );
       return NextResponse.json(
         {
           error:
             targetBikeId === booking.bike_id
               ? "Time conflict"
               : "No free unit on the new model for this window",
-          detail: availability.conflict
-            ? describeConflict(availability.conflict)
-            : "no free unit",
+          detail: describeConflict(availability.conflict),
+          conflict: card,
         },
         { status: 409 },
       );
