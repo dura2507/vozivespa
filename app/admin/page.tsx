@@ -328,8 +328,10 @@ function FleetCard({ entry }: { entry: FleetEntry }) {
 // the other. Violet = the ghost accent used everywhere else.
 function ReserveCard({ entry }: { entry: ReserveEntry }) {
   return (
-    <div
-      className={`block p-4 border ${
+    <Link
+      href="/admin?ghost=1"
+      prefetch={false}
+      className={`block p-4 border transition-colors hover:border-violet-600 ${
         entry.out ? "bg-violet-100 border-violet-400" : "bg-violet-50 border-violet-300"
       }`}
     >
@@ -363,7 +365,7 @@ function ReserveCard({ entry }: { entry: ReserveEntry }) {
           next rental {fmtDateTimeMs(entry.nextMs)}
         </p>
       )}
-    </div>
+    </Link>
   );
 }
 
@@ -438,9 +440,12 @@ function UnitAvailabilityPanel({
 export default async function AdminDashboard({
   searchParams,
 }: {
-  searchParams: Promise<{ bike?: string }>;
+  searchParams: Promise<{ bike?: string; ghost?: string }>;
 }) {
-  const { bike: bikeFilter } = await searchParams;
+  const { bike: bikeFilter, ghost: ghostParam } = await searchParams;
+  // /admin?ghost=1: the Ghost Bike (Vespa) view — every booking parked on the
+  // reserve, past and upcoming, so the joker has its own history page.
+  const ghostFilter = ghostParam === "1";
   const nowMs = Date.now();
   const [allRaw, fleet, blocksRaw, unitAvail, reserves] = await Promise.all([
     listAllBookings(),
@@ -450,8 +455,17 @@ export default async function AdminDashboard({
     bikeFilter ? listUnitAvailability(bikeFilter, nowMs) : Promise.resolve(null),
     listReserveSummary(nowMs),
   ]);
-  const all = bikeFilter ? allRaw.filter((b) => b.bike_id === bikeFilter) : allRaw;
-  const blocks = bikeFilter ? blocksRaw.filter((b) => b.bike_id === bikeFilter) : blocksRaw;
+  const ghostUnitIds = new Set(reserves.map((r) => r.unitId));
+  const all = ghostFilter
+    ? allRaw.filter((b) => b.onGhost)
+    : bikeFilter
+      ? allRaw.filter((b) => b.bike_id === bikeFilter)
+      : allRaw;
+  const blocks = ghostFilter
+    ? blocksRaw.filter((b) => b.bike_unit_id != null && ghostUnitIds.has(b.bike_unit_id))
+    : bikeFilter
+      ? blocksRaw.filter((b) => b.bike_id === bikeFilter)
+      : blocksRaw;
   const buckets = bucketBookings(all, nowMs);
   const filteredEntry = bikeFilter ? fleet.find((f) => f.bikeId === bikeFilter) : null;
 
@@ -473,13 +487,18 @@ export default async function AdminDashboard({
   return (
     <div className="max-w-7xl mx-auto px-5 md:px-8 py-8">
       <div className="flex items-baseline justify-between mb-6 flex-wrap gap-4">
-        <h1 className="font-bold text-3xl text-ink">
-          {filteredEntry ? filteredEntry.bikeName : "Dashboard"}
+        <h1 className="font-bold text-3xl text-ink inline-flex items-center gap-3">
+          {ghostFilter ? "Ghost Bike" : filteredEntry ? filteredEntry.bikeName : "Dashboard"}
+          {ghostFilter && (
+            <span className="text-[10px] tracking-[0.15em] uppercase font-bold px-1.5 py-0.5 bg-violet-200 text-violet-900 align-middle">
+              reserve
+            </span>
+          )}
         </h1>
         <p className="text-xs text-muted">
-          {all.length} {bikeFilter ? "filtered" : "total"} bookings ·{" "}
+          {all.length} {bikeFilter || ghostFilter ? "filtered" : "total"} bookings ·{" "}
           <span className="text-red font-bold">{buckets.pending.length} pending</span>
-          {bikeFilter && (
+          {(bikeFilter || ghostFilter) && (
             <>
               {" · "}
               <Link href="/admin" className="text-red font-bold uppercase tracking-widest">
@@ -490,7 +509,7 @@ export default async function AdminDashboard({
         </p>
       </div>
 
-      {!bikeFilter && (
+      {!bikeFilter && !ghostFilter && (
         <section className="mb-10">
           <div className="flex items-baseline gap-3 mb-3">
             <h2 className="font-semibold uppercase text-xs tracking-[0.12em] text-ink/80">
