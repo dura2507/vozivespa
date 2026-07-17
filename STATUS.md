@@ -10,7 +10,7 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-07-17.
+Last updated: 2026-07-17 (proactive consistency sweep).
 
 ## What this project is
 `rentamotozadar.com`: a scooter/motorbike rental platform for a shop in Zadar, Croatia.
@@ -85,6 +85,40 @@ Fixed this pass (live bugs, the "different inconsistency every day" class):
   left 11:00, second row booked 11:30 -> showed "1 free" for 30 min).
 - Ghost Bike stays visible (marked GHOST) in the model's per-unit panel by design;
   it has its own dashboard tile and never counts toward the model's K.
+
+## Proactive consistency sweep 2026-07-17 (26 agents, adversarially verified)
+Found 20 confirmed high/medium issues in two root patterns. WAVE 1 DONE + deployed:
+- picked-up/returned physical state now consistent across fleet card, per-unit panel,
+  homepage badge, Vespa tile (was only on the fleet card); fleet card keeps a picked-up
+  bike OUT until actually returned (not just past scheduled return).
+- walk-in "All (N)" no longer books the Ghost Bike reserve (is_backup filter).
+- FulfillButton surfaces HTTP errors; header "pending" counts grouped; edit-cancel clears
+  the conflict card.
+
+WAVE 2 - group operations touch only ONE row (do next, write paths, careful):
+- [ ] Edit PATCH (api/admin/bookings/[id]/route.ts:~275): editing a group's window/customer
+      splits the group - apply shared fields to every row in booking_group_id.
+- [ ] Status route (…/status:~111): re-confirming a FULLY-cancelled group updates 0 rows but
+      returns ok:true -> green "confirmed" banner while badge still says CANCELLED. Detect
+      0-rows and report honestly (don't silently succeed).
+- [ ] Status group cancel (…/status:~125): cancelling a confirmed GROUP never emails the
+      customer though the help text promises it. Send group email in the group cancel branch.
+- [ ] Fulfillment (…/fulfillment:~127): pickup/return acts on one bike of a group; apply to
+      the whole group (or add per-bike controls).
+
+WAVE 3 - customer/telegram + client calendar + labels:
+- [ ] Customer self-cancel (api/booking/[token]/decision:~91) never edits the original Telegram
+      card -> old card still shows Confirm/Decline buttons. Edit refs to "Cancelled".
+- [ ] sendOwnerCancellationTelegram hardcodes "Customer cancelled" even for owner-initiated
+      cancels; add a source param like the email.
+- [ ] BikeDetail calendar ignores API manualBlocks -> partial-day service blocks invisible,
+      customer offered pickup times the server then rejects.
+- [ ] Timezone: BikeDetail:~1008 + GroupBooking:~491 disable past days by browser clock, not
+      zagrebNow() - out-of-tz visitors get a wrong "today".
+- [ ] Homepage badge stays green after 18:30 Zagreb / when idle unit is boxed in within a
+      slot+turnaround (no bookable slot today) while the detail calendar shows today full.
+- [ ] blocks page intro paragraph describes the OLD name-inferred flow; "Recent entries" lists
+      blocks oldest-first and unbounded.
 
 ## MUST fix before enabling online payments (PAYMENT_PROVIDER=sumup) - not live yet
 These are dormant while payments run in "manual" mode, but are CRITICAL once the SumUp
