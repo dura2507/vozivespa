@@ -10,7 +10,7 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-07-15 (full-system audit + fixes).
+Last updated: 2026-07-17.
 
 ## What this project is
 `rentamotozadar.com`: a scooter/motorbike rental platform for a shop in Zadar, Croatia.
@@ -74,6 +74,17 @@ Fixed this pass (live bugs, the "different inconsistency every day" class):
   drives deposit + card charge). Matches the group route.
 - Admin status flip is group-aware (whole group + group card/email) instead of one row.
 - Ghost Bike reserve now has its OWN dashboard tile (not folded into any model X/K).
+
+## Recent (2026-07-16/17)
+- Turnaround buffer counts return-side only (was both sides): fixed the phantom
+  "Time conflict" on back-to-back bookings with the legal 30-min gap (Anna/Tomas case).
+- Conflict card (walk-in + admin edit): structured English mobile-first card - headline,
+  window, "all K out at <instant>", who has each bike + when back, green "Would fit if"
+  suggestion. buildConflictCard() in lib/availability.ts; routes return `conflict`.
+- Fleet card: picked-up bookings count as OUT before their booked start (2-bike group
+  left 11:00, second row booked 11:30 -> showed "1 free" for 30 min).
+- Ghost Bike stays visible (marked GHOST) in the model's per-unit panel by design;
+  it has its own dashboard tile and never counts toward the model's K.
 
 ## MUST fix before enabling online payments (PAYMENT_PROVIDER=sumup) - not live yet
 These are dormant while payments run in "manual" mode, but are CRITICAL once the SumUp
