@@ -3,6 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+function alertOnce(msg: string) {
+  if (typeof window !== "undefined") window.alert(msg);
+}
+
 // One-tap pickup/return confirmation right on the dashboard card, so the
 // owner doesn't have to open the booking detail for the common action.
 // Marks every booking in the group (walk-in groups = multiple bikes).
@@ -35,7 +39,7 @@ export function FulfillButton({
     if (!window.confirm(msg)) return;
     setBusy(true);
     try {
-      await Promise.all(
+      const results = await Promise.all(
         ids.map((id) =>
           fetch(`/api/admin/bookings/${id}/fulfillment`, {
             method: "POST",
@@ -44,8 +48,23 @@ export function FulfillButton({
           }),
         ),
       );
+      // fetch only rejects on network errors - an HTTP 409/500 would otherwise
+      // be swallowed and the list would refresh as if it worked.
+      const failed = results.filter((r) => !r.ok);
+      if (failed.length > 0) {
+        let detail = "";
+        try {
+          detail = ((await failed[0].json()) as { error?: string })?.error ?? "";
+        } catch {
+          /* ignore */
+        }
+        alertOnce(`Couldn't ${action === "return" ? "mark returned" : "mark picked up"}${detail ? `: ${detail}` : ". Please try again."}`);
+        setBusy(false);
+        return;
+      }
       router.refresh();
     } catch {
+      alertOnce("Network error - please try again.");
       setBusy(false);
     }
   }

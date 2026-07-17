@@ -497,7 +497,7 @@ export default async function AdminDashboard({
         </h1>
         <p className="text-xs text-muted">
           {all.length} {bikeFilter || ghostFilter ? "filtered" : "total"} bookings ·{" "}
-          <span className="text-red font-bold">{buckets.pending.length} pending</span>
+          <span className="text-red font-bold">{groupBookingsForDisplay(buckets.pending).length} pending</span>
           {(bikeFilter || ghostFilter) && (
             <>
               {" · "}

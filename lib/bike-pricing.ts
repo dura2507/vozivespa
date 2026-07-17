@@ -270,7 +270,7 @@ export async function getAvailableNowCounts(): Promise<
       .eq("is_backup", false),
     supabase
       .from("bookings")
-      .select("bike_id, bike_unit_id, date_from, date_to, pickup_time, return_time")
+      .select("bike_id, bike_unit_id, date_from, date_to, pickup_time, return_time, picked_up_at")
       .in("status", ["confirmed", "pending"])
       // Pull every booking from today onwards, not just the ones
       // currently covering today. The unitFreeAt chain walks forward
@@ -302,6 +302,7 @@ export async function getAvailableNowCounts(): Promise<
     date_to: string;
     pickup_time: string;
     return_time: string;
+    picked_up_at: string | null;
   };
   type M = {
     bike_id: string;
@@ -326,8 +327,14 @@ export async function getAvailableNowCounts(): Promise<
   // unpinned rental was invisible to the count).
   const unpinnedByBike = new Map<string, Array<{ start: number; end: number }>>();
   for (const b of ((bookingsRes.data ?? []) as B[])) {
-    const start = zagrebWallToMs(b.date_from, b.pickup_time);
-    const end = zagrebWallToMs(b.date_to, b.return_time);
+    // A picked-up (not-returned) bike is physically out NOW even if its booked
+    // window hasn't started or has passed - pull start back to now and end
+    // forward, so the badge agrees with the admin fleet card and the per-unit
+    // panel instead of showing "available now" for a bike that already left.
+    const schedStart = zagrebWallToMs(b.date_from, b.pickup_time);
+    const schedEnd = zagrebWallToMs(b.date_to, b.return_time);
+    const start = b.picked_up_at ? Math.min(schedStart, nowMs) : schedStart;
+    const end = b.picked_up_at ? Math.max(schedEnd, nowMs + 60_000) : schedEnd;
     if (!b.bike_unit_id) {
       let arr = unpinnedByBike.get(b.bike_id);
       if (!arr) {

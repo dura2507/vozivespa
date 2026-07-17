@@ -344,11 +344,13 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       // twice); fall back to the row id so rows without an assigned unit
       // still count as one occupied slot, not zero.
       const key = b.bike_unit_id ?? `row:${b.id}`;
-      // A booking marked picked up is physically OUT no matter what its
-      // scheduled start says. Real case: a 2-bike group left at 11:00, but
-      // the second row's booked window started 11:30 - for 30 minutes the
-      // card said "1 free" while the bike was already gone.
-      if (b.picked_up_at != null && end >= nowMs) {
+      // A booking marked picked up is physically OUT until it's actually
+      // returned (returned_at is already null here), no matter what its
+      // scheduled window says. Covers BOTH an early pickup (booked 11:30, left
+      // 11:00) AND a late return (past the scheduled return but not marked
+      // back). Without this the fleet card frees the bike while "Today's
+      // returns" still lists it.
+      if (b.picked_up_at != null) {
         entry.outUnits.add(key);
         entry.collected.add(key);
       } else if (start <= nowMs && end >= nowMs) {
@@ -451,7 +453,7 @@ export async function listReserveSummary(nowMs: number): Promise<ReserveEntry[]>
 
   const { data: bookings, error: bErr } = await supabase
     .from("bookings")
-    .select("bike_unit_id, customer_name, date_from, date_to, pickup_time, return_time")
+    .select("bike_unit_id, customer_name, date_from, date_to, pickup_time, return_time, picked_up_at")
     .in("bike_unit_id", reserves.map((u) => u.id))
     .in("status", ["confirmed", "pending"])
     .is("returned_at", null);
@@ -464,14 +466,19 @@ export async function listReserveSummary(nowMs: number): Promise<ReserveEntry[]>
     date_to: string;
     pickup_time: string;
     return_time: string;
+    picked_up_at: string | null;
   };
   const rows = (bookings ?? []) as B[];
 
   return reserves.map((u) => {
     const mine = rows.filter((b) => b.bike_unit_id === u.id);
+    // Out = physically gone: picked up (and not returned - returned_at is null
+    // here) OR inside its booked window. Matches the fleet card semantics.
     const current =
       mine.find(
-        (b) => toMs(b.date_from, b.pickup_time) <= nowMs && nowMs < toMs(b.date_to, b.return_time),
+        (b) =>
+          b.picked_up_at != null ||
+          (toMs(b.date_from, b.pickup_time) <= nowMs && nowMs < toMs(b.date_to, b.return_time)),
       ) ?? null;
     const next = mine
       .filter((b) => toMs(b.date_from, b.pickup_time) > nowMs)
@@ -566,7 +573,7 @@ export async function listUnitAvailability(
       .eq("active", true),
     supabase
       .from("bookings")
-      .select("bike_unit_id, date_from, date_to, pickup_time, return_time, returned_at, status")
+      .select("bike_unit_id, date_from, date_to, pickup_time, return_time, returned_at, picked_up_at, status")
       .eq("bike_id", bikeId)
       .in("status", ["confirmed", "pending"])
       .is("returned_at", null),
@@ -600,9 +607,16 @@ export async function listUnitAvailability(
   // view can't show a unit "free" while the fleet is actually at capacity.
   const unassignedIvs: Array<{ start: number; end: number }> = [];
   for (const b of (bookingsRes.data ?? []) as Array<{
-    bike_unit_id: string | null; date_from: string; date_to: string; pickup_time: string; return_time: string;
+    bike_unit_id: string | null; date_from: string; date_to: string; pickup_time: string; return_time: string; picked_up_at: string | null;
   }>) {
-    const iv = { start: toMs(b.date_from, b.pickup_time), end: toMs(b.date_to, b.return_time) };
+    // A picked-up (but not returned) bike is physically OUT now regardless of
+    // its scheduled window, so the panel agrees with the fleet card: pull the
+    // interval start back to now and its end to at least now.
+    const schedStart = toMs(b.date_from, b.pickup_time);
+    const schedEnd = toMs(b.date_to, b.return_time);
+    const iv = b.picked_up_at
+      ? { start: Math.min(schedStart, nowMs), end: Math.max(schedEnd, nowMs + 60_000) }
+      : { start: schedStart, end: schedEnd };
     if (b.bike_unit_id) {
       perUnit.get(b.bike_unit_id)?.push(iv);
     } else {

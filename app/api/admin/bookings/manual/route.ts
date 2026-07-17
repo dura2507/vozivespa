@@ -250,7 +250,10 @@ export async function POST(request: Request) {
       .from("bike_units")
       .select("id")
       .eq("bike_id", bikeId)
-      .eq("active", true);
+      .eq("active", true)
+      // "All" means all BOOKABLE units - never the hidden Ghost Bike reserve,
+      // or a walk-in "all" would silently book the Vespa too (K+1 rows).
+      .eq("is_backup", false);
     if (unitErr) {
       console.error("[/api/admin/bookings/manual] all-units lookup", unitErr);
       return NextResponse.json({ error: "Database error" }, { status: 500 });

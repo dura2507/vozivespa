@@ -75,6 +75,11 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
 
   function resetEditState() {
     setEditOpen(false);
+    // Clear any conflict card / error banner so cancelling the edit doesn't
+    // leave a scary red conflict on screen with no form to act on.
+    setError(null);
+    setConflictCard(null);
+    setInfo(null);
     setBikeId(booking.bike_id);
     setDateFrom(booking.date_from);
     setDateTo(booking.date_to);
