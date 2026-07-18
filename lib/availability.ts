@@ -85,6 +85,35 @@ function toMs(date: string, time: string): number {
   return new Date(`${date}T${t}`).getTime();
 }
 
+// If the owner never taps "returned", assume it came back 24h after the
+// scheduled return. Keep this in lockstep with bucketBookings' AUTO_FALLBACK_MS
+// so the "Currently out" list and the fleet/unit/badge counts never disagree.
+export const RETURN_AUTO_FALLBACK_MS = 24 * 60 * 60_000;
+
+// Occupancy interval for "is this unit physically out RIGHT NOW" displays
+// (fleet card, per-unit panel, reserve tile, homepage badge). Defined ONCE so
+// every surface counts identically. returned_at rows are filtered upstream.
+//
+//  - not picked up  -> occupies its scheduled window [schedStart, schedEnd]
+//  - picked up      -> out from min(pickup-proxy, now) until its scheduled
+//                      return; if never marked returned it lingers at most 24h
+//                      past that, then auto-forgiven. Without the cap an old
+//                      un-returned June rental would count as "out" forever and
+//                      contradict the "Currently out" list (which auto-forgives
+//                      after 24h) -> the "2 out but only 1 out" report.
+export function occupancyInterval(
+  schedStart: number,
+  schedEnd: number,
+  pickedUp: boolean,
+  nowMs: number,
+): { start: number; end: number } {
+  if (!pickedUp) return { start: schedStart, end: schedEnd };
+  return {
+    start: Math.min(schedStart, nowMs),
+    end: Math.min(Math.max(schedEnd, nowMs + 60_000), schedEnd + RETURN_AUTO_FALLBACK_MS),
+  };
+}
+
 // Walks the bike's physical fleet and returns the first unit that has
 // no time-overlapping confirmed booking (with the 1h turnaround buffer)
 // and isn't covered by an owner manual block. Returns the conflict

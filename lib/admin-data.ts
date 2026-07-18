@@ -13,6 +13,7 @@ import {
   LAST_PICKUP_MINUTES,
 } from "@/lib/pricing";
 import { SEASON_END_ISO } from "@/lib/season";
+import { occupancyInterval } from "@/lib/availability";
 
 export type EnrichedBooking = BookingRow & {
   bikeName: string;
@@ -338,30 +339,31 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       // Skip bookings on a backup unit — they're outside the public
       // capacity math (see bookableUnitIds above).
       if (b.bike_unit_id && !bookableUnitIds.has(b.bike_unit_id)) continue;
-      const start = toMs(b.date_from, b.pickup_time);
-      const end = toMs(b.date_to, b.return_time);
+      const schedStart = toMs(b.date_from, b.pickup_time);
+      const schedEnd = toMs(b.date_to, b.return_time);
       // Prefer the unit id (dedupes if the same unit is somehow booked
       // twice); fall back to the row id so rows without an assigned unit
       // still count as one occupied slot, not zero.
       const key = b.bike_unit_id ?? `row:${b.id}`;
-      // A booking marked picked up is physically OUT until it's actually
-      // returned (returned_at is already null here), no matter what its
-      // scheduled window says. Covers BOTH an early pickup (booked 11:30, left
-      // 11:00) AND a late return (past the scheduled return but not marked
-      // back). Without this the fleet card frees the bike while "Today's
-      // returns" still lists it.
-      if (b.picked_up_at != null) {
+      // Shared occupancy model (see occupancyInterval): a picked-up bike is
+      // out until its scheduled return, and at most 24h past that if never
+      // marked returned, then auto-forgiven. Covers an early pickup without
+      // pinning an ancient un-returned rental as phantom "out" forever.
+      const { start, end } = occupancyInterval(
+        schedStart,
+        schedEnd,
+        b.picked_up_at != null,
+        nowMs,
+      );
+      if (start <= nowMs && nowMs < end) {
         entry.outUnits.add(key);
-        entry.collected.add(key);
-      } else if (start <= nowMs && end >= nowMs) {
-        entry.outUnits.add(key);
-        // Physically with the customer only once collected (or past the
-        // same 24h auto-fallback bucketBookings uses). Otherwise the unit
-        // is committed-but-parked: reserved for an arriving pickup.
-        if (nowMs > start + AUTO_FALLBACK_MS) {
+        // Physically with the customer once collected, or past the 24h pickup
+        // auto-fallback bucketBookings uses. Otherwise the unit is committed-
+        // but-parked: reserved for an arriving pickup.
+        if (b.picked_up_at != null || nowMs > schedStart + AUTO_FALLBACK_MS) {
           entry.collected.add(key);
         }
-      } else if (start > nowMs) {
+      } else if (schedStart > nowMs) {
         // A future booking that hasn't started yet → upcoming, NOT out. The
         // site has no minimum-gap rule, so the unit is free until the pickup
         // (dashboard matches the public availability).
@@ -472,14 +474,19 @@ export async function listReserveSummary(nowMs: number): Promise<ReserveEntry[]>
 
   return reserves.map((u) => {
     const mine = rows.filter((b) => b.bike_unit_id === u.id);
-    // Out = physically gone: picked up (and not returned - returned_at is null
-    // here) OR inside its booked window. Matches the fleet card semantics.
+    // Out = physically gone right now, using the shared occupancy model so the
+    // reserve tile matches the fleet card: inside its booked window, or picked
+    // up and not yet 24h past its scheduled return (returned_at is null here).
     const current =
-      mine.find(
-        (b) =>
-          b.picked_up_at != null ||
-          (toMs(b.date_from, b.pickup_time) <= nowMs && nowMs < toMs(b.date_to, b.return_time)),
-      ) ?? null;
+      mine.find((b) => {
+        const iv = occupancyInterval(
+          toMs(b.date_from, b.pickup_time),
+          toMs(b.date_to, b.return_time),
+          b.picked_up_at != null,
+          nowMs,
+        );
+        return iv.start <= nowMs && nowMs < iv.end;
+      }) ?? null;
     const next = mine
       .filter((b) => toMs(b.date_from, b.pickup_time) > nowMs)
       .sort((a, b) => toMs(a.date_from, a.pickup_time) - toMs(b.date_from, b.pickup_time))[0];
@@ -609,14 +616,13 @@ export async function listUnitAvailability(
   for (const b of (bookingsRes.data ?? []) as Array<{
     bike_unit_id: string | null; date_from: string; date_to: string; pickup_time: string; return_time: string; picked_up_at: string | null;
   }>) {
-    // A picked-up (but not returned) bike is physically OUT now regardless of
-    // its scheduled window, so the panel agrees with the fleet card: pull the
-    // interval start back to now and its end to at least now.
+    // Shared occupancy model (see occupancyInterval): picked-up pulls the
+    // start back to now and holds the unit out until its scheduled return,
+    // then at most 24h past it if never marked returned. Keeps the panel in
+    // lockstep with the fleet card and the "Currently out" list.
     const schedStart = toMs(b.date_from, b.pickup_time);
     const schedEnd = toMs(b.date_to, b.return_time);
-    const iv = b.picked_up_at
-      ? { start: Math.min(schedStart, nowMs), end: Math.max(schedEnd, nowMs + 60_000) }
-      : { start: schedStart, end: schedEnd };
+    const iv = occupancyInterval(schedStart, schedEnd, b.picked_up_at != null, nowMs);
     if (b.bike_unit_id) {
       perUnit.get(b.bike_unit_id)?.push(iv);
     } else {

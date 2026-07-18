@@ -7,6 +7,7 @@ import {
   TURNAROUND_MINUTES,
 } from "@/lib/pricing";
 import { SEASON_END_ISO } from "@/lib/season";
+import { occupancyInterval } from "@/lib/availability";
 
 // Owner-editable price overrides live in the bike_price_overrides
 // table. Day rate has always been editable; weekend / week / month
@@ -328,13 +329,18 @@ export async function getAvailableNowCounts(): Promise<
   const unpinnedByBike = new Map<string, Array<{ start: number; end: number }>>();
   for (const b of ((bookingsRes.data ?? []) as B[])) {
     // A picked-up (not-returned) bike is physically out NOW even if its booked
-    // window hasn't started or has passed - pull start back to now and end
-    // forward, so the badge agrees with the admin fleet card and the per-unit
-    // panel instead of showing "available now" for a bike that already left.
+    // window hasn't started - pull start back to now - but it auto-frees 24h
+    // past its scheduled return if never marked back, so an ancient un-returned
+    // rental doesn't peg the badge to "0 free" forever (shared occupancyInterval
+    // keeps the badge, the fleet card and the per-unit panel identical).
     const schedStart = zagrebWallToMs(b.date_from, b.pickup_time);
     const schedEnd = zagrebWallToMs(b.date_to, b.return_time);
-    const start = b.picked_up_at ? Math.min(schedStart, nowMs) : schedStart;
-    const end = b.picked_up_at ? Math.max(schedEnd, nowMs + 60_000) : schedEnd;
+    const { start, end } = occupancyInterval(
+      schedStart,
+      schedEnd,
+      b.picked_up_at != null,
+      nowMs,
+    );
     if (!b.bike_unit_id) {
       let arr = unpinnedByBike.get(b.bike_id);
       if (!arr) {
