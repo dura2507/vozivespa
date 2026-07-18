@@ -72,6 +72,14 @@ export async function POST(
     const groupRows = groupData as BookingRow[];
     const active = groupRows.filter((r) => r.status !== "cancelled");
 
+    // Whole group already cancelled: the update below filters
+    // `.neq('status','cancelled')`, so it would touch 0 rows yet still report
+    // {ok:true} as if the decision applied. Report "nothing changed" honestly
+    // instead of a silent no-op that the UI reads as a successful confirm.
+    if (active.length === 0) {
+      return NextResponse.json({ ok: true, unchanged: true, status: "cancelled" });
+    }
+
     if (decision === "confirmed") {
       const win = {
         dateFrom: booking.date_from,

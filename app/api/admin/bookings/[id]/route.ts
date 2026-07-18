@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findFreeUnit, findUnitConflict, describeConflict, buildConflictCard } from "@/lib/availability";
+import { findFreeUnit, findFreeUnits, findUnitConflict, describeConflict, buildConflictCard } from "@/lib/availability";
 import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
 import { SEASON_END_ISO } from "@/lib/season";
 import { CATEGORIES } from "@/lib/mockData";
@@ -21,6 +21,15 @@ const RIDING_STYLES = ["solo", "with_passenger"] as const;
 // (name, phone, email, notes, price, licence, riding style, payment
 // method, licence country) update freely so owner can fill in walk-in
 // info later.
+//
+// GROUP bookings: a multi-bike order shares ONE booking_group_id and ONE
+// rental window across N rows. Editing one bike used to update only that
+// row, leaving its siblings on the old window (the group "split" -> phantom
+// conflicts, Thomas 2026-07-17). When the edited row is part of a group with
+// more than one active row, the shared fields (window + customer) are applied
+// to the WHOLE group and capacity is re-checked for the new window on EACH
+// sibling's model; per-bike fields (model, unit, price, licence category,
+// riding style) stay on the edited row.
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -110,70 +119,210 @@ export async function PATCH(
     }
   }
 
-  let assignedUnitId: string | null = booking.bike_unit_id;
-  try {
-    const availability = await findFreeUnit(supabase, {
-      bikeId: targetBikeId,
-      dateFrom,
-      dateTo,
-      pickupTime,
-      returnTime,
-      // Only exclude this booking from conflicts when the model isn't
-      // changing — otherwise the old unit (on the original model) was
-      // never going to overlap anyway, and excluding by booking id on
-      // the new model has no effect.
-      excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined,
-    }, { includeBackup: true });
-    if (availability.conflict) {
-      const modelName = CATEGORIES.find((m) => m.id === targetBikeId)?.model ?? targetBikeId;
-      const card = await buildConflictCard(
-        supabase,
-        { bikeId: targetBikeId, dateFrom, dateTo, pickupTime, returnTime, excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined },
-        availability.conflict,
-        modelName,
-        { seasonEndIso: SEASON_END_ISO },
-      );
-      return NextResponse.json(
-        {
-          error:
-            targetBikeId === booking.bike_id
-              ? "Time conflict"
-              : "No free unit on the new model for this window",
-          detail: describeConflict(availability.conflict),
-          conflict: card,
-        },
-        { status: 409 },
-      );
+  // Is this row part of a *live* multi-bike group? We route on the count of
+  // ACTIVE (non-cancelled) rows, NOT on booking_group_id being non-null: the
+  // website group-checkout stamps a group id even on a 1-bike order, and a
+  // group cancelled down to one bike keeps its id. Those are effectively solo
+  // and must take the exact original single-row path (byte-identical, incl.
+  // the label-first unit reassignment) — only a genuine 2+ active-row group
+  // moves as a set.
+  const groupId = booking.booking_group_id;
+  let groupLive: BookingRow[] = [];
+  if (groupId) {
+    const { data: groupData, error: gErr } = await supabase
+      .from("bookings")
+      .select("*")
+      .eq("booking_group_id", groupId);
+    if (gErr) {
+      console.error("[/api/admin/bookings] group lookup", gErr);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
-    assignedUnitId = availability.unitId;
+    // "Live" = still part of the running rental: not cancelled AND not already
+    // returned. A returned sibling (returned_at set, status still confirmed) is
+    // DONE — it must not move with the group window, must not be re-pinned, and
+    // must not count toward capacity. findFreeUnits already excludes returned
+    // rows from demand, so counting it here would desync supply and demand and
+    // falsely reject an edit that actually fits.
+    groupLive = ((groupData ?? []) as BookingRow[]).filter(
+      (r) => r.status !== "cancelled" && r.returned_at == null,
+    );
+  }
+  const isGroup =
+    !!groupId &&
+    booking.status !== "cancelled" &&
+    booking.returned_at == null &&
+    groupLive.length > 1;
 
-    // Keep a Ghost Bike parking in place: if this booking sits on the
-    // hidden reserve (Priscilla's ghost swap) and the model isn't
-    // changing, an edit must not silently move it back onto a regular
-    // unit — the customer is physically riding the reserve vehicle.
-    // Keep the pin as long as the reserve is still free for the NEW
-    // window; if it isn't, fall back to the fresh assignment above.
-    if (targetBikeId === booking.bike_id && booking.bike_unit_id) {
-      const { data: currentUnit } = await supabase
-        .from("bike_units")
-        .select("id, is_backup")
-        .eq("id", booking.bike_unit_id)
-        .maybeSingle<{ id: string; is_backup: boolean }>();
-      if (currentUnit?.is_backup) {
-        const clash = await findUnitConflict(supabase, {
-          bikeUnitId: booking.bike_unit_id,
-          dateFrom,
-          dateTo,
-          pickupTime,
-          returnTime,
-          excludeBookingId: booking.id,
-        });
-        if (!clash) assignedUnitId = booking.bike_unit_id;
+  let assignedUnitId: string | null = booking.bike_unit_id;
+  // Group path only: row.id -> the physical unit it should hold for the NEW
+  // window. Filled in below, applied when the group is persisted.
+  const groupAssignment = new Map<string, string | null>();
+
+  if (!isGroup) {
+    // ---------- single booking: EXACT original behaviour ----------
+    try {
+      const availability = await findFreeUnit(supabase, {
+        bikeId: targetBikeId,
+        dateFrom,
+        dateTo,
+        pickupTime,
+        returnTime,
+        // Only exclude this booking from conflicts when the model isn't
+        // changing — otherwise the old unit (on the original model) was
+        // never going to overlap anyway, and excluding by booking id on
+        // the new model has no effect.
+        excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined,
+      }, { includeBackup: true });
+      if (availability.conflict) {
+        const modelName = CATEGORIES.find((m) => m.id === targetBikeId)?.model ?? targetBikeId;
+        const card = await buildConflictCard(
+          supabase,
+          { bikeId: targetBikeId, dateFrom, dateTo, pickupTime, returnTime, excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined },
+          availability.conflict,
+          modelName,
+          { seasonEndIso: SEASON_END_ISO },
+        );
+        return NextResponse.json(
+          {
+            error:
+              targetBikeId === booking.bike_id
+                ? "Time conflict"
+                : "No free unit on the new model for this window",
+            detail: describeConflict(availability.conflict),
+            conflict: card,
+          },
+          { status: 409 },
+        );
       }
+      assignedUnitId = availability.unitId;
+
+      // Keep a Ghost Bike parking in place: if this booking sits on the
+      // hidden reserve (Priscilla's ghost swap) and the model isn't
+      // changing, an edit must not silently move it back onto a regular
+      // unit — the customer is physically riding the reserve vehicle.
+      // Keep the pin as long as the reserve is still free for the NEW
+      // window; if it isn't, fall back to the fresh assignment above.
+      if (targetBikeId === booking.bike_id && booking.bike_unit_id) {
+        const { data: currentUnit } = await supabase
+          .from("bike_units")
+          .select("id, is_backup")
+          .eq("id", booking.bike_unit_id)
+          .maybeSingle<{ id: string; is_backup: boolean }>();
+        if (currentUnit?.is_backup) {
+          const clash = await findUnitConflict(supabase, {
+            bikeUnitId: booking.bike_unit_id,
+            dateFrom,
+            dateTo,
+            pickupTime,
+            returnTime,
+            excludeBookingId: booking.id,
+          });
+          if (!clash) assignedUnitId = booking.bike_unit_id;
+        }
+      }
+    } catch (err) {
+      console.error("[/api/admin/bookings] availability", err);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
-  } catch (err) {
-    console.error("[/api/admin/bookings] availability", err);
-    return NextResponse.json({ error: "Database error" }, { status: 500 });
+  } else {
+    // ---------- group booking: move the WHOLE group together ----------
+    // Each active row keeps its OWN model; only the edited row may swap model.
+    // Re-check capacity for the NEW window on EACH model, excluding the ENTIRE
+    // group from the conflict set (they move as one). If any model can't fit
+    // its rows, abort the whole edit and write NOTHING (return the card).
+    const plan = groupLive.map((r) => ({
+      row: r,
+      bikeId: r.id === booking.id ? targetBikeId : r.bike_id,
+    }));
+    const byModel = new Map<string, { row: BookingRow; bikeId: string }[]>();
+    for (const p of plan) {
+      const arr = byModel.get(p.bikeId) ?? [];
+      arr.push(p);
+      byModel.set(p.bikeId, arr);
+    }
+
+    // The hidden reserve (is_backup) is Thomas's deliberate walk-in joker; a
+    // routine window edit must never silently hand it out. We still PRESERVE a
+    // row already pinned to the reserve (it stays if free), but FRESH unit
+    // assignments below draw only from regular units.
+    const { data: backupUnitRows, error: buErr } = await supabase
+      .from("bike_units")
+      .select("id")
+      .eq("is_backup", true)
+      .in("bike_id", [...byModel.keys()]);
+    if (buErr) {
+      console.error("[/api/admin/bookings] backup unit lookup", buErr);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+    const backupUnitIds = new Set(
+      (backupUnitRows ?? []).map((u) => (u as { id: string }).id),
+    );
+
+    try {
+      for (const [bikeId, rows] of byModel) {
+        // Ask for the full free pool (large count) so a reserve/ghost unit
+        // that sorts last by label is still returned and can be re-pinned
+        // below. The whole group is excluded, so a row's OWN current unit
+        // shows up as free here.
+        const free = await findFreeUnits(
+          supabase,
+          { bikeId, dateFrom, dateTo, pickupTime, returnTime, excludeGroupId: groupId },
+          Math.max(rows.length, 999),
+          { includeBackup: true },
+        );
+        // Gate on capacity only (with a large count, free.conflict may be set
+        // even when the group fits, so it is read solely on the miss path).
+        if (free.totalFree < rows.length) {
+          const modelName = CATEGORIES.find((m) => m.id === bikeId)?.model ?? bikeId;
+          const conflict = free.conflict ?? { kind: "no_units" as const };
+          const card = await buildConflictCard(
+            supabase,
+            { bikeId, dateFrom, dateTo, pickupTime, returnTime, excludeGroupId: groupId },
+            conflict,
+            modelName,
+            { seasonEndIso: SEASON_END_ISO },
+          );
+          return NextResponse.json(
+            { error: "Time conflict", detail: describeConflict(conflict), conflict: card },
+            { status: 409 },
+          );
+        }
+        // Distribute distinct free units. Preserve each row's CURRENT unit
+        // when its model is unchanged and that unit is still free — this is
+        // the per-sibling ghost/reserve pin (a still-free reserve unit is in
+        // this pool because the group is excluded). Hand the remaining rows
+        // the other free units; pad with null (capacity-allowed but unpinned)
+        // if real units run out, exactly like the online flow.
+        const pool = free.unitIds.filter((u): u is string => u !== null);
+        const poolSet = new Set(pool);
+        const taken = new Set<string>();
+        const needUnit: { row: BookingRow; bikeId: string }[] = [];
+        for (const p of rows) {
+          const cur = p.row.bike_unit_id;
+          const modelUnchanged = p.bikeId === p.row.bike_id;
+          // Keep the row's CURRENT unit when it's still free — including the
+          // reserve, so an existing ghost pin (Priscilla's Vespa swap) survives
+          // a window edit.
+          if (cur && modelUnchanged && poolSet.has(cur) && !taken.has(cur)) {
+            groupAssignment.set(p.row.id, cur);
+            taken.add(cur);
+          } else {
+            needUnit.push(p);
+          }
+        }
+        // Fresh assignments: regular units only (never silently the reserve).
+        // If regulars run out, pad with null (capacity-proven but unpinned) so
+        // the reserve stays Thomas's to hand out deliberately.
+        const spare = pool.filter((u) => !taken.has(u) && !backupUnitIds.has(u));
+        let si = 0;
+        for (const p of needUnit) {
+          groupAssignment.set(p.row.id, si < spare.length ? spare[si++] : null);
+        }
+      }
+    } catch (err) {
+      console.error("[/api/admin/bookings] group availability", err);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
   }
 
   // ---------- Optional customer + detail fields ----------
@@ -269,13 +418,76 @@ export async function PATCH(
     }
   }
 
-  const { error: updateErr } = await supabase
-    .from("bookings")
-    .update(updateRow)
-    .eq("id", id);
-  if (updateErr) {
-    console.error("[/api/admin/bookings] update", updateErr);
-    return NextResponse.json({ error: "Update failed" }, { status: 500 });
+  if (!isGroup) {
+    // ---------- single booking: EXACT original write ----------
+    const { error: updateErr } = await supabase
+      .from("bookings")
+      .update(updateRow)
+      .eq("id", id);
+    if (updateErr) {
+      console.error("[/api/admin/bookings] update", updateErr);
+      return NextResponse.json({ error: "Update failed" }, { status: 500 });
+    }
+  } else {
+    // ---------- group booking: propagate SHARED fields, keep PER-BIKE ----------
+    // 1) Window + customer details (incl. licence category + country, one
+    //    customer per group) go to EVERY non-cancelled row in ONE statement,
+    //    so the shared window can never diverge again. This is the
+    //    correctness-critical write and it is atomic on its own.
+    const SHARED_KEYS = [
+      "date_from", "date_to", "pickup_time", "return_time",
+      "customer_name", "customer_phone", "customer_email",
+      "notes", "payment_method", "drivers_licence",
+    ] as const;
+    const sharedUpdate: Partial<BookingRow> = {};
+    for (const k of SHARED_KEYS) {
+      if (k in updateRow) {
+        (sharedUpdate as Record<string, unknown>)[k] = (updateRow as Record<string, unknown>)[k];
+      }
+    }
+    const { error: sharedErr } = await supabase
+      .from("bookings")
+      .update(sharedUpdate)
+      .eq("booking_group_id", groupId)
+      .neq("status", "cancelled")
+      // Don't shift the window of a sibling that's already back (returned_at
+      // set) — it's DONE and not one of the live rows we re-checked/re-pinned.
+      .is("returned_at", null);
+    if (sharedErr) {
+      console.error("[/api/admin/bookings] group shared update", sharedErr);
+      return NextResponse.json({ error: "Update failed" }, { status: 500 });
+    }
+
+    // 2) Per-row physical unit recomputed for the new window (per-bike, so one
+    //    statement per row — values differ).
+    for (const [rowId, unitId] of groupAssignment) {
+      const { error: unitErr } = await supabase
+        .from("bookings")
+        .update({ bike_unit_id: unitId })
+        .eq("id", rowId);
+      if (unitErr) {
+        console.error("[/api/admin/bookings] group unit update", unitErr);
+        return NextResponse.json({ error: "Update failed" }, { status: 500 });
+      }
+    }
+
+    // 3) Per-bike fields that belong to the EDITED row only (model swap,
+    //    price, riding style). Riding style is genuinely per-rider in a group;
+    //    the licence + window + customer already went out group-wide in step 1.
+    const editedPerBike: Partial<BookingRow> = { bike_id: targetBikeId };
+    for (const k of ["total_price_cents", "riding_style"] as const) {
+      if (k in updateRow) {
+        (editedPerBike as Record<string, unknown>)[k] = (updateRow as Record<string, unknown>)[k];
+      }
+    }
+    const { error: editedErr } = await supabase
+      .from("bookings")
+      .update(editedPerBike)
+      .eq("id", booking.id);
+    if (editedErr) {
+      console.error("[/api/admin/bookings] group edited update", editedErr);
+      return NextResponse.json({ error: "Update failed" }, { status: 500 });
+    }
   }
 
   return NextResponse.json({ ok: true });

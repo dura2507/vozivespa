@@ -211,7 +211,14 @@ export async function findFreeUnit(
     .lte("date_from", w.dateTo)
     .gte("date_to", w.dateFrom);
   if (w.excludeBookingId) q = q.neq("id", w.excludeBookingId);
-  if (w.excludeGroupId) q = q.neq("booking_group_id", w.excludeGroupId);
+  if (w.excludeGroupId) {
+    // NULL-safe group exclusion. `.neq` compiles to SQL `col <> uuid`, which
+    // evaluates to NULL (not TRUE) for solo bookings where booking_group_id IS
+    // NULL, silently dropping them from the demand set -> under-counting ->
+    // overbooking. Keep NULL-group (solo) rows; drop only THIS group's own rows
+    // (they move together and must not conflict with themselves).
+    q = q.or(`booking_group_id.is.null,booking_group_id.neq.${w.excludeGroupId}`);
+  }
   const { data: candidates, error: bookErr } = await q;
   if (bookErr) throw new Error(`booking overlap lookup: ${bookErr.message}`);
 
@@ -522,7 +529,14 @@ export async function findFreeUnits(
     .lte("date_from", w.dateTo)
     .gte("date_to", w.dateFrom);
   if (w.excludeBookingId) q = q.neq("id", w.excludeBookingId);
-  if (w.excludeGroupId) q = q.neq("booking_group_id", w.excludeGroupId);
+  if (w.excludeGroupId) {
+    // NULL-safe group exclusion. `.neq` compiles to SQL `col <> uuid`, which
+    // evaluates to NULL (not TRUE) for solo bookings where booking_group_id IS
+    // NULL, silently dropping them from the demand set -> under-counting ->
+    // overbooking. Keep NULL-group (solo) rows; drop only THIS group's own rows
+    // (they move together and must not conflict with themselves).
+    q = q.or(`booking_group_id.is.null,booking_group_id.neq.${w.excludeGroupId}`);
+  }
   const { data: candidates, error: bookErr } = await q;
   if (bookErr) throw new Error(`booking overlap lookup: ${bookErr.message}`);
 

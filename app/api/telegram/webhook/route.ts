@@ -118,8 +118,13 @@ export async function POST(request: Request) {
         pickupTime: rows[0].pickup_time,
         returnTime: rows[0].return_time,
       };
+      // Only rows that will actually be (re-)confirmed demand capacity. The
+      // update below filters `.neq('status','cancelled')`, so counting an
+      // individually-cancelled sibling here would require a phantom extra unit
+      // and could wrongly reject the whole group. Match the update's filter.
+      const activeRows = rows.filter((r) => r.status !== "cancelled");
       const qtyByBike = new Map<string, number>();
-      for (const r of rows) qtyByBike.set(r.bike_id, (qtyByBike.get(r.bike_id) ?? 0) + 1);
+      for (const r of activeRows) qtyByBike.set(r.bike_id, (qtyByBike.get(r.bike_id) ?? 0) + 1);
       const groupId = booking.booking_group_id ?? undefined;
       for (const [bikeId, qty] of qtyByBike) {
         try {

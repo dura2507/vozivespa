@@ -10,7 +10,29 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-07-18 (phantom "out" from ancient un-returned bookings).
+Last updated: 2026-07-18 (group-op write paths + edit-splits-group fix).
+
+## Done (2026-07-18) - group booking write paths
+Trigger: Thomas edited one bike of Thorben's 2-bike group on 17.07, changed only one
+row's time; siblings kept the old window and the group "split" (phantom conflict,
+"einer zeigt frei, der zweite hängt drin"). Retroactive live audit: 4 historical split
+groups (Thorben 17.07, Luna 01.07, Thomas 24.06, Damian/Oscar cancelled 29.05) - ALL
+past, returned/cancelled, none active. No live split remains.
+Fixes shipped (adversarially verified, tsc clean):
+- lib/availability.ts: NULL-safe `excludeGroupId` (was `.neq`, which drops solo
+  bookings where booking_group_id IS NULL -> latent overbooking in the admin status
+  route + Telegram group confirm). Now `.or(is.null, neq.<uuid>)`.
+- PATCH /api/admin/bookings/[id]: a multi-bike group now moves as ONE - shared window +
+  customer fields (incl. licence) propagate to every LIVE row (status != cancelled AND
+  returned_at IS NULL) in one atomic statement; capacity re-checked per sibling model;
+  per-bike fields stay on the edited row; reserve never handed out on a routine edit;
+  solo / 1-live-row bookings keep the byte-identical original path. Routes on live-row
+  count, NOT booking_group_id truthiness (website 1-bike orders carry a uuid).
+- status route: fully-cancelled group re-decide no longer reports false success.
+- Telegram group confirm: capacity counts only non-cancelled rows.
+DEFERRED (product decision, need Thomas's intent): per-bike fulfillment stays per-bike
+(group-wide would break partial returns); customer self-cancel of a group cancels one
+row and emails nobody. See CALENDAR_MAP.md backlog #13.
 
 ## Done (2026-07-18) - phantom "out" fix
 Priscilla reported "Liberty top case: 2 out but only 1 out" and "Duke 125 the same".
