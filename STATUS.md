@@ -30,9 +30,14 @@ Fixes shipped (adversarially verified, tsc clean):
   count, NOT booking_group_id truthiness (website 1-bike orders carry a uuid).
 - status route: fully-cancelled group re-decide no longer reports false success.
 - Telegram group confirm: capacity counts only non-cancelled rows.
-DEFERRED (product decision, need Thomas's intent): per-bike fulfillment stays per-bike
-(group-wide would break partial returns); customer self-cancel of a group cancels one
-row and emails nobody. See CALENDAR_MAP.md backlog #13.
+DECIDED 2026-07-18 (owner delegated "simple, fewest bugs"), both shipped/settled:
+- Fulfillment stays PER-BIKE by design (real partial returns exist - Thorben's bikes
+  came back hours apart; group-wide would free bikes still physically out).
+- Customer self-cancel is now GROUP-WIDE: cancel link drops the whole order, blocked
+  if any live row is picked up; owner notified; the original owner Telegram card is
+  edited on self-cancel (used to stay "confirmed" forever - solo cards too). Cancel
+  page says "cancels your entire order (N bikes)". Adversarially verified SOUND.
+  See CALENDAR_MAP.md backlog #13 for accepted gaps.
 
 ## Done (2026-07-18) - phantom "out" fix
 Priscilla reported "Liberty top case: 2 out but only 1 out" and "Duke 125 the same".

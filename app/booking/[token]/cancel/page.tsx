@@ -35,7 +35,31 @@ export default async function CancelBookingPage({
   if (booking.status === "declined") {
     return <DecisionView tone="declined" hidePii message="This booking was already declined, nothing to cancel." />;
   }
-  if (booking.picked_up_at) {
+  // Multi-bike order: the cancel link drops the WHOLE order (the API cancels
+  // every bike of the group), so the guard and the wording must cover all of
+  // them, not just the row this token points at.
+  let liveBikes = 1;
+  let anyPickedUp = booking.picked_up_at != null;
+  if (booking.booking_group_id) {
+    const { data: gData, error: gErr } = await supabase
+      .from("bookings")
+      .select("id, status, picked_up_at")
+      .eq("booking_group_id", booking.booking_group_id);
+    // On error we degrade to the token-row-only guard below; the API re-checks
+    // the whole group authoritatively before writing anything.
+    if (gErr) console.error("[booking/cancel] group lookup", gErr);
+    const cancellable = ((gData ?? []) as Array<{
+      id: string;
+      status: string;
+      picked_up_at: string | null;
+    }>).filter((r) => r.status === "pending" || r.status === "confirmed");
+    if (cancellable.length > 0) {
+      liveBikes = cancellable.length;
+      anyPickedUp = cancellable.some((r) => r.picked_up_at != null);
+    }
+  }
+
+  if (anyPickedUp) {
     return (
       <DecisionView
         tone="error"
@@ -53,7 +77,9 @@ export default async function CancelBookingPage({
         token,
         action: "cancel",
         intro:
-          "Cancelling releases your dates. This can't be undone here - if you're not sure, message us on WhatsApp instead.",
+          liveBikes > 1
+            ? `This cancels your entire order (${liveBikes} bikes) and releases your dates. This can't be undone here - if you're not sure, message us on WhatsApp instead.`
+            : "Cancelling releases your dates. This can't be undone here - if you're not sure, message us on WhatsApp instead.",
       }}
     />
   );
