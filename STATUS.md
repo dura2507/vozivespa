@@ -10,7 +10,21 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-07-17 (proactive consistency sweep).
+Last updated: 2026-07-18 (phantom "out" from ancient un-returned bookings).
+
+## Done (2026-07-18) - phantom "out" fix
+Priscilla reported "Liberty top case: 2 out but only 1 out" and "Duke 125 the same".
+Verified live via SQL: bookings picked up in **June** and never marked returned
+(`returned_at` NULL) were being counted OUT forever. A Wave-1 change used
+`max(schedEnd, now+60s)` with no upper bound in the picked-up branch; the "Currently
+out" list (`bucketBookings`) auto-forgives 24h past the scheduled return, so the tile
+counts (which lacked that cap) disagreed with the list. Fix: one shared
+`occupancyInterval` in lib/availability.ts (picked-up = out until scheduled return,
+then <=24h, then auto-forgiven) now drives ALL four now-snapshot surfaces
+(`listFleetSummary`, `listUnitAvailability`, `listReserveSummary`,
+`getAvailableNowCounts`). Commit d629be5. Stale June rows (Čestmír/topcase,
+Dieckmann/Duke125, Andre/Liberty50) remain in the DB but are harmless now; DB stays
+read-only from here.
 
 ## What this project is
 `rentamotozadar.com`: a scooter/motorbike rental platform for a shop in Zadar, Croatia.

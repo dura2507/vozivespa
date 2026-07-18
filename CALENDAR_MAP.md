@@ -5,8 +5,19 @@ Re-read this before AND after touching anything that computes availability,
 demand, "units free", "busy", "blocked dates", or booking writes. All paths are
 repo-relative to the worktree root.
 
-Last updated: 2026-07-13. Keep this file in sync on every availability change
+Last updated: 2026-07-18. Keep this file in sync on every availability change
 (see the Change checklist at the bottom).
+
+**Canonical "physically out right now" helper: `occupancyInterval` (lib/availability.ts).**
+Every now-snapshot surface (fleet card `listFleetSummary`, per-unit panel
+`listUnitAvailability`, reserve tile `listReserveSummary`, homepage badge
+`getAvailableNowCounts`) computes a booking's occupancy interval through this
+ONE function so they can never diverge. Rule: not-picked-up = its scheduled
+window `[schedStart, schedEnd]`; picked-up (and `returned_at IS NULL`) = out from
+`min(pickup-proxy, now)` until `schedEnd`, then at most 24h past it
+(`RETURN_AUTO_FALLBACK_MS`), then auto-forgiven. The 24h cap MUST stay equal to
+`bucketBookings`' `AUTO_FALLBACK_MS`, or the "Currently out" list and the tile
+counts disagree (that mismatch was the 2026-07-18 "2 out but only 1 out" bug).
 
 ## Domain model in one paragraph
 
@@ -182,3 +193,4 @@ Run on **every** change that touches availability, demand, booking writes, or un
 7. **Group online-payment path broken (latent)**: POST /api/bookings/group requires a receipt File unconditionally, GroupBooking submits `payOnline=1` with no receipt, so online group checkout 400s. Dormant while online payments are off.
 8. **Telegram edit re-render drops fields**: unit label + English translation vanish from a card on any status edit.
 9. **Dead code**: `fullyBookedDates` (lib/pricing.ts:252, pinned-only), `fmtDateTime` (lib/telegram.ts:99).
+10. **FIXED 2026-07-18** (Priscilla: "Liberty top case says 2 out but only 1 out" + "Duke 125 the same"): a Wave-1 change had made the picked-up branch keep a booking OUT via `max(schedEnd, now+60s)` with **no upper bound**, so bookings picked up in June and never marked returned (`returned_at` NULL) counted as out **forever**. `bucketBookings` auto-forgives 24h past the scheduled return, so the "Currently out" list had already dropped them, hence card/panel/badge said 2 while the list said 1. Root data: Drahoňovský Čestmír (topcase T-1, due back 18.06), Jovan Dieckmann (Duke 125, due 17.06), Andre (Liberty 50, due 18.06), all `picked_up_at` set, `returned_at` NULL. Fix: single shared `occupancyInterval` (24h cap) now drives all four now-snapshot surfaces. Note: those stale June rows still exist in the DB (harmless now, auto-forgiven); marking them returned in admin would tidy the data but is not required.
