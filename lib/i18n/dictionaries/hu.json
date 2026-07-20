@@ -330,7 +330,9 @@
       "seasonValue": "Áprilistól októberig",
       "seasonText": "{season}. Csak ebben az időszakban adunk bérbe.",
       "fuelLabel": "Üzemanyag",
-      "fuelText": "Tele tankkal adjuk át. Tele tankkal is add vissza."
+      "fuelText": "Tele tankkal adjuk át. Tele tankkal is add vissza.",
+      "passengersLabel": "Utasok",
+      "passengersText": "Gyerekbukósisak nem áll rendelkezésre. Az utasoknak legalább 14 évesnek kell lenniük, kizárólag a szülő vagy törvényes gondviselő felelősségére."
     },
     "tierLabel": {
       "day": "Napi tarifa",

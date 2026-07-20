@@ -330,7 +330,9 @@
       "seasonValue": "Abril a octubre",
       "seasonText": "{season}. Solo alquilamos durante este periodo.",
       "fuelLabel": "Combustible",
-      "fuelText": "Se entrega con depósito lleno. Devuélvela también con depósito lleno."
+      "fuelText": "Se entrega con depósito lleno. Devuélvela también con depósito lleno.",
+      "passengersLabel": "Acompañantes",
+      "passengersText": "No hay cascos para niños. Los acompañantes deben tener al menos 14 años, exclusivamente bajo la responsabilidad de los padres o tutores legales."
     },
     "tierLabel": {
       "day": "Tarifa diaria",

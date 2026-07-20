@@ -330,7 +330,9 @@
       "seasonValue": "Apríl až október",
       "seasonText": "{season}. Požičiavame len v tomto období.",
       "fuelLabel": "Palivo",
-      "fuelText": "Odovzdané s plnou nádržou. Vráť ho tiež s plnou nádržou."
+      "fuelText": "Odovzdané s plnou nádržou. Vráť ho tiež s plnou nádržou.",
+      "passengersLabel": "Spolujazdci",
+      "passengersText": "Detské prilby nie sú k dispozícii. Spolujazdci musia mať aspoň 14 rokov, výhradne na zodpovednosť rodičov alebo zákonných zástupcov."
     },
     "tierLabel": {
       "day": "Denná sadzba",

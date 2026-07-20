@@ -330,7 +330,9 @@
       "seasonValue": "Duben až říjen",
       "seasonText": "{season}. Půjčujeme jen v tomto období.",
       "fuelLabel": "Palivo",
-      "fuelText": "Předáno s plnou nádrží. Vrať ho také s plnou nádrží."
+      "fuelText": "Předáno s plnou nádrží. Vrať ho také s plnou nádrží.",
+      "passengersLabel": "Spolujezdci",
+      "passengersText": "Dětské helmy nejsou k dispozici. Spolujezdci musí mít alespoň 14 let, výhradně na odpovědnost rodičů nebo zákonných zástupců."
     },
     "tierLabel": {
       "day": "Denní sazba",

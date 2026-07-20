@@ -339,7 +339,9 @@
       "seasonValue": "Od travnja do listopada",
       "seasonText": "{season}. Iznajmljujemo samo u ovom razdoblju.",
       "fuelLabel": "Gorivo",
-      "fuelText": "Predaje se s punim spremnikom. Vrati ga također s punim spremnikom."
+      "fuelText": "Predaje se s punim spremnikom. Vrati ga također s punim spremnikom.",
+      "passengersLabel": "Suvozači",
+      "passengersText": "Dječje kacige nisu dostupne. Suvozači moraju imati najmanje 14 godina, isključivo na odgovornost roditelja ili skrbnika."
     },
     "calendar": {
       "title": "Rezerviraj ovaj motor",

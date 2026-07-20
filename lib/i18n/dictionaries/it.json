@@ -330,7 +330,9 @@
       "seasonValue": "Da aprile a ottobre",
       "seasonText": "{season}. Noleggiamo solo in questo periodo.",
       "fuelLabel": "Carburante",
-      "fuelText": "Consegnata con il pieno. Restituiscila con il pieno."
+      "fuelText": "Consegnata con il pieno. Restituiscila con il pieno.",
+      "passengersLabel": "Passeggeri",
+      "passengersText": "Non sono disponibili caschi per bambini. I passeggeri devono avere almeno 14 anni, esclusivamente sotto la responsabilità dei genitori o tutori legali."
     },
     "tierLabel": {
       "day": "Tariffa giornaliera",

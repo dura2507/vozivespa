@@ -330,7 +330,9 @@
       "seasonValue": "Abril a outubro",
       "seasonText": "{season}. Alugamos só nesse período.",
       "fuelLabel": "Combustível",
-      "fuelText": "Entregue com o tanque cheio. Devolva também com o tanque cheio."
+      "fuelText": "Entregue com o tanque cheio. Devolva também com o tanque cheio.",
+      "passengersLabel": "Passageiros",
+      "passengersText": "Não há capacetes para crianças. Os passageiros devem ter pelo menos 14 anos, exclusivamente sob a responsabilidade dos pais ou responsáveis legais."
     },
     "tierLabel": {
       "day": "Tarifa diária",

@@ -330,7 +330,9 @@
       "seasonValue": "D'avril à octobre",
       "seasonText": "{season}. Nous louons uniquement sur cette période.",
       "fuelLabel": "Carburant",
-      "fuelText": "Remise avec le plein. Merci de la restituer également avec le plein."
+      "fuelText": "Remise avec le plein. Merci de la restituer également avec le plein.",
+      "passengersLabel": "Passagers",
+      "passengersText": "Pas de casques enfants disponibles. Les passagers doivent avoir au moins 14 ans, exclusivement sous la responsabilité des parents ou tuteurs légaux."
     },
     "tierLabel": {
       "day": "Tarif journalier",

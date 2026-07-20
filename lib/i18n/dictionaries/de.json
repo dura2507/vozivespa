@@ -330,7 +330,9 @@
       "seasonValue": "April bis Oktober",
       "seasonText": "{season}. Wir vermieten nur in diesem Zeitraum.",
       "fuelLabel": "Tank",
-      "fuelText": "Übergabe mit vollem Tank. Bitte auch mit vollem Tank zurückgeben."
+      "fuelText": "Übergabe mit vollem Tank. Bitte auch mit vollem Tank zurückgeben.",
+      "passengersLabel": "Mitfahrer",
+      "passengersText": "Kinderhelme sind nicht verfügbar. Mitfahrer müssen mindestens 14 Jahre alt sein, ausschließlich auf Verantwortung der Erziehungsberechtigten."
     },
     "tierLabel": {
       "day": "Tagestarif",

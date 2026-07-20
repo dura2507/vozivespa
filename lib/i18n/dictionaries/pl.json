@@ -330,7 +330,9 @@
       "seasonValue": "Od kwietnia do października",
       "seasonText": "{season}. Wynajmujemy tylko w tym okresie.",
       "fuelLabel": "Paliwo",
-      "fuelText": "Wydawany z pełnym bakiem. Zwróć go również z pełnym bakiem."
+      "fuelText": "Wydawany z pełnym bakiem. Zwróć go również z pełnym bakiem.",
+      "passengersLabel": "Pasażerowie",
+      "passengersText": "Kaski dziecięce nie są dostępne. Pasażerowie muszą mieć co najmniej 14 lat, wyłącznie na odpowiedzialność rodziców lub opiekunów prawnych."
     },
     "tierLabel": {
       "day": "Stawka dzienna",

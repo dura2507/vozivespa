@@ -330,7 +330,9 @@
       "seasonValue": "April to October",
       "seasonText": "{season}. We rent only in this window.",
       "fuelLabel": "Fuel",
-      "fuelText": "Handed over with a full tank. Return it with a full tank too."
+      "fuelText": "Handed over with a full tank. Return it with a full tank too.",
+      "passengersLabel": "Passengers",
+      "passengersText": "No children's helmets available. Passengers must be at least 14 years old, exclusively at the responsibility of a parent or legal guardian."
     },
     "tierLabel": {
       "day": "Daily rate",
