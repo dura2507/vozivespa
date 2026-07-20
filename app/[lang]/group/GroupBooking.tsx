@@ -565,6 +565,8 @@ export default function GroupBooking({
               <p>{g.reserveLine}</p>
               <p>{g.depositLine.replace("{deposit}", BRAND.deposit)}</p>
               <p>{g.sameDates}</p>
+              {/* Same passengers rule as the bike detail page (owner request 2026-07-20) */}
+              <p>{dict.fleet.specsSection.passengersText}</p>
             </div>
           </aside>
           </div>
