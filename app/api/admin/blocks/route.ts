@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 import { isValidSlot, parseTime } from "@/lib/pricing";
+import { findFreeUnits, describeConflict } from "@/lib/availability";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -85,19 +86,29 @@ export async function POST(request: Request) {
 
   // Sanity-check the unit belongs to the bike — otherwise a typo
   // would block the wrong model silently.
+  let unitIsGhost = false;
   if (bikeUnitId) {
     const { data: unit, error: unitErr } = await supabase
       .from("bike_units")
-      .select("id, bike_id")
+      .select("id, bike_id, active, is_backup")
       .eq("id", bikeUnitId)
       .maybeSingle();
     if (unitErr) {
       console.error("[/api/admin/blocks] unit lookup", unitErr);
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
-    if (!unit || (unit as { bike_id: string }).bike_id !== bikeId) {
+    const u = unit as { bike_id: string; active: boolean; is_backup: boolean } | null;
+    if (!u || u.bike_id !== bikeId) {
       return NextResponse.json({ error: "Unit doesn't belong to this bike" }, { status: 400 });
     }
+    if (!u.active) {
+      return NextResponse.json({ error: "Unit is inactive" }, { status: 400 });
+    }
+    // A block on the hidden ghost/backup reserve is off-the-books: it consumes
+    // ZERO public capacity (every capacity fn skips out-of-pool block spans),
+    // so it must not be gated against the regular fleet, and it must never
+    // float onto a regular unit.
+    unitIsGhost = u.is_backup;
   }
 
   // A single-unit service block ("1 of N out for repair") shouldn't be
@@ -109,7 +120,45 @@ export async function POST(request: Request) {
   // conflict when a day has NO free unit (every bike genuinely needed).
   // Time-bounded per-unit blocks keep the simpler whole-window pick.
   let targetUnitId = bikeUnitId;
-  if (bikeUnitId) {
+  if (bikeUnitId && !unitIsGhost) {
+    // ---- Capacity gate (the ONE invariant, see CALENDAR_MAP.md) ----
+    // "1 of N in service" is one extra concurrent demand on the model, so the
+    // block fits iff the capacity engine finds room for one more demand over
+    // the block span. findFreeUnits counts EVERY overlapping booking (incl.
+    // unpinned bike_unit_id=NULL rows and pending) plus existing per-unit
+    // blocks. The old check here only looked at PINNED bookings per unit,
+    // which both (a) falsely rejected when scattered pinned bookings touched
+    // every unit while real peak demand was below K (Priscilla's half-day
+    // block vs Antonio's week-long rental, 2026-07-23), and (b) silently
+    // ignored unpinned demand (over-block risk).
+    let cap;
+    try {
+      cap = await findFreeUnits(
+        supabase,
+        {
+          bikeId,
+          dateFrom,
+          dateTo,
+          pickupTime: startTime ?? "00:00",
+          returnTime: endTime ?? "23:59",
+        },
+        1,
+        { includeBackup: false },
+      );
+    } catch (err) {
+      console.error("[/api/admin/blocks] capacity gate", err);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+    if (cap.totalFree < 1) {
+      const detail = cap.conflict ? ` ${describeConflict(cap.conflict)}.` : "";
+      return NextResponse.json(
+        {
+          error: `Can't block — all ${cap.totalUnits} ${bikeId} are genuinely needed during this window.${detail} Free a bike first or pick another date/time.`,
+        },
+        { status: 409 },
+      );
+    }
+
     const [unitsRes, bookingsRes, blocksRes] = await Promise.all([
       // Only regular units: a floating service block must never auto-land on
       // the hidden ghost/backup reserve — that would silently consume the
@@ -155,13 +204,18 @@ export async function POST(request: Request) {
         return null;
       };
 
+      // UTC date arithmetic: local-midnight Date + toISOString() shifts one
+      // day early on any UTC+ server TZ (Zagreb dev box), silently blocking
+      // the wrong dates. Date.UTC keeps the walk timezone-proof.
       const days: string[] = [];
+      const [fy, fm, fd] = dateFrom.split("-").map(Number);
+      const [ty, tm, td] = dateTo.split("-").map(Number);
       for (
-        let d = new Date(`${dateFrom}T00:00:00`);
-        d <= new Date(`${dateTo}T00:00:00`);
-        d = new Date(d.getTime() + 86_400_000)
+        let t = Date.UTC(fy, fm - 1, fd);
+        t <= Date.UTC(ty, tm - 1, td);
+        t += 86_400_000
       ) {
-        days.push(d.toISOString().slice(0, 10));
+        days.push(new Date(t).toISOString().slice(0, 10));
       }
 
       type Run = { unit: string; from: string; to: string };
@@ -174,25 +228,15 @@ export async function POST(request: Request) {
         }
         const unit = candidates.find((u) => !occupiedOn(u, day));
         if (!unit) {
-          // Every unit busy this day → genuine over-capacity. If the
-          // clashing booking starts LATER on this day, tell the owner
-          // exactly how to work around it: uncheck "All day" and end the
-          // block 30 min before pickup.
-          const clash = bookings.find((bk) => bk.date_from <= day && day <= bk.date_to);
-          const who = clash ? ` (${clash.customer_name})` : "";
-          let suggestion = "";
-          if (clash && clash.date_from === day && clash.pickup_time) {
-            const [h, m] = clash.pickup_time.split(":").map((x) => parseInt(x, 10));
-            const totalMin = h * 60 + m - 30; // turnaround window
-            if (totalMin > 9 * 60) {
-              const sh = String(Math.floor(totalMin / 60)).padStart(2, "0");
-              const sm = String(totalMin % 60).padStart(2, "0");
-              suggestion = ` Uncheck "All day" and set End time to ${sh}:${sm} to block up to the turnaround.`;
-            }
-          }
+          // Capacity for one extra demand was proven by the gate above, so
+          // this is pin-scatter: bookings spread across every unit with no
+          // single bike free the whole day. We deliberately do NOT drop the
+          // block onto a busy unit id — several consumers (homepage badge
+          // buckets, per-unit panel) group blocks by unit id and would
+          // miscount a shared id. Honest reject with the actual reason.
           return NextResponse.json(
             {
-              error: `Can't block — every ${bikeId} is booked on ${day}${who}.${suggestion}`,
+              error: `Can't place the block on ${day}: one more bike fits by total capacity, but bookings are spread across every ${bikeId} so no single bike is free that whole day. Try a time-bounded block (uncheck "All day") or move one booking first.`,
             },
             { status: 409 },
           );
@@ -235,62 +279,64 @@ export async function POST(request: Request) {
       !blocks.some((bl) => bl.bike_unit_id === uid && overlaps(bl.date_from, bl.date_to, bl.start_time, bl.end_time));
     const freeUnit = unitIsFree(bikeUnitId) ? bikeUnitId : unitIds.find((u) => unitIsFree(u));
     if (!freeUnit) {
-      const clash = bookings.find((bk) => overlaps(bk.date_from, bk.date_to, bk.pickup_time, bk.return_time));
-      const who = clash ? ` (${clash.customer_name}, pickup ${clash.date_from} ${clash.pickup_time?.slice(0,5) ?? ""})` : "";
+      // Pin-scatter (capacity proven above, but no single bike free for the
+      // whole window). Never drop the block onto a busy unit id — downstream
+      // consumers group blocks by unit id and would miscount. Honest reject.
       return NextResponse.json(
-        { error: `Can't block — every ${bikeId} is needed during this window${who}.` },
+        {
+          error: `Can't block this window: one more bike fits by total capacity, but bookings are spread across every ${bikeId} so no single bike is free for the entire window. Try a shorter window or move one booking first.`,
+        },
         { status: 409 },
       );
     }
     targetUnitId = freeUnit;
   }
 
-  // Refuse a service block that would land on top of an existing
-  // confirmed customer booking — the bike physically can't be both
-  // with the customer and in the shop. Owner needs to cancel the
-  // booking first or pick a different unit / date. Same check covers
-  // whole-model blocks (bikeUnitId null) by widening the unit filter.
-  const conflictQuery = supabase
-    .from("bookings")
-    .select("id, customer_name, bike_unit_id, date_from, date_to, pickup_time, return_time")
-    .eq("bike_id", bikeId)
-    .eq("status", "confirmed")
-    .lte("date_from", dateTo)
-    .gte("date_to", dateFrom)
-    .limit(5);
-  // Per-unit block only conflicts with bookings on that same unit;
-  // whole-model block conflicts with any confirmed booking on the model.
-  const { data: clashBookings, error: clashErr } = targetUnitId
-    ? await conflictQuery.eq("bike_unit_id", targetUnitId)
-    : await conflictQuery;
-  if (clashErr) {
-    console.error("[/api/admin/blocks] conflict lookup", clashErr);
-    return NextResponse.json({ error: "Database error" }, { status: 500 });
-  }
-  // Time-bounded block: only conflict on actual time overlap. Whole-
-  // day block conflicts with anything on those dates.
-  const realClashes = (clashBookings ?? []).filter((b) => {
-    if (!startTime || !endTime) return true;
-    const r = b as {
-      date_from: string;
-      date_to: string;
-      pickup_time: string;
-      return_time: string;
-    };
-    const bookStart = new Date(`${r.date_from}T${r.pickup_time}`).getTime();
-    const bookEnd = new Date(`${r.date_to}T${r.return_time}`).getTime();
-    const blockStart = new Date(`${dateFrom}T${startTime}`).getTime();
-    const blockEnd = new Date(`${dateTo}T${endTime}`).getTime();
-    return blockStart < bookEnd && bookStart < blockEnd;
-  });
-  if (realClashes.length > 0) {
-    const c = realClashes[0] as { customer_name: string; date_from: string; date_to: string };
-    return NextResponse.json(
-      {
-        error: `Can't block — conflicts with confirmed booking for ${c.customer_name} (${c.date_from} → ${c.date_to}). Cancel the booking first or pick another unit.`,
-      },
-      { status: 409 },
-    );
+  // Whole-model block only: refuse when ANY live confirmed booking overlaps —
+  // blocking the whole model while a customer holds a bike is a genuine
+  // contradiction. Per-unit blocks are handled above: capacity-gated, then
+  // placed on a unit with no pinned overlap (or honestly rejected on scatter).
+  if (!targetUnitId) {
+    const { data: clashBookings, error: clashErr } = await supabase
+      .from("bookings")
+      .select("id, customer_name, bike_unit_id, date_from, date_to, pickup_time, return_time")
+      .eq("bike_id", bikeId)
+      .eq("status", "confirmed")
+      // A returned bike is free again — it must not veto a block (early
+      // returns used to falsely conflict here).
+      .is("returned_at", null)
+      .lte("date_from", dateTo)
+      .gte("date_to", dateFrom)
+      .limit(5);
+    if (clashErr) {
+      console.error("[/api/admin/blocks] conflict lookup", clashErr);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+    // Time-bounded block: only conflict on actual time overlap. Whole-
+    // day block conflicts with anything on those dates.
+    const realClashes = (clashBookings ?? []).filter((b) => {
+      if (!startTime || !endTime) return true;
+      const r = b as {
+        date_from: string;
+        date_to: string;
+        pickup_time: string;
+        return_time: string;
+      };
+      const bookStart = new Date(`${r.date_from}T${r.pickup_time}`).getTime();
+      const bookEnd = new Date(`${r.date_to}T${r.return_time}`).getTime();
+      const blockStart = new Date(`${dateFrom}T${startTime}`).getTime();
+      const blockEnd = new Date(`${dateTo}T${endTime}`).getTime();
+      return blockStart < bookEnd && bookStart < blockEnd;
+    });
+    if (realClashes.length > 0) {
+      const c = realClashes[0] as { customer_name: string; date_from: string; date_to: string };
+      return NextResponse.json(
+        {
+          error: `Can't block — conflicts with confirmed booking for ${c.customer_name} (${c.date_from} → ${c.date_to}). Cancel the booking first or pick another unit.`,
+        },
+        { status: 409 },
+      );
+    }
   }
 
   // Also refuse if another manual block already covers the same unit

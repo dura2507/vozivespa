@@ -288,7 +288,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       .select("id, bike_id, bike_unit_id, status, date_from, date_to, pickup_time, return_time, returned_at, picked_up_at"),
     supabase
       .from("blocked_dates")
-      .select("bike_id, bike_unit_id, date_from, date_to, start_time, end_time")
+      .select("id, bike_id, bike_unit_id, date_from, date_to, start_time, end_time")
       .is("booking_id", null),
   ]);
   if (unitsRes.error) throw new Error(unitsRes.error.message);
@@ -374,6 +374,7 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
   // Manual blocks: per-unit blocks count an extra unit as out; whole-
   // model blocks mark every unit of that bike out.
   for (const m of (blocksRes.data ?? []) as Array<{
+    id: string;
     bike_id: string;
     bike_unit_id: string | null;
     date_from: string;
@@ -397,8 +398,12 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
       // A block pinned to a unit outside the bookable pool (the Ghost Bike
       // reserve) is off-the-books here, same as ghost-parked bookings above.
       if (!bookableUnitIds.has(m.bike_unit_id)) continue;
-      entry.outUnits.add(m.bike_unit_id);
-      entry.collected.add(m.bike_unit_id); // in service = physically unavailable
+      // Key the block by its OWN row id, not the unit id: a service block
+      // always consumes a physical bike of its own, even when its advisory
+      // unit id collides with a booking's (pin-scatter fallback in the blocks
+      // route). Unit-id keying deduped that case and under-counted OUT.
+      entry.outUnits.add(`block:${m.id}`);
+      entry.collected.add(`block:${m.id}`); // in service = physically unavailable
     } else {
       // Whole-model block: every active unit is unavailable.
       const all = (unitsRes.data ?? []).filter((u) => u.bike_id === m.bike_id);
@@ -411,12 +416,15 @@ export async function listFleetSummary(nowMs: number): Promise<FleetEntry[]> {
 
   return CATEGORIES.map<FleetEntry>((cat) => {
     const entry = out.get(cat.id);
+    const total = unitsByBike.get(cat.id) ?? 0;
     return {
       bikeId: cat.id,
       bikeName: cat.shortName ?? cat.model,
-      totalUnits: unitsByBike.get(cat.id) ?? 0,
-      outUnits: entry?.outUnits.size ?? 0,
-      collectedOut: entry?.collected.size ?? 0,
+      totalUnits: total,
+      // Physically at most K bikes can be gone - cap so a booking + block
+      // overlap in the bookkeeping can never render "5/4 out" or negative free.
+      outUnits: Math.min(entry?.outUnits.size ?? 0, total),
+      collectedOut: Math.min(entry?.collected.size ?? 0, total),
       pendingCount: entry?.pending ?? 0,
       upcomingCount: entry?.upcoming ?? 0,
     };

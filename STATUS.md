@@ -10,7 +10,25 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-07-18 (group-op write paths + edit-splits-group fix).
+Last updated: 2026-07-26 (service-block capacity gate + WhatsApp number).
+
+## Done (2026-07-26)
+- **Service blocks capacity-gated** (Priscilla 23.07 "can't block, says Antonio pickup 18/07"):
+  the per-unit block path checked only PINNED bookings per unit (pin-scatter false rejects,
+  unpinned demand invisible, misleading 409 naming an unrelated booking). Now gated by
+  `findFreeUnits` over the block window (counts everything incl unpinned + pending + blocks);
+  placement only on a pinned-free regular unit, honest 409 on genuine-full AND on pin-scatter
+  (never dropped onto a busy unit id - downstream consumers key blocks by unit id). Blocks UI
+  posts quantity N sequentially (parallel gate race), ghost blocks skip the gate, day-walk is
+  TZ-safe. `listFleetSummary` keys blocks as their own
+  physical bike (block:<id>), capped at K. Retroactive DB check: her 23.07 rejection was
+  capacity-CORRECT (fleet full incl a since-cancelled 3-bike group); only the message was wrong.
+  See CALENDAR_MAP.md backlog #14.
+- **WhatsApp -> German number** (Thomas 24.07: Croatian number's WA blocked): new
+  `BRAND.whatsappRaw`; ALL wa.me links (contact page, customer emails, owner links) use it.
+  Call buttons + displayed numbers unchanged.
+- Worktree hygiene: the kind-elion worktree had silently fallen 34 commits behind origin/main;
+  fast-forwarded and re-applied. If you work in a worktree, `git fetch && git status -sb` FIRST.
 
 ## Done (2026-07-18) - group booking write paths
 Trigger: Thomas edited one bike of Thorben's 2-bike group on 17.07, changed only one

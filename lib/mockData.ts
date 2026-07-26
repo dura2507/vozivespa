@@ -530,6 +530,11 @@ export const BRAND = {
   hours: "Mon-Sun, 09:00-19:00",
   phone: "+49 176 34658003",
   phoneRaw: "4917634658003",
+  // ALL WhatsApp deep-links route to this number, regardless of which
+  // contact row they sit next to. The Croatian number's WhatsApp is
+  // blocked (Thomas, 2026-07-24) - calls still work, so the contact rows
+  // keep their own numbers for tel: links.
+  whatsappRaw: "4917634658003",
   languages: ["DE", "GB", "BR"],
   email: "rentamotobooking@gmail.com",
   instagram: "sickmotos_bike_rental_zadar",

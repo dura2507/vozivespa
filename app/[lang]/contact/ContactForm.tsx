@@ -248,7 +248,7 @@ export default function ContactForm({
                         {dict.footer.call}
                       </a>
                       <a
-                        href={`https://wa.me/${contact.phoneRaw}`}
+                        href={`https://wa.me/${BRAND.whatsappRaw}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center bg-[#25D366] text-white text-[10px] font-bold tracking-[0.15em] uppercase px-3 py-2.5 hover:bg-[#1EBD5A] transition-colors"

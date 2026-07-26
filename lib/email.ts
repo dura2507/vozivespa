@@ -120,7 +120,7 @@ function splitNotes(raw: string | null): { country: string | null; note: string 
 }
 
 function ownerWaLink(): string {
-  return `https://wa.me/${BRAND.contacts[0].phoneRaw}`;
+  return `https://wa.me/${BRAND.whatsappRaw}`;
 }
 
 /**
@@ -134,7 +134,9 @@ function contactButtonsHtml(): string {
     .map((c) => {
       const flag = c.languages.join(" ");
       const callHref = `tel:+${c.phoneRaw}`;
-      const waHref = `https://wa.me/${c.phoneRaw}`;
+      // WhatsApp always goes to the German number (Croatian WA is blocked);
+      // the call button keeps the contact's own number.
+      const waHref = `https://wa.me/${BRAND.whatsappRaw}`;
       return `<tr>
     <td style="padding:6px 12px 6px 0;font-size:13px;line-height:1.4;color:#1a1a1a;white-space:nowrap;">
       <span style="font-size:16px;line-height:1;vertical-align:middle;">${flag}</span>

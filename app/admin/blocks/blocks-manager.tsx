@@ -295,6 +295,13 @@ export function BlocksManager({
         // Service / repair block. Same shape: quantity → N POSTs.
         // "All units" sends one whole-model row (bike_unit_id null);
         // other counts fan out into N specific blocks.
+        if (!isAllUnits && availableUnits.length === 0) {
+          // Without this, [undefined] would serialize to a missing unit field
+          // and the API would create a WHOLE-MODEL block by accident.
+          setError("No units configured for this model.");
+          setBusy(false);
+          return;
+        }
         const blockTargets: Array<string | undefined> = isAllUnits
           ? [undefined]
           : numericQuantity === 1
@@ -308,18 +315,20 @@ export function BlocksManager({
           endTime: allDay ? undefined : returnTime,
           reason: reason.trim() || undefined,
         };
-        const results = await Promise.all(
-          blockTargets.map((unitId) =>
-            fetch("/api/admin/blocks", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ ...payloadBase, bikeUnitId: unitId }),
-            }).then(async (r) => ({
-              ok: r.ok,
-              body: await r.json().catch(() => ({})),
-            })),
-          ),
-        );
+        // SEQUENTIAL on purpose: the server gates each block on "one more
+        // demand still fits". Parallel POSTs would each read the same
+        // pre-insert state, all pass with a single free slot, and together
+        // over-block past capacity. One at a time, each request sees the
+        // previous insert.
+        const results: Array<{ ok: boolean; body: { error?: string } }> = [];
+        for (const unitId of blockTargets) {
+          const r = await fetch("/api/admin/blocks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...payloadBase, bikeUnitId: unitId }),
+          });
+          results.push({ ok: r.ok, body: await r.json().catch(() => ({})) });
+        }
         const failures = results.filter((r) => !r.ok);
         if (failures.length === results.length) {
           setError(failures[0].body?.error || "Could not add block");
