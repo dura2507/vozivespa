@@ -10,7 +10,17 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-07-26 (service-block capacity gate + WhatsApp number).
+Last updated: 2026-07-27 (BikeDetail counts service blocks client-side).
+
+## Done (2026-07-27)
+- BikeDetail slot pickers now count `manualBlocks` as demand (Wave-3 item "partial-day
+  service blocks invisible client-side" - bitten live 27.07: picker offered 1 bike while
+  a time-bounded block made the fleet full; server correctly 409'd "Time conflict").
+  See CALENDAR_MAP.md #15.
+- Thomas 27.07: "WhatsApp von Priscilla ist wieder ok" - Croatian WA unblocked again.
+  All wa.me links still route to the German number (as Thomas requested 24.07); switching
+  the English/PT contact back to the Croatian number is a one-line change in
+  BRAND (waRaw per contact) IF Thomas asks - not done without his say-so.
 
 ## Done (2026-07-26)
 - **Service blocks capacity-gated** (Priscilla 23.07 "can't block, says Antonio pickup 18/07"):

@@ -170,6 +170,13 @@ export default function BikeDetail({
           totalUnits: number;
           unitIds: string[];
           blockedPickupDates?: string[];
+          manualBlocks?: Array<{
+            from: string;
+            to: string;
+            startTime: string | null;
+            endTime: string | null;
+            unitId: string | null;
+          }>;
         }) => {
           if (cancelled) return;
           // Backup / reserve units are off-the-books online (the ghost-bike
@@ -183,10 +190,34 @@ export default function BikeDetail({
           // in the public unitIds list; keep legacy null-unit bookings (they
           // conservatively block the whole model).
           const publicUnitIds = new Set(json.unitIds ?? []);
+          // Owner service blocks consume capacity exactly like bookings on the
+          // server (findFreeUnit counts them as demand spans), but the slot
+          // pickers below only look at `bookings` — so a time-bounded block
+          // used to be invisible client-side: the picker offered a slot the
+          // server then rejected as "Time conflict" (Priscilla, 27.07, while
+          // one scooter sat in service). Feed each block in as a synthetic
+          // booking: a per-unit block is one extra demand over its span, a
+          // whole-model block takes ALL units (server rejects those windows
+          // outright).
+          const blockDemand: ConfirmedBooking[] = (json.manualBlocks ?? []).flatMap(
+            (m): ConfirmedBooking[] => {
+              const span = {
+                from: m.from,
+                to: m.to,
+                pickupTime: m.startTime ?? "00:00",
+                returnTime: m.endTime ?? "23:59",
+              };
+              if (m.unitId) return [{ ...span, unitId: m.unitId }];
+              return Array.from(
+                { length: Math.max(json.totalUnits || 1, 1) },
+                () => ({ ...span, unitId: null }),
+              );
+            },
+          );
           setBookings(
-            (json.bookings ?? []).filter(
-              (b) => !b.unitId || publicUnitIds.has(b.unitId),
-            ),
+            (json.bookings ?? [])
+              .filter((b) => !b.unitId || publicUnitIds.has(b.unitId))
+              .concat(blockDemand),
           );
           setTotalUnits(json.totalUnits || 1);
           setActiveUnitIds(json.unitIds ?? []);
