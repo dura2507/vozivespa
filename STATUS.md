@@ -10,7 +10,17 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-07-27 (BikeDetail counts service blocks client-side).
+Last updated: 2026-07-27 (BikeDetail service blocks + full DB reconciliation).
+
+## Done (2026-07-27, part 2) - DB reconciliation
+Cross-checked raw DB against every availability surface: admin dashboard 6/6 models,
+homepage badge 6/6, bike detail verified live; DB anomaly scan clean (see CALENDAR_MAP #16).
+Fixed three consistency gaps: blocks route now considers PENDING bookings when placing a
+per-unit block and when gating a whole-model block; the homepage badge folds in a service
+block that shares a unit with a rental; the client no longer buffers block demand (fuzz-
+verified equivalent to findFreeUnit over 330k states). A float-placement change to
+listUnitAvailability was written and reverted after fuzzing showed it moved ghost blocks
+onto regular units.
 
 ## Done (2026-07-27)
 - BikeDetail slot pickers now count `manualBlocks` as demand (Wave-3 item "partial-day

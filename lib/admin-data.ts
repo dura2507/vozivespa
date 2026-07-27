@@ -637,6 +637,11 @@ export async function listUnitAvailability(
       unassignedIvs.push(iv);
     }
   }
+  // Service blocks sit on the unit id they carry. That id is advisory, but the
+  // blocks route only ever places a block on a unit with no overlapping
+  // booking (confirmed OR pending), so a block and a rental can no longer end
+  // up on the same row - which is what used to collapse two physically-out
+  // bikes into one here while the fleet card counted both.
   for (const m of (blocksRes.data ?? []) as Array<{
     bike_unit_id: string | null; date_from: string; date_to: string; start_time: string | null; end_time: string | null;
   }>) {

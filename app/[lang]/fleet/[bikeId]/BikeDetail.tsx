@@ -206,6 +206,10 @@ export default function BikeDetail({
                 to: m.to,
                 pickupTime: m.startTime ?? "00:00",
                 returnTime: m.endTime ?? "23:59",
+                // No cleaning turnaround after service - the server doesn't
+                // buffer block spans either, and buffering here would hide the
+                // first pickup slot the booking engine actually accepts.
+                noBuffer: true,
               };
               if (m.unitId) return [{ ...span, unitId: m.unitId }];
               return Array.from(

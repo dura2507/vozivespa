@@ -472,6 +472,26 @@ export async function getAvailableNowCounts(): Promise<
     c.available += 1;
   }
 
+  // A service block whose advisory unit ALSO holds a live rental is a SECOND
+  // bike out: blocks consume a bike by existing, not by unit identity (the
+  // admin fleet card counts them per block row). The loop above bucketed such
+  // a unit once, as "service", leaving one genuinely-busy bike uncounted and
+  // the badge one bike too optimistic - the direction that advertises a bike
+  // the booking engine then refuses.
+  const extraServiceByBike = new Map<string, number>();
+  for (const u of ((unitsRes.data ?? []) as Array<{ id: string; bike_id: string }>)) {
+    if (serviceUnitIds.has(u.id) && rentedUnitIds.has(u.id)) {
+      extraServiceByBike.set(u.bike_id, (extraServiceByBike.get(u.bike_id) ?? 0) + 1);
+    }
+  }
+  for (const [bikeId, extra] of extraServiceByBike) {
+    const c = counts[bikeId];
+    if (!c) continue;
+    const absorb = Math.min(extra, c.available);
+    c.available -= absorb;
+    c.rented += absorb;
+  }
+
   // Fold in UNPINNED demand: each unpinned booking covering "now" eats one of
   // the model's currently-free units. Move it from available into rented, and
   // factor its return into the "back at" look-ahead so a model that is out

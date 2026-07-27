@@ -168,7 +168,12 @@ export async function POST(request: Request) {
         .from("bookings")
         .select("bike_unit_id, customer_name, date_from, date_to, pickup_time, return_time")
         .eq("bike_id", bikeId)
-        .eq("status", "confirmed")
+        // Pending holds a unit exactly like confirmed (the capacity gate above
+        // counts it). Looking at confirmed only let a block land on a unit a
+        // pending booking already held - the one way a block and a booking
+        // could still end up sharing a unit id, which several read surfaces
+        // then collapse into a single "out" bike.
+        .in("status", ["confirmed", "pending"])
         .not("bike_unit_id", "is", null)
         .is("returned_at", null)
         .lte("date_from", dateTo)
@@ -301,7 +306,10 @@ export async function POST(request: Request) {
       .from("bookings")
       .select("id, customer_name, bike_unit_id, date_from, date_to, pickup_time, return_time")
       .eq("bike_id", bikeId)
-      .eq("status", "confirmed")
+      // Pending counts too: blocking the WHOLE model over a live pending
+      // request would leave that customer unconfirmable (findFreeUnit rejects
+      // any window covered by a whole-model block).
+      .in("status", ["confirmed", "pending"])
       // A returned bike is free again — it must not veto a block (early
       // returns used to falsely conflict here).
       .is("returned_at", null)

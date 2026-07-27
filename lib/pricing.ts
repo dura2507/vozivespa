@@ -134,6 +134,11 @@ export type ConfirmedBooking = {
   pickupTime: string; // HH:MM
   returnTime: string;
   unitId: string | null;
+  // Set for synthetic demand that stands for an owner SERVICE BLOCK rather
+  // than a rental. A bike coming out of service needs no cleaning turnaround,
+  // and the server never buffers block spans (lib/availability.ts blockSpans),
+  // so buffering them here would hide a slot the booking engine accepts.
+  noBuffer?: boolean;
 };
 
 function toIsoDate(d: Date): string {
@@ -162,11 +167,15 @@ function unitsFreeForWindow(
   // Capacity model, mirrors findFreeUnit: customers aren't pinned to a bike, so
   // "free units" = K minus the PEAK number of bookings needed at once inside the
   // window (any unit, incl. unassigned), not the count of distinct units touched.
-  const ov: Array<{ s: number; e: number }> = [];
+  const ov: Array<{ s: number; e: number; buf: number }> = [];
   for (const b of bookings) {
+    // Service blocks carry no turnaround (see ConfirmedBooking.noBuffer), so
+    // each row brings its own buffer and the client stays identical to the
+    // server's mixed booking/block demand model.
+    const buf = b.noBuffer ? 0 : bufferMs;
     const bStart = combineDateTime(new Date(`${b.from}T00:00:00`), b.pickupTime).getTime();
     const bEnd = combineDateTime(new Date(`${b.to}T00:00:00`), b.returnTime).getTime();
-    if (winStart < bEnd + bufferMs && bStart - bufferMs < winEnd) ov.push({ s: bStart, e: bEnd });
+    if (winStart < bEnd + buf && bStart - buf < winEnd) ov.push({ s: bStart, e: bEnd, buf });
   }
   // A bike is committed [pickup, return + turnaround); the buffer is return-side
   // ONLY, else two back-to-back rentals exactly one turnaround apart get
@@ -177,7 +186,7 @@ function unitsFreeForWindow(
   for (const t of instants) {
     if (t < winStart || t >= winEnd) continue;
     let dem = 0;
-    for (const b of ov) if (b.s <= t && t < b.e + bufferMs) dem++;
+    for (const b of ov) if (b.s <= t && t < b.e + b.buf) dem++;
     if (dem > peak) peak = dem;
   }
   if (activeUnitIds && activeUnitIds.length > 0) return activeUnitIds.length - peak;
