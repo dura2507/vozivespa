@@ -112,8 +112,14 @@ function parseNewBooking(parsed: ParsedMail): RiderlyBooking {
   const subject = parsed.subject ?? "";
   const text = htmlToText(html);
 
+  // Dash class uses unicode escapes on purpose. A repo-wide dash cleanup
+  // once flattened this class to [--] (a range from hyphen to hyphen),
+  // which stops matching Riderly's en-dash subject line. The fallout is
+  // silent: bookingId drops to "(unknown)", and since that string is
+  // also the dedupe key, the SECOND such booking is skipped as a
+  // duplicate and never reaches the calendar. Escapes survive the pass.
   const idMatch =
-    /New Rental Booking\s*[--]\s*([A-Z0-9]+)/i.exec(subject) ??
+    /New Rental Booking\s*[-\u2013\u2014]\s*([A-Z0-9]+)/i.exec(subject) ??
     /Booking\s*#\s*\n\s*([A-Z0-9]+)/m.exec(text);
   const bookingId = idMatch?.[1] ?? "(unknown)";
 
@@ -296,6 +302,47 @@ export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
 
     for (const b of buffered) out.push(b.email);
     console.log(`[riderly] done. ${out.length} forwarded, ${seenUids.length - buffered.length} skipped, in ${Date.now() - t0}ms total`);
+
+    // ---- READ-ONLY diagnostic (temporary, 2026-08-07) ----------------
+    // Thomas: "Riderly hängt". The cron reports 0 forwarded AND 0 skipped
+    // every tick, i.e. the mailbox holds no UNREAD mail at all, so we
+    // cannot tell these three apart:
+    //   (a) Riderly stopped mailing us / mails go elsewhere,
+    //   (b) mails arrive but a human opens them first (the poller only
+    //       ever looks at unread, so they are invisible to it forever),
+    //   (c) Riderly changed its sender and the allowlist misses it.
+    // This scan reads envelopes only. It fetches no bodies, changes no
+    // flags, imports nothing, and any failure is swallowed, so it cannot
+    // affect the poll above. Remove once the question is answered.
+    try {
+      const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+      const diagLock = await client.getMailboxLock(mailbox);
+      try {
+        let total = 0;
+        let hits = 0;
+        for await (const msg of client.fetch(
+          { since },
+          { envelope: true, flags: true, uid: true },
+        )) {
+          total++;
+          const from = (msg.envelope?.from?.[0]?.address ?? "").toLowerCase();
+          const subject = msg.envelope?.subject ?? "";
+          if (!/riderly/i.test(from) && !/riderly|rental booking/i.test(subject)) continue;
+          hits++;
+          const state = msg.flags?.has("\\Seen") ? "READ" : "UNREAD";
+          console.log(
+            `[riderly:diag] uid=${msg.uid} ${state} from=${from} subject=${clip(subject, 90)}`,
+          );
+        }
+        console.log(
+          `[riderly:diag] mailbox=${mailbox} window=14d messages=${total} riderly-looking=${hits}`,
+        );
+      } finally {
+        diagLock.release();
+      }
+    } catch (err) {
+      console.warn("[riderly:diag] scan failed (ignored)", err);
+    }
   } finally {
     await client.logout().catch(() => {});
   }
