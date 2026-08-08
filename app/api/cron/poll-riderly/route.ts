@@ -10,6 +10,7 @@ import {
 import { sendOwnerRiderlyTelegram } from "@/lib/telegram";
 import { sendOwnerRiderlyEmail } from "@/lib/email";
 import { getServiceClient } from "@/lib/supabase";
+import { zagrebNow } from "@/lib/season";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -188,9 +189,21 @@ async function upsertRiderlyBookingRow(
   // nothing useful and would just be noise in the dashboard; a mail that
   // old only shows up here because its row was lost, and re-creating it
   // months later helps nobody.
-  const todayIso = new Date().toISOString().slice(0, 10);
-  if (end.date < todayIso) {
-    console.log(`[cron/poll-riderly] ${b.bookingId} already over (${end.date}), not importing`);
+  // Compare the full end MOMENT, not just the date, and do it in Zagreb
+  // wallclock (the function runs on a UTC box, so a naive Date would be two
+  // hours off). A day-level check let 6CVZRKBW52 through on 2026-08-08: it
+  // had ended that same morning at 10:00, so it was already history when
+  // the cron saw it, yet it landed as a fresh pending request.
+  const now = zagrebNow();
+  const [endH, endMin] = end.time.split(":").map((n) => parseInt(n, 10));
+  const endMinutes = endH * 60 + endMin;
+  const isOver =
+    end.date < now.isoDate ||
+    (end.date === now.isoDate && endMinutes <= now.minutesOfDay);
+  if (isOver) {
+    console.log(
+      `[cron/poll-riderly] ${b.bookingId} already over (${end.date} ${end.time}), not importing`,
+    );
     return "skipped";
   }
 
