@@ -2,15 +2,17 @@ import { ImapFlow } from "imapflow";
 import { simpleParser, type ParsedMail } from "mailparser";
 import { CATEGORIES } from "@/lib/mockData";
 
-// Hardcoded sender allowlist. Only mails whose From address contains
-// one of these substrings get forwarded to Telegram. Everything else
-// (Kristian sending tests, Google welcome, Facebook notifications,
-// random spam) gets silently marked as read.
+// Hardcoded sender allowlist. Only mails whose From address contains one
+// of these substrings are downloaded, parsed, forwarded or imported.
+// Everything else in the mailbox is ignored entirely (and left untouched,
+// see processRiderlyInbox).
 //
-// To switch to production-only: delete the leon line and push.
+// Note this is a plain substring test, so it matches the exact domain
+// only: helena@chat.riderly.com does NOT contain "@riderly.com" and is
+// therefore skipped. Riderly's booking notifications come from
+// reservations@riderly.com (verified live 2026-08-07).
 const ALLOWED_FROM = [
-  "leon.huschka@duraska.com", // TEST, remove for production
-  "@riderly.com",             // PRODUCTION, keep
+  "@riderly.com", // PRODUCTION
 ];
 
 // Riderly is a separate booking platform that doesn't expose an API.

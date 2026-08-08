@@ -10,7 +10,49 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-07-27 (BikeDetail service blocks + full DB reconciliation).
+Last updated: 2026-08-08 (Riderly importer rebuilt, duplicate cron removed).
+
+## Riderly integration (2026-08-08) - READ THIS BEFORE TOUCHING THE POLLER
+
+Thomas reported Riderly bookings not arriving. Four had silently never
+reached the calendar. What actually happened, in order:
+
+1. `c2e90d5` (10.05) removed the `*/15` cron from vercel.json because Vercel
+   HOBBY caps crons at once per day and was rejecting every deploy. The
+   comment said polling now had to be triggered from outside Vercel, so a
+   **cron-job.org** job was created against `rentamotozadar.com/api/cron/poll-riderly`.
+2. `80cd903` (03.07) re-added the Vercel cron after the upgrade to Pro,
+   believing nothing was polling. Nobody disabled cron-job.org. From then on
+   **two schedulers** hit the same Gmail mailbox every 15 min, ~30s apart.
+   Damage proof: booking TZWXXL3CW7 exists TWICE in `bookings`, the rows
+   inserted 24ms apart.
+3. Double polling made Gmail throttle (measured 31s connect, 44s mailbox
+   lock). The poller marked mail `\Seen` BEFORE the route forwarded or
+   inserted anything, so a slow run hit `maxDuration = 60` (the Hobby
+   ceiling) and was killed mid-flight: mail read, nobody notified, no row,
+   and invisible to every later run because those only looked at unread mail.
+
+Fixed: cron-job.org job **disabled** (not deleted, still in that account);
+`maxDuration` 300; `processRiderlyInbox` replaces `pollRiderlyInbox` and
+marks `\Seen` only after the handler reports success; import keys on the
+booking id from the SUBJECT, not on the unread flag.
+
+Two dedupe gates, both earned on real data during the first live run:
+- marker `Riderly: <id>` in `notes` (importer-created rows)
+- **hand-entered twin**: same bike + identical window + not cancelled + no
+  marker. Priscilla/Thomas type Riderly bookings in by hand under the real
+  rider name, so those rows carry no marker. This gate stopped RHIJ6FNB3M
+  (James Woodyear-Smith) and YEGENPJAMG (Michal Majerowski) from being
+  double-booked. It deliberately IGNORES marker-carrying rows, because two
+  different Riderly bookings on the same model and window are legitimate on
+  a multi-unit fleet.
+Plus: never import a rental whose end moment has passed (Zagreb wallclock).
+
+Still open / known:
+- An unmappable Riderly bike name logs at ERROR and creates nothing. Watch
+  `[cron/poll-riderly] UNMAPPED` in the Vercel logs.
+- No persistent state, so a hard-deleted Riderly row can be re-imported.
+- The importer never learns that a booking was later cancelled ON Riderly.
 
 ## Done (2026-07-27, part 2) - DB reconciliation
 Cross-checked raw DB against every availability surface: admin dashboard 6/6 models,
