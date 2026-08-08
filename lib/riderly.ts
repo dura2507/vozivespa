@@ -233,7 +233,58 @@ export function classifyRiderly(parsed: ParsedMail): RiderlyEmail {
 // marks them as read so the next cron tick only sees fresh
 // notifications. Throws on connection / auth issues so the cron
 // handler can log + 500.
-export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
+export type RiderlyCandidate = {
+  uid: number;
+  // Was the message still unread when we found it? Drives whether the
+  // owner gets pinged; the IMPORT decision is independent of this.
+  wasUnseen: boolean;
+  subject: string;
+  from: string;
+  // Riderly puts the booking id in the subject, so we know it before
+  // downloading the body. Lets the caller ask "do we already have this?"
+  // and skip the download entirely.
+  bookingId: string | null;
+};
+
+// Extract the Riderly booking id from a subject line, without needing the
+// body. Same dash class as parseNewBooking (unicode escapes on purpose).
+export function bookingIdFromSubject(subject: string): string | null {
+  const m = /New Rental Booking\s*[-\u2013\u2014]\s*([A-Z0-9]+)/i.exec(subject);
+  return m ? m[1] : null;
+}
+
+export type RiderlyPollStats = {
+  scanned: number;
+  candidates: number;
+  fetched: number;
+  handled: number;
+  markedRead: number;
+};
+
+// Walk the mailbox and hand every relevant Riderly mail to the caller.
+//
+// Two properties this design exists for, both learned the hard way:
+//
+//  1. IMPORTING MUST NOT DEPEND ON THE UNREAD FLAG. The old poller fetched
+//     `{ seen: false }` only. Anything already read was invisible to it
+//     forever, so a booking could never reach the calendar. That is how
+//     four Riderly bookings went missing in Aug 2026.
+//  2. NEVER MARK READ BEFORE THE WORK IS DONE. The old poller flagged every
+//     message \Seen inside this function, then the route did the actual
+//     forwarding and inserting. When a slow IMAP day pushed the request
+//     past maxDuration, the mail was already read but nothing had been
+//     forwarded or inserted, and no later run would ever look at it again.
+//     Now the caller reports success per message and only those get
+//     flagged, so a timeout costs one retry instead of one booking.
+export async function processRiderlyInbox(opts: {
+  windowDays?: number;
+  // Cheap gate: given the envelope-level info, do we need the body?
+  // Return false to skip the download entirely (already-imported mail).
+  needsBody: (c: RiderlyCandidate) => boolean | Promise<boolean>;
+  // Do the real work. Return true only if everything that had to happen
+  // happened - that is the sole trigger for marking the mail read.
+  handle: (email: RiderlyEmail, c: RiderlyCandidate) => Promise<boolean>;
+}): Promise<RiderlyPollStats> {
   const user = process.env.RIDERLY_IMAP_USER?.trim();
   const pass = process.env.RIDERLY_IMAP_PASSWORD?.trim();
   if (!user || !pass) {
@@ -242,6 +293,7 @@ export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
   const host = process.env.RIDERLY_IMAP_HOST?.trim() || "imap.gmail.com";
   const port = parseInt(process.env.RIDERLY_IMAP_PORT ?? "993", 10);
   const mailbox = process.env.RIDERLY_LABEL?.trim() || "INBOX";
+  const windowDays = opts.windowDays ?? 21;
 
   const client = new ImapFlow({
     host,
@@ -251,102 +303,134 @@ export async function pollRiderlyInbox(): Promise<RiderlyEmail[]> {
     logger: false,
   });
 
-  const out: RiderlyEmail[] = [];
+  const stats: RiderlyPollStats = {
+    scanned: 0,
+    candidates: 0,
+    fetched: 0,
+    handled: 0,
+    markedRead: 0,
+  };
   const t0 = Date.now();
   console.log(`[riderly] connect host=${host} port=${port} user=${user.slice(0, 6)}…`);
   await client.connect();
   console.log(`[riderly] connected in ${Date.now() - t0}ms`);
 
-  // Two-phase: drain the fetch iterator into a local array while the
-  // lock is held, then mark every UID as read in a single batch after
-  // the lock is released. Mixing messageFlagsAdd into an active fetch
-  // iterator deadlocks imapflow, which manifests on Vercel as a
-  // FUNCTION_INVOCATION_TIMEOUT at maxDuration. The earlier inline
-  // version of this loop hit that bug.
-  const buffered: { uid: number; email: RiderlyEmail }[] = [];
-  const seenUids: number[] = [];
+  const markSeenUids: number[] = [];
   try {
+    // ---- Phase 1: envelopes + flags only. Cheap, so a busy mailbox
+    // cannot blow the function budget just by existing.
+    const since = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000);
+    const candidates: RiderlyCandidate[] = [];
     const lock = await client.getMailboxLock(mailbox);
     console.log(`[riderly] mailbox lock acquired (${mailbox}) at ${Date.now() - t0}ms`);
     try {
       for await (const msg of client.fetch(
-        { seen: false },
-        { source: true, envelope: true, uid: true },
+        { since },
+        { envelope: true, flags: true, uid: true },
       )) {
-        if (!msg.source || !msg.uid) continue;
-        const parsed = await simpleParser(msg.source);
-        const fromAddr = (parsed.from?.value?.[0]?.address ?? "").toLowerCase();
-        const isAllowed = ALLOWED_FROM.some((s) => fromAddr.includes(s));
-        if (!isAllowed) {
-          console.log(`[riderly] skipping uid=${msg.uid} from=${fromAddr} (not in allowlist)`);
-          seenUids.push(msg.uid);
+        if (!msg.uid) continue;
+        stats.scanned++;
+        const from = (msg.envelope?.from?.[0]?.address ?? "").toLowerCase();
+        const subject = msg.envelope?.subject ?? "";
+        const wasUnseen = !(msg.flags?.has("\\Seen") ?? false);
+        if (!ALLOWED_FROM.some((s) => from.includes(s))) {
+          // Unrelated mail is left completely alone. The old poller marked
+          // it read "to keep the inbox tidy", which quietly destroys the
+          // owner's unread signal on mail we never even look at - including
+          // Riderly's own customer chat (helena@chat.riderly.com does NOT
+          // contain "@riderly.com"). Not ours to touch.
           continue;
         }
-        console.log(`[riderly] forwarding uid=${msg.uid} from=${fromAddr}`);
-        buffered.push({ uid: msg.uid, email: classifyRiderly(parsed) });
-        seenUids.push(msg.uid);
+        candidates.push({
+          uid: msg.uid,
+          wasUnseen,
+          subject,
+          from,
+          bookingId: bookingIdFromSubject(subject),
+        });
       }
     } finally {
       lock.release();
     }
+    stats.candidates = candidates.length;
+    console.log(
+      `[riderly] scanned ${stats.scanned} msg(s) since ${since.toISOString().slice(0, 10)}, ${candidates.length} from allowlisted senders`,
+    );
 
-    if (seenUids.length > 0) {
-      const lock = await client.getMailboxLock(mailbox);
+    // ---- Phase 2: ask the caller which ones actually need the body.
+    const wanted: RiderlyCandidate[] = [];
+    for (const c of candidates) {
       try {
-        await client.messageFlagsAdd(seenUids, ["\\Seen"], { uid: true });
-        console.log(`[riderly] marked ${seenUids.length} message(s) as read`);
-      } finally {
-        lock.release();
+        if (await opts.needsBody(c)) wanted.push(c);
+      } catch (err) {
+        // If we cannot tell, err on the side of looking at it.
+        console.warn(`[riderly] needsBody failed for uid=${c.uid}, fetching anyway`, err);
+        wanted.push(c);
       }
     }
+    if (wanted.length === 0) {
+      console.log(`[riderly] nothing to fetch (all ${candidates.length} known + read)`);
+    }
 
-    for (const b of buffered) out.push(b.email);
-    console.log(`[riderly] done. ${out.length} forwarded, ${seenUids.length - buffered.length} skipped, in ${Date.now() - t0}ms total`);
-
-    // ---- READ-ONLY diagnostic (temporary, 2026-08-07) ----------------
-    // Thomas: "Riderly hängt". The cron reports 0 forwarded AND 0 skipped
-    // every tick, i.e. the mailbox holds no UNREAD mail at all, so we
-    // cannot tell these three apart:
-    //   (a) Riderly stopped mailing us / mails go elsewhere,
-    //   (b) mails arrive but a human opens them first (the poller only
-    //       ever looks at unread, so they are invisible to it forever),
-    //   (c) Riderly changed its sender and the allowlist misses it.
-    // This scan reads envelopes only. It fetches no bodies, changes no
-    // flags, imports nothing, and any failure is swallowed, so it cannot
-    // affect the poll above. Remove once the question is answered.
-    try {
-      const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
-      const diagLock = await client.getMailboxLock(mailbox);
+    // ---- Phase 3: download, parse and hand over, one message at a time.
+    if (wanted.length > 0) {
+      const byUid = new Map(wanted.map((c) => [c.uid, c]));
+      const lock2 = await client.getMailboxLock(mailbox);
       try {
-        let total = 0;
-        let hits = 0;
         for await (const msg of client.fetch(
-          { since },
-          { envelope: true, flags: true, uid: true },
+          wanted.map((c) => c.uid).join(","),
+          { source: true, uid: true },
+          { uid: true },
         )) {
-          total++;
-          const from = (msg.envelope?.from?.[0]?.address ?? "").toLowerCase();
-          const subject = msg.envelope?.subject ?? "";
-          if (!/riderly/i.test(from) && !/riderly|rental booking/i.test(subject)) continue;
-          hits++;
-          const state = msg.flags?.has("\\Seen") ? "READ" : "UNREAD";
-          console.log(
-            `[riderly:diag] uid=${msg.uid} ${state} from=${from} subject=${clip(subject, 90)}`,
-          );
+          const cand = msg.uid ? byUid.get(msg.uid) : undefined;
+          if (!msg.source || !cand) continue;
+          stats.fetched++;
+          // Per-message isolation: one unparseable mail must not abort the
+          // batch, or a single poison message stalls the integration for
+          // as long as it sits inside the window.
+          try {
+            const parsed = await simpleParser(msg.source);
+            const ok = await opts.handle(classifyRiderly(parsed), cand);
+            if (ok) {
+              stats.handled++;
+              if (cand.wasUnseen) markSeenUids.push(cand.uid);
+            } else {
+              console.warn(`[riderly] uid=${cand.uid} not handled, leaving unread for retry`);
+            }
+          } catch (err) {
+            console.error(`[riderly] uid=${cand.uid} failed, leaving unread for retry`, err);
+          }
         }
-        console.log(
-          `[riderly:diag] mailbox=${mailbox} window=14d messages=${total} riderly-looking=${hits}`,
-        );
       } finally {
-        diagLock.release();
+        lock2.release();
       }
-    } catch (err) {
-      console.warn("[riderly:diag] scan failed (ignored)", err);
     }
+
+    // ---- Phase 4: flag only what we actually finished.
+    if (markSeenUids.length > 0) {
+      const lock3 = await client.getMailboxLock(mailbox);
+      try {
+        const ok = await client.messageFlagsAdd(markSeenUids, ["\\Seen"], { uid: true });
+        // messageFlagsAdd swallows its own errors and returns false. Say so
+        // out loud instead of logging a success we did not verify.
+        if (ok) {
+          stats.markedRead = markSeenUids.length;
+          console.log(`[riderly] marked ${markSeenUids.length} message(s) as read`);
+        } else {
+          console.warn(`[riderly] could NOT mark ${markSeenUids.length} message(s) as read`);
+        }
+      } finally {
+        lock3.release();
+      }
+    }
+
+    console.log(
+      `[riderly] done. scanned=${stats.scanned} riderly=${stats.candidates} fetched=${stats.fetched} handled=${stats.handled} read=${stats.markedRead} in ${Date.now() - t0}ms`,
+    );
   } finally {
     await client.logout().catch(() => {});
   }
-  return out;
+  return stats;
 }
 
 // Map a Riderly bike name to our internal bike_id. Their emails use the

@@ -669,7 +669,11 @@ function formatReceived(d: Date | null): string {
 // new rental bookings carry magic accept/reject URLs we can attach as
 // inline buttons . owner taps Accept directly, Riderly's API processes
 // the response, no portal switch.
-export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<void> {
+// Returns how many chats actually accepted the message. The caller uses
+// that to decide whether the owner was really told - a silent
+// Promise.allSettled that resolves on total failure used to let the cron
+// mark a Riderly mail as handled while nobody had been notified.
+export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<number> {
   const targets = riderlyTargets();
 
   if (email.kind === "booking") {
@@ -714,7 +718,7 @@ export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<v
     if (row1.length) keyboard.push(row1);
     if (row2.length) keyboard.push(row2);
 
-    await Promise.allSettled(
+    const sent = await Promise.allSettled(
       targets.map(({ chatId, threadId }) =>
         callTelegram("sendMessage", {
           chat_id: chatId,
@@ -726,7 +730,7 @@ export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<v
         }),
       ),
     );
-    return;
+    return countFulfilled(sent);
   }
 
   // Fallback for non-booking Riderly emails (Upcoming Reservations,
@@ -742,7 +746,7 @@ export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<v
     escapeMd(email.preview),
   ].filter(Boolean);
   const url = email.riderlyUrl ?? "https://riderly.com";
-  await Promise.allSettled(
+  const sentOther = await Promise.allSettled(
     targets.map(({ chatId, threadId }) =>
       callTelegram("sendMessage", {
         chat_id: chatId,
@@ -754,6 +758,11 @@ export async function sendOwnerRiderlyTelegram(email: RiderlyForward): Promise<v
       }),
     ),
   );
+  return countFulfilled(sentOther);
+}
+
+function countFulfilled(results: PromiseSettledResult<unknown>[]): number {
+  return results.filter((r) => r.status === "fulfilled").length;
 }
 
 export type CallbackAction = "confirm" | "decline";
