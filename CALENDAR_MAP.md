@@ -5,7 +5,7 @@ Re-read this before AND after touching anything that computes availability,
 demand, "units free", "busy", "blocked dates", or booking writes. All paths are
 repo-relative to the worktree root.
 
-Last updated: 2026-07-27 (DB reconciliation). Keep this file in sync on every availability change
+Last updated: 2026-08-13 (Ghost Bike fully separated from model capacity). Keep this file in sync on every availability change
 (see the Change checklist at the bottom).
 
 **Canonical "physically out right now" helper: `occupancyInterval` (lib/availability.ts).**
@@ -37,6 +37,37 @@ rows with `status IN ('confirmed','pending')` and `returned_at IS NULL`
 overlapping the window; `blocked_dates` further reduce capacity (NULL
 `bike_unit_id` = whole-model block removing all K; set = one unit; NULL times =
 whole-day, set = time-bounded).
+
+## The Ghost Bike rule (owner spec, 2026-08-13, NON-NEGOTIABLE)
+
+> **"Liberty bleibt vier, Ghost bleibt eins, getrennt."**
+> The Ghost Bike (`bike_units.is_backup = true`) is a SEPARATE single vehicle.
+> It is NEVER part of a model's capacity. K = active AND NOT is_backup, for
+> customers AND for the owner. Anything else is "doppelt gemoppelt": it turns a
+> 4-bike model into a 5-bike one.
+
+It is handed out ONLY by a deliberate act, and there are exactly two:
+1. the **Ghost Bike button** on a booking (`PATCH /api/admin/bookings/[id]/group`,
+   `toGhost`), which moves an EXISTING row onto the reserve, and
+2. the **Ghost Bike option in the walk-in form** (Blocks & walk-ins), which posts
+   `bikeUnitId = <reserve unit id>` and creates a NEW row on it.
+
+Both validate the reserve **against itself** (`findUnitConflict` on that one
+unit) plus any whole-model block. Never against the regular fleet.
+
+Two consequences that are INTENDED, not bugs:
+- When all K regular bikes are out, owner actions now say "full". The reserve
+  does not silently rescue them; the owner chooses it explicitly.
+- A booking already parked on the reserve is validated against the reserve, so
+  it stays editable/confirmable exactly when the regular fleet is out (that is
+  when the reserve is in use). `findUnitForOwnerAction` implements this.
+
+Before 2026-08-13, **eleven** owner call sites passed `includeBackup: true`.
+That is why a booking could be accepted as the "5th Liberty" and then pinned to
+an already-occupied REGULAR unit while the reserve sat idle and unlabelled
+(Liberty50-4 twice on 11.08, Liberty50-2 free; Priscilla read it as an
+overbooking). There are now **zero** such call sites: grep for `includeBackup: true`
+must stay empty.
 
 ## The one invariant
 

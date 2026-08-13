@@ -9,7 +9,11 @@ import {
   editTelegramMessageForGroup,
   sendOwnerCancellationTelegram,
 } from "@/lib/telegram";
-import { findFreeUnit, findUnitConflict, describeConflict, getBikeUnitLabel } from "@/lib/availability";
+import {
+  findUnitForOwnerAction,
+  describeConflict,
+  getBikeUnitLabel,
+} from "@/lib/availability";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -207,12 +211,13 @@ export async function POST(
     return NextResponse.json({ ok: true, status: "declined" });
   }
 
-  // confirm: re-check capacity (include the reserve, same as the Telegram
-  // and admin confirm surfaces) and keep a ghost pin instead of moving the
-  // booking back onto a regular unit.
+  // confirm: re-check capacity against the REGULAR fleet, same as every other
+  // surface. A booking already parked on the Ghost Bike keeps that parking
+  // (validated against the reserve itself) instead of being moved back onto a
+  // regular unit.
   let assignedUnitId: string | null = booking.bike_unit_id;
   try {
-    const availability = await findFreeUnit(
+    const availability = await findUnitForOwnerAction(
       supabase,
       {
         bikeId: booking.bike_id,
@@ -222,7 +227,7 @@ export async function POST(
         returnTime: booking.return_time,
         excludeBookingId: booking.id,
       },
-      { includeBackup: true },
+      booking.bike_unit_id,
     );
     if (availability.conflict) {
       return NextResponse.json(
@@ -230,25 +235,11 @@ export async function POST(
         { status: 409 },
       );
     }
+    // findUnitForOwnerAction already returned the Ghost Bike when this
+    // booking is parked on it and the reserve is still free, so there is no
+    // second re-pin here (the old block also missed the `active` check and
+    // could re-pin onto a retired reserve unit).
     assignedUnitId = availability.unitId;
-    if (booking.bike_unit_id) {
-      const { data: currentUnit } = await supabase
-        .from("bike_units")
-        .select("id, is_backup")
-        .eq("id", booking.bike_unit_id)
-        .maybeSingle<{ id: string; is_backup: boolean }>();
-      if (currentUnit?.is_backup) {
-        const clash = await findUnitConflict(supabase, {
-          bikeUnitId: booking.bike_unit_id,
-          dateFrom: booking.date_from,
-          dateTo: booking.date_to,
-          pickupTime: booking.pickup_time,
-          returnTime: booking.return_time,
-          excludeBookingId: booking.id,
-        });
-        if (!clash) assignedUnitId = booking.bike_unit_id;
-      }
-    }
   } catch (err) {
     console.error("[booking/decision] confirm availability", err);
     return NextResponse.json({ error: "Could not verify availability." }, { status: 500 });

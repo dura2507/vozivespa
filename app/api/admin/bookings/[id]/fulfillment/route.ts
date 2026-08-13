@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findFreeUnit, describeConflict } from "@/lib/availability";
+import { findUnitConflict, findUnitForOwnerAction, describeConflict } from "@/lib/availability";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -33,7 +33,7 @@ export async function POST(
   const supabase = getServiceClient();
   const { data: booking, error: lookupErr } = await supabase
     .from("bookings")
-    .select("id, status, picked_up_at, returned_at, bike_id, date_from, date_to, pickup_time, return_time")
+    .select("id, status, picked_up_at, returned_at, bike_id, bike_unit_id, date_from, date_to, pickup_time, return_time")
     .eq("id", id)
     .maybeSingle<
       Pick<
@@ -43,6 +43,7 @@ export async function POST(
         | "picked_up_at"
         | "returned_at"
         | "bike_id"
+        | "bike_unit_id"
         | "date_from"
         | "date_to"
         | "pickup_time"
@@ -63,6 +64,7 @@ export async function POST(
   // re-run the same capacity gate every booking write uses. Only the
   // remaining window matters: for an already-started rental check from
   // today, not from the original pickup date.
+  let revivedUnitId: string | null | undefined;
   const revivesDemand =
     (action === "undo_return" || action === "undo_pickup") &&
     booking.returned_at != null &&
@@ -72,7 +74,10 @@ export async function POST(
     const fromIso = booking.date_from > todayIso ? booking.date_from : todayIso;
     if (booking.date_to >= fromIso) {
       try {
-        const availability = await findFreeUnit(
+        // Regular fleet only. If this booking sits on the Ghost Bike, the
+        // helper validates against that one vehicle instead, so undoing a
+        // return works even when every regular bike is out.
+        const availability = await findUnitForOwnerAction(
           supabase,
           {
             bikeId: booking.bike_id,
@@ -82,8 +87,27 @@ export async function POST(
             returnTime: booking.return_time,
             excludeBookingId: booking.id,
           },
-          { includeBackup: true },
+          booking.bike_unit_id,
         );
+        // Capacity passing does not mean the row's OLD unit is still free -
+        // the freed slot may have been given to someone else meanwhile. Adopt
+        // the unit the gate just proved free (or the reserve it kept), so two
+        // live bookings can never end up pinned to the same vehicle.
+        // Prefer the booking's OWN pin when it is still free - findFreeUnit
+        // returns the lowest-label free unit, which would needlessly move a
+        // live rental onto a different vehicle.
+        revivedUnitId = availability.unitId;
+        if (booking.bike_unit_id && booking.bike_unit_id !== availability.unitId) {
+          const ownStillFree = await findUnitConflict(supabase, {
+            bikeUnitId: booking.bike_unit_id,
+            dateFrom: fromIso,
+            dateTo: booking.date_to,
+            pickupTime: booking.pickup_time,
+            returnTime: booking.return_time,
+            excludeBookingId: booking.id,
+          });
+          if (!ownStillFree) revivedUnitId = booking.bike_unit_id;
+        }
         if (availability.conflict) {
           return NextResponse.json(
             {
@@ -100,7 +124,7 @@ export async function POST(
   }
 
   const now = new Date().toISOString();
-  const patch: Partial<Pick<BookingRow, "picked_up_at" | "returned_at">> = {};
+  const patch: Partial<Pick<BookingRow, "picked_up_at" | "returned_at" | "bike_unit_id">> = {};
   switch (action as Action) {
     case "pickup":
       patch.picked_up_at = now;
@@ -109,6 +133,8 @@ export async function POST(
       // Can't be returned if it was never picked up.
       patch.picked_up_at = null;
       patch.returned_at = null;
+      // This also revives demand, so adopt the unit the gate proved free.
+      if (revivedUnitId !== undefined) patch.bike_unit_id = revivedUnitId;
       break;
     case "return":
       // Returning implies it was collected first — keep the real pickup
@@ -118,6 +144,11 @@ export async function POST(
       break;
     case "undo_return":
       patch.returned_at = null;
+      // Re-pin to the vehicle the capacity gate just proved free. The old pin
+      // may have been handed to someone else while this booking counted as
+      // returned, and two rows on one bike is exactly what the unit labels
+      // must never claim.
+      if (revivedUnitId !== undefined) patch.bike_unit_id = revivedUnitId;
       break;
   }
 

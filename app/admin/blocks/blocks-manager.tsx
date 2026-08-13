@@ -77,11 +77,16 @@ export function BlocksManager({
   initialWalkIns,
   bikes,
   unitsByBike,
+  reserveByBike,
 }: {
   initialBlocks: EnrichedBlock[];
   initialWalkIns: EnrichedBooking[];
   bikes: Bike[];
   unitsByBike: Record<string, Unit[]>;
+  // The model's Ghost Bike, if it has one. Separate from unitsByBike on
+  // purpose: it is not part of capacity and not blockable, it is only ever
+  // handed out deliberately.
+  reserveByBike: Record<string, Unit>;
 }) {
   const router = useRouter();
   // Explicit mode toggle: a paying walk-in vs a service/repair block.
@@ -94,7 +99,9 @@ export function BlocksManager({
   // customer / putting 2 in for service" — they don't care which
   // specific unit gets the row, they're identical bikes. "all" is a
   // special value that maps to a whole-model block (one DB row).
-  const [quantity, setQuantity] = useState<number | "all">(1);
+  // "ghost" = hand this walk-in the reserve vehicle. Never part of the
+  // capacity maths; the server validates that one unit on its own.
+  const [quantity, setQuantity] = useState<number | "all" | "ghost">(1);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [pickupTime, setPickupTime] = useState("09:00");
@@ -136,8 +143,11 @@ export function BlocksManager({
 
   const isWalkIn = mode === "walkin";
   const fleetSize = availableUnits.length;
+  const reserveUnit = reserveByBike[bikeId];
+  const isGhost = quantity === "ghost";
   const isAllUnits = quantity === "all";
-  const numericQuantity = quantity === "all" ? fleetSize : quantity;
+  const numericQuantity =
+    quantity === "all" ? fleetSize : quantity === "ghost" ? 1 : quantity;
 
   // Auto-price preview (point 7): same tier logic the public site uses,
   // scaled by the number of bikes. Pre-fills the Total price field so
@@ -226,7 +236,7 @@ export function BlocksManager({
       // Picking from the front of the list is arbitrary but deterministic;
       // the bikes are identical so "which specific ones" doesn't matter.
       const targetIds =
-        !isAllUnits && numericQuantity > 1
+        !isAllUnits && !isGhost && numericQuantity > 1
           ? availableUnits.slice(0, numericQuantity).map((u) => u.id)
           : [];
 
@@ -261,7 +271,8 @@ export function BlocksManager({
           licenceCountry: licenceCountry.trim() || undefined,
           locale: spokenLocale,
         };
-        if (isAllUnits) payload.bikeUnitId = "all";
+        if (isGhost && reserveUnit) payload.bikeUnitId = reserveUnit.id;
+        else if (isAllUnits) payload.bikeUnitId = "all";
         else if (targetIds.length > 0) payload.bikeUnitIds = targetIds;
         // else: quantity = 1 → no unit field, backend auto-picks
         const res = await fetch("/api/admin/bookings/manual", {
@@ -460,6 +471,19 @@ export function BlocksManager({
                 </button>
               );
             })}
+            {isWalkIn && reserveUnit && (
+              <button
+                type="button"
+                onClick={() => setQuantity("ghost")}
+                className={`px-4 py-2 text-sm font-bold border transition-colors ${
+                  isGhost
+                    ? "bg-violet-600 text-white border-violet-600"
+                    : "bg-white text-violet-900 border-violet-300 hover:border-violet-600"
+                }`}
+              >
+                Ghost Bike
+              </button>
+            )}
             {fleetSize > 1 && (
               <button
                 type="button"
@@ -475,7 +499,9 @@ export function BlocksManager({
             )}
           </div>
           <p className="text-xs text-muted pt-2">
-            {fleetSize === 0
+            {isGhost
+              ? "Walk-in on the reserve vehicle. It is not part of the fleet count, so this works even when every regular bike is out."
+              : fleetSize === 0
               ? "No active units for this model."
               : isWalkIn
                 ? isAllUnits

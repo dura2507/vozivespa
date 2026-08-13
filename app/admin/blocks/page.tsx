@@ -22,11 +22,28 @@ async function listAllUnits(): Promise<BikeUnitRow[]> {
   return (data ?? []) as BikeUnitRow[];
 }
 
+// The Ghost Bike reserve, listed separately. It is NOT a blockable public
+// unit and never counts toward a model's capacity, but the owner must be
+// able to hand it to a walk-in deliberately when the regular fleet is out -
+// that is the entire point of having it.
+async function listReserveUnits(): Promise<BikeUnitRow[]> {
+  const supabase = getServiceClient();
+  const { data, error } = await supabase
+    .from("bike_units")
+    .select("id, bike_id, label")
+    .eq("active", true)
+    .eq("is_backup", true)
+    .order("label", { ascending: true });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as BikeUnitRow[];
+}
+
 export default async function AdminBlocksPage() {
-  const [blocks, walkIns, units, categories] = await Promise.all([
+  const [blocks, walkIns, units, reserves, categories] = await Promise.all([
     listManualBlocks(),
     listWalkInBookings(),
     listAllUnits(),
+    listReserveUnits(),
     getCategoriesWithPricing(),
   ]);
   // Pass each model's effective pricing (DB overrides + mockData
@@ -44,6 +61,11 @@ export default async function AdminBlocksPage() {
   for (const u of units) {
     const arr = (unitsByBike[u.bike_id] ??= []);
     arr.push({ id: u.id, label: `#${arr.length + 1}` });
+  }
+  // One reserve vehicle per model at most.
+  const reserveByBike: Record<string, { id: string; label: string }> = {};
+  for (const u of reserves) {
+    reserveByBike[u.bike_id] ??= { id: u.id, label: u.label };
   }
   return (
     <div className="max-w-5xl mx-auto px-5 md:px-8 py-8">
@@ -63,6 +85,7 @@ export default async function AdminBlocksPage() {
         initialWalkIns={walkIns}
         bikes={bikes}
         unitsByBike={unitsByBike}
+        reserveByBike={reserveByBike}
       />
     </div>
   );

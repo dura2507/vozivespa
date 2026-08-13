@@ -443,6 +443,111 @@ export async function findUnitConflict(
   return null;
 }
 
+// Reserve ("Ghost Bike") unit ids for a set of models. The reserve is a
+// SEPARATE single vehicle, never part of a model's capacity.
+export async function reserveUnitIds(
+  supabase: SupabaseClient,
+  bikeIds: string[],
+): Promise<Set<string>> {
+  const ids = [...new Set(bikeIds)];
+  if (ids.length === 0) return new Set();
+  const { data, error } = await supabase
+    .from("bike_units")
+    .select("id")
+    .in("bike_id", ids)
+    .eq("active", true)
+    .eq("is_backup", true);
+  if (error) throw new Error(`reserve unit lookup: ${error.message}`);
+  return new Set(((data ?? []) as Array<{ id: string }>).map((u) => u.id));
+}
+
+// Capacity check for OWNER actions (edit, confirm, walk-in, Telegram tap).
+//
+// K is ALWAYS the regular fleet, exactly like the public site. The Ghost Bike
+// is a separate vehicle the owner hands out deliberately (the Ghost Bike
+// button or an explicit unit pick); counting it here would silently turn a
+// 4-bike model into a 5-bike one. That is how a booking ended up pinned to an
+// already-occupied regular unit while the reserve sat idle and unlabelled
+// (Priscilla, 2026-08-13: "the ghost bike isn't marked").
+//
+// One exception keeps the joker usable: a booking that ALREADY sits on the
+// reserve is validated against that single unit instead of the regular pool.
+// Without it, editing or confirming a ghost-parked booking would fail exactly
+// when the regular bikes are all out, which is when the reserve is in use.
+
+// Whole-model service block (blocked_dates row with bike_unit_id NULL)
+// overlapping the window, or null. Model-wide blocks apply to every vehicle
+// of the model INCLUDING the reserve.
+export async function wholeModelBlockConflict(
+  supabase: SupabaseClient,
+  w: BookingWindow,
+): Promise<Conflict | null> {
+  const { data, error } = await supabase
+    .from("blocked_dates")
+    .select("date_from, date_to, start_time, end_time")
+    .eq("bike_id", w.bikeId)
+    .is("booking_id", null)
+    .is("bike_unit_id", null)
+    .lte("date_from", w.dateTo)
+    .gte("date_to", w.dateFrom);
+  if (error) throw new Error(`model block lookup: ${error.message}`);
+  const newStart = toMs(w.dateFrom, w.pickupTime);
+  const newEnd = toMs(w.dateTo, w.returnTime);
+  for (const m of (data ?? []) as Array<{
+    date_from: string; date_to: string; start_time: string | null; end_time: string | null;
+  }>) {
+    if (m.start_time && m.end_time) {
+      const ms = toMs(m.date_from, m.start_time);
+      const me = toMs(m.date_to, m.end_time);
+      if (!(newStart < me && ms < newEnd)) continue;
+    }
+    return { kind: "manual", from: m.date_from, to: m.date_to };
+  }
+  return null;
+}
+
+export async function findUnitForOwnerAction(
+  supabase: SupabaseClient,
+  w: BookingWindow,
+  currentUnitId: string | null,
+): Promise<AvailabilityResult & { onReserve: boolean }> {
+  if (currentUnitId) {
+    const { data: unit, error: unitErr } = await supabase
+      .from("bike_units")
+      .select("id, is_backup, active")
+      .eq("id", currentUnitId)
+      // Scope to the model: a pin pointing at ANOTHER model's reserve must
+      // not be treated as this model's reserve.
+      .eq("bike_id", w.bikeId)
+      .maybeSingle<{ id: string; is_backup: boolean; active: boolean }>();
+    // Never swallow this: silently falling back to the regular fleet would
+    // reject a ghost-parked booking exactly when the regular bikes are out.
+    if (unitErr) throw new Error(`unit lookup: ${unitErr.message}`);
+    if (unit?.is_backup && unit.active) {
+      const clash = await findUnitConflict(supabase, {
+        bikeUnitId: currentUnitId,
+        dateFrom: w.dateFrom,
+        dateTo: w.dateTo,
+        pickupTime: w.pickupTime,
+        returnTime: w.returnTime,
+        excludeBookingId: w.excludeBookingId,
+      });
+      if (!clash) {
+        // A WHOLE-MODEL block (bike_unit_id NULL, e.g. a season pause) covers
+        // the reserve too: it says "nothing on this model goes out". Per-unit
+        // blocks were already handled by findUnitConflict above.
+        const modelBlock = await wholeModelBlockConflict(supabase, w);
+        if (modelBlock) return { unitId: null, conflict: modelBlock, onReserve: false };
+        // Reserve still free for this window: the rider keeps riding it.
+        return { unitId: currentUnitId, conflict: null, onReserve: true };
+      }
+      // Reserve taken now: fall through and see whether a regular bike fits.
+    }
+  }
+  const res = await findFreeUnit(supabase, w);
+  return { ...res, onReserve: false };
+}
+
 // Walks the fleet and returns up to `count` free unit IDs. Used by
 // the quantity-based walk-in path so the owner can say "book me 2
 // units" without picking which two — the server figures it out from

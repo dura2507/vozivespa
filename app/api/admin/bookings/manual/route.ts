@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
-import { findFreeUnit, findFreeUnits, findUnitConflict, describeConflict, buildConflictCard } from "@/lib/availability";
+import {
+  findFreeUnit,
+  findFreeUnits,
+  findUnitConflict,
+  wholeModelBlockConflict,
+  describeConflict,
+  buildConflictCard,
+  type Conflict,
+} from "@/lib/availability";
 import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
 import { SEASON_END_ISO } from "@/lib/season";
 import { CATEGORIES } from "@/lib/mockData";
@@ -184,20 +192,74 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Bike not available" }, { status: 404 });
   }
 
+  // Is the owner deliberately putting this walk-in on the Ghost Bike? That is
+  // the whole point of the reserve: when all K regular bikes are out, the
+  // owner still has one vehicle to hand over. It is a SEPARATE bike, so it is
+  // validated against itself further down and must NOT be gated by the
+  // regular fleet's capacity - otherwise the joker becomes unusable exactly
+  // when it is needed.
+  let explicitReserve = false;
+  // A combined payload (bikeUnitId + bikeUnitIds) resolves to the quantity
+  // branch further down, so the reserve intent would be silently dropped;
+  // don't skip the capacity gate in that case.
+  const hasUnitList = !!requestedUnitIds && requestedUnitIds.length > 0;
+  if (requestedUnitId && requestedUnitId !== "all" && !hasUnitList) {
+    const { data: reqUnit, error: reqErr } = await supabase
+      .from("bike_units")
+      .select("id, bike_id, active, is_backup")
+      .eq("id", requestedUnitId)
+      .maybeSingle<{ id: string; bike_id: string; active: boolean; is_backup: boolean }>();
+    if (reqErr) {
+      console.error("[/api/admin/bookings/manual] requested unit lookup", reqErr);
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+    if (!reqUnit || reqUnit.bike_id !== bikeId) {
+      return NextResponse.json({ error: "Unit doesn't belong to this bike" }, { status: 400 });
+    }
+    if (!reqUnit.active) {
+      return NextResponse.json({ error: "Unit is inactive" }, { status: 400 });
+    }
+    explicitReserve = reqUnit.is_backup;
+    if (explicitReserve) {
+      // The reserve skips the fleet capacity gate, but a WHOLE-MODEL block
+      // (season pause, recall) covers every vehicle of the model including
+      // this one.
+      const modelBlock = await wholeModelBlockConflict(supabase, {
+        bikeId,
+        dateFrom,
+        dateTo,
+        pickupTime,
+        returnTime,
+      });
+      if (modelBlock) {
+        return NextResponse.json(
+          { error: `Can't book — ${describeConflict(modelBlock)}` },
+          { status: 409 },
+        );
+      }
+    }
+  }
+
   // 2. Same overlap check as the public flow — the owner can't sneak
-  //    in a walk-in that would conflict with a real booking.
-  let availability;
-  try {
-    availability = await findFreeUnit(supabase, {
-      bikeId,
-      dateFrom,
-      dateTo,
-      pickupTime,
-      returnTime,
-    }, { includeBackup: true });
-  } catch (err) {
-    console.error("[/api/admin/bookings/manual] availability lookup", err);
-    return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
+  //    in a walk-in that would conflict with a real booking. Capacity is the
+  //    REGULAR fleet only; the reserve never enlarges it.
+  let availability: { unitId: string | null; conflict: Conflict | null } = {
+    unitId: null,
+    conflict: null,
+  };
+  if (!explicitReserve) {
+    try {
+      availability = await findFreeUnit(supabase, {
+        bikeId,
+        dateFrom,
+        dateTo,
+        pickupTime,
+        returnTime,
+      });
+    } catch (err) {
+      console.error("[/api/admin/bookings/manual] availability lookup", err);
+      return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
+    }
   }
   if (availability.conflict) {
     const c = availability.conflict;
@@ -232,7 +294,6 @@ export async function POST(request: Request) {
       supabase,
       { bikeId, dateFrom, dateTo, pickupTime, returnTime },
       wanted,
-      { includeBackup: true },
     );
     if (free.unitIds.length < wanted) {
       const detail = free.conflict ? describeConflict(free.conflict) : undefined;
@@ -270,7 +331,6 @@ export async function POST(request: Request) {
       supabase,
       { bikeId, dateFrom, dateTo, pickupTime, returnTime },
       unitIds.length,
-      { includeBackup: true },
     );
     if (free.totalFree < unitIds.length) {
       return NextResponse.json(
@@ -282,18 +342,9 @@ export async function POST(request: Request) {
     }
     unitsToBook.push(...unitIds);
   } else if (requestedUnitId) {
-    const { data: unit, error: unitErr } = await supabase
-      .from("bike_units")
-      .select("id, bike_id, active")
-      .eq("id", requestedUnitId)
-      .maybeSingle();
-    if (unitErr) {
-      console.error("[/api/admin/bookings/manual] unit lookup", unitErr);
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
-    }
-    if (!unit || (unit as { bike_id: string }).bike_id !== bikeId) {
-      return NextResponse.json({ error: "Unit doesn't belong to this bike" }, { status: 400 });
-    }
+    // Ownership / active were already validated above (that is also where we
+    // learned whether this is the reserve). What is left is: is this exact
+    // vehicle free for the window?
     if (requestedUnitId !== availability.unitId) {
       const c = await findUnitConflict(supabase, {
         bikeUnitId: requestedUnitId,

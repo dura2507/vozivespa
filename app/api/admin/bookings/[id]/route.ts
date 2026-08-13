@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findFreeUnit, findFreeUnits, findUnitConflict, describeConflict, buildConflictCard } from "@/lib/availability";
+import {
+  findFreeUnits,
+  findUnitConflict,
+  findUnitForOwnerAction,
+  reserveUnitIds,
+  describeConflict,
+  buildConflictCard,
+} from "@/lib/availability";
 import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
 import { SEASON_END_ISO } from "@/lib/season";
 import { CATEGORIES } from "@/lib/mockData";
@@ -161,18 +168,26 @@ export async function PATCH(
   if (!isGroup) {
     // ---------- single booking: EXACT original behaviour ----------
     try {
-      const availability = await findFreeUnit(supabase, {
-        bikeId: targetBikeId,
-        dateFrom,
-        dateTo,
-        pickupTime,
-        returnTime,
-        // Only exclude this booking from conflicts when the model isn't
-        // changing — otherwise the old unit (on the original model) was
-        // never going to overlap anyway, and excluding by booking id on
-        // the new model has no effect.
-        excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined,
-      }, { includeBackup: true });
+      // Capacity is the REGULAR fleet only, same as for customers. The Ghost
+      // Bike is a separate vehicle the owner assigns by hand; the helper only
+      // keeps an EXISTING ghost parking alive, it never adds capacity.
+      const availability = await findUnitForOwnerAction(
+        supabase,
+        {
+          bikeId: targetBikeId,
+          dateFrom,
+          dateTo,
+          pickupTime,
+          returnTime,
+          // Only exclude this booking from conflicts when the model isn't
+          // changing — otherwise the old unit (on the original model) was
+          // never going to overlap anyway, and excluding by booking id on
+          // the new model has no effect.
+          excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined,
+        },
+        // A unit pin only means anything while the model stays the same.
+        targetBikeId === booking.bike_id ? booking.bike_unit_id : null,
+      );
       if (availability.conflict) {
         const modelName = CATEGORIES.find((m) => m.id === targetBikeId)?.model ?? targetBikeId;
         const card = await buildConflictCard(
@@ -194,32 +209,10 @@ export async function PATCH(
           { status: 409 },
         );
       }
+      // findUnitForOwnerAction already preserved an existing Ghost Bike
+      // parking when the reserve is still free for the new window, so the
+      // rider stays on the vehicle they are physically sitting on.
       assignedUnitId = availability.unitId;
-
-      // Keep a Ghost Bike parking in place: if this booking sits on the
-      // hidden reserve (Priscilla's ghost swap) and the model isn't
-      // changing, an edit must not silently move it back onto a regular
-      // unit — the customer is physically riding the reserve vehicle.
-      // Keep the pin as long as the reserve is still free for the NEW
-      // window; if it isn't, fall back to the fresh assignment above.
-      if (targetBikeId === booking.bike_id && booking.bike_unit_id) {
-        const { data: currentUnit } = await supabase
-          .from("bike_units")
-          .select("id, is_backup")
-          .eq("id", booking.bike_unit_id)
-          .maybeSingle<{ id: string; is_backup: boolean }>();
-        if (currentUnit?.is_backup) {
-          const clash = await findUnitConflict(supabase, {
-            bikeUnitId: booking.bike_unit_id,
-            dateFrom,
-            dateTo,
-            pickupTime,
-            returnTime,
-            excludeBookingId: booking.id,
-          });
-          if (!clash) assignedUnitId = booking.bike_unit_id;
-        }
-      }
     } catch (err) {
       console.error("[/api/admin/bookings] availability", err);
       return NextResponse.json({ error: "Database error" }, { status: 500 });
@@ -241,34 +234,53 @@ export async function PATCH(
       byModel.set(p.bikeId, arr);
     }
 
-    // The hidden reserve (is_backup) is Thomas's deliberate walk-in joker; a
-    // routine window edit must never silently hand it out. We still PRESERVE a
-    // row already pinned to the reserve (it stays if free), but FRESH unit
-    // assignments below draw only from regular units.
-    const { data: backupUnitRows, error: buErr } = await supabase
-      .from("bike_units")
-      .select("id")
-      .eq("is_backup", true)
-      .in("bike_id", [...byModel.keys()]);
-    if (buErr) {
-      console.error("[/api/admin/bookings] backup unit lookup", buErr);
+    // The Ghost Bike is a SEPARATE vehicle, never part of a model's capacity.
+    // A sibling already parked on it keeps that parking and does not demand a
+    // regular bike; everything else is measured against the regular fleet,
+    // exactly like the public site.
+    let backupUnitIds: Set<string>;
+    try {
+      backupUnitIds = await reserveUnitIds(supabase, [...byModel.keys()]);
+    } catch (err) {
+      console.error("[/api/admin/bookings] reserve unit lookup", err);
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
-    const backupUnitIds = new Set(
-      (backupUnitRows ?? []).map((u) => (u as { id: string }).id),
-    );
 
     try {
-      for (const [bikeId, rows] of byModel) {
-        // Ask for the full free pool (large count) so a reserve/ghost unit
-        // that sorts last by label is still returned and can be re-pinned
-        // below. The whole group is excluded, so a row's OWN current unit
-        // shows up as free here.
+      for (const [bikeId, allRows] of byModel) {
+        // Split off rows sitting on the reserve: they stay there while the
+        // reserve is free for the new window, and never consume regular
+        // capacity.
+        const rows: typeof allRows = [];
+        for (const p of allRows) {
+          const cur = p.row.bike_unit_id;
+          const modelUnchanged = p.bikeId === p.row.bike_id;
+          if (cur && modelUnchanged && backupUnitIds.has(cur)) {
+            const clash = await findUnitConflict(supabase, {
+              bikeUnitId: cur,
+              dateFrom,
+              dateTo,
+              pickupTime,
+              returnTime,
+              excludeBookingId: p.row.id,
+            });
+            if (!clash) {
+              groupAssignment.set(p.row.id, cur);
+              continue;
+            }
+            // Reserve taken for the new window: this row needs a regular bike.
+          }
+          rows.push(p);
+        }
+        if (rows.length === 0) continue;
+
+        // Ask for the full free pool (large count) so the distribution below
+        // can pick freely. The whole group is excluded, so a row's OWN current
+        // unit shows up as free here.
         const free = await findFreeUnits(
           supabase,
           { bikeId, dateFrom, dateTo, pickupTime, returnTime, excludeGroupId: groupId },
           Math.max(rows.length, 999),
-          { includeBackup: true },
         );
         // Gate on capacity only (with a large count, free.conflict may be set
         // even when the group fits, so it is read solely on the miss path).
@@ -287,12 +299,11 @@ export async function PATCH(
             { status: 409 },
           );
         }
-        // Distribute distinct free units. Preserve each row's CURRENT unit
-        // when its model is unchanged and that unit is still free — this is
-        // the per-sibling ghost/reserve pin (a still-free reserve unit is in
-        // this pool because the group is excluded). Hand the remaining rows
-        // the other free units; pad with null (capacity-allowed but unpinned)
-        // if real units run out, exactly like the online flow.
+        // Distribute distinct free units. Keep a row on its CURRENT unit when
+        // the model is unchanged and that unit is still free, so a window edit
+        // doesn't shuffle bikes for no reason. The pool holds regular units
+        // only (rows on the reserve were split off above), so the Ghost Bike
+        // can never be handed out here.
         const pool = free.unitIds.filter((u): u is string => u !== null);
         const poolSet = new Set(pool);
         const taken = new Set<string>();
@@ -300,9 +311,6 @@ export async function PATCH(
         for (const p of rows) {
           const cur = p.row.bike_unit_id;
           const modelUnchanged = p.bikeId === p.row.bike_id;
-          // Keep the row's CURRENT unit when it's still free — including the
-          // reserve, so an existing ghost pin (Priscilla's Vespa swap) survives
-          // a window edit.
           if (cur && modelUnchanged && poolSet.has(cur) && !taken.has(cur)) {
             groupAssignment.set(p.row.id, cur);
             taken.add(cur);
@@ -310,10 +318,8 @@ export async function PATCH(
             needUnit.push(p);
           }
         }
-        // Fresh assignments: regular units only (never silently the reserve).
-        // If regulars run out, pad with null (capacity-proven but unpinned) so
-        // the reserve stays Thomas's to hand out deliberately.
-        const spare = pool.filter((u) => !taken.has(u) && !backupUnitIds.has(u));
+        // Pad with null (capacity-proven but unpinned) if the pool runs dry.
+        const spare = pool.filter((u) => !taken.has(u));
         let si = 0;
         for (const p of needUnit) {
           groupAssignment.set(p.row.id, si < spare.length ? spare[si++] : null);

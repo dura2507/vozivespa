@@ -1,6 +1,14 @@
 import { NextResponse, after } from "next/server";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findFreeUnit, findFreeUnits, getBikeUnitLabel, describeConflict } from "@/lib/availability";
+import {
+  findFreeUnits,
+  findUnitConflict,
+  findUnitForOwnerAction,
+  reserveUnitIds,
+  wholeModelBlockConflict,
+  getBikeUnitLabel,
+  describeConflict,
+} from "@/lib/availability";
 import {
   sendCustomerBookingDecidedEmail,
   sendCustomerGroupBookingDecidedEmail,
@@ -87,15 +95,48 @@ export async function POST(
         pickupTime: booking.pickup_time,
         returnTime: booking.return_time,
       };
+      // Capacity is the REGULAR fleet only. A row already parked on the Ghost
+      // Bike rides a separate vehicle, so it neither demands a regular bike
+      // nor lets the reserve count as extra capacity for its siblings.
+      let reserveIds: Set<string>;
+      try {
+        reserveIds = await reserveUnitIds(supabase, active.map((r) => r.bike_id));
+      } catch (err) {
+        console.error("[/api/admin/bookings/status] reserve lookup", err);
+        return NextResponse.json({ error: "Could not check availability" }, { status: 500 });
+      }
       const qtyByBike = new Map<string, number>();
-      for (const r of active) qtyByBike.set(r.bike_id, (qtyByBike.get(r.bike_id) ?? 0) + 1);
+      for (const r of active) {
+        // Already back: the bike is free again, so this row demands nothing.
+        // findFreeUnits excludes returned rows from supply too, so counting
+        // them here would inflate demand and reject a legitimate re-confirm.
+        if (r.returned_at != null) continue;
+        // Parked on the Ghost Bike: separate vehicle, no regular bike needed -
+        // but only if the reserve is genuinely still free for this window.
+        if (r.bike_unit_id && reserveIds.has(r.bike_unit_id)) {
+          const clash = await findUnitConflict(supabase, {
+            bikeUnitId: r.bike_unit_id,
+            ...win,
+            excludeBookingId: r.id,
+          });
+          // A whole-model block (season pause) covers the reserve too, so a
+          // ghost-parked row is NOT free during one.
+          const reserveUnavailable = clash
+            ? true
+            : (await wholeModelBlockConflict(supabase, { bikeId: r.bike_id, ...win })) != null;
+          // Reserve genuinely free -> this row needs no regular bike.
+          if (!reserveUnavailable) continue;
+          // Otherwise it falls through and demands one like any other row.
+          // Reserve taken meanwhile: this row needs a regular bike after all.
+        }
+        qtyByBike.set(r.bike_id, (qtyByBike.get(r.bike_id) ?? 0) + 1);
+      }
       for (const [bId, qty] of qtyByBike) {
         try {
           const free = await findFreeUnits(
             supabase,
             { bikeId: bId, ...win, excludeGroupId: booking.booking_group_id },
             qty,
-            { includeBackup: true },
           );
           if (free.totalFree < qty) {
             return NextResponse.json(
@@ -152,14 +193,21 @@ export async function POST(
   let assignedUnitId: string | null = booking.bike_unit_id;
   if (decision === "confirmed") {
     try {
-      const availability = await findFreeUnit(supabase, {
-        bikeId: booking.bike_id,
-        dateFrom: booking.date_from,
-        dateTo: booking.date_to,
-        pickupTime: booking.pickup_time,
-        returnTime: booking.return_time,
-        excludeBookingId: booking.id,
-      }, { includeBackup: true });
+      // Regular fleet only, same as the public site. A booking already parked
+      // on the Ghost Bike keeps that parking (validated against the reserve
+      // itself), so confirming it works even when all regular bikes are out.
+      const availability = await findUnitForOwnerAction(
+        supabase,
+        {
+          bikeId: booking.bike_id,
+          dateFrom: booking.date_from,
+          dateTo: booking.date_to,
+          pickupTime: booking.pickup_time,
+          returnTime: booking.return_time,
+          excludeBookingId: booking.id,
+        },
+        booking.bike_unit_id,
+      );
       if (availability.conflict) {
         return NextResponse.json(
           {

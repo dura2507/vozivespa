@@ -8,7 +8,15 @@ import {
   parseCallbackData,
   NEW_STATUS,
 } from "@/lib/telegram";
-import { findFreeUnit, findFreeUnits, getBikeUnitLabel, describeConflict } from "@/lib/availability";
+import {
+  findFreeUnits,
+  findUnitConflict,
+  findUnitForOwnerAction,
+  reserveUnitIds,
+  wholeModelBlockConflict,
+  getBikeUnitLabel,
+  describeConflict,
+} from "@/lib/availability";
 
 export const dynamic = "force-dynamic";
 
@@ -123,15 +131,47 @@ export async function POST(request: Request) {
       // individually-cancelled sibling here would require a phantom extra unit
       // and could wrongly reject the whole group. Match the update's filter.
       const activeRows = rows.filter((r) => r.status !== "cancelled");
+      // Capacity is the REGULAR fleet only, exactly like the public site and
+      // like the single confirm below. A row already parked on the Ghost Bike
+      // rides a separate vehicle: it demands no regular bike, and the reserve
+      // never counts as extra capacity for the others.
+      let reserveIds: Set<string>;
+      try {
+        reserveIds = await reserveUnitIds(supabase, activeRows.map((r) => r.bike_id));
+      } catch (err) {
+        console.error("[telegram/webhook] reserve lookup error", err);
+        await answerTelegramCallback(cb.id, "Database error - try again");
+        return NextResponse.json({ ok: true });
+      }
       const qtyByBike = new Map<string, number>();
-      for (const r of activeRows) qtyByBike.set(r.bike_id, (qtyByBike.get(r.bike_id) ?? 0) + 1);
+      for (const r of activeRows) {
+        // Already returned: bike is free again, demands nothing (and the
+        // engine excludes it from supply too, so counting it would reject a
+        // legitimate re-confirm of a partially returned group).
+        if (r.returned_at != null) continue;
+        // On the Ghost Bike: separate vehicle, but only when the reserve is
+        // genuinely still free for this window.
+        if (r.bike_unit_id && reserveIds.has(r.bike_unit_id)) {
+          const clash = await findUnitConflict(supabase, {
+            bikeUnitId: r.bike_unit_id,
+            ...win,
+            excludeBookingId: r.id,
+          });
+          // A whole-model block (season pause) covers the reserve too, so a
+          // ghost-parked row is NOT free during one.
+          const reserveUnavailable = clash
+            ? true
+            : (await wholeModelBlockConflict(supabase, { bikeId: r.bike_id, ...win })) != null;
+          // Reserve genuinely free -> this row needs no regular bike.
+          if (!reserveUnavailable) continue;
+          // Otherwise it falls through and demands one like any other row.
+        }
+        qtyByBike.set(r.bike_id, (qtyByBike.get(r.bike_id) ?? 0) + 1);
+      }
       const groupId = booking.booking_group_id ?? undefined;
       for (const [bikeId, qty] of qtyByBike) {
         try {
-          // includeBackup matches the single-booking confirm below — the
-          // owner's tap may dip into the reserve, so an identical fleet
-          // state must not confirm a solo booking but reject a group.
-          const free = await findFreeUnits(supabase, { bikeId, ...win, excludeGroupId: groupId }, qty, { includeBackup: true });
+          const free = await findFreeUnits(supabase, { bikeId, ...win, excludeGroupId: groupId }, qty);
           if (free.totalFree < qty) {
             await answerTelegramCallback(cb.id, "Conflict - not enough bikes free for these dates");
             return NextResponse.json({ ok: true });
@@ -215,14 +255,21 @@ export async function POST(request: Request) {
   let assignedUnitId: string | null = booking.bike_unit_id;
   if (newStatus === "confirmed") {
     try {
-      const availability = await findFreeUnit(supabase, {
-        bikeId: booking.bike_id,
-        dateFrom: booking.date_from,
-        dateTo: booking.date_to,
-        pickupTime: booking.pickup_time,
-        returnTime: booking.return_time,
-        excludeBookingId: booking.id,
-      }, { includeBackup: true });
+      // Regular fleet only, exactly like the public site. A booking already
+      // parked on the Ghost Bike keeps that parking (checked against the
+      // reserve itself), so a tap still works when every regular bike is out.
+      const availability = await findUnitForOwnerAction(
+        supabase,
+        {
+          bikeId: booking.bike_id,
+          dateFrom: booking.date_from,
+          dateTo: booking.date_to,
+          pickupTime: booking.pickup_time,
+          returnTime: booking.return_time,
+          excludeBookingId: booking.id,
+        },
+        booking.bike_unit_id,
+      );
       // Capacity model: reject ONLY when the window is genuinely over
       // capacity (conflict set). A null unitId with no conflict means the
       // window fits but no single unit spans it end to end - confirm it

@@ -10,7 +10,7 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-08-08 (Riderly importer rebuilt, duplicate cron removed).
+Last updated: 2026-08-13 (Ghost Bike separated from Liberty capacity).
 
 ## Riderly integration (2026-08-08) - READ THIS BEFORE TOUCHING THE POLLER
 
@@ -53,6 +53,29 @@ Still open / known:
   `[cron/poll-riderly] UNMAPPED` in the Vercel logs.
 - No persistent state, so a hard-deleted Riderly row can be re-imported.
 - The importer never learns that a booking was later cancelled ON Riderly.
+
+## Ghost Bike separation (2026-08-13)
+
+Owner restated the rule: "Liberty bleibt vier, Ghost bleibt eins, getrennt."
+The reserve is a separate vehicle, admin-only, assigned by hand. It must never
+count as capacity. See the dedicated section in CALENDAR_MAP.md.
+
+Removed `includeBackup: true` from all ELEVEN owner call sites (walk-in x3,
+edit single+group, admin status single+group, Telegram single+group,
+undo_return, customer confirm link). New helpers in lib/availability.ts:
+`reserveUnitIds`, `findUnitForOwnerAction` (regular fleet, but keeps an
+EXISTING ghost parking alive by validating that one unit), and
+`wholeModelBlockConflict` (a season pause covers the reserve too).
+
+Added: a **Ghost Bike option in the walk-in form**. Without it the reserve had
+become unreachable for NEW walk-ins, which the full check caught as its top
+finding - the server accepted an explicit reserve unit but no UI ever sent one.
+
+Two full adversarial review rounds over every CALENDAR_MAP surface found and
+fixed, among others: returned siblings still demanding a bike in both group
+confirms, a ghost-parked row skipped without checking the reserve was free,
+undo_return not re-pinning (two rows on one bike), and a model-wide block not
+applying to the reserve.
 
 ## Done (2026-07-27, part 2) - DB reconciliation
 Cross-checked raw DB against every availability surface: admin dashboard 6/6 models,
