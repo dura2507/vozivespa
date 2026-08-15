@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
+import { prepareReceipt, MAX_PICK_BYTES, MAX_UPLOAD_BYTES } from "@/lib/compress-receipt";
 import Image from "next/image";
 import Link from "next/link";
 import { DayPicker } from "react-day-picker";
@@ -628,7 +629,7 @@ export default function BikeDetail({
     }
   }
 
-  function handleReceiptChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleReceiptChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     setReceiptError(null);
     if (!file) {
@@ -649,13 +650,24 @@ export default function BikeDetail({
       setReceipt(null);
       return;
     }
-    if (file.size > 4 * 1024 * 1024) {
+    // Phone photos are routinely 8-15 MB. Accept them and shrink in the
+    // browser: the request itself must stay under the platform body limit,
+    // which is why the server cap cannot simply be raised (see
+    // lib/compress-receipt.ts).
+    if (file.size > MAX_PICK_BYTES) {
       setReceiptError(tF.reservation.fileTooLarge);
       e.target.value = "";
       setReceipt(null);
       return;
     }
-    setReceipt(file);
+    const prepared = await prepareReceipt(file);
+    if (prepared.size > MAX_UPLOAD_BYTES) {
+      setReceiptError(tF.reservation.fileTooLarge);
+      e.target.value = "";
+      setReceipt(null);
+      return;
+    }
+    setReceipt(prepared);
   }
 
   const bookingFee = Math.round(totalPrice * 0.2 * 100) / 100;

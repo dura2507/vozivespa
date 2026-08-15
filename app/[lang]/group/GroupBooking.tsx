@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
+import { prepareReceipt, MAX_PICK_BYTES, MAX_UPLOAD_BYTES } from "@/lib/compress-receipt";
 import Image from "next/image";
 import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
@@ -270,6 +271,34 @@ export default function GroupBooking({
 
   // 20% booking fee secures the dates, rest paid on arrival (same as the
   // single-bike flow), here computed off the whole-group total.
+  // Deposit receipts: accept a full-size phone photo and shrink it in the
+  // browser. The server cap cannot simply be raised because the platform
+  // rejects request bodies over 4.5 MB before our route runs; this page
+  // previously had no size check at all, so a big photo failed with an
+  // opaque error. See lib/compress-receipt.ts.
+  async function handleReceiptPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setReceipt(null);
+      return;
+    }
+    setSubmitError(null);
+    if (file.size > MAX_PICK_BYTES) {
+      setSubmitError(dict.group.errReceipt);
+      e.target.value = "";
+      setReceipt(null);
+      return;
+    }
+    const prepared = await prepareReceipt(file);
+    if (prepared.size > MAX_UPLOAD_BYTES) {
+      setSubmitError(dict.group.errReceipt);
+      e.target.value = "";
+      setReceipt(null);
+      return;
+    }
+    setReceipt(prepared);
+  }
+
   const bookingFee = Math.round(cartTotal * 0.2 * 100) / 100;
 
   function copyValue(text: string, key: string) {
@@ -1008,7 +1037,7 @@ export default function GroupBooking({
                       id="group-receipt-file"
                       type="file"
                       accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf"
-                      onChange={(e) => setReceipt(e.target.files?.[0] ?? null)}
+                      onChange={handleReceiptPick}
                       className="sr-only"
                     />
                     <div className="flex items-center gap-3 flex-wrap">
