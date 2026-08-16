@@ -349,6 +349,7 @@
       "legendFree": "Dostupné",
       "legendBooked": "Rezervováno",
       "legendPartial": "Částečně",
+      "slotUnavailable": "Nedostupné",
       "pickupDate": "Datum vyzvednutí",
       "returnDate": "Datum vrácení",
       "pickupTime": "Čas vyzvednutí",

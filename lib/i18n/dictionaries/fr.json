@@ -349,6 +349,7 @@
       "legendFree": "Disponible",
       "legendBooked": "Réservé",
       "legendPartial": "Partiel",
+      "slotUnavailable": "Non disponible",
       "pickupDate": "Date de retrait",
       "returnDate": "Date de restitution",
       "pickupTime": "Heure de retrait",

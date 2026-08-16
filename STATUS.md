@@ -10,7 +10,48 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-08-13 (Ghost Bike separated from Liberty capacity).
+Last updated: 2026-08-16 (time dropdowns show taken slots greyed out).
+
+## Time dropdowns: taken slots are now visible, not hidden (2026-08-16)
+
+Priscilla, 15.08: *"On return time, you can select a later return, but not a earlier
+return. Same happen with the pick up time, but opposite, you can't select a later pick
+up time. We need both."*
+
+**Investigated: no defect in the booking logic.** Do not "fix" the filters, they are right.
+- `unitsFreeForWindow` is monotone under window shrinkage, so on a multi-day range the
+  pickup list can only ever lose EARLY slots and the return list only LATE ones. Her
+  report is the exact inverse and cannot be produced there.
+- Replayed the real BikeDetail pipeline against live `/api/availability` data over
+  14383 states (6 models x 40 days x 6 lengths x 12 start pairs), running both
+  auto-correct effects to a fixed point: **0 slots snap back**. Every offered option is
+  genuinely selectable.
+- What she hit is the SAME-DAY case (one calendar tap means from == to): the return list
+  correctly starts after the pickup, the pickup list correctly ends where no free return
+  follows. Both restrictions trace to real bookings (e.g. 20.08 scooter-50: three units
+  out all day, the fourth leaves 09:30, so 09:00->09:30 is the only same-day window).
+
+**Shipped (presentation only, booking logic untouched):** the pickup/return dropdowns now
+render the full grid and grey out what can't be had as `HH:MM · Not available` instead of
+hiding it, so a short list reads "not available" rather than "broken". New i18n key
+`calendar.slotUnavailable` in all 11 dictionaries - the wording is deliberately neutral,
+not "Booked", because a slot also drops out when the instant is free but the whole rental
+window clashes later, and "Booked" would contradict the calendar's own half-green day.
+Two invariants to keep: each option grid must stay a superset of its selectable list, and
+a time already past in Zadar must be hidden rather than greyed. Details in CALENDAR_MAP.md
+open-issues #17.
+
+**Still open, found while checking this (pre-existing, NOT introduced here, not yet fixed
+because it is outside what was reported):**
+- The "is this slot in the past" filter compares `iso !== zagrebNow().isoDate`, so a day
+  that is already over in Zadar but still "today" for a visitor west of us (Los Angeles,
+  7h/day window) offers the full slot grid; the server then rejects at submit
+  (`isPickupInPast`, 400) after the customer filled in the whole form.
+- The calendar itself renders `startMonth={new Date()}` and `disabled={[{before: new Date()}]}`
+  with no `mounted` guard while the page is force-dynamic on a UTC server, so any visitor
+  whose local date differs from UTC gets a hydration mismatch (at a month boundary the
+  server and client even render different months). Fix would be one shared
+  `todayZagreb` date used by the matchers and DayPicker's `today` prop.
 
 ## Riderly integration (2026-08-08) - READ THIS BEFORE TOUCHING THE POLLER
 

@@ -349,6 +349,7 @@
       "legendFree": "Elérhető",
       "legendBooked": "Foglalt",
       "legendPartial": "Részben",
+      "slotUnavailable": "Nem elérhető",
       "pickupDate": "Átvétel dátuma",
       "returnDate": "Visszaadás dátuma",
       "pickupTime": "Átvétel ideje",

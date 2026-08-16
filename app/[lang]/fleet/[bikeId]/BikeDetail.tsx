@@ -418,6 +418,74 @@ export default function BikeDetail({
   const pickupSlots = [...earlyExtras, ...pickupBase];
   const returnSlots = [...returnBase, ...lateExtras];
 
+  // What the dropdowns SHOW, as opposed to what they let you choose.
+  //
+  // Priscilla (15.08): "you can select a later return, but not an earlier
+  // one — and with the pickup it's the opposite". That is not a filter bug:
+  // when the fleet is out, the taken times were simply dropped from the list,
+  // so the remaining options ran in one direction only and the dropdown read
+  // like a malfunction. We now render the WHOLE grid and grey out what can't
+  // be had, so a short list says "not available" instead of looking broken.
+  //
+  // The label is deliberately NEUTRAL ("not available", not "booked"): a slot
+  // also drops out when the instant is free but the whole rental window
+  // clashes further along, and calling that "booked" would contradict the
+  // calendar, which paints the same day as partly free.
+  //
+  // The selectable set is unchanged — only pickupSlots / returnSlots stay
+  // enabled. Both grids are supersets of them by construction (same past
+  // filter, same start-before-end rule), so the current value always has an
+  // <option> to sit on.
+  const pickupOptionGrid = (() => {
+    const all = [...EARLY_PICKUP_SLOTS, ...buildPickupSlots()];
+    const from = effectiveRange?.from;
+    if (!mounted || !from) return all;
+    const zn = zagrebNow();
+    if (format(from, "yyyy-MM-dd") !== zn.isoDate) return all;
+    // Slots that are already past stay HIDDEN rather than greyed: they are
+    // not unavailable, they are gone. Mirrors the filter in pickupSlotsFor;
+    // the includes() keeps the grid a superset even if that filter and this
+    // one straddle a minute boundary on their own zagrebNow() call.
+    return all.filter((s) => {
+      const [h, m] = s.split(":").map(Number);
+      return h * 60 + m > zn.minutesOfDay || pickupSlots.includes(s);
+    });
+  })();
+  const returnOptionGrid = (() => {
+    let all = [...buildSlots(), ...LATE_RETURN_SLOTS];
+    const from = effectiveRange?.from;
+    const to = effectiveRange?.to;
+    // Times that have already passed on the return day are hidden, not greyed:
+    // they are not unavailable, they are gone. This has to run BEFORE the
+    // pickupTime guard below, because on a day with no pickup left at all
+    // pickupTime is "" and the start-before-end filter never runs — that was
+    // how "19:30 · ..." showed up at 20:00 on the same evening. Keeping any
+    // currently selectable slot preserves the grid-is-a-superset invariant.
+    if (mounted && to) {
+      const zn = zagrebNow();
+      if (format(to, "yyyy-MM-dd") === zn.isoDate) {
+        all = all.filter((s) => {
+          const [h, m] = s.split(":").map(Number);
+          return h * 60 + m > zn.minutesOfDay || returnSlots.includes(s);
+        });
+      }
+    }
+    if (!from || !to || !pickupTime) return all;
+    // A return at or before the pickup instant isn't "taken", it's
+    // impossible — hide those so a greyed option always means "booked".
+    // Same rule as unitsFreeForWindow's winEnd <= winStart guard, which is
+    // why this only ever bites on a same-day rental.
+    const [ph, pm] = pickupTime.split(":").map(Number);
+    const start = new Date(from);
+    start.setHours(ph, pm, 0, 0);
+    return all.filter((s) => {
+      const [h, m] = s.split(":").map(Number);
+      const end = new Date(to);
+      end.setHours(h, m, 0, 0);
+      return end.getTime() > start.getTime();
+    });
+  })();
+
   // If the active selection got invalidated by a date change, snap to
   // the closest valid slot rather than sending an unbookable request.
   // When a day has NO valid slots (e.g. today too late for the 8h
@@ -1170,11 +1238,18 @@ export default function BikeDetail({
                           disabled={pickupSlots.length === 0}
                           className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all disabled:bg-ink/5 disabled:text-ink/40"
                         >
-                          {pickupSlots.map((s) => (
-                            <option key={s} value={s}>
-                              {isEarlyPickup(s) ? `${s}  (+30€)` : s}
-                            </option>
-                          ))}
+                          {pickupOptionGrid.map((s) => {
+                            const free = pickupSlots.includes(s);
+                            return (
+                              <option key={s} value={s} disabled={!free}>
+                                {!free
+                                  ? `${s}  ·  ${tF.calendar.slotUnavailable}`
+                                  : isEarlyPickup(s)
+                                    ? `${s}  (+30€)`
+                                    : s}
+                              </option>
+                            );
+                          })}
                           {pickupSlots.length === 0 && (
                             <option value="">-</option>
                           )}
@@ -1190,11 +1265,18 @@ export default function BikeDetail({
                           disabled={returnSlots.length === 0}
                           className="mt-1.5 w-full border border-ink/15 px-4 py-3 text-ink text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red/30 focus:border-red transition-all disabled:bg-ink/5 disabled:text-ink/40"
                         >
-                          {returnSlots.map((s) => (
-                            <option key={s} value={s}>
-                              {isLateReturn(s) ? `${s}  (+30€)` : s}
-                            </option>
-                          ))}
+                          {returnOptionGrid.map((s) => {
+                            const free = returnSlots.includes(s);
+                            return (
+                              <option key={s} value={s} disabled={!free}>
+                                {!free
+                                  ? `${s}  ·  ${tF.calendar.slotUnavailable}`
+                                  : isLateReturn(s)
+                                    ? `${s}  (+30€)`
+                                    : s}
+                              </option>
+                            );
+                          })}
                           {returnSlots.length === 0 && (
                             <option value="">-</option>
                           )}

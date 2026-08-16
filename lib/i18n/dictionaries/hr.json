@@ -349,6 +349,7 @@
       "legendFree": "Dostupno",
       "legendBooked": "Zauzeto",
       "legendPartial": "Djelomično",
+      "slotUnavailable": "Nije dostupno",
       "pickupDate": "Datum preuzimanja",
       "returnDate": "Datum povrata",
       "pickupTime": "Vrijeme preuzimanja",
