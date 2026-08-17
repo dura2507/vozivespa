@@ -356,7 +356,7 @@
       "returnTime": "Vrijeme povrata",
       "shopHours": "Radno vrijeme 09:00 do 19:00. Vrijeme izvan ovog razdoblja nije dostupno",
       "timezone": "zadarsko vrijeme",
-      "tooClose": " (ili preblizu drugoj rezervaciji, treba nam 1h između rezervacija)",
+      "tooClose": " (ili preblizu drugoj rezervaciji, treba nam {minutes} min između rezervacija)",
       "totalDays": "{n} dana",
       "totalDay": "1 dan",
       "appliedTier": "Primijenjena cijena",

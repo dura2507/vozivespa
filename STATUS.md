@@ -41,6 +41,20 @@ Two invariants to keep: each option grid must stay a superset of its selectable 
 a time already past in Zadar must be hidden rather than greyed. Details in CALENDAR_MAP.md
 open-issues #17.
 
+**Two follow-ups, both shipped 2026-08-16 after a second adversarial pass:**
+- The Submit button was not gated on empty times, only Continue was. The dates block stays
+  mounted during the form step, so a customer could go back up, pick a day with no free
+  pickup left, and still submit; the server then answered a slot-format 400 that means
+  nothing to someone looking at "-" and 0 EUR. `canSubmit` now mirrors the Continue gate,
+  plus a backstop in `handleFormSubmit` for Enter-in-a-text-field.
+- **Turnaround was not enforced on the new booking's own return side.** A rental could end
+  at the exact minute the next one started on the last free bike, i.e. zero minutes to
+  receive and prep. Fixed in all three mirrored peak loops (client + both server ones);
+  details and the verification numbers in CALENDAR_MAP.md, "Turnaround buffer". The
+  customer-facing note also claimed "1h between bookings" while the engine uses 30 min;
+  the 11 strings now carry a `{minutes}` placeholder fed from `TURNAROUND_MINUTES`, so the
+  copy cannot drift from the constant again.
+
 **Still open, found while checking this (pre-existing, NOT introduced here, not yet fixed
 because it is outside what was reported):**
 - The "is this slot in the past" filter compares `iso !== zagrebNow().isoDate`, so a day

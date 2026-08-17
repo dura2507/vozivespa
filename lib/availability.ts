@@ -267,7 +267,15 @@ export async function findFreeUnit(
   for (const m of (manuals ?? []) as Array<{
     date_from: string; date_to: string; start_time: string | null; end_time: string | null; bike_unit_id: string | null;
   }>) {
-    if (!m.bike_unit_id || !occupiedByManual.has(m.bike_unit_id)) continue; // whole-model handled above
+    // Filter per ROW, not per unit. `occupiedByManual` only records that the
+    // unit carries at least ONE overlapping block, so keying off it pushed a
+    // span for EVERY block row of that unit inside the queried date range,
+    // including rows that don't overlap this window at all. That was harmless
+    // while the scan stopped at newEnd (those rows contribute 0 demand at every
+    // instant it evaluated); with the trailing turnaround the scan reaches them
+    // and the server started rejecting windows the picker offers. Same test as
+    // the client's noBuffer pre-filter, so the two engines line up again.
+    if (!m.bike_unit_id || !overlapsManual(m)) continue; // whole-model handled above
     if (!poolUnitIds.has(m.bike_unit_id)) continue;
     const ms = m.start_time ? toMs(m.date_from, m.start_time) : toMs(m.date_from, "00:00");
     const me = m.end_time ? toMs(m.date_to, m.end_time) : toMs(m.date_to, "23:59");
@@ -287,7 +295,12 @@ export async function findFreeUnit(
   let existingPeak = 0;
   let peakT = newStart; // the instant where the peak happens (for the message)
   for (const t of instants) {
-    if (t < newStart || t >= newEnd) continue;
+    // Scan to newEnd + buffer, not newEnd: the window being placed keeps its
+    // bike through its own turnaround (receiving, checking, refuelling), so a
+    // rental must not end at the exact minute the next one starts. The legit
+    // back-to-back pair (return 11:00, next pickup 11:30) still passes, the
+    // guard is exclusive. Mirrors unitsFreeForWindow in lib/pricing.ts.
+    if (t < newStart || t >= newEnd + bufferMs) continue;
     let demand = 0;
     for (const c of overlapping) {
       if (toMs(c.date_from, c.pickup_time) <= t && t < toMs(c.date_to, c.return_time) + bufferMs) demand++;
@@ -556,7 +569,14 @@ export async function findFreeUnits(
   supabase: SupabaseClient,
   w: BookingWindow,
   count: number,
-  opts: { includeBackup?: boolean } = {},
+  // `noTrailingBuffer` is for the ONE caller that passes a service-block span
+  // instead of a rental window (POST /api/admin/blocks). A bike coming out of
+  // service needs no cleaning turnaround - the same rule ConfirmedBooking
+  // .noBuffer encodes client-side and that block spans already follow as
+  // existing demand. Without it, a block ending when the next rental starts
+  // would be refused while the identical pair created in the other order is
+  // accepted.
+  opts: { includeBackup?: boolean; noTrailingBuffer?: boolean } = {},
 ): Promise<{ unitIds: (string | null)[]; totalFree: number; totalUnits: number; conflict: Conflict | null }> {
   // Reuse the same conflict-collection logic as findFreeUnit, just
   // keep walking past the first match.
@@ -680,7 +700,8 @@ export async function findFreeUnits(
   for (const m of (manuals ?? []) as Array<{
     date_from: string; date_to: string; start_time: string | null; end_time: string | null; bike_unit_id: string | null;
   }>) {
-    if (!m.bike_unit_id || !blockedUnitIds.has(m.bike_unit_id)) continue;
+    // Per ROW, not per unit - see the same fix in findFreeUnit.
+    if (!m.bike_unit_id || !overlapsManual(m)) continue;
     // Blocks on out-of-pool units (ghost/backup reserve) don't consume K.
     if (!poolUnitIds.has(m.bike_unit_id)) continue;
     const ms = m.start_time ? toMs(m.date_from, m.start_time) : toMs(m.date_from, "00:00");
@@ -690,9 +711,13 @@ export async function findFreeUnits(
   const instants = [newStart];
   for (const c of overlapping) instants.push(toMs(c.date_from, c.pickup_time)); // buffer is return-side only
   for (const b of blockSpans) instants.push(b.start);
+  // Scan to newEnd + buffer: the window being placed holds its bike through its
+  // own turnaround too. Mirrors unitsFreeForWindow in lib/pricing.ts. A service
+  // block is the exception, it carries no turnaround (see opts above).
+  const trailing = opts.noTrailingBuffer ? 0 : bufferMs;
   let existingPeak = 0;
   for (const t of instants) {
-    if (t < newStart || t >= newEnd) continue;
+    if (t < newStart || t >= newEnd + trailing) continue;
     let dem = 0;
     for (const c of overlapping) if (toMs(c.date_from, c.pickup_time) <= t && t < toMs(c.date_to, c.return_time) + bufferMs) dem++;
     for (const b of blockSpans) if (b.start <= t && t < b.end) dem++;

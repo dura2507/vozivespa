@@ -356,7 +356,7 @@
       "returnTime": "Return time",
       "shopHours": "Shop hours 09:00 to 19:00. Times outside this window are not available",
       "timezone": "Zadar time",
-      "tooClose": " (or too close to another booking, we need 1h between bookings)",
+      "tooClose": " (or too close to another booking, we need {minutes} min between bookings)",
       "totalDays": "{n} days",
       "totalDay": "1 day",
       "appliedTier": "Applied rate",

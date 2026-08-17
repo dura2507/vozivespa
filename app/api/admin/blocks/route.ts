@@ -143,7 +143,12 @@ export async function POST(request: Request) {
           returnTime: endTime ?? "23:59",
         },
         1,
-        { includeBackup: false },
+        // A service block is not a rental: the bike goes straight from the
+        // mechanic to the next rider, so it gets NO trailing turnaround. Block
+        // spans already count unbuffered as existing demand, and without this
+        // flag the same block would be refused or accepted depending on whether
+        // it or the rental happened to be entered first.
+        { includeBackup: false, noTrailingBuffer: true },
       );
     } catch (err) {
       console.error("[/api/admin/blocks] capacity gate", err);

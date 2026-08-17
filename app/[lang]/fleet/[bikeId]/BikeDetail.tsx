@@ -30,6 +30,7 @@ import {
   isEarlyPickup,
   isLateReturn,
   outsideHoursSurcharge,
+  TURNAROUND_MINUTES,
   type ConfirmedBooking,
 } from "@/lib/pricing";
 import { SEASON_END_DATE, zagrebNow } from "@/lib/season";
@@ -573,6 +574,12 @@ export default function BikeDetail({
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!effectiveRange?.from || !effectiveRange?.to) return;
+    // Backstop for the disabled Submit button above: Enter inside a text field
+    // submits the form directly, bypassing the button's disabled state.
+    if (!pickupTime || !returnTime) {
+      setSubmitError(tF.calendar.notAvailableInWindow);
+      return;
+    }
     const online = payMode !== "screenshot";
     if (!online && !receipt) {
       setReceiptError(tF.reservation.uploadError);
@@ -739,8 +746,17 @@ export default function BikeDetail({
   }
 
   const bookingFee = Math.round(totalPrice * 0.2 * 100) / 100;
+  // The dates block stays mounted and clickable during the form step
+  // (the wrapper is `bookingStep !== "done"`), so a customer can walk back up,
+  // pick a day that has no free pickup left, and end up with empty times while
+  // the filled-in form still sits below. "Continue" checks the times, "Submit"
+  // used not to, and the server then answered a slot-format 400 that means
+  // nothing to a customer looking at "-" and 0 €. Mirror the Continue gate.
   const canSubmit =
     bookingStep === "form" &&
+    !!pickupTime &&
+    !!returnTime &&
+    totalPrice > 0 &&
     (payMode !== "screenshot" || (!!receipt && !receiptError)) &&
     !!driversLicence &&
     !!ridingStyle;
@@ -1284,7 +1300,13 @@ export default function BikeDetail({
                       </label>
                     </div>
                     <p className="text-muted text-xs mt-2">
-                      {tF.calendar.shopHours}{pickupBase.length < buildPickupSlots().length || returnBase.length < buildSlots().length ? tF.calendar.tooClose : ""}. ({tF.calendar.timezone})
+                      {tF.calendar.shopHours}
+                      {pickupBase.length < buildPickupSlots().length || returnBase.length < buildSlots().length
+                        ? // The gap is read from the engine, never typed into the
+                          // copy: the constant was lowered from 60 to 30 once and
+                          // all 11 translations kept claiming "1h" for months.
+                          tF.calendar.tooClose.replace("{minutes}", String(TURNAROUND_MINUTES))
+                        : ""}. ({tF.calendar.timezone})
                     </p>
 
                     {pickupSlots.length === 0 || returnSlots.length === 0 ? (

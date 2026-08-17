@@ -180,11 +180,20 @@ function unitsFreeForWindow(
   // A bike is committed [pickup, return + turnaround); the buffer is return-side
   // ONLY, else two back-to-back rentals exactly one turnaround apart get
   // double-counted (mirrors the findFreeUnit fix).
+  //
+  // That commitment applies to the window being checked as well, which is why
+  // the scan runs to winEnd + buffer and not to winEnd: the returning bike is
+  // still being received, checked and refuelled after the customer hands it
+  // back. Without the trailing span a rental could END at the exact minute the
+  // next one starts, leaving zero turnaround, and only in that direction - the
+  // reverse pairing was already rejected. The legitimate back-to-back case the
+  // comment above protects is untouched: return 11:00 with the next pickup at
+  // 11:30 puts that pickup exactly ON the limit, and the guard is exclusive.
   const instants = [winStart];
   for (const b of ov) instants.push(b.s);
   let peak = 0;
   for (const t of instants) {
-    if (t < winStart || t >= winEnd) continue;
+    if (t < winStart || t >= winEnd + bufferMs) continue;
     let dem = 0;
     for (const b of ov) if (b.s <= t && t < b.e + b.buf) dem++;
     if (dem > peak) peak = dem;

@@ -194,6 +194,54 @@ double-counted two legit back-to-back rentals exactly one turnaround apart
 The **adjacency filters** `x < cEnd + buffer && cStart - buffer < y` (one buffer
 per return->pickup transition) are a DIFFERENT, correct form - leave them.
 
+**Scan range (fixed 2026-08-16).** The same commitment applies to the window being
+placed, so the peak scan runs over `[newStart, newEnd + buffer)`, NOT `[newStart,
+newEnd)`. It used to stop at `newEnd`, which meant the new booking's own trailing
+turnaround was never modelled: a rental could END at the exact minute another one
+STARTED on the last free bike (return 13:00 / next pickup 13:00, K=1) and both the
+picker and `findFreeUnit` accepted it, leaving zero minutes to receive, check and
+refuel. The tell was that the adjacency pre-filter already admitted bookings
+starting up to one buffer past `newEnd` while the loop could never evaluate an
+instant there - dead candidates, i.e. the trailing check was intended all along.
+The asymmetry proved it was not policy: the same pair created in the other order
+was rejected. The legit back-to-back case above is untouched, the guard is
+exclusive (`t >= newEnd + buffer`), so a pickup exactly one turnaround after the
+return still passes. All three mirrored loops changed together: `unitsFreeForWindow`
+pr:186, `findFreeUnit` av:290, `findFreeUnits` av:695. Verified by fuzzing 400k
+random fleet states client-vs-server: 0 disagreements in either direction, and the
+four boundary cases (0 / 15 / 30 min gap, plus the reverse pairing) all correct.
+Live impact measured before shipping: 0.06% of offered return slots and 0.01% of
+pickup slots disappear - exactly the zero-gap boundary, nothing else.
+
+**Two regressions the trailing scan exposed, both fixed in the same commit.** Neither
+was a new bug, both were latent shapes the old short scan could never reach:
+1. *Block spans were collected per UNIT, not per ROW* (`findFreeUnit` av:278,
+   `findFreeUnits` av:703). `occupiedByManual` / `blockedUnitIds` only record that a
+   unit carries **at least one** overlapping block, so the loop pushed a span for
+   **every** block row of that unit in the queried date range - including rows that
+   don't overlap the window. Harmless while the scan stopped at `newEnd` (those rows
+   score 0 at every evaluated instant), fatal once it reaches 30 min further: with two
+   time-bounded blocks on one unit (09:00-10:00 and 13:00-18:00, admin allows this,
+   they don't overlap) the server rejected a window the picker offered - the "green
+   button, then 409" class. Now filtered with `overlapsManual(m)`, the same test the
+   client's noBuffer pre-filter uses. Do NOT instead widen the client's pre-filter:
+   the server ignores a block row whose unit has no other overlapping row, so that
+   flips the divergence into "picker hides a slot the server would accept".
+   `occupiedByManual`/`blockedUnitIds` stay as they are for physical unit ASSIGNMENT.
+2. *Service blocks must not get a trailing turnaround.* `POST /api/admin/blocks` is the
+   only caller that feeds `findFreeUnits` a BLOCK span instead of a rental window, so
+   the new bound handed the block a 30-min rental turnaround: a 09:00-12:00 service
+   block was refused when a rental started at 12:00, even though the bike goes straight
+   from the mechanic to the rider. Worse, it was order-dependent - block first then
+   rental was accepted, rental first then block was refused. New opt
+   `findFreeUnits(..., { noTrailingBuffer: true })`, set ONLY by the blocks route;
+   every other caller passes a real rental window and keeps the buffer. Mirrors
+   `ConfirmedBooking.noBuffer` client-side and the documented rule that the server never
+   buffers block spans.
+Both verified against a control copy with the fix reverted: the exact scenario shows
+"picker offers / server rejects" before and agreement after, the block gate flips from
+409 to created, and the intent survives (0-min gap rejected, 30-min allowed).
+
 ## Change checklist
 
 Run on **every** change that touches availability, demand, booking writes, or unit/block queries:

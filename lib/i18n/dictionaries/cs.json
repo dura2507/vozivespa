@@ -356,7 +356,7 @@
       "returnTime": "Čas vrácení",
       "shopHours": "Otevírací doba 09:00 až 19:00. Časy mimo toto okno nejsou dostupné",
       "timezone": "čas v Zadaru",
-      "tooClose": " (nebo příliš blízko jiné rezervace, mezi rezervacemi potřebujeme 1h)",
+      "tooClose": " (nebo příliš blízko jiné rezervace, mezi rezervacemi potřebujeme {minutes} min)",
       "totalDays": "{n} dní",
       "totalDay": "1 den",
       "appliedTier": "Použitá sazba",

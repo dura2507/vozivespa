@@ -356,7 +356,7 @@
       "returnTime": "Rückgabezeit",
       "shopHours": "Öffnungszeiten 09:00 bis 19:00 Uhr. Zeiten außerhalb sind nicht buchbar",
       "timezone": "Zadar-Zeit",
-      "tooClose": " (oder zu dicht an einer anderen Buchung, wir brauchen 1h Pause zwischen Buchungen)",
+      "tooClose": " (oder zu dicht an einer anderen Buchung, wir brauchen {minutes} Min. Pause zwischen Buchungen)",
       "totalDays": "{n} Tage",
       "totalDay": "1 Tag",
       "appliedTier": "Anwendbarer Tarif",

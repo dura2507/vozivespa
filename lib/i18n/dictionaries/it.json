@@ -356,7 +356,7 @@
       "returnTime": "Ora riconsegna",
       "shopHours": "Orari 09:00 alle 19:00. Fuori questo orario non disponibile",
       "timezone": "ora di Zadar",
-      "tooClose": " (o troppo vicino a un'altra prenotazione, ci serve 1h tra le prenotazioni)",
+      "tooClose": " (o troppo vicino a un'altra prenotazione, ci serve {minutes} min tra le prenotazioni)",
       "totalDays": "{n} giorni",
       "totalDay": "1 giorno",
       "appliedTier": "Tariffa applicata",

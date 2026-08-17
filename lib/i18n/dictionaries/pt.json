@@ -356,7 +356,7 @@
       "returnTime": "Hora de devolução",
       "shopHours": "Horário da loja 09:00 às 19:00. Horários fora dessa janela não estão disponíveis",
       "timezone": "horário de Zadar",
-      "tooClose": " (ou muito perto de outra reserva, precisamos de 1h entre reservas)",
+      "tooClose": " (ou muito perto de outra reserva, precisamos de {minutes} min entre reservas)",
       "totalDays": "{n} dias",
       "totalDay": "1 dia",
       "appliedTier": "Tarifa aplicada",
