@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { isLocale, type Locale, DEFAULT_LOCALE, LOCALES } from "@/lib/i18n/config";
 import { buildSystemPrompt } from "@/lib/chatbot/knowledge";
 import { CATEGORIES } from "@/lib/mockData";
 import { getCategoriesWithPricing } from "@/lib/bike-pricing";
+import { appendConversation, getOwnerKnowledge } from "@/lib/chat-log";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -112,7 +113,7 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: { message?: unknown; history?: unknown; locale?: unknown };
+  let body: { message?: unknown; history?: unknown; locale?: unknown; conversationId?: unknown };
   try {
     body = await request.json();
   } catch {
@@ -142,7 +143,12 @@ export async function POST(request: Request) {
   // Merge Thomas's current admin price overrides (same source the website
   // uses) so the bot quotes live, binding prices — not the stale mockData base.
   const categories = await getCategoriesWithPricing();
-  const system = buildSystemPrompt(locale, categories);
+  // Thomas's merged corrections (admin, /admin/chats) are layered on top of
+  // the base knowledge with the highest priority. Empty string when none.
+  const ownerKnowledge = await getOwnerKnowledge();
+  const system = buildSystemPrompt(locale, categories, ownerKnowledge);
+  const conversationId =
+    typeof body.conversationId === "string" ? body.conversationId : null;
   const messages = [...history, { role: "user" as const, content: message }];
 
   try {
@@ -186,7 +192,24 @@ export async function POST(request: Request) {
         { status: 502 },
       );
     }
-    return NextResponse.json({ reply: sanitizeInternalLinks(text, locale) });
+    const reply = sanitizeInternalLinks(text, locale);
+    // Log the exchange for the admin chat view AFTER responding, so a slow or
+    // failing log can never delay or break the customer's answer.
+    const convId = conversationId && /^[a-z0-9-]{6,40}$/.test(conversationId)
+      ? conversationId
+      : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    const now = Date.now();
+    after(() =>
+      appendConversation(
+        convId,
+        [
+          { role: "user", content: message, at: now },
+          { role: "assistant", content: reply, at: Date.now() },
+        ],
+        locale,
+      ),
+    );
+    return NextResponse.json({ reply, conversationId: convId });
   } catch (err) {
     console.error("[/api/chatbot] network", err);
     return NextResponse.json(

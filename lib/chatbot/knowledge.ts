@@ -287,12 +287,21 @@ function pageLinks(locale: Locale): string {
 // `cats` MUST be the override-merged catalogue (getCategoriesWithPricing) so
 // the bot quotes Thomas's CURRENT admin-edited prices, not the static mockData
 // base — the bot's price is treated as binding, so a stale price is a real bug.
-export function buildSystemPrompt(locale: Locale, cats: Category[] = CATEGORIES): string {
+export function buildSystemPrompt(
+  locale: Locale,
+  cats: Category[] = CATEGORIES,
+  // Thomas's merged corrections from the admin (see lib/chat-log.ts). Placed
+  // LAST and marked highest priority so a correction beats a stale FAQ line.
+  ownerKnowledge = "",
+): string {
   return [
     ROLE_INSTRUCTIONS,
     "\n\n" + LANGUAGE_RULE + "\n- Site default, used ONLY as the fallback for an untellable message (see rule above): " + LOCALE_DEFAULT[locale],
     "\n\n## " + pageLinks(locale),
     "\n\n## OWNER-PROVIDED FAQ (authoritative)\n" + THOMAS_FAQ,
     "\n\n## SITE FACTS\n" + SITE_FACTS.replace("__FLEET_PLACEHOLDER__", fleetSummary(cats)),
+    ownerKnowledge
+      ? "\n\n## OWNER CORRECTIONS (HIGHEST priority - overrides everything above on conflict)\n" + ownerKnowledge
+      : "",
   ].join("");
 }

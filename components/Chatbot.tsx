@@ -133,9 +133,18 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
           message: trimmed,
           history: messages.slice(-10),
           locale,
+          // Groups this visitor's messages into one conversation in the admin
+          // chat log. Survives a reload via sessionStorage, resets per tab.
+          conversationId:
+            typeof window !== "undefined" ? sessionStorage.getItem("chat-conv-id") : null,
         }),
       });
-      const data = (await res.json()) as { reply?: string; message?: string; error?: string };
+      const data = (await res.json()) as {
+        reply?: string;
+        message?: string;
+        error?: string;
+        conversationId?: string;
+      };
       if (!res.ok) {
         // Prefer the localised copy over the server's English default so
         // the error reads in the visitor's language.
@@ -147,6 +156,11 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
               : t.errorGeneric;
         setError(localised ?? data.message ?? t.errorGeneric);
         return;
+      }
+      if (data.conversationId) {
+        try {
+          sessionStorage.setItem("chat-conv-id", data.conversationId);
+        } catch {}
       }
       if (data.reply) {
         setMessages((prev) => [...prev, { role: "assistant", content: data.reply! }]);

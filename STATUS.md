@@ -10,7 +10,30 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-08-16 (time dropdowns show taken slots greyed out).
+Last updated: 2026-08-18 (chatbot logging + admin chat view, same system as the shop).
+
+## Chatbot logging + owner corrections (2026-08-18)
+
+Thomas asked for the same system the SickMotos shop has: every bot conversation is
+logged and reviewable in the admin, plus the correction loop.
+
+- Every /api/chatbot exchange is logged AFTER the reply is sent (`after()` +
+  `lib/chat-log.ts`), so logging can never slow down or break the customer bot.
+  The widget keeps a per-tab conversation id in sessionStorage so a visitor's
+  messages group into one conversation.
+- Admin: **/admin/chats** (nav "Bot chats") lists conversations with an
+  All / Unread filter; the detail page shows the full transcript (Zadar time),
+  a read/unread toggle, a note field, and a "Correct the bot" form.
+- Corrections work like the shop: each correction is stored as an audit row
+  (`bot_corrections`) and merged by Haiku into ONE compact knowledge document
+  (`bot_knowledge`, single row), which `buildSystemPrompt` appends as an
+  OWNER CORRECTIONS section with highest priority. A merge that shrinks the
+  document by more than half is rejected as lossy (correction stays recorded).
+- Supabase is the store (the shop uses Redis; this project has no Redis).
+  Tables `chat_conversations`, `bot_corrections`, `bot_knowledge` - created
+  2026-08-18 via the Management API, RLS enabled with no policies (service
+  role only). Read convention from the shop kept: a failed READ must never be
+  treated as "no data", or a subsequent write erases real history.
 
 ## Time dropdowns: taken slots are now visible, not hidden (2026-08-16)
 
