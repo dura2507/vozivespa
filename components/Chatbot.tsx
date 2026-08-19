@@ -135,8 +135,15 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
           locale,
           // Groups this visitor's messages into one conversation in the admin
           // chat log. Survives a reload via sessionStorage, resets per tab.
-          conversationId:
-            typeof window !== "undefined" ? sessionStorage.getItem("chat-conv-id") : null,
+          // Guarded: with "block all cookies" the storage ACCESS itself throws,
+          // and that must degrade to "no grouping", never to a broken chat.
+          conversationId: (() => {
+            try {
+              return sessionStorage.getItem("chat-conv-id");
+            } catch {
+              return null;
+            }
+          })(),
         }),
       });
       const data = (await res.json()) as {
