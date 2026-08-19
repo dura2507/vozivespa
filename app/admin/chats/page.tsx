@@ -28,7 +28,7 @@ export default async function AdminChats({
   const unreviewed = all.filter((c) => !c.reviewed).length;
 
   return (
-    <div>
+    <div className="max-w-7xl mx-auto px-5 md:px-8 py-8">
       <div className="flex flex-wrap items-baseline justify-between gap-4 mb-6">
         <h1 className="font-barlow font-bold uppercase tracking-wide text-2xl text-ink">
           Bot chats

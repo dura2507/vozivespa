@@ -64,7 +64,7 @@ export default async function AdminChatDetail({
   const conv = await getConversation(id);
   if (conv === undefined) {
     return (
-      <div className="bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+      <div className="max-w-3xl mx-auto px-5 md:px-8 py-8 bg-red-50 border border-red-200 text-sm text-red-800">
         This chat can&apos;t be loaded right now (store error).
       </div>
     );
@@ -72,7 +72,7 @@ export default async function AdminChatDetail({
   if (!conv) notFound();
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-3xl mx-auto px-5 md:px-8 py-8">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <Link
           href="/admin/chats"
