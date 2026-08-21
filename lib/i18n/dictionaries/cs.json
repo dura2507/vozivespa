@@ -432,6 +432,45 @@
       "summaryPaid": "Rezervační poplatek zaplacen",
       "summaryRemaining": "Splatné při vyzvednutí",
       "back": "Zpět na úvod"
+    },
+    "tours": {
+      "heading": "Tipy na výlety",
+      "intro": "Nápady na trasy pro tento stroj. Klepnutím na zastávku ji otevřete v Mapách Google.",
+      "routes": {
+        "ugljan": {
+          "name": "Okruh po ostrově Ugljan",
+          "desc": "Trajektem ze Zadaru do Preka, přes ostrov s plážovým barem, pevností a plážemi, zpět trajektem z Tkonu do Biogradu na Moru."
+        },
+        "nin": {
+          "name": "Nin, Queen's Beach",
+          "desc": "Pohodová jízda na slavnou písečnou pláž v Ninu."
+        },
+        "pag": {
+          "name": "Okruh po ostrově Pag",
+          "desc": "Velký pobřežní okruh přes most Maslenica, podél řeky Zrmanji, po pobřeží do Karlobagu a trajektem na ostrov Pag."
+        },
+        "svetirok": {
+          "name": "Sveti Rok",
+          "desc": "Vyhlídková horská trasa ke spotu Sveti Rok."
+        }
+      },
+      "stops": {
+        "ferryZadar": "Trajektový přístav Zadar",
+        "preko": "Ostrov Preko",
+        "beachBar": "Plážový bar",
+        "gardenBar": "Garden bar (u trajektu)",
+        "castleFort": "Pevnost",
+        "beach": "Pláž",
+        "ferryTkon": "Trajektový přístav Tkon",
+        "ferryBiograd": "Trajektový přístav Biograd na Moru",
+        "queensBeach": "Queen's Beach, Nin",
+        "pagLoop": "Trasa okruhu Pag",
+        "ferryPortMainland": "Trajektový přístav (pevnina)",
+        "ferryPortPag": "Trajektový přístav (Pag)",
+        "karlobag": "Karlobag",
+        "maslenica": "Most Maslenica",
+        "svetiRok": "Sveti Rok"
+      }
     }
   },
   "bikes": {
@@ -548,8 +587,8 @@
       "pickupHeader": "Vyzvednutí",
       "openHoursLabel": "Otevřeno",
       "bringHeader": "Vezmi si s sebou",
-      "bringLicence": "Platný motorkářský řidičák, bez něj nemůžeme předat",
-      "bringDeposit": "{deposit} kauce (hotově při příjezdu, vrácena po odevzdání bez poškození)",
+      "bringLicence": "Při vyzvednutí je nutné předložit řidičský průkaz platný pro rezervovanou třídu vozidla, bez něj stroj nemůžeme předat",
+      "bringDeposit": "{deposit} kauce za každý stroj, vrácena po odevzdání bez poškození. Při vyzvednutí: hotově (bez poplatků), PayPal, Revolut nebo Wise (mohou platit transakční poplatky). Žádné kreditní ani debetní karty.",
       "bringTank": "Stroj přijde s plnou nádrží, vrať ho prosím plný",
       "adjustHeader": "Potřebuješ něco upravit?",
       "adjustLine": "Vyzvednutí je zajištěno na {from} v {pickupTime}, vrácení {to} do {returnTime}. Ozvi se, pokud se něco mění:",

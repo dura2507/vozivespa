@@ -34,6 +34,7 @@ import {
   type ConfirmedBooking,
 } from "@/lib/pricing";
 import { SEASON_END_DATE, zagrebNow } from "@/lib/season";
+import { TOURS } from "@/lib/tours";
 import SumUpCardWidget from "@/components/SumUpCardWidget";
 
 type CustomerForm = {
@@ -1076,6 +1077,49 @@ export default function BikeDetail({
               </div>
             </div>
           </section>
+
+          {/* Tour tips per model (Thomas, 2026-08-21): his Google Maps routes,
+              rendered as link chips. Models without an assigned route render
+              nothing - scooter-125 has none yet by his explicit mapping. */}
+          {(TOURS[bike.id] ?? []).length > 0 && (
+            <section className="mb-16">
+              <div className="text-center mb-8">
+                <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-muted mb-2">
+                  {tF.tours.heading}
+                </p>
+                <p className="text-muted text-sm">{tF.tours.intro}</p>
+              </div>
+              <div className="space-y-6">
+                {(TOURS[bike.id] ?? []).map((tour) => (
+                  <div key={tour.id} className="bg-off-white px-6 py-6">
+                    <h3 className="font-barlow font-bold uppercase tracking-wide text-lg text-ink mb-1">
+                      {tF.tours.routes[tour.id].name}
+                    </h3>
+                    <p className="text-muted text-sm leading-relaxed mb-4">
+                      {tF.tours.routes[tour.id].desc}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {tour.stops.map((stop) => (
+                        <a
+                          key={stop.labelKey}
+                          href={stop.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 bg-white border border-ink/15 px-3 py-2 text-xs font-semibold text-ink hover:border-red hover:text-red transition-colors"
+                        >
+                          <svg className="w-3.5 h-3.5 text-red" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                          </svg>
+                          {tF.tours.stops[stop.labelKey as keyof typeof tF.tours.stops]}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Cross-sell: book several different bikes in one go */}
           <Link

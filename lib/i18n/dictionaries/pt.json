@@ -432,6 +432,45 @@
       "summaryPaid": "Taxa de reserva paga",
       "summaryRemaining": "A pagar na retirada",
       "back": "Voltar para o início"
+    },
+    "tours": {
+      "heading": "Sugestões de rotas",
+      "intro": "Ideias de rota para esta moto. Toca numa paragem para a abrir no Google Maps.",
+      "routes": {
+        "ugljan": {
+          "name": "Volta à ilha de Ugljan",
+          "desc": "Ferry de Zadar até Preko, atravessa a ilha com beach bar, fortaleza e praias, e regressa de ferry de Tkon a Biograd na Moru."
+        },
+        "nin": {
+          "name": "Nin, Queen's Beach",
+          "desc": "Um passeio tranquilo até à famosa praia de areia de Nin."
+        },
+        "pag": {
+          "name": "Volta à ilha de Pag",
+          "desc": "Grande volta costeira pela ponte de Maslenica, ao longo do rio Zrmanja, pela costa até Karlobag e de ferry para a ilha de Pag."
+        },
+        "svetirok": {
+          "name": "Sveti Rok",
+          "desc": "Rota de montanha panorâmica até ao spot de Sveti Rok."
+        }
+      },
+      "stops": {
+        "ferryZadar": "Porto de ferry de Zadar",
+        "preko": "Ilha de Preko",
+        "beachBar": "Beach bar",
+        "gardenBar": "Garden bar (junto ao ferry)",
+        "castleFort": "Fortaleza",
+        "beach": "Praia",
+        "ferryTkon": "Porto de ferry de Tkon",
+        "ferryBiograd": "Porto de ferry de Biograd na Moru",
+        "queensBeach": "Queen's Beach, Nin",
+        "pagLoop": "Rota da volta a Pag",
+        "ferryPortMainland": "Porto de ferry (continente)",
+        "ferryPortPag": "Porto de ferry (Pag)",
+        "karlobag": "Karlobag",
+        "maslenica": "Ponte de Maslenica",
+        "svetiRok": "Sveti Rok"
+      }
     }
   },
   "bikes": {
@@ -548,8 +587,8 @@
       "pickupHeader": "Retirada",
       "openHoursLabel": "Aberto",
       "bringHeader": "Traga com você",
-      "bringLicence": "Habilitação de moto válida, não podemos entregar sem ela",
-      "bringDeposit": "{deposit} de caução (dinheiro na chegada, devolvida após a entrega se não houver danos)",
+      "bringLicence": "Na retirada é preciso apresentar uma carta de condução válida para a classe do veículo reservado, sem ela não podemos entregar a moto",
+      "bringDeposit": "{deposit} de caução por moto, devolvida após a entrega se não houver danos. Na retirada: dinheiro (sem taxas), PayPal, Revolut ou Wise (taxas de transação podem ser aplicadas). Sem cartão de crédito ou débito.",
       "bringTank": "A moto vem com o tanque cheio, por favor devolva cheio",
       "adjustHeader": "Precisa ajustar?",
       "adjustLine": "A retirada está marcada para {from} às {pickupTime}, devolução {to} até {returnTime}. Fale com a gente se algo mudar:",

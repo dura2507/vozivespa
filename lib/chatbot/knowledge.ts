@@ -222,7 +222,11 @@ TOURS & LOCAL TIPS (a conversion booster — when a visitor has picked or is cho
   Food & drink in Zadar: meat restaurant https://maps.app.goo.gl/HMwjviB2ibLQGhY46 · grill https://maps.app.goo.gl/nJjnSA3pdVxJnyTr9 · best burek https://maps.app.goo.gl/NZeRee5zwVDK7KEr5 · sushi https://maps.app.goo.gl/xh4MG2MjSSgYjCSP7 · Asian https://maps.app.goo.gl/dprCe9ff1mBUv5hC8 · Croatian https://maps.app.goo.gl/CmxyTmm61fVTnbMf8 · breakfast buffet https://maps.app.goo.gl/s2GvWEoQPf527KoL7 · fast food https://maps.app.goo.gl/oXBUQypXgahDsp9B9 · wine bar https://maps.app.goo.gl/cZXvueFB3yeq69Yy9 · wine bar https://maps.app.goo.gl/ksshZqidYuewxR9b8
   Things to do: tank experience https://maps.app.goo.gl/8ap5nMUZCKofxkZ48 · massage https://maps.app.goo.gl/vBM4726msoTcdsAD8 · bowling https://maps.app.goo.gl/PccFC3Hd9htkLHa18
   Ugljan / Preko island (ferry Zadar → Preko): Preko https://maps.app.goo.gl/W1HdrHtrkdMGqM9v6 · beach bar https://maps.app.goo.gl/e519SCemf1siFMPLA · garden bar (near ferry) https://maps.app.goo.gl/xx9ih2ksVKqmyC9p9 · castle fort https://maps.app.goo.gl/owMYaYwDwyT7Dq1r5 · beach https://maps.app.goo.gl/nAFfFcvRfwT74xY56
-  Routes (125cc / motorbike): Pag island loop https://maps.app.goo.gl/wdvepHLGENtUEAAg9 · Karlobag coastal road https://maps.app.goo.gl/nEno8zph7i9U9YYG7
+  Routes (125cc / motorbike): Pag island loop https://maps.app.goo.gl/wdvepHLGENtUEAAg9 · Karlobag coastal road https://maps.app.goo.gl/nEno8zph7i9U9YYG7 · Maslenica Bridge https://maps.app.goo.gl/vufdDBiWMU7Zpa9q9
+  KTM Duke 125 / Duke 390 signature route: the Pag loop incl. the Zrmanja river (Maslenica Bridge, Zrmanja, coast up to Karlobag, ferry to Pag).
+  Beta RR 125 signature route: the Sveti Rok spot https://maps.app.goo.gl/rexj6ryLy4wGFztY8 (scenic mountain ride).
+  50cc signature routes: the Ugljan island loop (links above) and Nin, Queen's Beach (famous sandy beach) https://www.google.com/maps/search/?api=1&query=Queen%27s%20Beach%20Nin
+  Every bike page now has a "Tour tips" section with the matching route and map links for that model - you can also point visitors there.
   Ferry ports (for the island / Pag loops): Zadar https://maps.app.goo.gl/9aJuFyfWvnCwdg5i9 · Tkon https://maps.app.goo.gl/V8FK7xYg2MdbsJQ56 · Biograd na Moru https://maps.app.goo.gl/6vTHTWpfAsHU4D8LA · Pag-loop ferry https://maps.app.goo.gl/My93fgNkQJKG1rZM7 · Pag-loop ferry https://maps.app.goo.gl/tG4rSAuJBt38GfTZ7
 
 LANGUAGES

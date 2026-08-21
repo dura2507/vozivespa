@@ -10,7 +10,29 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-08-18 (chatbot logging + admin chat view, same system as the shop).
+Last updated: 2026-08-22 (Thomas's 21.08 requests: email deposit/licence copy + tour tips).
+
+## Thomas's requests from 2026-08-21 (all shipped 2026-08-22)
+
+1. **Confirmation email, deposit line**: said "cash only"; the site has always promised
+   PayPal/Revolut/Wise too. Per Priscilla's suggestion the email now uses the SITE's
+   deposit wording (fleet.specsSection.depositText, already professionally translated),
+   prefixed with the local word for deposit: emails.bookingConfirmed.bringDeposit in all
+   11 dictionaries. Email and site can no longer contradict each other on this.
+2. **Confirmation email, licence line**: now "a driving licence valid for the booked
+   vehicle class must be shown at pickup" (Thomas verbatim), all 11 languages
+   (emails.bookingConfirmed.bringLicence).
+3. **Tour tips per model** (lib/tours.ts + fleet.tours dict section + a section on the
+   bike detail page between the info cards and the group cross-sell): his Google Maps
+   links VERBATIM. Mapping exactly as he specified: Liberty 50 (both) = Ugljan Island
+   Loop + Nin Queen's Beach; Duke 125 + 390 = Pag Loop incl. Zrmanja; Beta RR 125 =
+   Sveti Rok. **scooter-125 (Liberty 125) got NO route from him and renders no section -
+   ask Thomas which route it should get.** Queen's Beach had no link from him; a Google
+   Maps search URL stands in until he supplies one. Chatbot knowledge extended with the
+   missing links (Maslenica, Sveti Rok, Queen's Beach) + the per-model mapping.
+4. Bot quality praise - no action.
+
+Previously: 2026-08-18 (chatbot logging + admin chat view, same system as the shop).
 
 ## Chatbot logging + owner corrections (2026-08-18)
 

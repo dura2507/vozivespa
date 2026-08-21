@@ -432,6 +432,45 @@
       "summaryPaid": "Predujam plaćen",
       "summaryRemaining": "Plaća se pri preuzimanju",
       "back": "Natrag na početnu"
+    },
+    "tours": {
+      "heading": "Prijedlozi tura",
+      "intro": "Ideje za rute za ovaj stroj. Dodirni stanicu da je otvoriš u Google kartama.",
+      "routes": {
+        "ugljan": {
+          "name": "Krug oko otoka Ugljana",
+          "desc": "Trajektom iz Zadra do Preka, preko otoka uz beach bar, tvrđavu i plaže, natrag trajektom iz Tkona do Biograda na Moru."
+        },
+        "nin": {
+          "name": "Nin, Kraljičina plaža",
+          "desc": "Lagana vožnja do poznate pješčane plaže u Ninu."
+        },
+        "pag": {
+          "name": "Krug oko otoka Paga",
+          "desc": "Velika obalna ruta preko Masleničkog mosta, uz rijeku Zrmanju, obalom do Karlobaga i trajektom na otok Pag."
+        },
+        "svetirok": {
+          "name": "Sveti Rok",
+          "desc": "Panoramska planinska ruta do spota Sveti Rok."
+        }
+      },
+      "stops": {
+        "ferryZadar": "Trajektna luka Zadar",
+        "preko": "Otok, Preko",
+        "beachBar": "Beach bar",
+        "gardenBar": "Garden bar (kod trajekta)",
+        "castleFort": "Tvrđava",
+        "beach": "Plaža",
+        "ferryTkon": "Trajektna luka Tkon",
+        "ferryBiograd": "Trajektna luka Biograd na Moru",
+        "queensBeach": "Kraljičina plaža, Nin",
+        "pagLoop": "Ruta kruga oko Paga",
+        "ferryPortMainland": "Trajektna luka (kopno)",
+        "ferryPortPag": "Trajektna luka (Pag)",
+        "karlobag": "Karlobag",
+        "maslenica": "Maslenički most",
+        "svetiRok": "Sveti Rok"
+      }
     }
   },
   "bikes": {
@@ -548,8 +587,8 @@
       "pickupHeader": "Preuzimanje",
       "openHoursLabel": "Otvoreno",
       "bringHeader": "Donesi sa sobom",
-      "bringLicence": "Važeću vozačku za motor, bez nje ne možemo predati",
-      "bringDeposit": "{deposit} polog (gotovina pri dolasku, vraća se nakon povrata ako nema oštećenja)",
+      "bringLicence": "Pri preuzimanju je potrebno pokazati vozačku dozvolu valjanu za rezerviranu klasu vozila, bez nje ne možemo predati vozilo",
+      "bringDeposit": "{deposit} pologa po motoru, vraća se nakon povrata ako nema oštećenja. Pri preuzimanju: gotovina (bez naknada), PayPal, Revolut ili Wise (mogu se primijeniti naknade). Bez kreditnih ili debitnih kartica.",
       "bringTank": "Motor dolazi s punim spremnikom, vrati ga također punim",
       "adjustHeader": "Treba prilagoditi?",
       "adjustLine": "Preuzimanje je za {from} u {pickupTime}, povrat {to} do {returnTime}. Javi nam ako se nešto promijeni:",

@@ -432,6 +432,45 @@
       "summaryPaid": "Booking fee paid",
       "summaryRemaining": "Due at pickup",
       "back": "Back to home"
+    },
+    "tours": {
+      "heading": "Tour tips",
+      "intro": "Route ideas for this bike. Tap a stop to open it in Google Maps.",
+      "routes": {
+        "ugljan": {
+          "name": "Ugljan Island Loop",
+          "desc": "Ferry from Zadar over to Preko, cruise the island with beach bar, castle fort and beaches, then ferry back from Tkon to Biograd na Moru."
+        },
+        "nin": {
+          "name": "Nin, Queen's Beach",
+          "desc": "An easy ride to Nin's famous sandy beach."
+        },
+        "pag": {
+          "name": "Island Pag Loop",
+          "desc": "Big coastal loop over the Maslenica Bridge and along the Zrmanja river, up the coast to Karlobag and by ferry over to the island of Pag."
+        },
+        "svetirok": {
+          "name": "Sveti Rok Spot",
+          "desc": "A scenic mountain ride to the Sveti Rok spot."
+        }
+      },
+      "stops": {
+        "ferryZadar": "Ferry port Zadar",
+        "preko": "Preko island",
+        "beachBar": "Beach bar",
+        "gardenBar": "Garden bar (near the ferry)",
+        "castleFort": "Castle fort",
+        "beach": "Beach",
+        "ferryTkon": "Ferry port Tkon",
+        "ferryBiograd": "Ferry port Biograd na Moru",
+        "queensBeach": "Queen's Beach, Nin",
+        "pagLoop": "Pag loop route",
+        "ferryPortMainland": "Ferry port (mainland)",
+        "ferryPortPag": "Ferry port (Pag)",
+        "karlobag": "Karlobag",
+        "maslenica": "Maslenica Bridge",
+        "svetiRok": "Sveti Rok"
+      }
     }
   },
   "bikes": {
@@ -548,8 +587,8 @@
       "pickupHeader": "Pickup",
       "openHoursLabel": "Open",
       "bringHeader": "Bring with you",
-      "bringLicence": "Valid motorcycle licence, we can't hand over without it",
-      "bringDeposit": "{deposit} deposit (cash on arrival, refunded after drop-off if no damage)",
+      "bringLicence": "At pickup you must show a driving licence valid for the booked vehicle class, without it we can't hand over the bike",
+      "bringDeposit": "{deposit} deposit per bike, refunded after drop-off if no damage. At pickup: cash (no fees), PayPal, Revolut or Wise (transaction fees may apply). No credit or debit cards.",
       "bringTank": "Bike comes with a full tank, please return it full",
       "adjustHeader": "Need to adjust?",
       "adjustLine": "Pickup is locked in for {from} at {pickupTime}, return {to} by {returnTime}. Reach out if anything changes:",

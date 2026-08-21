@@ -432,6 +432,45 @@
       "summaryPaid": "Anzahlung gezahlt",
       "summaryRemaining": "Fällig bei Abholung",
       "back": "Zurück zur Startseite"
+    },
+    "tours": {
+      "heading": "Touren-Tipps",
+      "intro": "Routen-Ideen für dieses Bike. Tippe einen Stopp an, um ihn in Google Maps zu öffnen.",
+      "routes": {
+        "ugljan": {
+          "name": "Ugljan Island Loop",
+          "desc": "Mit der Fähre von Zadar nach Preko, über die Insel mit Beach Bar, Festung und Stränden, zurück mit der Fähre von Tkon nach Biograd na Moru."
+        },
+        "nin": {
+          "name": "Nin, Queen's Beach",
+          "desc": "Entspannte Fahrt zum berühmten Sandstrand von Nin."
+        },
+        "pag": {
+          "name": "Island Pag Loop",
+          "desc": "Große Küstenrunde über die Maslenica-Brücke, entlang der Zrmanja, die Küste hoch nach Karlobag und mit der Fähre auf die Insel Pag."
+        },
+        "svetirok": {
+          "name": "Sveti Rok Spot",
+          "desc": "Aussichtsreiche Bergstrecke zum Sveti-Rok-Spot."
+        }
+      },
+      "stops": {
+        "ferryZadar": "Fährhafen Zadar",
+        "preko": "Insel Preko",
+        "beachBar": "Beach Bar",
+        "gardenBar": "Garden Bar (nahe Fähre)",
+        "castleFort": "Festung",
+        "beach": "Strand",
+        "ferryTkon": "Fährhafen Tkon",
+        "ferryBiograd": "Fährhafen Biograd na Moru",
+        "queensBeach": "Queen's Beach, Nin",
+        "pagLoop": "Pag-Loop-Route",
+        "ferryPortMainland": "Fährhafen (Festland)",
+        "ferryPortPag": "Fährhafen (Pag)",
+        "karlobag": "Karlobag",
+        "maslenica": "Maslenica-Brücke",
+        "svetiRok": "Sveti Rok"
+      }
     }
   },
   "bikes": {
@@ -548,8 +587,8 @@
       "pickupHeader": "Abholung",
       "openHoursLabel": "Geöffnet",
       "bringHeader": "Bring mit",
-      "bringLicence": "Gültiger Motorradführerschein, ohne den können wir nicht übergeben",
-      "bringDeposit": "{deposit} Kaution (bar bei Ankunft, wird nach unbeschadeter Rückgabe zurückerstattet)",
+      "bringLicence": "Zur Abholung muss ein für die gebuchte Fahrzeugklasse gültiger Führerschein vorgezeigt werden, ohne ihn können wir nicht übergeben",
+      "bringDeposit": "{deposit} Kaution pro Bike, wird bei unbeschadeter Rückgabe zurückerstattet. Bei Abholung: Bargeld (keine Gebühren), PayPal, Revolut oder Wise (Transaktionsgebühren können anfallen). Keine Kredit- oder Debitkarten.",
       "bringTank": "Bike kommt mit vollem Tank, bitte auch mit vollem Tank zurückgeben",
       "adjustHeader": "Anpassungen nötig?",
       "adjustLine": "Abholung ist für {from} um {pickupTime}, Rückgabe {to} bis {returnTime}. Meld dich falls sich was ändert:",

@@ -432,6 +432,45 @@
       "summaryPaid": "Befizetett foglalási díj",
       "summaryRemaining": "Átvételkor fizetendő",
       "back": "Vissza a főoldalra"
+    },
+    "tours": {
+      "heading": "Túratippek",
+      "intro": "Útvonalötletek ehhez a járműhöz. Koppints egy megállóra, és megnyílik a Google Térképen.",
+      "routes": {
+        "ugljan": {
+          "name": "Ugljan-szigeti kör",
+          "desc": "Komppal Zadarból Prekóba, át a szigeten beach barral, erőddel és strandokkal, vissza komppal Tkonból Biograd na Moruba."
+        },
+        "nin": {
+          "name": "Nin, Queen's Beach",
+          "desc": "Könnyű út Nin híres homokos strandjához."
+        },
+        "pag": {
+          "name": "Pag-szigeti kör",
+          "desc": "Nagy tengerparti kör a Maslenica-hídon át, a Zrmanja folyó mentén, a parton Karlobagig, majd komppal Pag szigetére."
+        },
+        "svetirok": {
+          "name": "Sveti Rok",
+          "desc": "Látványos hegyi út a Sveti Rok-i spothoz."
+        }
+      },
+      "stops": {
+        "ferryZadar": "Zadari kompkikötő",
+        "preko": "Preko sziget",
+        "beachBar": "Beach bar",
+        "gardenBar": "Garden bar (a kompnál)",
+        "castleFort": "Erőd",
+        "beach": "Strand",
+        "ferryTkon": "Tkoni kompkikötő",
+        "ferryBiograd": "Biograd na Moru-i kompkikötő",
+        "queensBeach": "Queen's Beach, Nin",
+        "pagLoop": "Pag-kör útvonala",
+        "ferryPortMainland": "Kompkikötő (szárazföld)",
+        "ferryPortPag": "Kompkikötő (Pag)",
+        "karlobag": "Karlobag",
+        "maslenica": "Maslenica-híd",
+        "svetiRok": "Sveti Rok"
+      }
     }
   },
   "bikes": {
@@ -548,8 +587,8 @@
       "pickupHeader": "Átvétel",
       "openHoursLabel": "Nyitva",
       "bringHeader": "Hozd magaddal",
-      "bringLicence": "Érvényes motoros jogosítvány, e nélkül nem tudjuk átadni",
-      "bringDeposit": "{deposit} kaució (készpénz érkezéskor, sérülésmentes visszaadás után visszajár)",
+      "bringLicence": "Átvételkor be kell mutatni a foglalt járműkategóriához érvényes jogosítványt, enélkül nem tudjuk átadni a járművet",
+      "bringDeposit": "{deposit} kaució járművenként, sérülésmentes visszaadás után visszajár. Átvételkor: készpénz (díjmentes), PayPal, Revolut vagy Wise (tranzakciós díj felmerülhet). Hitel- vagy bankkártya nem.",
       "bringTank": "A motor tele tankkal érkezik, kérjük, tele tankkal add vissza",
       "adjustHeader": "Módosítanod kell?",
       "adjustLine": "Az átvétel rögzítve {from} {pickupTime}-kor, visszaadás {to} {returnTime}-ig. Szólj, ha bármi változik:",

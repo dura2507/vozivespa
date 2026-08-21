@@ -432,6 +432,45 @@
       "summaryPaid": "Zaliczka opłacona",
       "summaryRemaining": "Do zapłaty przy odbiorze",
       "back": "Powrót do strony głównej"
+    },
+    "tours": {
+      "heading": "Pomysły na trasy",
+      "intro": "Propozycje tras dla tego pojazdu. Stuknij przystanek, aby otworzyć go w Mapach Google.",
+      "routes": {
+        "ugljan": {
+          "name": "Pętla po wyspie Ugljan",
+          "desc": "Promem z Zadaru do Preko, przez wyspę z beach barem, twierdzą i plażami, powrót promem z Tkonu do Biogradu na Moru."
+        },
+        "nin": {
+          "name": "Nin, Queen's Beach",
+          "desc": "Spokojna trasa na słynną piaszczystą plażę w Ninie."
+        },
+        "pag": {
+          "name": "Pętla po wyspie Pag",
+          "desc": "Duża nadmorska pętla przez most Maslenica, wzdłuż rzeki Zrmanji, wybrzeżem do Karlobagu i promem na wyspę Pag."
+        },
+        "svetirok": {
+          "name": "Sveti Rok",
+          "desc": "Widokowa górska trasa do spotu Sveti Rok."
+        }
+      },
+      "stops": {
+        "ferryZadar": "Port promowy Zadar",
+        "preko": "Wyspa Preko",
+        "beachBar": "Beach bar",
+        "gardenBar": "Garden bar (przy promie)",
+        "castleFort": "Twierdza",
+        "beach": "Plaża",
+        "ferryTkon": "Port promowy Tkon",
+        "ferryBiograd": "Port promowy Biograd na Moru",
+        "queensBeach": "Queen's Beach, Nin",
+        "pagLoop": "Trasa pętli Pag",
+        "ferryPortMainland": "Port promowy (ląd)",
+        "ferryPortPag": "Port promowy (Pag)",
+        "karlobag": "Karlobag",
+        "maslenica": "Most Maslenica",
+        "svetiRok": "Sveti Rok"
+      }
     }
   },
   "bikes": {
@@ -548,8 +587,8 @@
       "pickupHeader": "Odbiór",
       "openHoursLabel": "Otwarte",
       "bringHeader": "Zabierz ze sobą",
-      "bringLicence": "Ważne prawo jazdy motocyklowe, bez niego nie możemy wydać pojazdu",
-      "bringDeposit": "{deposit} kaucji (gotówka po przyjeździe, zwracana po oddaniu bez uszkodzeń)",
+      "bringLicence": "Przy odbiorze trzeba okazać prawo jazdy ważne na zarezerwowaną klasę pojazdu, bez niego nie możemy wydać pojazdu",
+      "bringDeposit": "{deposit} kaucji za pojazd, zwracana po oddaniu bez uszkodzeń. Przy odbiorze: gotówka (bez prowizji), PayPal, Revolut lub Wise (mogą wystąpić prowizje od transakcji). Bez kart kredytowych ani debetowych.",
       "bringTank": "Pojazd przychodzi z pełnym bakiem, prosimy zwrócić również pełny",
       "adjustHeader": "Trzeba coś zmienić?",
       "adjustLine": "Odbiór ustalony na {from} o {pickupTime}, zwrot {to} do {returnTime}. Daj znać, jeśli coś się zmieni:",

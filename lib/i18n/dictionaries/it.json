@@ -432,6 +432,45 @@
       "summaryPaid": "Caparra pagata",
       "summaryRemaining": "Da pagare al ritiro",
       "back": "Torna alla home"
+    },
+    "tours": {
+      "heading": "Itinerari consigliati",
+      "intro": "Idee di percorso per questo mezzo. Tocca una tappa per aprirla in Google Maps.",
+      "routes": {
+        "ugljan": {
+          "name": "Giro dell'isola di Ugljan",
+          "desc": "Traghetto da Zara a Preko, attraversa l'isola tra beach bar, fortezza e spiagge, ritorno in traghetto da Tkon a Biograd na Moru."
+        },
+        "nin": {
+          "name": "Nin, Queen's Beach",
+          "desc": "Una guida rilassata fino alla famosa spiaggia di sabbia di Nin."
+        },
+        "pag": {
+          "name": "Giro dell'isola di Pag",
+          "desc": "Grande anello costiero sul ponte di Maslenica, lungo il fiume Zrmanja, su per la costa fino a Karlobag e in traghetto sull'isola di Pag."
+        },
+        "svetirok": {
+          "name": "Sveti Rok",
+          "desc": "Percorso di montagna panoramico fino allo spot di Sveti Rok."
+        }
+      },
+      "stops": {
+        "ferryZadar": "Porto dei traghetti di Zara",
+        "preko": "Isola, Preko",
+        "beachBar": "Beach bar",
+        "gardenBar": "Garden bar (vicino al traghetto)",
+        "castleFort": "Fortezza",
+        "beach": "Spiaggia",
+        "ferryTkon": "Porto dei traghetti di Tkon",
+        "ferryBiograd": "Porto dei traghetti di Biograd na Moru",
+        "queensBeach": "Queen's Beach, Nin",
+        "pagLoop": "Percorso del giro di Pag",
+        "ferryPortMainland": "Porto dei traghetti (terraferma)",
+        "ferryPortPag": "Porto dei traghetti (Pag)",
+        "karlobag": "Karlobag",
+        "maslenica": "Ponte di Maslenica",
+        "svetiRok": "Sveti Rok"
+      }
     }
   },
   "bikes": {
@@ -548,8 +587,8 @@
       "pickupHeader": "Ritiro",
       "openHoursLabel": "Aperto",
       "bringHeader": "Porta con te",
-      "bringLicence": "Patente moto valida, senza non possiamo consegnare",
-      "bringDeposit": "{deposit} di cauzione (contanti all'arrivo, restituita dopo la riconsegna se non ci sono danni)",
+      "bringLicence": "Al ritiro va mostrata una patente valida per la classe del veicolo prenotato, senza non possiamo consegnare il mezzo",
+      "bringDeposit": "{deposit} di cauzione per moto, restituita dopo la riconsegna se non ci sono danni. Al ritiro: contanti (senza commissioni), PayPal, Revolut o Wise (possono applicarsi commissioni). Niente carte di debito o credito.",
       "bringTank": "La moto arriva con il pieno, riconsegnala anche con il pieno",
       "adjustHeader": "Devi modificare?",
       "adjustLine": "Ritiro previsto per {from} alle {pickupTime}, riconsegna {to} entro {returnTime}. Scrivici se cambia qualcosa:",

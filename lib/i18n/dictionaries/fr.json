@@ -432,6 +432,45 @@
       "summaryPaid": "Acompte payé",
       "summaryRemaining": "À régler au retrait",
       "back": "Retour à l'accueil"
+    },
+    "tours": {
+      "heading": "Idées de balades",
+      "intro": "Des idées d'itinéraires pour ce deux-roues. Touchez une étape pour l'ouvrir dans Google Maps.",
+      "routes": {
+        "ugljan": {
+          "name": "Boucle de l'île d'Ugljan",
+          "desc": "Ferry de Zadar à Preko, traversée de l'île avec beach bar, forteresse et plages, retour en ferry de Tkon à Biograd na Moru."
+        },
+        "nin": {
+          "name": "Nin, Queen's Beach",
+          "desc": "Une balade tranquille jusqu'à la célèbre plage de sable de Nin."
+        },
+        "pag": {
+          "name": "Boucle de l'île de Pag",
+          "desc": "Grande boucle côtière par le pont de Maslenica, le long de la Zrmanja, la côte jusqu'à Karlobag puis le ferry vers l'île de Pag."
+        },
+        "svetirok": {
+          "name": "Sveti Rok",
+          "desc": "Route de montagne panoramique jusqu'au spot de Sveti Rok."
+        }
+      },
+      "stops": {
+        "ferryZadar": "Port des ferrys de Zadar",
+        "preko": "Île de Preko",
+        "beachBar": "Beach bar",
+        "gardenBar": "Garden bar (près du ferry)",
+        "castleFort": "Forteresse",
+        "beach": "Plage",
+        "ferryTkon": "Port des ferrys de Tkon",
+        "ferryBiograd": "Port des ferrys de Biograd na Moru",
+        "queensBeach": "Queen's Beach, Nin",
+        "pagLoop": "Itinéraire de la boucle de Pag",
+        "ferryPortMainland": "Port des ferrys (continent)",
+        "ferryPortPag": "Port des ferrys (Pag)",
+        "karlobag": "Karlobag",
+        "maslenica": "Pont de Maslenica",
+        "svetiRok": "Sveti Rok"
+      }
     }
   },
   "bikes": {
@@ -548,8 +587,8 @@
       "pickupHeader": "Retrait",
       "openHoursLabel": "Ouvert",
       "bringHeader": "À apporter",
-      "bringLicence": "Permis moto valide, sans lui nous ne pouvons pas remettre la moto",
-      "bringDeposit": "{deposit} de caution (espèces à l'arrivée, restituée après la restitution si aucun dommage)",
+      "bringLicence": "Au retrait, un permis de conduire valide pour la classe du véhicule réservé doit être présenté, sans lui nous ne pouvons pas remettre le véhicule",
+      "bringDeposit": "{deposit} de caution par moto, restituée après la restitution si aucun dommage. Au retrait : espèces (sans frais), PayPal, Revolut ou Wise (des frais de transaction peuvent s'appliquer). Pas de carte de débit ni de carte de crédit.",
       "bringTank": "La moto arrive avec le plein, merci de la rendre avec le plein",
       "adjustHeader": "Besoin de modifier ?",
       "adjustLine": "Le retrait est prévu le {from} à {pickupTime}, restitution le {to} avant {returnTime}. Écrivez-nous si quelque chose change :",
