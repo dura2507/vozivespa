@@ -10,7 +10,31 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-08-22 (Thomas's 21.08 requests: email deposit/licence copy + tour tips).
+Last updated: 2026-08-29 (Priscilla's FAQ overhaul + email late-arrival line).
+
+## Priscilla's requests from 2026-08-29 (shipped same day)
+
+Forwarded privately to the bot (the group updates had been consumed by the other
+machine's getUpdates - if that happens again, ask for a private forward).
+
+1. **FAQ rewrites** (faqItems in all 11 dictionaries, bot knowledge updated to match):
+   - "How do I make a reservation?" [8]: adds how to book online, the Multibooking
+     option, and in-person booking when no online payment fits.
+   - "What does breakdown service include?" [0]: fee structure changed - technical
+     failures + theft recovery free; user-caused up to 20 km now 30 EUR (was free),
+     over 20 km from 50 EUR + transport costs; islands unchanged; key 50 EUR now
+     also covers locking the key inside.
+   - "What happens if the bike is damaged?" [6]: authorized brand dealership
+     (Piaggio Center Zadar, KTM Moto Spica) instead of "local mechanic", OEM parts
+     only, official quotation copy.
+   - "not experienced enough" [12]: "the bike" -> "the scooter or bike" (a scooter
+     customer complained; Kristian approved "scooter or bike" over the literal
+     "scooter" so Duke customers aren't mis-addressed next).
+2. **Confirmation email**: new red line (emails.bookingConfirmed.lateLine, 11
+   languages, single + group template): more than 1h late without notice =
+   automatically cancelled, no refund.
+
+Previously: 2026-08-22 (Thomas's 21.08 requests: email deposit/licence copy + tour tips).
 
 ## Thomas's requests from 2026-08-21 (all shipped 2026-08-22)
 

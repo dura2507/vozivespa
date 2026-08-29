@@ -510,7 +510,7 @@
   "faqItems": [
     {
       "question": "Co zahrnuje asistenční služba?",
-      "answer": "Do 20 km: zdarma (u nehod nebo ztracených klíčů platí příplatky). Nad 20 km: 50€. Ostrovy: Preko 150€, Dugi Otok 500€. Ztracený klíč: 50€. Asistenční služba platí, pokud se nemůžeš vrátit na naši adresu kvůli nehodě nebo ztracenému klíči. V případě poruchy motoru hradíme všechny náklady."
+      "answer": "Asistenční služba při technických závadách a vyzvednutí po krádeži je zdarma. U případů zaviněných uživatelem (píchlá pneumatika, vybitá baterie, odtah po nehodě): do 20 km zdarma při mechanické závadě, 30€ servisní poplatek za píchlou pneumatiku a jiné zaviněné případy; nad 20 km poplatek od 50€ podle vzdálenosti plus skutečné náklady na přepravu. Přirážky za ostrovy: Preko 150€, Dugi Otok 500€. Náhradní klíč: 50€ při ztrátě, poškození nebo zabouchnutí klíče."
     },
     {
       "question": "V jakém stavu je stroj předáván?",
@@ -534,7 +534,7 @@
     },
     {
       "question": "Co se stane, když je stroj poškozen?",
-      "answer": "Kauce kryje počáteční náklady na opravu. Stroj odvezeme k místnímu mechanikovi na posouzení a opravu a nájemce hradí plnou cenu opravy podle faktury mechanika. Pokud oprava přesáhne kauci, nájemce doplatí rozdíl. Kopii faktury vždy poskytujeme pro transparentnost."
+      "answer": "Při poškození během pronájmu zadržíme kauci na pokrytí prvotních nákladů na opravu. Stroj odvezeme k autorizovanému prodejci značky (např. Piaggio Center Zadar, KTM Moto Špica) k odbornému posouzení. Nájemce hradí plné náklady na opravu podle oficiální kalkulace nebo faktury prodejce; pokud přesáhnou kauci, doplatí rozdíl. Opravuje se výhradně originálními díly (OEM) a vždy dostaneš oficiální kopii kalkulace, plná transparentnost."
     },
     {
       "question": "Co když ztratím klíč?",
@@ -542,7 +542,7 @@
     },
     {
       "question": "Jak provedu rezervaci?",
-      "answer": "Vždy si u nás nejprve potvrď dostupnost. Může se rychle změnit. 20% rezervační poplatek ti zajistí termíny. Zaplať přes PayPal, bankovní převod, Revolut nebo hotově při příjezdu. Po zaplacení nám pošli screenshot transakce. Pokud dorazíš o více než 1 hodinu později bez upozornění, rezervace se automaticky zruší. Kreditní karty nepřijímáme."
+      "answer": "Rezervaci provedeš tak, že si na našem webu vybereš stroj a klikneš na „Book Now“, ověříš dostupnost a zvolíš termín a čas. Více strojů najednou zarezervuješ přes „Multibooking“ v menu. Pokud ti nevyhovuje žádná online platba, můžeš rezervovat i osobně, ale ověř si dostupnost předem, může se rychle změnit. Termín drží záloha 20 %. Platí se přes PayPal, bankovním převodem, přes Revolut nebo hotově při příjezdu; po zaplacení nám pošli screenshot transakce jako potvrzení. Kreditní karty nepřijímáme. Pokud dorazíš s více než hodinovým zpožděním bez upozornění, rezervace se automaticky ruší."
     },
     {
       "question": "Nabízíte držáky na telefon?",
@@ -558,7 +558,7 @@
     },
     {
       "question": "Co když usoudíte, že nemám dost zkušeností?",
-      "answer": "Jízda vyžaduje předchozí zkušenost. Pokud při vyzvednutí zjistíme, že nemáš dost zkušeností na bezpečné zvládnutí stroje, vyhrazujeme si právo výpůjčku odmítnout. V tom případě je rezervační poplatek nevratný, takže prosím buď upřímný ohledně své zkušenosti už při rezervaci."
+      "answer": "Jízda vyžaduje předchozí zkušenost. Pokud při vyzvednutí usoudíme, že nemáš dost zkušeností na bezpečné ovládání skútru nebo motorky, vyhrazujeme si právo pronájem odmítnout. Záloha se v takovém případě nevrací, při rezervaci proto uváděj své zkušenosti pravdivě."
     }
   ],
   "common": {
@@ -594,7 +594,8 @@
       "adjustLine": "Vyzvednutí je zajištěno na {from} v {pickupTime}, vrácení {to} do {returnTime}. Ozvi se, pokud se něco mění:",
       "cancelLine": "Změnily se plány?",
       "cancelLink": "Zrušit tuto rezervaci",
-      "cancelTail": ", termíny se okamžitě uvolní pro někoho jiného."
+      "cancelTail": ", termíny se okamžitě uvolní pro někoho jiného.",
+      "lateLine": "Pokud dorazíš s více než hodinovým zpožděním bez upozornění, rezervace se automaticky ruší bez náhrady."
     },
     "bookingDeclined": {
       "subject": "Aktualizace tvojí rezervace, {bike}",

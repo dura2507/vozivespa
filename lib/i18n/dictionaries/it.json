@@ -510,7 +510,7 @@
   "faqItems": [
     {
       "question": "Cosa include il servizio di soccorso?",
-      "answer": "Fino a 20 km: gratis (costi extra per incidenti o chiavi perse). Oltre 20 km: 50€. Isole: Preko 150€, Dugi Otok 500€. Chiave persa: 50€. Il soccorso si applica se non puoi tornare al nostro indirizzo per incidente o chiave persa. In caso di guasto al motore copriamo tutti i costi."
+      "answer": "Il soccorso stradale per guasti tecnici o di manutenzione e il recupero dopo furto sono gratuiti. Per i casi causati dall'utente (foratura, batteria scarica, traino dopo incidente): fino a 20 km gratis per guasti meccanici, con 30€ di costo servizio per forature e altri casi causati dall'utente; oltre 20 km il costo parte da 50€ in base alla distanza, più i costi reali di trasporto e recupero. Supplementi isole: Preko 150€, Dugi Otok 500€. Sostituzione chiave: 50€ in caso di smarrimento, danneggiamento o chiave chiusa nel mezzo."
     },
     {
       "question": "In che condizioni viene consegnata la moto?",
@@ -534,7 +534,7 @@
     },
     {
       "question": "Cosa succede se la moto si danneggia?",
-      "answer": "La cauzione copre i primi costi di riparazione. Portiamo la moto da un meccanico locale per valutazione e riparazione, il cliente paga il costo completo secondo la fattura del meccanico. Se le riparazioni superano la cauzione, il cliente paga la differenza. Una copia della fattura è sempre fornita per trasparenza."
+      "answer": "In caso di danni durante il noleggio tratteniamo la cauzione per coprire i primi costi di riparazione. Il mezzo viene portato a un concessionario autorizzato del marchio (es. Piaggio Center Zadar, KTM Moto Špica) per una valutazione professionale. Il noleggiatore paga l'intero costo della riparazione secondo il preventivo o la fattura ufficiale del concessionario; se supera la cauzione, paga la differenza. Tutte le riparazioni usano ricambi originali (OEM) e ricevi sempre una copia ufficiale del preventivo, massima trasparenza."
     },
     {
       "question": "Cosa succede se perdo la chiave?",
@@ -542,7 +542,7 @@
     },
     {
       "question": "Come faccio una prenotazione?",
-      "answer": "Conferma sempre la disponibilità con noi prima. Può cambiare in fretta. Una caparra del 20% blocca le tue date. Paga via PayPal, bonifico, Revolut o contanti all'arrivo. Dopo il pagamento inviaci uno screenshot della transazione. Se arrivi più di 1 ora in ritardo senza preavviso, la prenotazione viene annullata automaticamente. Non accettiamo carte di credito."
+      "answer": "Per prenotare, scegli il mezzo che ti piace sul nostro sito e clicca “Book Now” per verificare la disponibilità, poi scegli date e orari. Per prenotare più mezzi insieme usa l'opzione “Multibooking” nel menu. Se nessuna delle opzioni di pagamento online fa per te, puoi prenotare anche di persona, ma contattaci prima di arrivare per verificare la disponibilità, può cambiare in fretta. Un acconto del 20% blocca le tue date. Paga con PayPal, bonifico bancario, Revolut o in contanti all'arrivo, e mandaci uno screenshot della transazione come conferma. Non accettiamo carte di credito. Se arrivi con più di 1 ora di ritardo senza avvisare, la prenotazione viene annullata automaticamente."
     },
     {
       "question": "Offrite supporti per telefono?",
@@ -558,7 +558,7 @@
     },
     {
       "question": "E se decidete che non ho abbastanza esperienza?",
-      "answer": "Guidare richiede esperienza precedente. Se al ritiro stabiliamo che non hai abbastanza esperienza per gestire la moto in sicurezza, ci riserviamo il diritto di rifiutare il noleggio. In quel caso la caparra non è rimborsabile, sii onesto sulla tua esperienza al momento della prenotazione."
+      "answer": "Guidare richiede esperienza pregressa. Se al ritiro riteniamo che tu non abbia abbastanza esperienza per gestire in sicurezza lo scooter o la moto, ci riserviamo il diritto di rifiutare il noleggio. In tal caso l'acconto non è rimborsabile, quindi sii sincero sulla tua esperienza al momento della prenotazione."
     }
   ],
   "common": {
@@ -594,7 +594,8 @@
       "adjustLine": "Ritiro previsto per {from} alle {pickupTime}, riconsegna {to} entro {returnTime}. Scrivici se cambia qualcosa:",
       "cancelLine": "Cambiati i piani?",
       "cancelLink": "Annulla la prenotazione",
-      "cancelTail": ", le date si liberano subito per qualcun altro."
+      "cancelTail": ", le date si liberano subito per qualcun altro.",
+      "lateLine": "Se arrivi con più di 1 ora di ritardo senza avvisare, la prenotazione viene annullata automaticamente, senza rimborso."
     },
     "bookingDeclined": {
       "subject": "Aggiornamento sulla tua prenotazione, {bike}",

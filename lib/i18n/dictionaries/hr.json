@@ -510,7 +510,7 @@
   "faqItems": [
     {
       "question": "Što uključuje cestovna pomoć?",
-      "answer": "Do 20 km: besplatno (dodatni troškovi za nesreće ili izgubljene ključeve). Preko 20 km: 50€. Otoci: Preko 150€, Dugi Otok 500€. Izgubljeni ključ: 50€. Cestovna pomoć vrijedi ako se ne možeš vratiti na našu adresu zbog nesreće ili izgubljenog ključa. U slučaju kvara motora pokrivamo sve troškove."
+      "answer": "Pomoć na cesti kod tehničkih kvarova i preuzimanje nakon krađe su besplatni. Za slučajeve koje je skrivio korisnik (probušena guma, prazan akumulator, vuča nakon nezgode): do 20 km besplatno kod mehaničkog kvara, uz naknadu od 30€ za probušene gume i druge skrivljene slučajeve; preko 20 km naknada od 50€ ovisno o udaljenosti, plus stvarni troškovi prijevoza. Doplate za otoke: Preko 150€, Dugi Otok 500€. Zamjena ključa: 50€ u slučaju gubitka, oštećenja ili zaključanog ključa u vozilu."
     },
     {
       "question": "U kakvom se stanju predaje motor?",
@@ -534,7 +534,7 @@
     },
     {
       "question": "Što ako se motor ošteti?",
-      "answer": "Polog pokriva početne troškove popravka. Vodimo motor lokalnom mehaničaru na procjenu i popravak, najmoprimac plaća pune troškove popravka prema računu mehaničara. Ako popravak prelazi polog, najmoprimac plaća razliku. Kopija računa se uvijek dostavlja radi transparentnosti."
+      "answer": "U slučaju štete tijekom najma zadržavamo polog za pokriće početnih troškova popravka. Vozilo vozimo ovlaštenom serviseru marke (npr. Piaggio Center Zadar, KTM Moto Špica) na stručnu procjenu. Najmoprimac plaća puni trošak popravka prema službenoj ponudi ili računu servisa; ako prelazi polog, plaća razliku. Popravlja se isključivo originalnim dijelovima (OEM), a uvijek dobivaš službenu kopiju ponude, potpuna transparentnost."
     },
     {
       "question": "Što ako izgubim ključ?",
@@ -542,7 +542,7 @@
     },
     {
       "question": "Kako napraviti rezervaciju?",
-      "answer": "Uvijek prvo potvrdi dostupnost s nama. Brzo se mijenja. 20% predujma osigurava termine. Plaćanje preko PayPala, bankovne uplate, Revoluta ili gotovine pri dolasku. Nakon plaćanja pošalji nam snimku transakcije. Ako kasniš više od 1 sata bez najave, rezervacija se automatski otkazuje. Ne primamo kreditne kartice."
+      "answer": "Za rezervaciju odaberi vozilo koje ti se sviđa na našoj stranici i klikni “Book Now” da provjeriš dostupnost te odabereš datume i vrijeme. Više vozila odjednom rezerviraš preko opcije “Multibooking” u izborniku. Ako ti ne odgovara nijedna online opcija plaćanja, možeš rezervirati i osobno, ali nas prije dolaska kontaktiraj da provjerimo dostupnost jer se brzo mijenja. Kapara od 20% osigurava tvoje termine. Plaćanje putem PayPala, bankovnog prijenosa, Revoluta ili gotovinom pri dolasku; nakon uplate pošalji nam screenshot transakcije kao potvrdu. Kreditne kartice ne prihvaćamo. Ako kasniš više od 1 sata bez najave, rezervacija se automatski otkazuje."
     },
     {
       "question": "Nudite li držače za mobitel?",
@@ -558,7 +558,7 @@
     },
     {
       "question": "Što ako odlučite da nemam dovoljno iskustva?",
-      "answer": "Za vožnju je potrebno prethodno iskustvo. Ako pri preuzimanju utvrdimo da nemaš dovoljno iskustva za sigurnu vožnju, zadržavamo pravo odbiti najam. U tom slučaju predujam se ne vraća, budi iskren oko svog iskustva pri rezervaciji."
+      "answer": "Vožnja zahtijeva prethodno iskustvo. Ako pri preuzimanju procijenimo da nemaš dovoljno iskustva za sigurno upravljanje skuterom ili motociklom, zadržavamo pravo odbiti najam. Kapara se u tom slučaju ne vraća, zato pri rezervaciji budi iskren o svom iskustvu."
     }
   ],
   "common": {
@@ -594,7 +594,8 @@
       "adjustLine": "Preuzimanje je za {from} u {pickupTime}, povrat {to} do {returnTime}. Javi nam ako se nešto promijeni:",
       "cancelLine": "Promijenili planovi?",
       "cancelLink": "Otkaži rezervaciju",
-      "cancelTail": ", termini se odmah oslobađaju za nekoga drugog."
+      "cancelTail": ", termini se odmah oslobađaju za nekoga drugog.",
+      "lateLine": "Ako kasniš više od 1 sata bez najave, rezervacija se automatski otkazuje, bez povrata novca."
     },
     "bookingDeclined": {
       "subject": "Ažuriranje rezervacije, {bike}",

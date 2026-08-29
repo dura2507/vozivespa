@@ -510,7 +510,7 @@
   "faqItems": [
     {
       "question": "Que comprend l'assistance en cas de panne ?",
-      "answer": "Jusqu'à 20 km : gratuite (frais supplémentaires en cas d'accident ou de clé perdue). Au-delà de 20 km : 50 €. Îles : Preko 150 €, Dugi Otok 500 €. Clé perdue : 50 €. L'assistance s'applique si vous ne pouvez pas revenir à notre adresse à cause d'un accident ou d'une clé perdue. En cas de panne moteur, nous prenons en charge tous les frais."
+      "answer": "L'assistance routière pour les pannes techniques ou d'entretien et la récupération après vol sont gratuites. Pour les incidents causés par l'utilisateur (crevaison, batterie déchargée, remorquage après accident) : jusqu'à 20 km gratuit pour les pannes mécaniques, 30€ de frais de service pour les crevaisons et autres cas causés par l'utilisateur ; au-delà de 20 km, frais à partir de 50€ selon la distance, plus les coûts réels de transport et de récupération. Suppléments îles : Preko 150€, Dugi Otok 500€. Remplacement de clé : 50€ en cas de perte, de détérioration ou de clé enfermée dans le véhicule."
     },
     {
       "question": "Dans quel état la moto est-elle remise ?",
@@ -534,7 +534,7 @@
     },
     {
       "question": "Que se passe-t-il si la moto est endommagée ?",
-      "answer": "La caution couvre les premiers frais de réparation. Nous emmenons la moto chez un mécanicien local pour évaluation et réparation, et le locataire paie l'intégralité des frais selon la facture du mécanicien. Si les réparations dépassent la caution, le locataire règle la différence. Une copie de la facture est toujours fournie pour la transparence."
+      "answer": "En cas de dommage pendant la location, nous retenons la caution pour couvrir les premiers frais de réparation. Le véhicule est confié à un concessionnaire agréé de la marque (p. ex. Piaggio Center Zadar, KTM Moto Špica) pour une expertise professionnelle. Le locataire paie le coût total de la réparation selon le devis ou la facture officielle du concessionnaire ; s'il dépasse la caution, il paie la différence. Toutes les réparations utilisent des pièces d'origine (OEM) et tu reçois toujours une copie officielle du devis, transparence totale."
     },
     {
       "question": "Que faire si je perds la clé ?",
@@ -542,7 +542,7 @@
     },
     {
       "question": "Comment faire une réservation ?",
-      "answer": "Confirmez toujours la disponibilité avec nous d'abord. Elle peut changer rapidement. Un acompte de 20 % bloque vos dates. Paiement par PayPal, virement, Revolut ou espèces à l'arrivée. Après le paiement, envoyez-nous une capture d'écran de la transaction. Si vous arrivez avec plus d'1 heure de retard sans prévenir, la réservation est automatiquement annulée. Nous n'acceptons pas les cartes de crédit."
+      "answer": "Pour réserver, choisis le véhicule qui te plaît sur notre site et clique sur “Book Now” pour vérifier la disponibilité, puis choisis tes dates et horaires. Pour réserver plusieurs véhicules à la fois, utilise l'option “Multibooking” du menu. Si aucun des moyens de paiement en ligne ne te convient, tu peux aussi réserver sur place, mais contacte-nous avant de venir pour vérifier la disponibilité, elle peut changer vite. Un acompte de 20% garantit tes dates. Paiement par PayPal, virement bancaire, Revolut ou en espèces à l'arrivée ; envoie-nous ensuite une capture d'écran de la transaction comme confirmation. Nous n'acceptons pas les cartes de crédit. Si tu arrives avec plus d'1 heure de retard sans prévenir, la réservation est automatiquement annulée."
     },
     {
       "question": "Proposez-vous des supports de téléphone ?",
@@ -558,7 +558,7 @@
     },
     {
       "question": "Et si vous estimez que je n'ai pas assez d'expérience ?",
-      "answer": "La conduite nécessite une expérience préalable. Si au retrait nous estimons que vous n'avez pas assez d'expérience pour piloter la moto en sécurité, nous nous réservons le droit de refuser la location. Dans ce cas, l'acompte n'est pas remboursable, soyez donc honnête sur votre expérience lors de la réservation."
+      "answer": "Conduire exige une expérience préalable. Si au retrait nous estimons que tu n'as pas assez d'expérience pour maîtriser le scooter ou la moto en toute sécurité, nous nous réservons le droit de refuser la location. Dans ce cas l'acompte n'est pas remboursé, sois donc honnête sur ton expérience au moment de réserver."
     }
   ],
   "common": {
@@ -594,7 +594,8 @@
       "adjustLine": "Le retrait est prévu le {from} à {pickupTime}, restitution le {to} avant {returnTime}. Écrivez-nous si quelque chose change :",
       "cancelLine": "Vos plans ont changé ?",
       "cancelLink": "Annuler cette réservation",
-      "cancelTail": ", les dates se libèrent immédiatement pour quelqu'un d'autre."
+      "cancelTail": ", les dates se libèrent immédiatement pour quelqu'un d'autre.",
+      "lateLine": "Si tu arrives avec plus d'1 heure de retard sans prévenir, la réservation est automatiquement annulée, sans remboursement."
     },
     "bookingDeclined": {
       "subject": "Mise à jour sur votre réservation, {bike}",

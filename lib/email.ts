@@ -640,6 +640,7 @@ export async function sendCustomerBookingDecidedEmail(
       </ul>
       <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).adjustHeader)}</h3>
       <p style="margin:0 0 8px;font-size:14px;line-height:1.6;">${escape(fmt((t as Dictionary["emails"]["bookingConfirmed"]).adjustLine, vars))}</p>
+      <p style="margin:0 0 8px;font-size:13px;color:#B61F36;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).lateLine)}</p>
       ${contactButtonsHtml()}
       <p style="margin:32px 0 0;padding-top:18px;border-top:1px solid #e6e4dd;font-size:12px;color:#6b6b6b;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).cancelLine)} <a href="${cancelUrl}" style="color:#B61F36;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).cancelLink)}</a>${escape((t as Dictionary["emails"]["bookingConfirmed"]).cancelTail)}</p>
     `
@@ -768,6 +769,7 @@ export async function sendCustomerGroupBookingDecidedEmail(
         <li>${escape(fmt((t as Dictionary["emails"]["bookingConfirmed"]).bringDeposit, vars))}</li>
         <li>${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringTank)}</li>
       </ul>
+      <p style="margin:0 0 8px;font-size:13px;color:#B61F36;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).lateLine)}</p>
       ${contactButtonsHtml()}
     `
     : `

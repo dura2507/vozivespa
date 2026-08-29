@@ -510,7 +510,7 @@
   "faqItems": [
     {
       "question": "Co obejmuje pomoc drogowa?",
-      "answer": "Do 20 km: bezpłatnie (dodatkowe koszty przy wypadkach lub zgubionych kluczykach). Powyżej 20 km: 50€. Wyspy: Preko 150€, Dugi Otok 500€. Zgubiony kluczyk: 50€. Pomoc drogowa działa, gdy nie możesz wrócić pod nasz adres z powodu wypadku lub zgubionego kluczyka. W przypadku awarii silnika pokrywamy wszystkie koszty."
+      "answer": "Pomoc drogowa przy awariach technicznych oraz odzyskanie pojazdu po kradzieży są bezpłatne. W przypadkach zawinionych przez użytkownika (złapana guma, rozładowany akumulator, holowanie po wypadku): do 20 km bezpłatnie przy awarii mechanicznej, 30€ opłaty serwisowej za gumę i inne zawinione przypadki; powyżej 20 km opłata od 50€ zależnie od odległości, plus rzeczywiste koszty transportu. Dopłaty wyspowe: Preko 150€, Dugi Otok 500€. Wymiana kluczyka: 50€ w razie zgubienia, uszkodzenia lub zatrzaśnięcia w pojeździe."
     },
     {
       "question": "W jakim stanie wydawany jest pojazd?",
@@ -534,7 +534,7 @@
     },
     {
       "question": "Co się stanie, jeśli pojazd zostanie uszkodzony?",
-      "answer": "Kaucja pokrywa wstępne koszty naprawy. Zawozimy pojazd do lokalnego mechanika w celu wyceny i naprawy, a wypożyczający pokrywa pełne koszty naprawy zgodnie z fakturą mechanika. Jeśli naprawy przekraczają kaucję, wypożyczający dopłaca różnicę. Kopia faktury jest zawsze przekazywana dla przejrzystości."
+      "answer": "W razie uszkodzenia podczas najmu zatrzymujemy kaucję na pokrycie pierwszych kosztów naprawy. Pojazd trafia do autoryzowanego dealera marki (np. Piaggio Center Zadar, KTM Moto Špica) w celu profesjonalnej wyceny. Najemca płaci pełny koszt naprawy według oficjalnej wyceny lub faktury dealera; jeśli przekracza on kaucję, dopłaca różnicę. Naprawy wykonywane są wyłącznie na oryginalnych częściach (OEM), a ty zawsze otrzymujesz oficjalną kopię wyceny, pełna przejrzystość."
     },
     {
       "question": "Co jeśli zgubię kluczyk?",
@@ -542,7 +542,7 @@
     },
     {
       "question": "Jak dokonać rezerwacji?",
-      "answer": "Zawsze najpierw potwierdź z nami dostępność. Może się szybko zmienić. 20% zaliczki zabezpiecza twoje terminy. Płatność przez PayPal, przelew bankowy, Revolut lub gotówką po przyjeździe. Po dokonaniu płatności prześlij nam zrzut ekranu transakcji. Jeśli spóźnisz się więcej niż 1 godzinę bez uprzedzenia, rezerwacja zostanie automatycznie anulowana. Nie akceptujemy kart kredytowych."
+      "answer": "Aby zarezerwować, wybierz pojazd na naszej stronie i kliknij “Book Now”, aby sprawdzić dostępność i wybrać daty oraz godziny. Kilka pojazdów naraz zarezerwujesz przez opcję “Multibooking” w menu. Jeśli żadna z opcji płatności online ci nie odpowiada, możesz zarezerwować osobiście, ale skontaktuj się z nami przed przyjazdem, by potwierdzić dostępność, bo szybko się zmienia. Zaliczka 20% zabezpiecza terminy. Zapłać przez PayPal, przelewem, Revolutem lub gotówką na miejscu; po zapłacie wyślij nam zrzut ekranu transakcji jako potwierdzenie. Nie przyjmujemy kart kredytowych. Jeśli spóźnisz się ponad 1 godzinę bez uprzedzenia, rezerwacja zostanie automatycznie anulowana."
     },
     {
       "question": "Czy oferujecie uchwyty na telefon?",
@@ -558,7 +558,7 @@
     },
     {
       "question": "Co jeśli uznacie, że nie mam wystarczającego doświadczenia?",
-      "answer": "Jazda wymaga wcześniejszego doświadczenia. Jeśli przy odbiorze stwierdzimy, że nie masz wystarczającego doświadczenia do bezpiecznej obsługi pojazdu, zastrzegamy sobie prawo do odmowy wynajmu. W takim wypadku zaliczka nie podlega zwrotowi, dlatego prosimy o szczerość co do swojego doświadczenia przy rezerwacji."
+      "answer": "Jazda wymaga wcześniejszego doświadczenia. Jeśli przy odbiorze uznamy, że nie masz wystarczającego doświadczenia, by bezpiecznie jeździć skuterem lub motocyklem, zastrzegamy sobie prawo odmowy najmu. Zaliczka w takim przypadku nie podlega zwrotowi, dlatego przy rezerwacji szczerze opisz swoje doświadczenie."
     }
   ],
   "common": {
@@ -594,7 +594,8 @@
       "adjustLine": "Odbiór ustalony na {from} o {pickupTime}, zwrot {to} do {returnTime}. Daj znać, jeśli coś się zmieni:",
       "cancelLine": "Plany się zmieniły?",
       "cancelLink": "Anuluj tę rezerwację",
-      "cancelTail": ", terminy od razu zwolnią się dla kogoś innego."
+      "cancelTail": ", terminy od razu zwolnią się dla kogoś innego.",
+      "lateLine": "Jeśli spóźnisz się ponad 1 godzinę bez uprzedzenia, rezerwacja zostanie automatycznie anulowana, bez zwrotu pieniędzy."
     },
     "bookingDeclined": {
       "subject": "Aktualizacja twojej rezerwacji, {bike}",

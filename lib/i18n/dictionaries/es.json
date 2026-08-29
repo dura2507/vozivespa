@@ -510,7 +510,7 @@
   "faqItems": [
     {
       "question": "¿Qué incluye el servicio de asistencia?",
-      "answer": "Hasta 20 km: gratis (costes adicionales por accidente o pérdida de llaves). Más de 20 km: 50€. Islas: Preko 150€, Dugi Otok 500€. Pérdida de llave: 50€. La asistencia se aplica si no puedes volver a nuestra dirección por accidente o pérdida de llaves. En caso de avería de motor cubrimos todos los costes."
+      "answer": "La asistencia en carretera por averías técnicas o de mantenimiento y la recuperación por robo son gratuitas. Para incidentes causados por el usuario (pinchazos, batería descargada, remolque tras accidente): hasta 20 km gratis si es avería mecánica, con una tarifa de 30€ por pinchazos y otros casos causados por el usuario; a partir de 20 km la tarifa empieza en 50€ según la distancia, más los costes reales de transporte y recuperación. Recargos por islas: Preko 150€, Dugi Otok 500€. Reposición de llave: 50€ en caso de pérdida, daño o dejarla dentro del vehículo."
     },
     {
       "question": "¿En qué estado se entrega la moto?",
@@ -534,7 +534,7 @@
     },
     {
       "question": "¿Qué pasa si la moto se daña?",
-      "answer": "El depósito cubre los primeros costes de reparación. Llevamos la moto a un taller local para evaluación y reparación, el cliente paga el coste total según la factura del taller. Si las reparaciones superan el depósito, el cliente paga la diferencia. Siempre proporcionamos copia de la factura para mayor transparencia."
+      "answer": "En caso de daños durante el alquiler, retenemos la fianza para cubrir los costes iniciales de reparación. Llevamos el vehículo a un concesionario oficial de la marca (p. ej. Piaggio Center Zadar, KTM Moto Špica) para una evaluación profesional. El arrendatario paga el coste total de la reparación según el presupuesto o la factura oficial del concesionario; si supera la fianza, paga la diferencia. Todas las reparaciones usan piezas originales (OEM) y siempre recibes una copia oficial del presupuesto, transparencia total."
     },
     {
       "question": "¿Qué pasa si pierdo la llave?",
@@ -542,7 +542,7 @@
     },
     {
       "question": "¿Cómo hago una reserva?",
-      "answer": "Confirma siempre la disponibilidad con nosotros primero. Puede cambiar rápido. El 20% de reserva asegura tus fechas. Pago por PayPal, transferencia, Revolut o efectivo a la llegada. Tras el pago envíanos un screenshot de la transacción. Si llegas más de 1 hora tarde sin avisar, la reserva se cancela automáticamente. No aceptamos tarjetas de crédito."
+      "answer": "Para reservar, elige el vehículo que te guste en nuestra web y haz clic en “Book Now” para comprobar la disponibilidad y elegir fechas y horas. Para reservar varios vehículos a la vez, usa la opción “Multibooking” del menú. Si no puedes usar ninguna de las opciones de pago online, también puedes reservar en persona, pero contáctanos antes de venir para confirmar la disponibilidad, ya que puede cambiar rápido. Una señal del 20% asegura tus fechas. Paga por PayPal, transferencia bancaria, Revolut o en efectivo a la llegada, y envíanos una captura de la transacción como confirmación. No aceptamos tarjetas de crédito. Si llegas con más de 1 hora de retraso sin avisar, la reserva se cancela automáticamente."
     },
     {
       "question": "¿Ofrecéis soportes de móvil?",
@@ -558,7 +558,7 @@
     },
     {
       "question": "¿Qué pasa si decidís que no tengo suficiente experiencia?",
-      "answer": "Conducir requiere experiencia previa. Si en la recogida determinamos que no tienes suficiente experiencia para conducir la moto de forma segura, nos reservamos el derecho a rechazar el alquiler. En ese caso la reserva no es reembolsable, sé honesto sobre tu experiencia al reservar."
+      "answer": "Conducir requiere experiencia previa. Si en la recogida determinamos que no tienes experiencia suficiente para manejar con seguridad el scooter o la moto, nos reservamos el derecho de rechazar el alquiler. En ese caso la señal no se devuelve, así que sé sincero sobre tu experiencia al reservar."
     }
   ],
   "common": {
@@ -594,7 +594,8 @@
       "adjustLine": "Recogida prevista para {from} a las {pickupTime}, devolución {to} a las {returnTime}. Escríbenos si cambia algo:",
       "cancelLine": "¿Cambiaron los planes?",
       "cancelLink": "Cancelar reserva",
-      "cancelTail": ", las fechas vuelven a estar libres al instante."
+      "cancelTail": ", las fechas vuelven a estar libres al instante.",
+      "lateLine": "Si llegas con más de 1 hora de retraso sin avisar, la reserva se cancela automáticamente sin reembolso."
     },
     "bookingDeclined": {
       "subject": "Actualización de tu reserva, {bike}",

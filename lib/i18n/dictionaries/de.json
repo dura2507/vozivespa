@@ -510,7 +510,7 @@
   "faqItems": [
     {
       "question": "Was beinhaltet die Pannenhilfe?",
-      "answer": "Bis 20 km: kostenlos (Zusatzkosten bei Unfällen oder verlorenen Schlüsseln). Über 20 km: 50€. Inseln: Preko 150€, Dugi Otok 500€. Verlorener Schlüssel: 50€. Pannenhilfe greift wenn du wegen Unfall oder verlorenem Schlüssel nicht zurück zu unserer Adresse kommst. Bei Motorschaden übernehmen wir alle Kosten."
+      "answer": "Pannenhilfe bei technischen Defekten oder Wartungsfehlern sowie die Bergung nach Diebstahl sind kostenlos. Bei selbstverschuldeten Fällen (Reifenpanne, leere Batterie, Abschleppen nach Unfall) gilt: bis 20 km kostenlos bei mechanischen Defekten, 30€ Servicegebühr bei Reifenpannen und anderen selbstverschuldeten Fällen; über 20 km ab 50€ je nach Entfernung, plus die tatsächlichen Transport- und Bergungskosten. Insel-Zuschläge: Preko 150€, Dugi Otok 500€. Schlüsselersatz: 50€ bei Verlust, Beschädigung oder eingeschlossenem Schlüssel."
     },
     {
       "question": "In welchem Zustand wird das Bike übergeben?",
@@ -534,7 +534,7 @@
     },
     {
       "question": "Was passiert wenn das Bike beschädigt wird?",
-      "answer": "Die Kaution deckt die ersten Reparaturkosten. Wir bringen das Bike zu einer lokalen Werkstatt zur Begutachtung und Reparatur, der Mieter zahlt die vollen Reparaturkosten laut Werkstattrechnung. Übersteigen die Reparaturen die Kaution, zahlt der Mieter die Differenz. Eine Kopie der Rechnung wird immer zur Verfügung gestellt."
+      "answer": "Bei einem Schaden während der Miete behalten wir die Kaution ein, um die ersten Reparaturkosten zu decken. Das Fahrzeug kommt zur professionellen Begutachtung zu einem Vertragshändler der Marke (z.B. Piaggio Center Zadar, KTM Moto Špica). Der Mieter trägt die vollen Reparaturkosten laut offiziellem Kostenvoranschlag bzw. Rechnung des Händlers; übersteigen sie die Kaution, zahlt der Mieter die Differenz. Repariert wird ausschließlich mit Original-Teilen (OEM), und du bekommst immer eine offizielle Kopie des Kostenvoranschlags, volle Transparenz."
     },
     {
       "question": "Was wenn ich den Schlüssel verliere?",
@@ -542,7 +542,7 @@
     },
     {
       "question": "Wie buche ich?",
-      "answer": "Bestätige immer zuerst die Verfügbarkeit mit uns. Sie kann sich schnell ändern. Eine 20% Anzahlung sichert deine Termine. Zahlung per PayPal, Banküberweisung, Revolut oder bar bei Ankunft. Nach der Zahlung schick uns einen Screenshot der Transaktion. Kommst du mehr als 1 Stunde zu spät ohne Bescheid, wird die Reservierung automatisch storniert. Wir akzeptieren keine Kreditkarten."
+      "answer": "Wähle auf unserer Website das Fahrzeug aus, das dir gefällt, und klicke auf „Book Now“, um die Verfügbarkeit zu prüfen und Datum und Uhrzeit zu wählen. Mehrere Fahrzeuge auf einmal buchst du über „Multibooking“ im Menü. Wenn keine der Online-Zahlungsarten für dich passt, kannst du auch vor Ort buchen, kläre die Verfügbarkeit aber vorher mit uns ab, sie kann sich schnell ändern. Eine Anzahlung von 20% sichert deine Termine. Zahlung per PayPal, Banküberweisung, Revolut oder bar bei Ankunft; schick uns danach einen Screenshot der Transaktion als Bestätigung. Kreditkarten akzeptieren wir nicht. Kommst du mehr als 1 Stunde zu spät, ohne Bescheid zu geben, wird die Reservierung automatisch storniert."
     },
     {
       "question": "Bietet ihr Handyhalter an?",
@@ -558,7 +558,7 @@
     },
     {
       "question": "Was wenn ihr entscheidet ich habe nicht genug Erfahrung?",
-      "answer": "Fahren erfordert Vorerfahrung. Stellen wir bei der Abholung fest dass du nicht genug Erfahrung hast das Bike sicher zu fahren, behalten wir uns das Recht vor die Vermietung abzulehnen. In dem Fall ist die Anzahlung nicht erstattungsfähig, sei also ehrlich was deine Erfahrung bei der Buchung angeht."
+      "answer": "Fahren erfordert Vorerfahrung. Wenn wir bei der Abholung feststellen, dass du nicht genug Erfahrung hast, um den Roller oder das Motorrad sicher zu fahren, behalten wir uns vor, die Vermietung abzulehnen. Die Anzahlung wird in dem Fall nicht erstattet, sei bei der Buchung also ehrlich, was deine Erfahrung angeht."
     }
   ],
   "common": {
@@ -594,7 +594,8 @@
       "adjustLine": "Abholung ist für {from} um {pickupTime}, Rückgabe {to} bis {returnTime}. Meld dich falls sich was ändert:",
       "cancelLine": "Pläne geändert?",
       "cancelLink": "Buchung stornieren",
-      "cancelTail": ", die Termine sind sofort wieder frei für jemand anderen."
+      "cancelTail": ", die Termine sind sofort wieder frei für jemand anderen.",
+      "lateLine": "Kommst du mehr als 1 Stunde zu spät, ohne Bescheid zu geben, wird die Reservierung automatisch storniert, ohne Rückerstattung."
     },
     "bookingDeclined": {
       "subject": "Update zu deiner Buchung, {bike}",

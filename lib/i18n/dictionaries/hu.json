@@ -510,7 +510,7 @@
   "faqItems": [
     {
       "question": "Mit tartalmaz a meghibásodási szerviz?",
-      "answer": "20 km-ig: ingyenes (balesetek vagy elveszett kulcsok esetén extra költségek merülnek fel). 20 km felett: 50€. Szigetek: Preko 150€, Dugi Otok 500€. Elveszett kulcs: 50€. A meghibásodási szerviz akkor érvényes, ha baleset vagy elveszett kulcs miatt nem tudsz visszatérni a címünkre. Motorhiba esetén minden költséget mi állunk."
+      "answer": "A műszaki vagy karbantartási hibák miatti országúti segítség és a lopás utáni visszaszerzés ingyenes. A felhasználó által okozott eseteknél (defekt, lemerült akkumulátor, baleseti vontatás): 20 km-ig ingyenes mechanikai hibánál, defektnél és más okozott eseteknél 30€ szolgáltatási díj; 20 km felett a díj 50€-tól indul távolságtól függően, plusz a tényleges szállítási költségek. Sziget-felárak: Preko 150€, Dugi Otok 500€. Kulcspótlás: 50€ elvesztés, sérülés vagy a járműbe zárt kulcs esetén."
     },
     {
       "question": "Milyen állapotban kapom meg a motort?",
@@ -534,7 +534,7 @@
     },
     {
       "question": "Mi történik, ha a motor megsérül?",
-      "answer": "A kaució fedezi a kezdeti javítási költségeket. A motort egy helyi szerelőhöz visszük felmérésre és javításra, a bérlő pedig a teljes javítási költséget a szerelő számlája szerint fizeti. Ha a javítás meghaladja a kauciót, a bérlő fizeti a különbözetet. Az átláthatóság érdekében mindig adunk másolatot a számláról."
+      "answer": "A bérlés alatti károk esetén a kauciót visszatartjuk a kezdeti javítási költségek fedezésére. A járművet a márka hivatalos szervizébe visszük (pl. Piaggio Center Zadar, KTM Moto Špica) szakszerű felmérésre. A bérlő a szerviz hivatalos ajánlata vagy számlája szerinti teljes javítási költséget fizeti; ha ez meghaladja a kauciót, a különbözetet is. Minden javítás eredeti (OEM) alkatrészekkel történik, és mindig kapsz hivatalos másolatot az ajánlatról, teljes átláthatóság."
     },
     {
       "question": "Mi van, ha elveszítem a kulcsot?",
@@ -542,7 +542,7 @@
     },
     {
       "question": "Hogyan foglalhatok?",
-      "answer": "Mindig erősítsd meg nálunk először az elérhetőséget. Gyorsan változhat. Egy 20%-os foglalási díj rögzíti a dátumaidat. Fizess PayPallal, banki átutalással, Revoluttal vagy készpénzzel érkezéskor. Fizetés után küldj nekünk egy képernyőképet a tranzakcióról. Ha értesítés nélkül több mint 1 órát késel, a foglalás automatikusan törlésre kerül. Bankkártyát nem fogadunk el."
+      "answer": "Foglaláshoz válaszd ki az oldalunkon a neked tetsző járművet, kattints a “Book Now” gombra a szabad időpontok ellenőrzéséhez, majd válaszd ki a dátumot és időpontot. Több jármű együttes foglalásához használd a menü “Multibooking” opcióját. Ha egyik online fizetési mód sem megfelelő, személyesen is foglalhatsz, de érkezés előtt egyeztess velünk a szabad kapacitásról, mert gyorsan változhat. A 20% foglaló biztosítja az időpontjaidat. Fizethetsz PayPallal, banki átutalással, Revoluttal vagy készpénzzel érkezéskor; fizetés után küldj nekünk képernyőképet a tranzakcióról megerősítésként. Hitelkártyát nem fogadunk el. Ha több mint 1 órát késel előzetes jelzés nélkül, a foglalás automatikusan törlődik."
     },
     {
       "question": "Kínáltok telefontartót?",
@@ -558,7 +558,7 @@
     },
     {
       "question": "Mi van, ha úgy döntötök, hogy nem vagyok elég tapasztalt?",
-      "answer": "A vezetéshez előzetes tapasztalat szükséges. Ha átvételkor azt állapítjuk meg, hogy nincs elég tapasztalatod a motor biztonságos kezeléséhez, fenntartjuk a jogot a bérlés elutasítására. Ilyen esetben a foglalási díj nem visszatéríthető, ezért kérjük, légy őszinte a tapasztalatoddal kapcsolatban a foglaláskor."
+      "answer": "A vezetéshez előzetes tapasztalat kell. Ha átvételkor úgy ítéljük meg, hogy nincs elég tapasztalatod a robogó vagy a motor biztonságos kezeléséhez, fenntartjuk a jogot a bérlés megtagadására. Ilyenkor a foglaló nem jár vissza, ezért foglaláskor őszintén add meg a tapasztalatodat."
     }
   ],
   "common": {
@@ -594,7 +594,8 @@
       "adjustLine": "Az átvétel rögzítve {from} {pickupTime}-kor, visszaadás {to} {returnTime}-ig. Szólj, ha bármi változik:",
       "cancelLine": "Megváltoztak a terveid?",
       "cancelLink": "Foglalás lemondása",
-      "cancelTail": ", a dátumok azonnal felszabadulnak valaki más számára."
+      "cancelTail": ", a dátumok azonnal felszabadulnak valaki más számára.",
+      "lateLine": "Ha több mint 1 órát késel előzetes jelzés nélkül, a foglalás automatikusan törlődik, visszatérítés nélkül."
     },
     "bookingDeclined": {
       "subject": "Frissítés a foglalásoddal kapcsolatban, {bike}",

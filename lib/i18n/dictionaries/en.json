@@ -510,7 +510,7 @@
   "faqItems": [
     {
       "question": "What does the breakdown service include?",
-      "answer": "Up to 20 km: free (extra costs apply for accidents or lost keys). Over 20 km: 50€. Islands: Preko 150€, Dugi Otok 500€. Lost key: 50€. Breakdown service applies if you can't return to our address due to an accident or lost key. In case of engine failure we cover all costs."
+      "answer": "Roadside support for technical or maintenance failures and theft recovery is free of charge. For user-caused incidents (flat tires, drained battery, accident towing): up to 20 km it's free for mechanical failures, with a 30€ service fee for flat tires and other user-caused issues; over 20 km the service fee starts at 50€ depending on distance, plus the actual transport and recovery costs. Island surcharges: Preko 150€, Dugi Otok 500€. Key replacement: 50€ in case of loss, physical damage or locking the key inside the vehicle."
     },
     {
       "question": "In what condition is the bike delivered?",
@@ -534,7 +534,7 @@
     },
     {
       "question": "What happens if the bike is damaged?",
-      "answer": "The deposit covers initial repair costs. We take the bike to a local mechanic for assessment and repair, and the renter pays the full repair costs per the mechanic's invoice. If repairs exceed the deposit, the renter pays the difference. A copy of the invoice is always provided for transparency."
+      "answer": "In case of damage during the rental, we retain the security deposit to cover the initial repair costs. The vehicle is taken to an authorized brand dealership (e.g. Piaggio Center Zadar, KTM Moto Špica) for professional damage assessment. The renter pays the full repair cost according to the dealer's official quotation or invoice; if it exceeds the deposit, the renter pays the remaining balance. All repairs use original OEM parts, and you always receive an official copy of the quotation for full transparency."
     },
     {
       "question": "What if I lose the key?",
@@ -542,7 +542,7 @@
     },
     {
       "question": "How do I make a reservation?",
-      "answer": "Always confirm availability with us first. It can change quickly. A 20% booking fee secures your dates. Pay via PayPal, bank transfer, Revolut or cash on arrival. After paying, send us a screenshot of the transaction. If you arrive more than 1 hour late without notice, the reservation is automatically cancelled. We don't accept credit cards."
+      "answer": "To make a reservation, select the vehicle you like on our website and click “Book Now” to check availability, then pick your preferred dates and times. To book several vehicles at once, use the “Multibooking” option in the menu. If you can't use any of the online payment options, you can also book in person, but please contact us to check availability before arriving, as it can change quickly. A 20% booking fee secures your dates. Pay via PayPal, bank transfer, Revolut or cash on arrival, and send us a screenshot of the transaction as confirmation. We don't accept credit cards. If you arrive more than 1 hour late without notice, the reservation is automatically cancelled."
     },
     {
       "question": "Do you offer phone holders?",
@@ -558,7 +558,7 @@
     },
     {
       "question": "What if you decide I'm not experienced enough?",
-      "answer": "Riding requires prior experience. If at pickup we determine you don't have enough experience to safely handle the bike, we reserve the right to decline the rental. In that case the booking fee is non-refundable, so please be honest about your experience when booking."
+      "answer": "Riding requires prior experience. If at pickup we determine you don't have enough experience to safely handle the scooter or bike, we reserve the right to decline the rental. In that case the booking fee is non-refundable, so please be honest about your experience when booking."
     }
   ],
   "common": {
@@ -594,7 +594,8 @@
       "adjustLine": "Pickup is locked in for {from} at {pickupTime}, return {to} by {returnTime}. Reach out if anything changes:",
       "cancelLine": "Plans changed?",
       "cancelLink": "Cancel this booking",
-      "cancelTail": ", the dates open up immediately for someone else."
+      "cancelTail": ", the dates open up immediately for someone else.",
+      "lateLine": "If you arrive more than 1h late without notice, the reservation is automatically cancelled with no refund."
     },
     "bookingDeclined": {
       "subject": "Update on your booking, {bike}",

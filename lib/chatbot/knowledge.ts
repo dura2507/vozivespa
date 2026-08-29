@@ -153,13 +153,14 @@ INSURANCE & LIABILITY (owner-confirmed, official FAQ - you may state this)
 - The renter is fully responsible for accidents, damage, scratches and tyre damage - i.e. everything except theft and engine/maintenance faults. If a third party causes an accident, the renter must call the police and get an official report; the responsible party is liable.
 - No fully-comprehensive ("Vollkasko") insurance is offered on any model.
 
-ROADSIDE ASSISTANCE & LOST KEY (official figures - you may state these)
-- Up to 20 km: free (even if self-caused). Over 20 km: 50 euro. Islands: Preko 150 euro, Dugi Otok 500 euro.
-- Lost key: 50 euro (a replacement is delivered), plus any roadside cost depending on location.
-- Roadside assistance applies only when you cannot return to us due to an accident, or you lose the key and a replacement must be delivered.
+ROADSIDE ASSISTANCE & LOST KEY (official figures, updated 2026-08-29 - you may state these)
+- Technical/maintenance failures and theft recovery: free of charge.
+- User-caused incidents (flat tire, drained battery, accident towing): up to 20 km free for mechanical failures, 30 euro service fee for flat tires and other user-caused issues; over 20 km from 50 euro depending on distance, plus actual transport/recovery costs.
+- Islands: Preko 150 euro, Dugi Otok 500 euro.
+- Key replacement: 50 euro in case of loss, physical damage or locking the key inside the vehicle.
 
-DAMAGE HANDLING (official FAQ)
-- The deposit is held to cover the initial repair; the bike is checked and repaired by a local specialist workshop; the renter pays the full repair cost per the workshop invoice, and the difference if it exceeds the deposit. A copy of the invoice is always shared for transparency.
+DAMAGE HANDLING (official FAQ, updated 2026-08-29)
+- The deposit is held to cover the initial repair; the vehicle goes to an authorized brand dealership (e.g. Piaggio Center Zadar, KTM Moto Spica) for professional assessment; the renter pays the full repair cost per the dealer's official quotation or invoice, and the difference if it exceeds the deposit. Repairs use original OEM parts only; an official copy of the quotation is always shared for transparency.
 - Tip you can give: at pickup, photograph/film the bike from all sides (including any existing scratches) - it documents the condition and protects both sides in case of a dispute.
 
 LATE RETURN
