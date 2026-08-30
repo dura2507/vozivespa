@@ -83,7 +83,9 @@ used ONLY in reserve contexts and widens its lookup by `reserveBikeIds()` too, s
 whole-model block on EITHER Liberty variant grounds the one shared ghost for BOTH.
 Without this, a topcase booking parked on the ghost survived a scooter-50 season
 pause. Regular-fleet capacity paths (findFreeUnit/findFreeUnits) still scope model
-blocks to their own bike_id. When adding a reserve for another model family, extend
+blocks to their own bike_id. `wholeModelBlockConflict` is ALSO widened by the sharing set (a season pause on either
+Liberty variant grounds the shared Vespa; the adversarial check caught that this was
+asymmetric at first). When adding a reserve for another model family, extend
 the map, never copy the per-site checks.
 
 ## The one invariant
