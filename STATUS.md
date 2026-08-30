@@ -10,7 +10,21 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-08-29 (Priscilla's FAQ overhaul + email late-arrival line).
+Last updated: 2026-08-30 (Ghost Bike now shared by both Liberty 50 variants).
+
+## Ghost Bike sharing (2026-08-30)
+
+Priscilla: the topcase Liberty had no Ghost Bike option, only the plain Liberty 50.
+Cause: the one physical reserve Vespa is a bike_units row under scooter-50, and every
+ownership check was scoped to the booking's own bike_id. Fix: central sharing rule
+`reserveBikeIds()` in lib/availability.ts (scooter-50 <-> scooter-50-topcase), used by
+all six reserve-ownership sites. One vehicle, two models may park on it; double-booking
+is still caught because findUnitConflict scopes by unit id. Details in CALENDAR_MAP.md
+("Reserve sharing"). Also of note: the chatbot's ANTHROPIC_API_KEY ran out of credit
+around 2026-08-29/30 (Anthropic status all green, upstream rejects) - Thomas must top
+up at console.anthropic.com; bot shows the WhatsApp fallback meanwhile.
+
+Previously: 2026-08-29 (Priscilla's FAQ overhaul + email late-arrival line).
 
 ## Priscilla's requests from 2026-08-29 (shipped same day)
 

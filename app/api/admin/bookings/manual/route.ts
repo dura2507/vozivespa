@@ -8,6 +8,7 @@ import {
   describeConflict,
   buildConflictCard,
   type Conflict,
+  reserveBikeIds,
 } from "@/lib/availability";
 import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
 import { SEASON_END_ISO } from "@/lib/season";
@@ -213,7 +214,13 @@ export async function POST(request: Request) {
       console.error("[/api/admin/bookings/manual] requested unit lookup", reqErr);
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
-    if (!reqUnit || reqUnit.bike_id !== bikeId) {
+    // A reserve unit from a sharing partner (the one Liberty ghost serves
+    // both Liberty variants) counts as "belongs"; anything else foreign 400s.
+    const ownedBySharing =
+      !!reqUnit &&
+      (reqUnit.bike_id === bikeId ||
+        (reqUnit.is_backup && reserveBikeIds(bikeId).includes(reqUnit.bike_id)));
+    if (!reqUnit || !ownedBySharing) {
       return NextResponse.json({ error: "Unit doesn't belong to this bike" }, { status: 400 });
     }
     if (!reqUnit.active) {

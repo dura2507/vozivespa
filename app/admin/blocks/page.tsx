@@ -1,3 +1,4 @@
+import { reserveBikeIds } from "@/lib/availability";
 import { getCategoriesWithPricing } from "@/lib/bike-pricing";
 import { listManualBlocks, listWalkInBookings } from "@/lib/admin-data";
 import { getServiceClient } from "@/lib/supabase";
@@ -65,7 +66,11 @@ export default async function AdminBlocksPage() {
   // One reserve vehicle per model at most.
   const reserveByBike: Record<string, { id: string; label: string }> = {};
   for (const u of reserves) {
-    reserveByBike[u.bike_id] ??= { id: u.id, label: u.label };
+    // Sharing rule: register the unit under every model it serves, so the
+    // walk-in Ghost Bike button also appears for the topcase variant.
+    for (const bid of reserveBikeIds(u.bike_id)) {
+      reserveByBike[bid] ??= { id: u.id, label: u.label };
+    }
   }
   return (
     <div className="max-w-5xl mx-auto px-5 md:px-8 py-8">

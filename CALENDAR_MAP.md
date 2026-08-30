@@ -69,6 +69,23 @@ an already-occupied REGULAR unit while the reserve sat idle and unlabelled
 overbooking). There are now **zero** such call sites: grep for `includeBackup: true`
 must stay empty.
 
+**Reserve sharing (2026-08-30, Priscilla: "Liberty top case doesn't have a option to
+change to ghost bike").** The ONE physical Ghost Bike serves BOTH Liberty 50 variants.
+`RESERVE_SHARING` / `reserveBikeIds()` in lib/availability.ts is the single source of
+that rule; six sites consume it (findUnitForOwnerAction unit-ownership, reserveUnitIds
+input widening, admin-data canGhost, group route ghost lookup, manual route explicit
+reserve ownership, blocks page/route ghost ownership). Safety relies on two facts that
+must stay true: findUnitConflict scopes by UNIT id only (so cross-model double-booking
+of the shared Vespa is caught), and every capacity path skips bookings pinned to units
+outside the model's pool (so a topcase row parked on the scooter-50 ghost consumes no
+capacity anywhere). Third fact (review fix, same day): `wholeModelBlockConflict` is
+used ONLY in reserve contexts and widens its lookup by `reserveBikeIds()` too, so a
+whole-model block on EITHER Liberty variant grounds the one shared ghost for BOTH.
+Without this, a topcase booking parked on the ghost survived a scooter-50 season
+pause. Regular-fleet capacity paths (findFreeUnit/findFreeUnits) still scope model
+blocks to their own bike_id. When adding a reserve for another model family, extend
+the map, never copy the per-site checks.
+
 ## The one invariant
 
 > **Every surface that computes availability MUST count ALL overlapping bookings

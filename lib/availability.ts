@@ -458,11 +458,29 @@ export async function findUnitConflict(
 
 // Reserve ("Ghost Bike") unit ids for a set of models. The reserve is a
 // SEPARATE single vehicle, never part of a model's capacity.
+// The ONE physical Ghost Bike (a Vespa) stands in for BOTH Liberty 50
+// variants (Priscilla 2026-08-30: "Liberty top case doesn't have a option to
+// change to ghost bike / Only liberty 50"). The unit row lives under ONE model
+// in the DB, but either model may park a booking on it. This map is the single
+// source of that sharing rule - every reserve-ownership check goes through it,
+// so the rule cannot drift between the six call sites. Models not listed here
+// only ever see their own reserve. findUnitConflict scopes by UNIT id (not by
+// model), so cross-model double-booking of the shared vehicle is still caught.
+const RESERVE_SHARING: Record<string, readonly string[]> = {
+  "scooter-50": ["scooter-50", "scooter-50-topcase"],
+  "scooter-50-topcase": ["scooter-50", "scooter-50-topcase"],
+};
+export function reserveBikeIds(bikeId: string): readonly string[] {
+  return RESERVE_SHARING[bikeId] ?? [bikeId];
+}
+
 export async function reserveUnitIds(
   supabase: SupabaseClient,
   bikeIds: string[],
 ): Promise<Set<string>> {
-  const ids = [...new Set(bikeIds)];
+  // Widen by the sharing map: a topcase group must recognise a row parked on
+  // the Liberty-50 ghost as reserve-parked, not as regular demand.
+  const ids = [...new Set(bikeIds.flatMap((b) => reserveBikeIds(b)))];
   if (ids.length === 0) return new Set();
   const { data, error } = await supabase
     .from("bike_units")
@@ -490,7 +508,14 @@ export async function reserveUnitIds(
 
 // Whole-model service block (blocked_dates row with bike_unit_id NULL)
 // overlapping the window, or null. Model-wide blocks apply to every vehicle
-// of the model INCLUDING the reserve.
+// of the model INCLUDING the reserve. Every caller uses this ONLY for
+// reserve-parked (or explicitly reserve-targeted) bookings, so the lookup
+// widens by the sharing map: the shared ghost's unit row lives under
+// scooter-50, and a whole-model block on EITHER Liberty variant must ground
+// the one physical Vespa for BOTH - otherwise a topcase booking could ride
+// out on a vehicle the owner deliberately took out of service via a
+// scooter-50 season pause (and the two variants would disagree about
+// whether the same vehicle is available).
 export async function wholeModelBlockConflict(
   supabase: SupabaseClient,
   w: BookingWindow,
@@ -498,7 +523,12 @@ export async function wholeModelBlockConflict(
   const { data, error } = await supabase
     .from("blocked_dates")
     .select("date_from, date_to, start_time, end_time")
-    .eq("bike_id", w.bikeId)
+    // Widened by the reserve-sharing set: a whole-model block (season pause,
+    // recall) on EITHER Liberty variant grounds the one shared ghost Vespa.
+    // Safe to widen HERE because every caller invokes this function only when
+    // validating a reserve-parked or reserve-targeted booking - the regular
+    // fleet's own model-block check lives in findFreeUnit and stays .eq.
+    .in("bike_id", [...reserveBikeIds(w.bikeId)])
     .is("booking_id", null)
     .is("bike_unit_id", null)
     .lte("date_from", w.dateTo)
@@ -529,9 +559,11 @@ export async function findUnitForOwnerAction(
       .from("bike_units")
       .select("id, is_backup, active")
       .eq("id", currentUnitId)
-      // Scope to the model: a pin pointing at ANOTHER model's reserve must
-      // not be treated as this model's reserve.
-      .eq("bike_id", w.bikeId)
+      // Scope to the model (plus its reserve-sharing partners): a pin pointing
+      // at an UNRELATED model's reserve must not be treated as this model's
+      // reserve. Regular units of a partner model match the lookup too, but
+      // they fail the is_backup check below and fall through unchanged.
+      .in("bike_id", [...reserveBikeIds(w.bikeId)])
       .maybeSingle<{ id: string; is_backup: boolean; active: boolean }>();
     // Never swallow this: silently falling back to the regular fleet would
     // reject a ghost-parked booking exactly when the regular bikes are out.

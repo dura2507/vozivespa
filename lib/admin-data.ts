@@ -13,7 +13,7 @@ import {
   LAST_PICKUP_MINUTES,
 } from "@/lib/pricing";
 import { SEASON_END_ISO } from "@/lib/season";
-import { occupancyInterval } from "@/lib/availability";
+import { occupancyInterval, reserveBikeIds } from "@/lib/availability";
 
 export type EnrichedBooking = BookingRow & {
   bikeName: string;
@@ -247,7 +247,8 @@ export async function getBookingById(id: string): Promise<EnrichedBooking | null
     // Is this bike currently parked on the Ghost Bike, and does its model
     // have a Ghost Bike to swap onto at all?
     onGhost: b.bike_unit_id ? backupUnitIds.has(b.bike_unit_id) : false,
-    canGhost: modelsWithGhost.has(b.bike_id),
+    // Sharing rule: the Liberty-50 ghost also serves the topcase variant.
+    canGhost: reserveBikeIds(b.bike_id).some((id) => modelsWithGhost.has(id)),
   });
   const groupBikes = siblings
     ? [...siblings].sort((a, b) => bikeName(a.bike_id).localeCompare(bikeName(b.bike_id))).map(toGroupBike)
@@ -502,7 +503,8 @@ export async function listReserveSummary(nowMs: number): Promise<ReserveEntry[]>
       unitId: u.id,
       label: u.label,
       bikeId: u.bike_id,
-      bikeName: bikeName(u.bike_id),
+      // Sharing rule: the shared reserve books & prices as either Liberty variant.
+    bikeName: reserveBikeIds(u.bike_id).map(bikeName).join(" / "),
       out: current !== null,
       customerName: current?.customer_name ?? null,
       backMs: current ? toMs(current.date_to, current.return_time) : null,

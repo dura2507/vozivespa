@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 import { isValidSlot, parseTime } from "@/lib/pricing";
-import { findFreeUnits, describeConflict } from "@/lib/availability";
+import { findFreeUnits, describeConflict, reserveBikeIds } from "@/lib/availability";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -98,7 +98,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
     const u = unit as { bike_id: string; active: boolean; is_backup: boolean } | null;
-    if (!u || u.bike_id !== bikeId) {
+    const ghostShared = !!u && u.is_backup && reserveBikeIds(bikeId).includes(u.bike_id);
+    if (!u || (u.bike_id !== bikeId && !ghostShared)) {
       return NextResponse.json({ error: "Unit doesn't belong to this bike" }, { status: 400 });
     }
     if (!u.active) {

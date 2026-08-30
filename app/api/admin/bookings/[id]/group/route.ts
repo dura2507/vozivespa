@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getServiceClient, type BookingRow } from "@/lib/supabase";
-import { findFreeUnit, findUnitConflict, describeConflict } from "@/lib/availability";
+import { findFreeUnit, findUnitConflict, describeConflict, reserveBikeIds } from "@/lib/availability";
 import { calculatePrice } from "@/lib/pricing";
 import { getBikeWithPricing } from "@/lib/bike-pricing";
 import { SESSION_COOKIE_NAME, isValidSession } from "@/lib/admin-session";
@@ -244,7 +244,8 @@ export async function PATCH(
     const { data: ghost, error: gErr } = await supabase
       .from("bike_units")
       .select("id")
-      .eq("bike_id", booking.bike_id)
+      // Sharing rule: both Liberty 50 variants use the ONE physical ghost.
+      .in("bike_id", [...reserveBikeIds(booking.bike_id)])
       .eq("active", true)
       .eq("is_backup", true)
       .limit(1)
