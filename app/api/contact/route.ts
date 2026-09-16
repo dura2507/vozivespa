@@ -6,6 +6,7 @@ import {
 } from "@/lib/email";
 import { markEmailReadByHeader } from "@/lib/imap-mark";
 import { isLocale } from "@/lib/i18n/config";
+import { judgeContact } from "@/lib/contact-spam";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,27 @@ type ContactPayload = {
   phone?: unknown;
   message?: unknown;
   locale?: unknown;
+  // Spam gate inputs (see lib/contact-spam.ts): the honeypot field and the
+  // form's load timestamp. Real submissions from ContactForm always send ts.
+  website?: unknown;
+  ts?: unknown;
 };
+
+// Light per-IP rate limit, same shape as the chatbot's: a real person sends
+// one or two messages, a script sends dozens.
+const RATE_LIMIT = 3;
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const bucket = new Map<string, { count: number; resetAt: number }>();
+function rateLimited(ip: string): boolean {
+  const now = Date.now();
+  const b = bucket.get(ip);
+  if (!b || now >= b.resetAt) {
+    bucket.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+    return false;
+  }
+  b.count++;
+  return b.count > RATE_LIMIT;
+}
 
 function asString(v: unknown): string | null {
   return typeof v === "string" && v.trim().length > 0 ? v.trim() : null;
@@ -49,6 +70,38 @@ export async function POST(request: Request) {
   if (!message) return NextResponse.json({ error: "Message is required" }, { status: 400 });
   if (message.length > 4000) {
     return NextResponse.json({ error: "Message is too long" }, { status: 400 });
+  }
+
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+    request.headers.get("x-real-ip") ??
+    "unknown";
+  if (rateLimited(ip)) {
+    return NextResponse.json(
+      { error: "Too many messages, please try again in a few minutes." },
+      { status: 429 },
+    );
+  }
+
+  // ---- Spam gate: runs BEFORE anything is sent or translated ----
+  const verdict = judgeContact({
+    name,
+    message,
+    honeypot: asString(body.website),
+    formLoadedAt: typeof body.ts === "number" ? body.ts : null,
+    now: Date.now(),
+  });
+  if (verdict.kind === "drop") {
+    // Look exactly like success so the bot doesn't adapt. Logged so the
+    // volume stays visible in the Vercel logs.
+    console.warn("[/api/contact] dropped spam", verdict.reason, { ip, name: name.slice(0, 40) });
+    return NextResponse.json({ ok: true });
+  }
+  if (verdict.kind === "retry") {
+    return NextResponse.json(
+      { error: "Please take a moment and send again." },
+      { status: 400 },
+    );
   }
 
   const payload = { name, email, phone, message };

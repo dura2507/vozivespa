@@ -20,6 +20,11 @@ export default function ContactForm({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  // Spam gate (lib/contact-spam.ts): when the form was mounted, and a honeypot
+  // field only bots fill. Set after mount so server and client HTML match.
+  const [loadedAt, setLoadedAt] = useState<number | null>(null);
+  const [website, setWebsite] = useState("");
+  useEffect(() => setLoadedAt(Date.now()), []);
   // WhatsApp / phone are a LAST-RESORT escalation (Thomas): keep them out of
   // sight at first so visitors use the assistant or the form, then reveal them
   // at the bottom after ~30s for anyone who still wants a human.
@@ -37,7 +42,7 @@ export default function ContactForm({
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, locale: lang }),
+        body: JSON.stringify({ ...form, locale: lang, website, ts: loadedAt }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -141,6 +146,22 @@ export default function ContactForm({
                     {t.form.send}
                   </h2>
                   <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Honeypot: invisible to people (off-screen, not focusable,
+                        hidden from screen readers), filled by form-stuffing bots.
+                        Anything in it means "drop silently" server-side. */}
+                    <div aria-hidden="true" className="absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden">
+                      <label>
+                        Website
+                        <input
+                          type="text"
+                          name="website"
+                          tabIndex={-1}
+                          autoComplete="off"
+                          value={website}
+                          onChange={(e) => setWebsite(e.target.value)}
+                        />
+                      </label>
+                    </div>
                     <label className="block">
                       <span className="text-[10px] font-bold text-ink/50 uppercase tracking-[0.15em]">
                         {t.form.name} *

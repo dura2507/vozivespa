@@ -10,7 +10,27 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-08-30 (Ghost Bike now shared by both Liberty 50 variants).
+Last updated: 2026-09-16 (contact-form spam gate).
+
+## Contact-form spam gate (2026-09-16)
+
+Priscilla: dozens of bot submissions ("nvOezpRraMAbbAOp" / "sZDVapszsTECDjZsQIYpHy"),
+each costing a Telegram ping, an owner email, an acknowledgement email to a harvested
+stranger's address AND an LLM translation call. Fix in lib/contact-spam.ts, wired into
+/api/contact BEFORE anything is sent, plus two hidden inputs in ContactForm.tsx:
+1. honeypot field `website` (off-screen, tabIndex -1, aria-hidden) - filled = drop
+2. form load timestamp `ts` - missing (script hitting the API directly) = drop; younger
+   than 3 s or older than 6 h = visible "please send again" error (a real person with
+   autofill can hit this and must be able to retry)
+3. gibberish detector: >= 10 chars, no whitespace, >= 4 case flips AND a mid-word
+   capital cluster (or >= 8 flips) - catches every observed sample, passes CamelCase
+   names like JeanClaudeVanDamme (unit-tested, 16 legit + 4 spam samples)
+4. per-IP rate limit 3 per 10 min (429)
+Drops answer {ok:true} so the bot learns nothing; each drop is logged as
+"[/api/contact] dropped spam <reason>" in Vercel. If spam adapts (spaces, real-looking
+names), the next layer is Cloudflare Turnstile (needs a Cloudflare account + 2 env vars).
+
+Previously: 2026-08-30 (Ghost Bike now shared by both Liberty 50 variants).
 
 ## Ghost Bike sharing (2026-08-30)
 
