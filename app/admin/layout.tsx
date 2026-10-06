@@ -12,6 +12,7 @@ const NAV = [
   { label: "Pricing", href: "/admin/pricing" },
   { label: "Visitors", href: "/admin/analytics" },
   { label: "Bot chats", href: "/admin/chats" },
+  { label: "Group inbox", href: "/admin/telegram" },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

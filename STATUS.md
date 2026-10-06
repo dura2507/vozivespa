@@ -10,7 +10,29 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-09-16 (contact-form spam gate).
+Last updated: 2026-10-06 (Telegram group inbox via webhook).
+
+## Telegram group inbox via webhook (2026-10-06) - "check tele" CHANGED
+
+The monitoring group was read with getUpdates from two machines; Telegram hands each
+update out once and drops it after 24 h, so one machine kept eating what the other
+needed (happened three times). Now the Krileo monitoring bot delivers via WEBHOOK to
+`POST /api/telegram/monitor`, which stores every message in Supabase `telegram_inbox`.
+
+- Admin page **/admin/telegram** ("Group inbox"): grouped by day, Open/All filter,
+  Done / Reopen per message, "Mark all done", photos and voice memos open through
+  `/api/admin/telegram-file?id=<file_id>` (bot token stays server-side).
+- Terminal read for either machine (replaces getUpdates, which now returns 409):
+  `GET /api/telegram/monitor?secret=<S>` (open rows) or `&all=1`;
+  `PATCH /api/telegram/monitor {secret, ids, done}` to mark done.
+  S = sha256("monitor-webhook:" + <monitoring bot token>) as hex. The token itself is
+  NOT in this file (secrets policy); it is the Krileo monitoring bot token both
+  machines already use. Vercel env var: `TELEGRAM_MONITOR_BOT_TOKEN`.
+- Private forwards to the bot land in the same inbox and show the original sender
+  as "Name (via Forwarder)".
+- Table `telegram_inbox` (update_id PK, idempotent upsert), RLS on, service role only.
+
+Previously: 2026-09-16 (contact-form spam gate).
 
 ## Contact-form spam gate (2026-09-16)
 
