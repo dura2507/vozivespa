@@ -10,7 +10,24 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-10-06 (Telegram group inbox via webhook).
+Last updated: 2026-10-15 (Krileo credit in chat widget + customer emails).
+
+## Krileo credit (2026-10-15)
+
+Small agency note, same style as the Restaurant Neckarau mails. Everything lives in
+`lib/krileo-credit.ts` (copy for all 11 locales, links, logo URL); remove or reword it there.
+- Chat widget: one line "Powered by Krileo" with the K logo under the AI disclaimer.
+- Customer emails only (received / confirmed / declined, the group variants, contact
+  acknowledgement): two centred lines below the mail card plus one line in the text part.
+  Owner emails (booking, group, cancellation, contact, Riderly) stay without it.
+- Logo `public/krileo-k.png` (48x48), referenced absolutely as
+  https://rentamotozadar.com/krileo-k.png so mails never point at localhost.
+- Links: krileo.de for `de`, krileo.com otherwise, `?utm_source=rentamoto&utm_medium=email`
+  or `chatbot`.
+- Booking routes still clamp the locale to 7 languages, so hu/sk/cs/pt bookings get English
+  mails (and the English credit); only the contact form uses all 11.
+
+Previously: 2026-10-06 (Telegram group inbox via webhook).
 
 ## Telegram group inbox via webhook (2026-10-06) - "check tele" CHANGED
 

@@ -7,6 +7,7 @@ import { getDictionary, type Dictionary } from "@/lib/i18n/dictionaries";
 import { type Locale, isLocale } from "@/lib/i18n/config";
 import { translate } from "@/lib/translate";
 import { bookingRef } from "@/lib/booking-ref";
+import { KRILEO_LOGO_URL, krileoCopy, krileoDomain, krileoUrl } from "@/lib/krileo-credit";
 
 // Prominent booking-number block for the customer "received" emails so
 // they can quote it (+ their phone) when paying. HTML version.
@@ -157,16 +158,38 @@ function contactButtonsHtml(): string {
 
 // ---------- Shared HTML layout ----------------------------------------------
 
+// Small agency note below the mail card (customer emails only, never the
+// owner mails). Text stays readable with images blocked: the logo is purely
+// decorative (alt="") and both lines are plain linked text.
+function krileoCreditHtml(locale: Locale): string {
+  const c = krileoCopy(locale);
+  const url = escape(krileoUrl(locale, "email"));
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
+        <tr><td style="padding:18px 10px 0;text-align:center;font-size:12px;line-height:1.6;color:#7f7c75;">
+          <a href="${url}" style="color:#7f7c75;text-decoration:none;"><img src="${KRILEO_LOGO_URL}" width="14" height="14" alt="" style="display:inline-block;vertical-align:-2px;border:0;margin-right:6px;">${escape(c.emailLead)} <strong style="color:#1a1a1a;font-weight:700;">Krileo</strong></a><br/>
+          <a href="${url}" style="color:#9a978f;text-decoration:none;font-size:11px;">${escape(c.emailServices)} &middot; ${krileoDomain(locale)}</a>
+        </td></tr>
+      </table>`;
+}
+
+// Plain-text twin of the credit, appended to the customer text bodies.
+function krileoCreditText(locale: Locale): string {
+  return `\n\n${krileoCopy(locale).emailLead} Krileo · ${krileoDomain(locale)}`;
+}
+
 function htmlLayout({
   preheader,
   headline,
   accent,
   bodyHtml,
+  credit,
 }: {
   preheader: string;
   headline: string;
   accent: "red" | "green" | "ink";
   bodyHtml: string;
+  // Set on customer emails only: renders the Krileo note below the card.
+  credit?: Locale;
 }): string {
   // Header background is dark, so 'ink' headline reads as plain white;
   // 'red' / 'green' keep their accent colour for the confirmed/declined states.
@@ -192,7 +215,10 @@ function htmlLayout({
           </p>
         </td></tr>
       </table>
-    </td></tr>
+    </td></tr>${credit ? `
+    <tr><td align="center">
+      ${krileoCreditHtml(credit)}
+    </td></tr>` : ""}
   </table>
 </body></html>`;
 }
@@ -538,7 +564,8 @@ export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Pro
     return;
   }
   const bikeName = bikeNameFor(booking);
-  const dict = await getDictionary(bookingLocale(booking));
+  const locale = bookingLocale(booking);
+  const dict = await getDictionary(locale);
   const t = dict.emails.bookingReceived;
   const ref = bookingRef(booking.booking_group_id ?? booking.id);
   const vars = {
@@ -563,6 +590,7 @@ export async function sendCustomerBookingReceivedEmail(booking: BookingRow): Pro
     headline: t.headline,
     accent: "ink",
     bodyHtml,
+    credit: locale,
   });
 
   const pickup = fmtTimeOfDay(booking.pickup_time);
@@ -582,7 +610,7 @@ ${t.refLine}
 ${t.urgentLine} WhatsApp: ${ownerWaLink()}
 
 ${t.signoff}
-${BRAND.name}`;
+${BRAND.name}${krileoCreditText(locale)}`;
 
   await sendWithRetry("customerReceived", {
     from: fromAddress(),
@@ -611,7 +639,8 @@ export async function sendCustomerBookingDecidedEmail(
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
   const cancelUrl = `${siteUrl}/booking/${encodeURIComponent(booking.secret_token)}/cancel`;
 
-  const dict = await getDictionary(bookingLocale(booking));
+  const locale = bookingLocale(booking);
+  const dict = await getDictionary(locale);
   const t = isConfirmed ? dict.emails.bookingConfirmed : dict.emails.bookingDeclined;
   const vars = {
     name: booking.customer_name,
@@ -657,6 +686,7 @@ export async function sendCustomerBookingDecidedEmail(
     headline: t.headline,
     accent,
     bodyHtml,
+    credit: locale,
   });
 
   const text = isConfirmed
@@ -675,7 +705,7 @@ WhatsApp: ${ownerWaLink()}
 
 ${(t as Dictionary["emails"]["bookingConfirmed"]).cancelLine} ${cancelUrl}
 
-${BRAND.name}`
+${BRAND.name}${krileoCreditText(locale)}`
     : `${fmt(t.greeting, vars)}
 
 ${fmt(t.intro, vars)}
@@ -684,7 +714,7 @@ ${(t as Dictionary["emails"]["bookingDeclined"]).tryOther}
 
 WhatsApp: ${ownerWaLink()}
 
-${BRAND.name}`;
+${BRAND.name}${krileoCreditText(locale)}`;
 
   await sendWithRetry(`customer${isConfirmed ? "Confirmed" : "Declined"}`, {
     from: fromAddress(),
@@ -703,7 +733,8 @@ ${BRAND.name}`;
 export async function sendCustomerGroupBookingReceivedEmail(bookings: BookingRow[]): Promise<void> {
   const primary = bookings[0];
   if (!primary?.customer_email || !primary.customer_email.includes("@")) return;
-  const dict = await getDictionary(bookingLocale(primary));
+  const locale = bookingLocale(primary);
+  const dict = await getDictionary(locale);
   const t = dict.emails.bookingReceived;
   const ref = bookingRef(primary.booking_group_id ?? primary.id);
   const vars = {
@@ -721,13 +752,13 @@ export async function sendCustomerGroupBookingReceivedEmail(bookings: BookingRow
     ${contactButtonsHtml()}
     <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">${escape(t.signoff)}</p>
   `;
-  const html = htmlLayout({ preheader: fmt(t.preheader, vars), headline: t.headline, accent: "ink", bodyHtml });
+  const html = htmlLayout({ preheader: fmt(t.preheader, vars), headline: t.headline, accent: "ink", bodyHtml, credit: locale });
   await sendWithRetry("customerGroupReceived", {
     from: fromAddress(),
     to: primary.customer_email,
     subject: fmt(t.subject, vars),
     html,
-    text: `${fmt(t.greeting, vars)}\n\n${t.intro}\n\n${t.refLabel}: ${ref}\n${t.refLine}\n\n${t.urgentLine} WhatsApp: ${ownerWaLink()}\n\n${t.signoff}\n${BRAND.name}`,
+    text: `${fmt(t.greeting, vars)}\n\n${t.intro}\n\n${t.refLabel}: ${ref}\n${t.refLine}\n\n${t.urgentLine} WhatsApp: ${ownerWaLink()}\n\n${t.signoff}\n${BRAND.name}${krileoCreditText(locale)}`,
     replyTo: BRAND.email,
   });
 }
@@ -740,7 +771,8 @@ export async function sendCustomerGroupBookingDecidedEmail(
   const primary = bookings[0];
   if (!primary?.customer_email || !primary.customer_email.includes("@")) return;
   const isConfirmed = decision === "confirmed";
-  const dict = await getDictionary(bookingLocale(primary));
+  const locale = bookingLocale(primary);
+  const dict = await getDictionary(locale);
   const t = isConfirmed ? dict.emails.bookingConfirmed : dict.emails.bookingDeclined;
   const vars = {
     name: primary.customer_name,
@@ -779,13 +811,13 @@ export async function sendCustomerGroupBookingDecidedEmail(
       <p style="margin:24px 0 8px;font-size:14px;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingDeclined"]).tryOther)}</p>
       ${contactButtonsHtml()}
     `;
-  const html = htmlLayout({ preheader: fmt(t.preheader, vars), headline: t.headline, accent: isConfirmed ? "green" : "ink", bodyHtml });
+  const html = htmlLayout({ preheader: fmt(t.preheader, vars), headline: t.headline, accent: isConfirmed ? "green" : "ink", bodyHtml, credit: locale });
   await sendWithRetry(`customerGroup${isConfirmed ? "Confirmed" : "Declined"}`, {
     from: fromAddress(),
     to: primary.customer_email,
     subject: fmt(t.subject, vars),
     html,
-    text: `${fmt(t.greeting, vars)}\n\n${fmt(t.intro, vars)}\n\nWhatsApp: ${ownerWaLink()}\n\n${BRAND.name}`,
+    text: `${fmt(t.greeting, vars)}\n\n${fmt(t.intro, vars)}\n\nWhatsApp: ${ownerWaLink()}\n\n${BRAND.name}${krileoCreditText(locale)}`,
     replyTo: BRAND.email,
   });
 }
@@ -950,6 +982,7 @@ export async function sendCustomerContactReceivedEmail(input: {
     headline: t.headline,
     accent: "ink",
     bodyHtml,
+    credit: locale,
   });
 
   const text = `${fmt(t.greeting, vars)}
@@ -962,7 +995,7 @@ ${input.message}
 WhatsApp: ${ownerWaLink()}
 
 ${t.signoff}
-${BRAND.name}`;
+${BRAND.name}${krileoCreditText(locale)}`;
 
   await sendWithRetry("customerContact", {
     from: fromAddress(),

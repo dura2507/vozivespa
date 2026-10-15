@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import type { Locale } from "@/lib/i18n/config";
+import { krileoCopy, krileoUrl } from "@/lib/krileo-credit";
 
 type Turn = { role: "user" | "assistant"; content: string };
 
@@ -342,6 +343,21 @@ export default function Chatbot({ locale, t }: { locale: Locale; t: Dictionary["
               </button>
             </div>
             <p className="text-[10px] text-ink/35 mt-2 text-center">{t.disclaimer}</p>
+            {/* Agency credit, kept below everything so it never crowds the input. */}
+            <p className="mt-1 text-center text-[10px] leading-4">
+              <a
+                href={krileoUrl(locale, "chatbot")}
+                target="_blank"
+                rel="noopener"
+                className="inline-flex items-center gap-1 text-ink/40 hover:text-ink/70 transition-colors"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/krileo-k.png" alt="" width={11} height={11} className="w-[11px] h-[11px]" />
+                <span>
+                  {krileoCopy(locale).chatLead} <span className="font-semibold text-ink/60">Krileo</span>
+                </span>
+              </a>
+            </p>
           </div>
         </div>
       )}
