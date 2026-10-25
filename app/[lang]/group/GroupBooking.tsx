@@ -801,7 +801,7 @@ export default function GroupBooking({
             <div className="bg-sand text-ink px-5 md:px-12 py-6 grid grid-cols-2 gap-x-5 gap-y-5 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-8 md:gap-x-12 sm:gap-y-4">
               {[
                 { label: g.bandHelmets, value: g.valIncluded, d: "M5 13l4 4L19 7", sw: 3 },
-                { label: g.bandSeason, value: "Apr–Oct", d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5", sw: 1.5 },
+                { label: g.bandSeason, value: "Apr-Oct", d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5", sw: 1.5 },
                 { label: g.bandPhone, value: g.valNotAvailable, d: "M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z", sw: 1.5 },
                 { label: g.bandPickup, value: g.valZadarShop, d: "M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 9.75c0 7.142-7.5 11.25-7.5 11.25S4.5 16.892 4.5 9.75a7.5 7.5 0 1115 0z", sw: 1.5 },
               ].map((it, i) => (
@@ -826,7 +826,7 @@ export default function GroupBooking({
                     {from === to
                       ? format(effFrom, "dd MMM", { locale: dfLocale })
                       : `${format(effFrom, "dd MMM", { locale: dfLocale })} → ${format(effTo, "dd MMM", { locale: dfLocale })}`}
-                    <span className="text-muted font-normal"> · {pickupTime}–{returnTime}</span>
+                    <span className="text-muted font-normal"> · {pickupTime}-{returnTime}</span>
                   </p>
                 )}
                 <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.yourGroup}</p>

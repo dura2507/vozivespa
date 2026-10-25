@@ -69,6 +69,24 @@ function sanitizeInternalLinks(text: string, locale: string): string {
   );
 }
 
+// House style: no long dashes in anything a customer reads. The prompt asks
+// for it, this makes it hold even when the model slips. A plain hyphen, never
+// a comma: "30 – 50 €" is a price range and must stay one.
+function replaceLongDashes(text: string): string {
+  return text.replace(/[–—]/g, "-");
+}
+
+// A reply that hit max_tokens ends mid-word. Cut it back to the last complete
+// sentence or line so the customer never sees a broken fragment. A sentence
+// end needs two letters before it (French may put a space before ?/!) and a
+// new sentence after it (not lowercase, not a digit), so "31.", "z. B.",
+// "ca. 25", "bzw. direkt" or a cut-off "rentamotozadar." don't count.
+function trimCutReply(text: string): string {
+  const ends = [...text.matchAll(/(?<=[^\d\s.]{2} ?)[.!?](?=\s+[^\p{Ll}\d])|\n/gu)].map((m) => (m.index ?? 0) + 1);
+  const cut = ends.length ? ends[ends.length - 1] : 0;
+  return cut > text.length * 0.4 ? text.slice(0, cut).trim() : text;
+}
+
 // Very light per-IP rate limit so a single visitor can't burn tokens.
 // Enough for a real conversation (a burst of 20 messages then a cool-down)
 // while still capping abuse.
@@ -161,7 +179,8 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 500,
+        // 500 cut two-part answers off mid-word once the FAQ grew (2026-10).
+        max_tokens: 900,
         // Cache the big static system prompt (FAQ + fleet + tours + pricing
         // rules). It's identical across requests for a given locale/price set,
         // so repeat requests within the 5-min TTL only pay ~10% of the input
@@ -180,12 +199,14 @@ export async function POST(request: Request) {
     }
     const data = (await res.json()) as {
       content?: Array<{ type: string; text?: string }>;
+      stop_reason?: string;
     };
-    const text = (data.content ?? [])
+    const raw = (data.content ?? [])
       .filter((c) => c.type === "text")
       .map((c) => c.text ?? "")
       .join("")
       .trim();
+    const text = replaceLongDashes(data.stop_reason === "max_tokens" ? trimCutReply(raw) : raw);
     if (!text) {
       return NextResponse.json(
         { error: "empty", message: "Sorry, I don't have an answer for that. Please contact us on WhatsApp." },

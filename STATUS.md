@@ -39,6 +39,10 @@ authoritative content is his "SickMotos_Rental_Zadar_Multilingual_FAQ_Manual.pdf
    German FAQ with the outdated "free up to 20 km even if self-caused" rule). FAQ page has
    a Documents box. Chatbot knowledge aligned (insurance, late fee 30-50 EUR, cancellation,
    road conditions, experience definition, PDF links).
+6. Chatbot (found in the live check): max_tokens 500 cut two-part answers mid-word -> 900,
+   and a reply that still hits the cap is trimmed back to the last full sentence/line
+   (trimCutReply; ignores "31.", "z. B.", "ca. 25"). Every reply has long dashes replaced
+   by "-" (never ",": "30 – 50 €" must stay a range). PAGE LINKS list now names hu/sk/cs.
 OPEN: DMARC record for rentamotozadar.com (domain lives in another Vercel account than
 this machine's CLI, Kristian adds it); /terms page still carries older roadside/repair
 wording (pre-existing, needs Thomas' OK to align).
