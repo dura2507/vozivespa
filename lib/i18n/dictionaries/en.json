@@ -170,7 +170,10 @@
       "ride": "During the Ride",
       "return": "Return",
       "incidents": "Damage & Roadside"
-    }
+    },
+    "docsTitle": "Documents",
+    "agreementDownload": "Rental agreement (PDF, all languages)",
+    "manualDownload": "FAQ and rental terms (PDF, all languages)"
   },
   "terms": {
     "eyebrow": "Reservation terms",
@@ -398,7 +401,11 @@
       "submit": "Send Request",
       "submitting": "Sending...",
       "reviewLine": "We'll review your reservation screenshot and confirm by email, usually within a few hours. By sending you agree to our",
-      "termsLink": "terms"
+      "termsLink": "terms",
+      "faqConfirm": "I have read the FAQ and the rental terms.",
+      "faqLinkShort": "FAQ",
+      "agreementLinkShort": "Rental agreement (PDF)",
+      "experienceMeaning": "Riding experience means: you got your AM licence before your A or B licence."
     },
     "reservation": {
       "title": "Reservation",
@@ -509,36 +516,36 @@
   },
   "faqItems": [
     {
-      "question": "What does the breakdown service include?",
-      "answer": "Roadside support for technical or maintenance failures and theft recovery is free of charge. For user-caused incidents (flat tires, drained battery, accident towing): up to 20 km it's free for mechanical failures, with a 30€ service fee for flat tires and other user-caused issues; over 20 km the service fee starts at 50€ depending on distance, plus the actual transport and recovery costs. Island surcharges: Preko 150€, Dugi Otok 500€. Key replacement: 50€ in case of loss, physical damage or locking the key inside the vehicle."
+      "question": "What does roadside assistance include and what costs apply?",
+      "answer": "Roadside assistance for technical/mechanical defects (e.g. engine failure) or theft processing is FREE OF CHARGE including vehicle pickup and return transport.\nFor incidents caused by the renter (e.g., flat tire, dead battery, key loss, fall/accident), the following fees apply:\nUp to 20 km radius: free for mechanical defects, €30 service fee for renter fault, tire or accident.\nOver 20 km distance: free for mechanical defects, from €50 (variable by distance + transport) for renter fault, tire or accident.\nPreko Island: free for mechanical defects, €150 flat fee for renter fault, tire or accident.\nDugi Otok Island: free for mechanical defects, €500 flat fee for renter fault, tire or accident."
     },
     {
-      "question": "In what condition is the bike delivered?",
-      "answer": "All bikes and scooters are handed over in perfect working condition. We ask renters to inspect the bike, take clear photos and videos at pickup documenting any existing scratches or damage, and return it in the same condition. These recordings are official proof in case of any dispute."
+      "question": "What condition is the vehicle handed over in and what must I inspect?",
+      "answer": "All vehicles are delivered in flawless, roadworthy condition. For mutual protection, the renter is required to:\nThoroughly inspect the vehicle prior to departure.\nTake clear photos and videos from all angles at pickup (including any existing scratches/damage).\nReturn the vehicle in the same documented condition (normal wear excluded).\nThese recordings serve as official proof in case of discrepancies."
     },
     {
-      "question": "What insurance is included?",
-      "answer": "Basic insurance covers theft of the bike and engine damage. Accidents, scratches, damage and flat tires are the renter's responsibility. If a third party causes an accident, you must call the police and obtain an official report. The responsible party is liable."
+      "question": "What insurance is included in the rental price?",
+      "answer": "Basic insurance is included in the rental price.\nCovered: Vehicle theft and mechanical/engine breakdowns (unless caused by operational error or negligence).\nNOT covered (Renter fully liable): All external, optical, structural, or physical damage caused by falls, accidents, vandalism, scratches, and tire punctures/flats."
     },
     {
-      "question": "What is your cancellation policy?",
-      "answer": "All bookings are non-refundable. The 20% reservation fee secures your dates and is not returned in case of cancellation. If a bike becomes unavailable due to an accident or damage caused by another client, we'll cancel and refund in full."
+      "question": "What is the cancellation policy?",
+      "answer": "All bookings are binding and non-refundable. In the event of a cancellation by the renter, no refund of the rental amount will be issued."
     },
     {
-      "question": "When and where do I return the bike?",
-      "answer": "At the agreed time and location. We give a 15-minute grace period. Late returns beyond that incur extra fees. Drop-off at our address: Velebitska Ulica 2, 23000 Zadar."
+      "question": "When and where must the vehicle be returned? What about delays?",
+      "answer": "The vehicle must be returned at the agreed time and location.\nGrace Period: A 15-minute grace period applies. For returns after this 15-minute period or outside standard business hours, an administrative/operational fee of €30 to €50 will be charged."
     },
     {
-      "question": "Who is responsible for accidents or injuries?",
-      "answer": "The renter assumes full responsibility for all accidents, damages or injuries that occur during the rental period."
+      "question": "Who is liable in case of accidents or third-party damage?",
+      "answer": "The renter bears full responsibility for all accidents, damages, or injuries during the rental period. Crucial for third-party fault: IF the accident was caused by a third party, the police MUST be called immediately and an official Police Report created. The party at fault or their insurance covers damages."
     },
     {
-      "question": "What happens if the bike is damaged?",
-      "answer": "In case of damage during the rental, we retain the security deposit to cover the initial repair costs. The vehicle is taken to an authorized brand dealership (e.g. Piaggio Center Zadar, KTM Moto Špica) for professional damage assessment. The renter pays the full repair cost according to the dealer's official quotation or invoice; if it exceeds the deposit, the renter pays the remaining balance. All repairs use original OEM parts, and you always receive an official copy of the quotation for full transparency."
+      "question": "What happens in the event of vehicle damage? (Billing & Repair)",
+      "answer": "In case of vehicle damage, the following transparent procedure applies:\n1. The security deposit is initially retained to cover initial repair expenses.\n2. The vehicle is taken to an authorized official dealership for inspection and repair (e.g., Piaggio Center Zadar, KTM Moto Špica).\n3. Repairs are performed strictly using Original OEM Spare Parts.\n4. The renter agrees to cover the total costs according to the official dealer invoice/estimate. If repair costs exceed the deposit, the remaining balance must be paid.\n5. For full transparency, the renter receives a copy of the official dealer invoice."
     },
     {
-      "question": "What if I lose the key?",
-      "answer": "A replacement key will be delivered for 50€ plus any applicable breakdown service fee depending on your location."
+      "question": "What should I do if I lose the vehicle key?",
+      "answer": "In case of loss, damage, or locking the key inside, a replacement key will be delivered. A flat fee of €50 is charged, plus any call-out or roadside assistance fees depending on location."
     },
     {
       "question": "How do I make a reservation?",
@@ -558,7 +565,11 @@
     },
     {
       "question": "What if you decide I'm not experienced enough?",
-      "answer": "Riding requires prior experience. If at pickup we determine you don't have enough experience to safely handle the scooter or bike, we reserve the right to decline the rental. In that case the booking fee is non-refundable, so please be honest about your experience when booking."
+      "answer": "Riding requires prior experience. Riding experience means you got your AM licence before your A or B licence. If at pickup we determine you don't have enough experience to safely handle the scooter or bike, we reserve the right to decline the rental. In that case the booking fee is non-refundable, so please be honest about your experience when booking."
+    },
+    {
+      "question": "What special road and driving conditions apply in Zadar?",
+      "answer": "By signing, the renter confirms:\nHolding a valid driver's license for the appropriate vehicle category and possessing sufficient riding experience.\nBeing informed about the challenging local traffic conditions in and around Zadar (especially extremely slick polished coastal asphalt, dust accumulation, and slip hazards when wet).\nNote: Decisive for the rental contract are the signed Terms & Conditions of SickMotos d.o.o. at vehicle handover."
     }
   ],
   "common": {
@@ -595,7 +606,12 @@
       "cancelLine": "Plans changed?",
       "cancelLink": "Cancel this booking",
       "cancelTail": ", the dates open up immediately for someone else.",
-      "lateLine": "If you arrive more than 1h late without notice, the reservation is automatically cancelled with no refund."
+      "lateLine": "If you arrive more than 1h late without notice, the reservation is automatically cancelled with no refund.",
+      "readHeader": "Please read before pickup",
+      "readLine": "Our FAQ and rental terms apply to your booking. Please read them before you pick up your vehicle.",
+      "faqLink": "Read the FAQ",
+      "agreementLink": "Rental agreement (PDF)",
+      "toursHeader": "Tour tips for your ride"
     },
     "bookingDeclined": {
       "subject": "Update on your booking, {bike}",
@@ -706,7 +722,8 @@
     "at": "at",
     "freeIfReturnBy": "Free if returned by",
     "useReturn": "Use return time",
-    "depositSummary": "Deposit: {count} × {each} = {total}"
+    "depositSummary": "Deposit: {count} × {each} = {total}",
+    "errFaq": "Please confirm that you have read the FAQ and the rental terms."
   },
   "chatbot": {
     "openLabel": "Open chat",

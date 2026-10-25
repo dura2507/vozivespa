@@ -170,7 +170,10 @@
       "ride": "Pendant la location",
       "return": "Restitution",
       "incidents": "Dommages et assistance"
-    }
+    },
+    "docsTitle": "Documents",
+    "agreementDownload": "Contrat de location (PDF, toutes les langues)",
+    "manualDownload": "FAQ et conditions de location (PDF, toutes les langues)"
   },
   "terms": {
     "eyebrow": "Conditions de réservation",
@@ -398,7 +401,11 @@
       "submit": "Envoyer la demande",
       "submitting": "Envoi en cours...",
       "reviewLine": "Nous vérifions votre capture d'écran de paiement et confirmons par email, généralement en quelques heures. En envoyant, vous acceptez nos",
-      "termsLink": "conditions"
+      "termsLink": "conditions",
+      "faqConfirm": "J'ai lu la FAQ et les conditions de location.",
+      "faqLinkShort": "FAQ",
+      "agreementLinkShort": "Contrat de location (PDF)",
+      "experienceMeaning": "Expérience de conduite signifie : tu as obtenu ton permis AM avant ton permis A ou B."
     },
     "reservation": {
       "title": "Réservation",
@@ -509,36 +516,36 @@
   },
   "faqItems": [
     {
-      "question": "Que comprend l'assistance en cas de panne ?",
-      "answer": "L'assistance routière pour les pannes techniques ou d'entretien et la récupération après vol sont gratuites. Pour les incidents causés par l'utilisateur (crevaison, batterie déchargée, remorquage après accident) : jusqu'à 20 km gratuit pour les pannes mécaniques, 30€ de frais de service pour les crevaisons et autres cas causés par l'utilisateur ; au-delà de 20 km, frais à partir de 50€ selon la distance, plus les coûts réels de transport et de récupération. Suppléments îles : Preko 150€, Dugi Otok 500€. Remplacement de clé : 50€ en cas de perte, de détérioration ou de clé enfermée dans le véhicule."
+      "question": "Que comprend l'assistance routière et quels sont les coûts ?",
+      "answer": "L'assistance routière pour les pannes techniques/mécaniques (ex. panne moteur) ou le vol est GRATUITE, incluant le remorquage et le transport du véhicule.\nPour les incidents causés par le locataire (ex. crevaison, batterie à plat, perte de clé, chute/accident), les frais suivants s'appliquent :\nJusqu'à 20 km de rayon : GRATUIT en cas de panne mécanique, 30 € de frais de service en cas de faute du locataire, de pneu ou d'accident.\nPlus de 20 km : GRATUIT en cas de panne mécanique, à partir de 50 € (selon distance + transport) en cas de faute du locataire, de pneu ou d'accident.\nÎle de Preko : GRATUIT en cas de panne mécanique, 150 € forfait en cas de faute du locataire, de pneu ou d'accident.\nÎle de Dugi Otok : GRATUIT en cas de panne mécanique, 500 € forfait en cas de faute du locataire, de pneu ou d'accident."
     },
     {
-      "question": "Dans quel état la moto est-elle remise ?",
-      "answer": "Toutes les motos et scooters sont remis en parfait état de fonctionnement. Nous demandons aux locataires d'inspecter la moto, de prendre des photos et vidéos claires au retrait documentant toute rayure ou dommage existant, et de la restituer dans le même état. Ces enregistrements font foi en cas de litige."
+      "question": "Dans quel état le véhicule est-il remis et que vérifier à la prise en main ?",
+      "answer": "Tous les véhicules sont remis en parfait état de fonctionnement. Pour la sécurité de chacun, le locataire doit :\nInspecter soigneusement le véhicule avant de rouler.\nPrendre des photos et vidéos claires sous tous les angles lors de la prise en main (y compris les rayures/dommages existants).\nRestituer le véhicule dans le même état documenté (usure normale exceptée).\nCes preuves serviront en cas de litige."
     },
     {
-      "question": "Quelle assurance est incluse ?",
-      "answer": "L'assurance de base couvre le vol de la moto et les dommages moteur. Les accidents, rayures, dommages et crevaisons sont à la charge du locataire. Si un tiers est à l'origine d'un accident, vous devez appeler la police et obtenir un rapport officiel. Le responsable est tenu de payer."
+      "question": "Quelle assurance est incluse dans le prix de location ?",
+      "answer": "Une assurance de base est incluse dans le prix.\nCouverts : Vol du véhicule et pannes mécaniques/moteur (sauf si causés par une erreur de manipulation ou négligence).\nNON couverts (Locataire pleinement responsable) : Tous les dommages extérieurs, esthétiques, structurels ou physiques dus à des chutes, accidents, vandalisme, rayures et crevaisons."
     },
     {
-      "question": "Quelle est votre politique d'annulation ?",
-      "answer": "Toutes les réservations sont non remboursables. L'acompte de 20 % bloque vos dates et n'est pas restitué en cas d'annulation. Si une moto devient indisponible suite à un accident ou un dommage causé par un autre client, nous annulons et remboursons intégralement."
+      "question": "Quelles sont les conditions d'annulation ?",
+      "answer": "Toutes les réservations sont fermes et non remboursables. En cas d'annulation par le locataire, aucun remboursement ne sera effectué."
     },
     {
-      "question": "Quand et où dois-je rendre la moto ?",
-      "answer": "À l'heure et au lieu convenus. Nous accordons 15 minutes de tolérance. Les retours au-delà entraînent des frais supplémentaires. Restitution à notre adresse : Velebitska Ulica 2, 23000 Zadar."
+      "question": "Quand et où le véhicule doit-il être restitué ? Que se passe-t-il en cas de retard ?",
+      "answer": "Le véhicule doit être restitué à l'heure et au lieu convenus.\nDélai de grâce : Une tolérance de 15 minutes s'applique. Pour les retours après ces 15 minutes ou en dehors des heures d'ouverture, des frais de gestion/service de 30 € à 50 € s'appliquent."
     },
     {
-      "question": "Qui est responsable en cas d'accident ou de blessure ?",
-      "answer": "Le locataire assume l'entière responsabilité de tous les accidents, dommages ou blessures survenant pendant la période de location."
+      "question": "Qui est responsable en cas d'accident ou de dommage causé par un tiers ?",
+      "answer": "Le locataire est entièrement responsable de tous les accidents, dommages ou blessures pendant la location. IMPORTANT en cas de faute d'un tiers : SI l'accident est causé par un tiers, la police DOIT être appelée et un rapport de police officiel (Police Report) doit être établi. Le tiers responsable ou son assurance couvre les dommages."
     },
     {
-      "question": "Que se passe-t-il si la moto est endommagée ?",
-      "answer": "En cas de dommage pendant la location, nous retenons la caution pour couvrir les premiers frais de réparation. Le véhicule est confié à un concessionnaire agréé de la marque (p. ex. Piaggio Center Zadar, KTM Moto Špica) pour une expertise professionnelle. Le locataire paie le coût total de la réparation selon le devis ou la facture officielle du concessionnaire ; s'il dépasse la caution, il paie la différence. Toutes les réparations utilisent des pièces d'origine (OEM) et tu reçois toujours une copie officielle du devis, transparence totale."
+      "question": "Que se passe-t-il en cas de dommage au véhicule ? (Facturation & Réparation)",
+      "answer": "En cas de dommage, la procédure transparente suivante s'applique :\n1. Le dépôt de garantie est retenu pour couvrir les premiers frais de réparation.\n2. Le véhicule est emmené dans un concessionnaire agréé pour expertise et réparation (ex. Piaggio Center Zadar, KTM Moto Špica).\n3. La réparation est effectuée exclusivement avec des pièces d'origine OEM.\n4. Le locataire s'engage à payer le montant total selon le devis/facture officiel du concessionnaire. Si les frais dépassent la caution, la différence doit être réglée.\n5. Pour une transparence totale, le locataire reçoit une copie de la facture officielle."
     },
     {
-      "question": "Que faire si je perds la clé ?",
-      "answer": "Une clé de remplacement est livrée pour 50 € plus l'éventuelle intervention d'assistance selon votre localisation."
+      "question": "Que faire en cas de perte de la clé du véhicule ?",
+      "answer": "En cas de perte, d'endommagement ou d'enfermement de la clé, une clé de rechange sera livrée. Un forfait de 50 € est facturé, plus les frais éventuels de déplacement/dépannage selon la localisation."
     },
     {
       "question": "Comment faire une réservation ?",
@@ -558,7 +565,11 @@
     },
     {
       "question": "Et si vous estimez que je n'ai pas assez d'expérience ?",
-      "answer": "Conduire exige une expérience préalable. Si au retrait nous estimons que tu n'as pas assez d'expérience pour maîtriser le scooter ou la moto en toute sécurité, nous nous réservons le droit de refuser la location. Dans ce cas l'acompte n'est pas remboursé, sois donc honnête sur ton expérience au moment de réserver."
+      "answer": "Conduire exige une expérience préalable. Par expérience de conduite, on entend que tu as obtenu ton permis AM avant ton permis A ou B. Si au retrait nous estimons que tu n'as pas assez d'expérience pour maîtriser le scooter ou la moto en toute sécurité, nous nous réservons le droit de refuser la location. Dans ce cas l'acompte n'est pas remboursé, sois donc honnête sur ton expérience au moment de réserver."
+    },
+    {
+      "question": "Quelles conditions de circulation particulières s'appliquent à Zadar ?",
+      "answer": "En signant, le locataire confirme :\nÊtre titulaire d'un permis de conduire valide pour la catégorie de véhicule et posséder une expérience de conduite suffisante.\nAvoir été informé des conditions de circulation exigeantes à Zadar (notamment l'asphalte côtier poli extrêmement glissant, la poussière et les risques de glissade sur route mouillée).\nRemarque : Seules les conditions générales (Terms & Conditions) de SickMotos d.o.o. signées lors de la remise font foi."
     }
   ],
   "common": {
@@ -595,7 +606,12 @@
       "cancelLine": "Vos plans ont changé ?",
       "cancelLink": "Annuler cette réservation",
       "cancelTail": ", les dates se libèrent immédiatement pour quelqu'un d'autre.",
-      "lateLine": "Si tu arrives avec plus d'1 heure de retard sans prévenir, la réservation est automatiquement annulée, sans remboursement."
+      "lateLine": "Si tu arrives avec plus d'1 heure de retard sans prévenir, la réservation est automatiquement annulée, sans remboursement.",
+      "readHeader": "À lire avant le retrait",
+      "readLine": "Notre FAQ et nos conditions de location s'appliquent à ta réservation. Lis-les avant de retirer ton véhicule.",
+      "faqLink": "Lire la FAQ",
+      "agreementLink": "Contrat de location (PDF)",
+      "toursHeader": "Idées de balades pour ta sortie"
     },
     "bookingDeclined": {
       "subject": "Mise à jour sur votre réservation, {bike}",
@@ -706,7 +722,8 @@
     "at": "à",
     "freeIfReturnBy": "Libre si rendu avant",
     "useReturn": "Utiliser ce retour",
-    "depositSummary": "Caution : {count} × {each} = {total}"
+    "depositSummary": "Caution : {count} × {each} = {total}",
+    "errFaq": "Confirme que tu as lu la FAQ et les conditions de location."
   },
   "chatbot": {
     "openLabel": "Ouvrir le chat",

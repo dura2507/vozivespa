@@ -170,7 +170,10 @@
       "ride": "Während der Fahrt",
       "return": "Rückgabe",
       "incidents": "Schaden & Pannenhilfe"
-    }
+    },
+    "docsTitle": "Dokumente",
+    "agreementDownload": "Mietvertrag (PDF, alle Sprachen)",
+    "manualDownload": "FAQ und Mietbedingungen (PDF, alle Sprachen)"
   },
   "terms": {
     "eyebrow": "Buchungsbedingungen",
@@ -398,7 +401,11 @@
       "submit": "Anfrage senden",
       "submitting": "Senden...",
       "reviewLine": "Wir prüfen deinen Screenshot der Anzahlung und bestätigen per Email, normalerweise innerhalb weniger Stunden. Mit dem Absenden akzeptierst du unsere",
-      "termsLink": "AGB"
+      "termsLink": "AGB",
+      "faqConfirm": "Ich habe die FAQ und die Mietbedingungen gelesen.",
+      "faqLinkShort": "FAQ",
+      "agreementLinkShort": "Mietvertrag (PDF)",
+      "experienceMeaning": "Fahrerfahrung bedeutet: Du hast deinen AM-Führerschein vor deinem A- bzw. B-Führerschein gemacht."
     },
     "reservation": {
       "title": "Anzahlung",
@@ -509,36 +516,36 @@
   },
   "faqItems": [
     {
-      "question": "Was beinhaltet die Pannenhilfe?",
-      "answer": "Pannenhilfe bei technischen Defekten oder Wartungsfehlern sowie die Bergung nach Diebstahl sind kostenlos. Bei selbstverschuldeten Fällen (Reifenpanne, leere Batterie, Abschleppen nach Unfall) gilt: bis 20 km kostenlos bei mechanischen Defekten, 30€ Servicegebühr bei Reifenpannen und anderen selbstverschuldeten Fällen; über 20 km ab 50€ je nach Entfernung, plus die tatsächlichen Transport- und Bergungskosten. Insel-Zuschläge: Preko 150€, Dugi Otok 500€. Schlüsselersatz: 50€ bei Verlust, Beschädigung oder eingeschlossenem Schlüssel."
+      "question": "Was beinhaltet der Pannendienst und welche Kosten fallen an?",
+      "answer": "Pannenhilfe für technische/mechanische Defekte (z. B. Motorschaden) oder Diebstahlabwicklung ist kostenlos inkl. Fahrzeugabholung und Rücktransport.\nFür vom Mieter verursachte Vorfälle (z. B. Reifenschaden, leere Batterie, Schlüsselverlust, Sturz/Unfall) gelten folgende Gebühren:\nBis 20 km Umkreis: kostenlos bei mechanischem Defekt, 30 € Servicegebühr bei Eigenverschulden, Reifen oder Unfall.\nÜber 20 km Entfernung: kostenlos bei mechanischem Defekt, ab 50 € (nach Distanz + Transport) bei Eigenverschulden, Reifen oder Unfall.\nInsel Preko: kostenlos bei mechanischem Defekt, 150 € Pauschale bei Eigenverschulden, Reifen oder Unfall.\nInsel Dugi Otok: kostenlos bei mechanischem Defekt, 500 € Pauschale bei Eigenverschulden, Reifen oder Unfall."
     },
     {
-      "question": "In welchem Zustand wird das Bike übergeben?",
-      "answer": "Alle Bikes und Roller werden in einwandfreiem Zustand übergeben. Wir bitten Mieter das Bike zu inspizieren, klare Fotos und Videos bei Abholung zu machen die alle bestehenden Kratzer und Schäden dokumentieren, und es im gleichen Zustand zurückzugeben. Diese Aufnahmen sind im Streitfall offizielle Beweismittel."
+      "question": "In welchem Zustand wird das Fahrzeug übergeben und was muss ich bei der Übernahme beachten?",
+      "answer": "Alle Fahrzeuge werden in einwandfreiem, betriebsbereitem Zustand übergeben. Zur gegenseitigen Absicherung ist der Mieter verpflichtet:\nDas Fahrzeug vor Fahrtantritt sorgfältig zu prüfen.\nBei Abholung klare Fotos und Videos aus allen Blickwinkeln zu machen (inkl. vorhandener Kratzer/Schäden).\nDas Fahrzeug im selben dokumentierten Zustand zurückzugeben (normale Abnutzung ausgenommen).\nDiese Aufnahmen dienen als offizieller Nachweis bei Eventualitäten oder Unstimmigkeiten."
     },
     {
-      "question": "Welche Versicherung ist enthalten?",
-      "answer": "Die Basisversicherung deckt Diebstahl des Bikes und Motorschäden ab. Unfälle, Kratzer, Schäden und platte Reifen liegen in der Verantwortung des Mieters. Verursacht ein Dritter einen Unfall, musst du die Polizei rufen und einen offiziellen Bericht einholen. Der Verursacher haftet."
+      "question": "Welche Versicherung ist im Mietpreis enthalten?",
+      "answer": "Im Mietpreis ist eine Basisversicherung enthalten.\nAbgedeckt sind: Diebstahl des Fahrzeugs sowie Motorschäden / mechanische Defekte (sofern nicht durch Bedienungsfehler oder Fahrlässigkeit verursacht).\nNicht abgedeckt (Mieter haftet voll): Alle äußeren, optischen, strukturellen oder physischen Schäden durch Stürze, Unfälle, Vandalismus, Kratzer sowie Reifenschäden/Platten."
     },
     {
-      "question": "Wie lauten eure Stornierungsbedingungen?",
-      "answer": "Alle Buchungen sind nicht erstattungsfähig. Die 20% Anzahlung sichert deine Termine und wird im Falle einer Stornierung nicht zurückerstattet. Wird ein Bike durch einen Unfall oder Schaden eines anderen Kunden nicht verfügbar, stornieren wir und erstatten den vollen Betrag."
+      "question": "Wie lauten die Stornierungsbedingungen?",
+      "answer": "Alle Buchungen sind verbindlich und nicht erstattungsfähig (non-refundable). Im Falle einer Stornierung durch den Mieter erfolgt keine Rückerstattung des Mietbetrags."
     },
     {
-      "question": "Wann und wo gebe ich das Bike zurück?",
-      "answer": "Zur vereinbarten Zeit am vereinbarten Ort. Wir gewähren 15 Minuten Karenzzeit. Verspätungen darüber hinaus kosten extra. Rückgabe an unserer Adresse: Velebitska Ulica 2, 23000 Zadar."
+      "question": "Wann und wo muss das Fahrzeug zurückgegeben werden? Was gilt bei Verspätung?",
+      "answer": "Das Fahrzeug muss zum vereinbarten Zeitpunkt am vereinbarten Ort zurückgegeben werden.\nKulanzregelung: Es gilt eine Toleranzzeit (Grace Period) von 15 Minuten. Bei Rückgaben nach Ablauf dieser 15 Minuten oder außerhalb der regulären Öffnungszeiten fällt eine Bearbeitungs- / Betriebspauschale von 30 € bis 50 € an."
     },
     {
-      "question": "Wer haftet bei Unfällen oder Verletzungen?",
-      "answer": "Der Mieter trägt die volle Verantwortung für alle Unfälle, Schäden oder Verletzungen die während der Mietzeit auftreten."
+      "question": "Wer haftet bei Unfällen oder Schäden durch Dritte?",
+      "answer": "Der Mieter trägt die volle Verantwortung für alle Unfälle, Schäden oder Verletzungen während der Mietdauer. Wichtig bei Fremdverschulden: WURDE der Unfall durch einen Dritten verursacht, MUSS zwingend die Polizei gerufen und ein offizieller Polizeibericht (Police Report) erstellt werden. Der Verursacher bzw. dessen Versicherung haftet für die Schäden."
     },
     {
-      "question": "Was passiert wenn das Bike beschädigt wird?",
-      "answer": "Bei einem Schaden während der Miete behalten wir die Kaution ein, um die ersten Reparaturkosten zu decken. Das Fahrzeug kommt zur professionellen Begutachtung zu einem Vertragshändler der Marke (z.B. Piaggio Center Zadar, KTM Moto Špica). Der Mieter trägt die vollen Reparaturkosten laut offiziellem Kostenvoranschlag bzw. Rechnung des Händlers; übersteigen sie die Kaution, zahlt der Mieter die Differenz. Repariert wird ausschließlich mit Original-Teilen (OEM), und du bekommst immer eine offizielle Kopie des Kostenvoranschlags, volle Transparenz."
+      "question": "Was passiert im Falle eines Fahrzeugschadens? (Abrechnung & Reparatur)",
+      "answer": "Bei Beschädigung des Fahrzeugs gilt folgender transparenter Ablauf:\n1. Die Einbehaltung der Kaution erfolgt vorerst zur Deckung der ersten Reparaturkosten.\n2. Das Fahrzeug wird zur fachgerechten Begutachtung und Reparatur in eine autorisierte Vertragswerkstatt gebracht (z. B. Piaggio Center Zadar, KTM Moto Špica).\n3. Die Reparatur erfolgt ausschließlich mit Original-OEM-Ersatzteilen.\n4. Der Mieter verpflichtet sich, die Gesamtkosten laut offizieller Werkstattrechnung/Kostenvoranschlag zu tragen. Übersteigen die Reparaturkosten die Kaution, ist der Differenzbetrag nachzuzahlen.\n5. Zur vollständigen Transparenz erhält der Mieter eine Kopie der offiziellen Händlerrechnung."
     },
     {
-      "question": "Was wenn ich den Schlüssel verliere?",
-      "answer": "Ein Ersatzschlüssel wird für 50€ geliefert, plus eventuell anfallende Pannenhilfegebühr je nach Standort."
+      "question": "Was muss ich tun, wenn ich den Fahrzeugschlüssel verliere?",
+      "answer": "Bei Verlust, Beschädigung oder Einschließen des Schlüssels wird ein Ersatzschlüssel geliefert. Dafür wird eine Pauschale von 50 € berechnet, zzgl. eventueller Anfahrts- bzw. Pannendienstkosten je nach Standort."
     },
     {
       "question": "Wie buche ich?",
@@ -558,7 +565,11 @@
     },
     {
       "question": "Was wenn ihr entscheidet ich habe nicht genug Erfahrung?",
-      "answer": "Fahren erfordert Vorerfahrung. Wenn wir bei der Abholung feststellen, dass du nicht genug Erfahrung hast, um den Roller oder das Motorrad sicher zu fahren, behalten wir uns vor, die Vermietung abzulehnen. Die Anzahlung wird in dem Fall nicht erstattet, sei bei der Buchung also ehrlich, was deine Erfahrung angeht."
+      "answer": "Fahren erfordert Vorerfahrung. Fahrerfahrung bedeutet, dass du deinen AM-Führerschein vor deinem A- bzw. B-Führerschein gemacht hast. Wenn wir bei der Abholung feststellen, dass du nicht genug Erfahrung hast, um den Roller oder das Motorrad sicher zu fahren, behalten wir uns vor, die Vermietung abzulehnen. Die Anzahlung wird in dem Fall nicht erstattet, sei bei der Buchung also ehrlich, was deine Erfahrung angeht."
+    },
+    {
+      "question": "Welche besonderen Straßen- und Fahrbedingungen gelten in Zadar?",
+      "answer": "Mit der Unterzeichnung bestätigt der Mieter:\nEinen gültigen Führerschein der entsprechenden Fahrzeugklasse zu besitzen und über ausreichend Fahrpraxis zu verfügen.\nÜber die anspruchsvollen lokalen Verkehrsverhältnisse in und um Zadar informiert worden zu sein (insbesondere extrem glatter polierter Küstenasphalt, Staubansammlungen und Rutschgefahr bei Nässe).\nHinweis: Maßgeblich für das Mietverhältnis sind die bei der Übergabe unterzeichneten Mietbedingungen (Terms & Conditions) der SickMotos d.o.o."
     }
   ],
   "common": {
@@ -595,7 +606,12 @@
       "cancelLine": "Pläne geändert?",
       "cancelLink": "Buchung stornieren",
       "cancelTail": ", die Termine sind sofort wieder frei für jemand anderen.",
-      "lateLine": "Kommst du mehr als 1 Stunde zu spät, ohne Bescheid zu geben, wird die Reservierung automatisch storniert, ohne Rückerstattung."
+      "lateLine": "Kommst du mehr als 1 Stunde zu spät, ohne Bescheid zu geben, wird die Reservierung automatisch storniert, ohne Rückerstattung.",
+      "readHeader": "Bitte vor der Abholung lesen",
+      "readLine": "Für deine Buchung gelten unsere FAQ und Mietbedingungen. Bitte lies sie, bevor du dein Fahrzeug abholst.",
+      "faqLink": "FAQ lesen",
+      "agreementLink": "Mietvertrag (PDF)",
+      "toursHeader": "Touren-Tipps für deine Fahrt"
     },
     "bookingDeclined": {
       "subject": "Update zu deiner Buchung, {bike}",
@@ -706,7 +722,8 @@
     "at": "um",
     "freeIfReturnBy": "Frei, wenn Rückgabe bis",
     "useReturn": "Rückgabe übernehmen",
-    "depositSummary": "Kaution: {count} × {each} = {total}"
+    "depositSummary": "Kaution: {count} × {each} = {total}",
+    "errFaq": "Bitte bestätige, dass du die FAQ und die Mietbedingungen gelesen hast."
   },
   "chatbot": {
     "openLabel": "Chat öffnen",

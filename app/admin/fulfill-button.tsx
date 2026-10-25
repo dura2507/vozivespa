@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 function alertOnce(msg: string) {
   if (typeof window !== "undefined") window.alert(msg);
@@ -19,9 +19,24 @@ export function FulfillButton({
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  // Set once the server confirmed the update. The button used to stay on "…"
+  // until router.refresh() re-rendered the whole dashboard: refresh keeps
+  // client state (Next docs), so whenever that re-render was slow or failed
+  // the button looked hung even though the booking was already saved
+  // (Thomas: "Marked as Returned hängt ab und zu"). Now the result shows
+  // immediately and the refresh runs in the background.
+  const [done, setDone] = useState(false);
+  const [, startTransition] = useTransition();
+  // A refresh can hand this same instance a different booking or action;
+  // never carry a stale "done"/"busy" over to it.
+  const identity = `${action}:${ids.join(",")}`;
+  useEffect(() => {
+    setDone(false);
+    setBusy(false);
+  }, [identity]);
 
   async function run() {
-    if (busy) return;
+    if (busy || done) return;
     // Guard the one-tap actions with a confirm. "Mark as returned" sets
     // returned_at, which frees the unit on the public calendar IMMEDIATELY
     // (even before the scheduled return) — an accidental tap here silently
@@ -62,19 +77,27 @@ export function FulfillButton({
         setBusy(false);
         return;
       }
-      router.refresh();
+      setDone(true);
+      setBusy(false);
+      startTransition(() => router.refresh());
     } catch {
       alertOnce("Network error - please try again.");
       setBusy(false);
     }
   }
 
-  const label = action === "pickup" ? "Mark as picked up" : "Mark as returned";
+  const label = done
+    ? action === "pickup"
+      ? "✓ Picked up"
+      : "✓ Returned"
+    : action === "pickup"
+      ? "Mark as picked up"
+      : "Mark as returned";
   return (
     <button
       type="button"
       onClick={run}
-      disabled={busy}
+      disabled={busy || done}
       className="shrink-0 w-28 sm:w-32 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold tracking-[0.1em] uppercase leading-tight text-center px-3 disabled:opacity-50 transition-colors flex items-center justify-center"
     >
       {busy ? "…" : label}

@@ -36,12 +36,17 @@ export default function Accordion({
         </span>
       </button>
 
+      {/* Grid 0fr/1fr instead of a fixed max-height: the panel grows to the
+          real answer height. A max-h cap clipped Thomas' longer answers on
+          phones (the roadside fee lines vanished without a scrollbar). */}
       <div
-        className={`overflow-hidden transition-all duration-300 ${
-          open ? "max-h-[32rem] pb-5" : "max-h-0"
+        className={`grid transition-[grid-template-rows] duration-300 ${
+          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         }`}
       >
-        <p className="text-muted text-sm leading-relaxed pl-9">{answer}</p>
+        <div className="overflow-hidden">
+          <p className="text-muted text-sm leading-relaxed pl-9 pb-5 whitespace-pre-line">{answer}</p>
+        </div>
       </div>
     </div>
   );

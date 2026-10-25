@@ -170,7 +170,10 @@
       "ride": "Tijekom najma",
       "return": "Povrat",
       "incidents": "Šteta i pomoć na cesti"
-    }
+    },
+    "docsTitle": "Dokumenti",
+    "agreementDownload": "Ugovor o najmu (PDF, svi jezici)",
+    "manualDownload": "FAQ i uvjeti najma (PDF, svi jezici)"
   },
   "terms": {
     "eyebrow": "Uvjeti rezervacije",
@@ -398,7 +401,11 @@
       "submit": "Pošalji zahtjev",
       "submitting": "Šaljem...",
       "reviewLine": "Pregledat ćemo tvoju snimku predujma i potvrditi mailom, obično u roku nekoliko sati. Slanjem prihvaćaš naše",
-      "termsLink": "uvjete"
+      "termsLink": "uvjete",
+      "faqConfirm": "Pročitao/la sam FAQ i uvjete najma.",
+      "faqLinkShort": "FAQ",
+      "agreementLinkShort": "Ugovor o najmu (PDF)",
+      "experienceMeaning": "Iskustvo u vožnji znači: AM vozačku dozvolu stekao/la si prije A ili B kategorije."
     },
     "reservation": {
       "title": "Rezervacija",
@@ -509,36 +516,36 @@
   },
   "faqItems": [
     {
-      "question": "Što uključuje cestovna pomoć?",
-      "answer": "Pomoć na cesti kod tehničkih kvarova i preuzimanje nakon krađe su besplatni. Za slučajeve koje je skrivio korisnik (probušena guma, prazan akumulator, vuča nakon nezgode): do 20 km besplatno kod mehaničkog kvara, uz naknadu od 30€ za probušene gume i druge skrivljene slučajeve; preko 20 km naknada od 50€ ovisno o udaljenosti, plus stvarni troškovi prijevoza. Doplate za otoke: Preko 150€, Dugi Otok 500€. Zamjena ključa: 50€ u slučaju gubitka, oštećenja ili zaključanog ključa u vozilu."
+      "question": "Što uključuje pomoć na cesti i koji su troškovi?",
+      "answer": "Pomoć na cesti za tehničke/mehaničke kvarove (npr. kvar motora) ili postupak u slučaju krađe je BESPLATNA uključujući preuzimanje i povratak vozila.\nZa incidente uzrokovane od strane najmoprimca (npr. bušotina gume, prazna baterija, gubitak ključa, pad/nesreća) vrijede sljedeće naknade:\nDo 20 km radijusa: besplatno kod mehaničkog kvara, 30 € naknada za uslugu u slučaju krivnje najmoprimca, gume ili nesreće.\nPreko 20 km udaljenosti: besplatno kod mehaničkog kvara, od 50 € (ovisno o udaljenosti + prijevozu) u slučaju krivnje najmoprimca, gume ili nesreće.\nOtok Preko: besplatno kod mehaničkog kvara, 150 € paušal u slučaju krivnje najmoprimca, gume ili nesreće.\nOtok Dugi Otok: besplatno kod mehaničkog kvara, 500 € paušal u slučaju krivnje najmoprimca, gume ili nesreće."
     },
     {
-      "question": "U kakvom se stanju predaje motor?",
-      "answer": "Svi motori i skuteri predaju se u savršenom stanju. Tražimo od najmoprimaca da pregledaju motor, snime jasne fotografije i videozapise pri preuzimanju koji dokumentiraju postojeće ogrebotine ili štetu, i vrate ga u istom stanju. Te snimke su službeni dokaz u slučaju spora."
+      "question": "U kojem se stanju vozilo predaje i na što moram paziti pri preuzimanju?",
+      "answer": "Sva se vozila predaju u besprijekornom, za vožnju spremnom stanju. Radi obostrane sigurnosti najmoprimac je dužan:\nPažljivo pregledati vozilo prije početka vožnje.\nPrilikom preuzimanja napraviti jasne fotografije i videozapise iz svih kutova (uključujući postojeće ogrebotine/oštećenja).\nVratiti vozilo u istom dokumentiranom stanju (osim uobičajenog trošenja).\nOvi snimci služe kao službeni dokaz u slučaju nesuglasica."
     },
     {
-      "question": "Koje osiguranje je uključeno?",
-      "answer": "Osnovno osiguranje pokriva krađu motora i štetu na motoru. Nesreće, ogrebotine, štete i ispuhane gume su odgovornost najmoprimca. Ako treća strana uzrokuje nesreću, moraš pozvati policiju i dobiti službeni izvještaj. Odgovorna strana plaća."
+      "question": "Koje je osiguranje uključeno u cijenu najma?",
+      "answer": "U cijenu najma uključeno je osnovno osiguranje.\nPokriveno: Krađa vozila te mehanički kvarovi / kvarovi motora (osim ako nisu uzrokovani pogreškom pri rukovanju ili nemarom).\nNije pokriveno (Najmoprimac odgovara u potpunosti): Sva vanjska, optička, strukturna ili fizička oštećenja uzrokovana padom, nesrećom, vandalizmom, ogrebotinama te oštećenjima guma."
     },
     {
-      "question": "Kakva je vaša politika otkazivanja?",
-      "answer": "Sve rezervacije su nepovratne. 20% predujma osigurava termine i ne vraća se pri otkazu. Ako motor postane nedostupan zbog nesreće ili štete drugog klijenta, otkazujemo i vraćamo cijeli iznos."
+      "question": "Koji su uvjeti otkazivanja?",
+      "answer": "Sve su rezervacije obvezujuće i nepovratne (non-refundable). U slučaju otkazivanja od strane najmoprimca nema povrata iznosa najma."
     },
     {
-      "question": "Kada i gdje vraćam motor?",
-      "answer": "U dogovoreno vrijeme na dogovorenom mjestu. Dajemo 15 minuta tolerancije. Kasniji povrati se dodatno naplaćuju. Povrat na našoj adresi: Velebitska Ulica 2, 23000 Zadar."
+      "question": "Kada i gdje se vozilo mora vratiti? Što vrijedi u slučaju kašnjenja?",
+      "answer": "Vozilo se mora vratiti u dogovoreno vrijeme i na dogovorenom mjestu.\nTolerancija: Vrijedi razdoblje tolerancije (Grace Period) od 15 minuta. Za povratke nakon tih 15 minuta ili izvan redovnog radnog vremena naplaćuje se administrativna/operativna naknada od 30 € do 50 €."
     },
     {
-      "question": "Tko je odgovoran za nesreće ili ozljede?",
-      "answer": "Najmoprimac preuzima punu odgovornost za sve nesreće, štete ili ozljede koje se dogode tijekom najma."
+      "question": "Tko odgovara u slučaju nesreće ili štete uzrokovane od trećih strana?",
+      "answer": "Najmoprimac snosi punu odgovornost za sve nesreće, štete ili ozljede tijekom trajanja najma. Važno u slučaju krivnje treće strane: AKO je nesreću uzrokovala treća strana, OBVEZNO se mora pozvati policija i izraditi službeni policijski zapisnik (Police Report). Krivac odnosno njegovo osiguranje odgovara za štetu."
     },
     {
-      "question": "Što ako se motor ošteti?",
-      "answer": "U slučaju štete tijekom najma zadržavamo polog za pokriće početnih troškova popravka. Vozilo vozimo ovlaštenom serviseru marke (npr. Piaggio Center Zadar, KTM Moto Špica) na stručnu procjenu. Najmoprimac plaća puni trošak popravka prema službenoj ponudi ili računu servisa; ako prelazi polog, plaća razliku. Popravlja se isključivo originalnim dijelovima (OEM), a uvijek dobivaš službenu kopiju ponude, potpuna transparentnost."
+      "question": "Što se događa u slučaju oštećenja vozila? (Obračun i popravak)",
+      "answer": "U slučaju oštećenja vozila primjenjuje se sljedeći transparentni postupak:\n1. Sigurnosni polog zadržava se prvenstveno radi pokrivanja početnih troškova popravka.\n2. Vozilo se odvodi u ovlašteni servis na stručni pregled i popravak (npr. Piaggio Center Zadar, KTM Moto Špica).\n3. Popravak se vrši isključivo s originalnim OEM rezervnim dijelovima.\n4. Najmoprimac se obvezuje platiti ukupne troškove prema službenom računu/procjeni servisa. Ako troškovi popravka premaše polog, razlika se mora nadoplatiti.\n5. Radi potpune transparentnosti najmoprimac dobiva kopiju službenog računa servisa."
     },
     {
-      "question": "Što ako izgubim ključ?",
-      "answer": "Zamjenski ključ se dostavlja za 50€ plus eventualna naknada za cestovnu pomoć ovisno o tvojoj lokaciji."
+      "question": "Što trebam učiniti ako izgubim ključ vozila?",
+      "answer": "U slučaju gubitka, oštećenja ili zaključavanja ključa u vozilu, dostavit će se zamjenski ključ. Naplaćuje se paušalna naknada od 50 €, uz moguće troškove dolaska i pomoći na cesti ovisno o lokaciji."
     },
     {
       "question": "Kako napraviti rezervaciju?",
@@ -558,7 +565,11 @@
     },
     {
       "question": "Što ako odlučite da nemam dovoljno iskustva?",
-      "answer": "Vožnja zahtijeva prethodno iskustvo. Ako pri preuzimanju procijenimo da nemaš dovoljno iskustva za sigurno upravljanje skuterom ili motociklom, zadržavamo pravo odbiti najam. Kapara se u tom slučaju ne vraća, zato pri rezervaciji budi iskren o svom iskustvu."
+      "answer": "Vožnja zahtijeva prethodno iskustvo. Vozačko iskustvo znači da si vozačku dozvolu kategorije AM položio prije vozačke dozvole kategorije A odnosno B. Ako pri preuzimanju procijenimo da nemaš dovoljno iskustva za sigurno upravljanje skuterom ili motociklom, zadržavamo pravo odbiti najam. Kapara se u tom slučaju ne vraća, zato pri rezervaciji budi iskren o svom iskustvu."
+    },
+    {
+      "question": "Koji posebni uvjeti na cestama i vožnji vrijede u Zadru?",
+      "answer": "Potpisom najmoprimac potvrđuje:\nDa posjeduje važeću vozačku dozvolu odgovarajuće kategorije i dovoljno vozačkog iskustva.\nDa je informiran o zahtjevnim lokalnim prometnim uvjetima u Zadru i okolici (posebno izuzetno klizav polirani obalni asfalt, nakupine prašine i opasnost od klizanja po mokrom).\nNapomena: Za najamni odnos mjerodavni su uvjeti najma (Terms & Conditions) tvrtke SickMotos d.o.o. potpisani prilikom preuzimanja."
     }
   ],
   "common": {
@@ -595,7 +606,12 @@
       "cancelLine": "Promijenili planovi?",
       "cancelLink": "Otkaži rezervaciju",
       "cancelTail": ", termini se odmah oslobađaju za nekoga drugog.",
-      "lateLine": "Ako kasniš više od 1 sata bez najave, rezervacija se automatski otkazuje, bez povrata novca."
+      "lateLine": "Ako kasniš više od 1 sata bez najave, rezervacija se automatski otkazuje, bez povrata novca.",
+      "readHeader": "Molimo pročitaj prije preuzimanja",
+      "readLine": "Za tvoju rezervaciju vrijede naša česta pitanja (FAQ) i uvjeti najma. Molimo pročitaj ih prije nego što preuzmeš vozilo.",
+      "faqLink": "Pročitaj FAQ",
+      "agreementLink": "Ugovor o najmu (PDF)",
+      "toursHeader": "Prijedlozi tura za tvoju vožnju"
     },
     "bookingDeclined": {
       "subject": "Ažuriranje rezervacije, {bike}",
@@ -706,7 +722,8 @@
     "at": "u",
     "freeIfReturnBy": "Slobodno uz povrat do",
     "useReturn": "Primijeni povrat",
-    "depositSummary": "Polog: {count} × {each} = {total}"
+    "depositSummary": "Polog: {count} × {each} = {total}",
+    "errFaq": "Molimo potvrdi da si pročitao/la FAQ i uvjete najma."
   },
   "chatbot": {
     "openLabel": "Otvori chat",

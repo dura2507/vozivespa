@@ -4,6 +4,7 @@ import { retry } from "@/lib/retry";
 import { billableDays } from "@/lib/pricing";
 import type { BookingRow } from "@/lib/supabase";
 import { getDictionary, type Dictionary } from "@/lib/i18n/dictionaries";
+import { TOURS, type Tour } from "@/lib/tours";
 import { type Locale, isLocale } from "@/lib/i18n/config";
 import { translate } from "@/lib/translate";
 import { bookingRef } from "@/lib/booking-ref";
@@ -624,6 +625,79 @@ ${BRAND.name}${krileoCreditText(locale)}`;
 
 // ---------- Customer: booking decided (confirmed / declined) ----------------
 
+// ---------- Confirmation extras (Thomas, 2026-10-05) -------------------------
+// "FAQ must be read" + rental agreement download, and the tour tips for the
+// booked models. Shared by the single and the group confirmation so both say
+// the same. Tours come from lib/tours.ts (Thomas' Maps links, verbatim).
+const AGREEMENT_PATH = "/docs/sickmotos-rental-agreement.pdf";
+type ConfirmedStrings = Dictionary["emails"]["bookingConfirmed"];
+type TourStrings = Dictionary["fleet"]["tours"];
+
+function siteBase(): string {
+  return (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+}
+
+function readBeforePickupHtml(t: ConfirmedStrings, locale: Locale): string {
+  const base = siteBase();
+  return `
+      <div style="margin:24px 0 16px;padding:14px 16px;border:1px solid #B61F36;background:#fdf3f4;">
+        <p style="margin:0 0 6px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#B61F36;font-weight:700;">${escape(t.readHeader)}</p>
+        <p style="margin:0 0 10px;font-size:14px;line-height:1.6;">${escape(t.readLine)}</p>
+        <p style="margin:0;font-size:14px;line-height:1.6;"><a href="${base}/${locale}/faq" style="color:#B61F36;font-weight:600;">${escape(t.faqLink)}</a> &nbsp;&middot;&nbsp; <a href="${base}${AGREEMENT_PATH}" style="color:#B61F36;font-weight:600;">${escape(t.agreementLink)}</a></p>
+      </div>`;
+}
+
+function readBeforePickupText(t: ConfirmedStrings, locale: Locale): string {
+  const base = siteBase();
+  return `${t.readHeader}: ${t.readLine}\n${t.faqLink}: ${base}/${locale}/faq\n${t.agreementLink}: ${base}${AGREEMENT_PATH}`;
+}
+
+// Two Liberty 50s in one group must not list the same tour twice.
+function toursFor(bikeIds: string[]): Tour[] {
+  const seen = new Set<string>();
+  const out: Tour[] = [];
+  for (const id of bikeIds) {
+    for (const tour of TOURS[id] ?? []) {
+      if (seen.has(tour.id)) continue;
+      seen.add(tour.id);
+      out.push(tour);
+    }
+  }
+  return out;
+}
+
+function toursHtml(bikeIds: string[], t: ConfirmedStrings, tours: TourStrings): string {
+  const list = toursFor(bikeIds);
+  if (list.length === 0) return "";
+  const blocks = list
+    .map((tour) => {
+      const r = tours.routes[tour.id];
+      const stops = tour.stops
+        .map((st) => `<a href="${st.url}" style="color:#B61F36;">${escape(tours.stops[st.labelKey as keyof TourStrings["stops"]])}</a>`)
+        .join(" &nbsp;&middot;&nbsp; ");
+      return `
+      <p style="margin:0 0 4px;font-size:14px;font-weight:700;">${escape(r.name)}</p>
+      <p style="margin:0 0 6px;font-size:14px;line-height:1.6;color:#3a3a3a;">${escape(r.desc)}</p>
+      <p style="margin:0 0 14px;font-size:13px;line-height:1.8;">${stops}</p>`;
+    })
+    .join("");
+  return `
+      <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape(t.toursHeader)}</h3>${blocks}`;
+}
+
+function toursText(bikeIds: string[], t: ConfirmedStrings, tours: TourStrings): string {
+  const list = toursFor(bikeIds);
+  if (list.length === 0) return "";
+  const parts = list.map((tour) => {
+    const r = tours.routes[tour.id];
+    const stops = tour.stops
+      .map((st) => `- ${tours.stops[st.labelKey as keyof TourStrings["stops"]]}: ${st.url}`)
+      .join("\n");
+    return `${r.name}\n${r.desc}\n${stops}`;
+  });
+  return `${t.toursHeader}\n\n${parts.join("\n\n")}`;
+}
+
 export async function sendCustomerBookingDecidedEmail(
   booking: BookingRow,
   decision: "confirmed" | "declined",
@@ -667,6 +741,8 @@ export async function sendCustomerBookingDecidedEmail(
         <li>${escape(fmt((t as Dictionary["emails"]["bookingConfirmed"]).bringDeposit, vars))}</li>
         <li>${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringTank)}</li>
       </ul>
+      ${readBeforePickupHtml(t as ConfirmedStrings, locale)}
+      ${toursHtml([booking.bike_id], t as ConfirmedStrings, dict.fleet.tours)}
       <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).adjustHeader)}</h3>
       <p style="margin:0 0 8px;font-size:14px;line-height:1.6;">${escape(fmt((t as Dictionary["emails"]["bookingConfirmed"]).adjustLine, vars))}</p>
       <p style="margin:0 0 8px;font-size:13px;color:#B61F36;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).lateLine)}</p>
@@ -701,6 +777,8 @@ ${dict.emails.summary.total}: ${totalEur(booking)}
 ${(t as Dictionary["emails"]["bookingConfirmed"]).pickupHeader}: ${BRAND.address}
 ${(t as Dictionary["emails"]["bookingConfirmed"]).openHoursLabel}: ${BRAND.hours}
 
+${readBeforePickupText(t as ConfirmedStrings, locale)}
+${(() => { const tt = toursText([booking.bike_id], t as ConfirmedStrings, dict.fleet.tours); return tt ? `\n${tt}\n` : ""; })()}
 WhatsApp: ${ownerWaLink()}
 
 ${(t as Dictionary["emails"]["bookingConfirmed"]).cancelLine} ${cancelUrl}
@@ -801,6 +879,8 @@ export async function sendCustomerGroupBookingDecidedEmail(
         <li>${escape(fmt((t as Dictionary["emails"]["bookingConfirmed"]).bringDeposit, vars))}</li>
         <li>${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringTank)}</li>
       </ul>
+      ${readBeforePickupHtml(t as ConfirmedStrings, locale)}
+      ${toursHtml(bookings.map((b) => b.bike_id), t as ConfirmedStrings, dict.fleet.tours)}
       <p style="margin:0 0 8px;font-size:13px;color:#B61F36;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).lateLine)}</p>
       ${contactButtonsHtml()}
     `
@@ -817,7 +897,9 @@ export async function sendCustomerGroupBookingDecidedEmail(
     to: primary.customer_email,
     subject: fmt(t.subject, vars),
     html,
-    text: `${fmt(t.greeting, vars)}\n\n${fmt(t.intro, vars)}\n\nWhatsApp: ${ownerWaLink()}\n\n${BRAND.name}${krileoCreditText(locale)}`,
+    text: isConfirmed
+      ? `${fmt(t.greeting, vars)}\n\n${fmt(t.intro, vars)}\n\n${readBeforePickupText(t as ConfirmedStrings, locale)}\n${(() => { const tt = toursText(bookings.map((b) => b.bike_id), t as ConfirmedStrings, dict.fleet.tours); return tt ? `\n${tt}\n` : ""; })()}\nWhatsApp: ${ownerWaLink()}\n\n${BRAND.name}${krileoCreditText(locale)}`
+      : `${fmt(t.greeting, vars)}\n\n${fmt(t.intro, vars)}\n\nWhatsApp: ${ownerWaLink()}\n\n${BRAND.name}${krileoCreditText(locale)}`,
     replyTo: BRAND.email,
   });
 }

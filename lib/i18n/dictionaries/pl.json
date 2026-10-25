@@ -170,7 +170,10 @@
       "ride": "Podczas jazdy",
       "return": "Zwrot",
       "incidents": "Szkody i pomoc drogowa"
-    }
+    },
+    "docsTitle": "Dokumenty",
+    "agreementDownload": "Umowa najmu (PDF, wszystkie języki)",
+    "manualDownload": "FAQ i warunki wynajmu (PDF, wszystkie języki)"
   },
   "terms": {
     "eyebrow": "Warunki rezerwacji",
@@ -398,7 +401,11 @@
       "submit": "Wyślij zgłoszenie",
       "submitting": "Wysyłanie...",
       "reviewLine": "Sprawdzimy zrzut ekranu twojej rezerwacji i potwierdzimy mailem, zwykle w ciągu kilku godzin. Wysyłając akceptujesz nasz",
-      "termsLink": "regulamin"
+      "termsLink": "regulamin",
+      "faqConfirm": "Przeczytałem/am FAQ i warunki wynajmu.",
+      "faqLinkShort": "FAQ",
+      "agreementLinkShort": "Umowa najmu (PDF)",
+      "experienceMeaning": "Doświadczenie w jeździe oznacza: prawo jazdy kat. AM zdobyłeś/aś przed kat. A lub B."
     },
     "reservation": {
       "title": "Rezerwacja",
@@ -509,36 +516,36 @@
   },
   "faqItems": [
     {
-      "question": "Co obejmuje pomoc drogowa?",
-      "answer": "Pomoc drogowa przy awariach technicznych oraz odzyskanie pojazdu po kradzieży są bezpłatne. W przypadkach zawinionych przez użytkownika (złapana guma, rozładowany akumulator, holowanie po wypadku): do 20 km bezpłatnie przy awarii mechanicznej, 30€ opłaty serwisowej za gumę i inne zawinione przypadki; powyżej 20 km opłata od 50€ zależnie od odległości, plus rzeczywiste koszty transportu. Dopłaty wyspowe: Preko 150€, Dugi Otok 500€. Wymiana kluczyka: 50€ w razie zgubienia, uszkodzenia lub zatrzaśnięcia w pojeździe."
+      "question": "Co obejmuje pomoc drogowa i jakie są koszty?",
+      "answer": "Pomoc drogowa w przypadku awarii technicznych/mechanicznych (np. uszkodzenie silnika) lub kradzieży jest BEZPŁATNA wraz z odbiorem i transportem pojazdu.\nW przypadku zdarzeń z winy najemcy (np. uszkodzenie opony, rozładowany akumulator, zgubienie kluczyka, upadek/wypadek) obowiązują następujące opłaty:\nDo 20 km promienia: bezpłatnie przy awarii mechanicznej, 30 € opłaty serwisowej przy winie najemcy, oponie lub wypadku.\nPowyżej 20 km: bezpłatnie przy awarii mechanicznej, od 50 € (zależnie od dystansu + transportu) przy winie najemcy, oponie lub wypadku.\nWyspa Preko: bezpłatnie przy awarii mechanicznej, 150 € ryczałtu przy winie najemcy, oponie lub wypadku.\nWyspa Dugi Otok: bezpłatnie przy awarii mechanicznej, 500 € ryczałtu przy winie najemcy, oponie lub wypadku."
     },
     {
-      "question": "W jakim stanie wydawany jest pojazd?",
-      "answer": "Wszystkie pojazdy i skutery są wydawane w idealnym stanie technicznym. Prosimy wypożyczających o sprawdzenie pojazdu, zrobienie wyraźnych zdjęć i nagrań przy odbiorze, dokumentujących wszelkie istniejące zarysowania lub uszkodzenia, oraz o zwrot w tym samym stanie. Te nagrania są oficjalnym dowodem w razie sporu."
+      "question": "W jakim stanie pojazd jest przekazywany i na co zwrócić uwagę?",
+      "answer": "Wszystkie pojazdy są przekazywane w nienagannym stanie technicznym. Dla obopólnego bezpieczeństwa najemca jest zobowiązany do:\nDokładnego sprawdzenia pojazdu przed rozpoczęciem jazdy.\nWykonania wyraźnych zdjęć i filmów ze wszystkich stron przy odbiorze (w tym istniejących rys/uszkodzeń).\nZwrotu pojazdu w tym samym udokumentowanym stanie (z wyjątkiem normalnego zużycia).\nNagrania te stanowią oficjalny dowód w razie ewentualnych kwestii spornych."
     },
     {
-      "question": "Jakie ubezpieczenie jest w cenie?",
-      "answer": "Ubezpieczenie podstawowe obejmuje kradzież pojazdu i awarię silnika. Wypadki, zarysowania, uszkodzenia i przebite opony są odpowiedzialnością wypożyczającego. Jeśli wypadek spowoduje osoba trzecia, musisz wezwać policję i uzyskać oficjalny raport. Odpowiedzialność ponosi sprawca."
+      "question": "Jakie ubezpieczenie jest wliczone w cenę wynajmu?",
+      "answer": "Cena wynajmu obejmuje ubezpieczenie podstawowe.\nObjęte ochroną: Kradzież pojazdu oraz awaria silnika/mechaniczna (o ile nie wynikają z błędu obsługi lub zaniedbania).\nBrak ochrony (Najemca odpowiada w pełni): Wszelkie uszkodzenia zewnętrzne, optyczne, strukturalne lub fizyczne spowodowane upadkiem, wypadkiem, wandalizmem, zarysowaniami i uszkodzeniami opon."
     },
     {
-      "question": "Jaka jest polityka anulowania?",
-      "answer": "Wszystkie rezerwacje są bezzwrotne. 20% zaliczki zabezpiecza twoje terminy i nie jest zwracane w przypadku anulowania. Jeśli pojazd stanie się niedostępny z powodu wypadku lub szkody wyrządzonej przez innego klienta, anulujemy i zwrócimy pełną kwotę."
+      "question": "Jakie są warunki anulowania rezerwacji?",
+      "answer": "Wszystkie rezerwacje są wiążące i bezzwrotne (non-refundable). W przypadku anulowania rezerwacji przez najemcę opłata za wynajem nie podlega zwrotowi."
     },
     {
-      "question": "Kiedy i gdzie zwracam pojazd?",
-      "answer": "O umówionej godzinie w umówionym miejscu. Dajemy 15 minut tolerancji. Spóźnienia powyżej tego wiążą się z dodatkowymi opłatami. Zwrot pod naszym adresem: Velebitska Ulica 2, 23000 Zadar."
+      "question": "Kiedy i gdzie należy zwrócić pojazd? Co w przypadku opóźnienia?",
+      "answer": "Pojazd należy zwrócić w uzgodnionym czasie i miejscu.\nOkres tolerancji: Obowiązuje 15 minut tolerancji. W przypadku zwrotu po upływie 15 minut lub poza godzinami otwarcia pobierana jest opłata manipulacyjna/operacyjna w wysokości 30 € do 50 €."
     },
     {
-      "question": "Kto odpowiada za wypadki lub obrażenia?",
-      "answer": "Wypożyczający bierze pełną odpowiedzialność za wszystkie wypadki, szkody lub obrażenia, które wystąpią w okresie wynajmu."
+      "question": "Kto odpowiada za wypadki lub szkody wyrządzone przez osoby trzecie?",
+      "answer": "Najemca ponosi pełną odpowiedzialność za wszelkie wypadki, szkody lub obrażenia w okresie wynajmu. Ważne przy winie osoby trzeciej: JEŚLI wypadek został spowodowany przez osobę trzecią, NALEŻY bezwzględnie wezwać policję i sporządzić oficjalny raport policyjny (Police Report). Sprawca lub jego ubezpieczyciel pokrywa szkody."
     },
     {
-      "question": "Co się stanie, jeśli pojazd zostanie uszkodzony?",
-      "answer": "W razie uszkodzenia podczas najmu zatrzymujemy kaucję na pokrycie pierwszych kosztów naprawy. Pojazd trafia do autoryzowanego dealera marki (np. Piaggio Center Zadar, KTM Moto Špica) w celu profesjonalnej wyceny. Najemca płaci pełny koszt naprawy według oficjalnej wyceny lub faktury dealera; jeśli przekracza on kaucję, dopłaca różnicę. Naprawy wykonywane są wyłącznie na oryginalnych częściach (OEM), a ty zawsze otrzymujesz oficjalną kopię wyceny, pełna przejrzystość."
+      "question": "Co dzieje się w przypadku uszkodzenia pojazdu? (Rozliczenie i Naprawa)",
+      "answer": "W przypadku uszkodzenia pojazdu obowiązuje następująca przejrzysta procedura:\n1. Kaucja zostaje zatrzymana na poczet wstępnych kosztów naprawy.\n2. Pojazd zostaje przewieziony do autoryzowanego serwisu w celu ekspertyzy i naprawy (np. Piaggio Center Zadar, KTM Moto Špica).\n3. Naprawa odbywa się wyłącznie przy użyciu oryginalnych części OEM.\n4. Najemca zobowiązuje się do pokrycia pełnych kosztów według oficjalnej faktury/kosztorysu serwisu. Jeśli koszt naprawy przekracza kaucję, należy dopłacić różnicę.\n5. Dla pełnej przejrzystości najemca otrzymuje kopię oficjalnej faktury z serwisu."
     },
     {
-      "question": "Co jeśli zgubię kluczyk?",
-      "answer": "Zapasowy kluczyk zostanie dostarczony za 50€ plus ewentualna opłata za pomoc drogową w zależności od lokalizacji."
+      "question": "Co zrobić w przypadku zgubienia kluczyka do pojazdu?",
+      "answer": "W przypadku zgubienia, uszkodzenia lub zatrzaśnięcia kluczyka dostarczony zostanie kluczyk zastępczy. Pobierana jest opłata ryczałtowa w wysokości 50 €, plus koszty dojazdu/pomocy drogowej w zależności od lokalizacji."
     },
     {
       "question": "Jak dokonać rezerwacji?",
@@ -558,7 +565,11 @@
     },
     {
       "question": "Co jeśli uznacie, że nie mam wystarczającego doświadczenia?",
-      "answer": "Jazda wymaga wcześniejszego doświadczenia. Jeśli przy odbiorze uznamy, że nie masz wystarczającego doświadczenia, by bezpiecznie jeździć skuterem lub motocyklem, zastrzegamy sobie prawo odmowy najmu. Zaliczka w takim przypadku nie podlega zwrotowi, dlatego przy rezerwacji szczerze opisz swoje doświadczenie."
+      "answer": "Jazda wymaga wcześniejszego doświadczenia. Doświadczenie w jeździe oznacza, że twoje prawo jazdy kategorii AM zostało wydane przed twoim prawem jazdy kategorii A lub B. Jeśli przy odbiorze uznamy, że nie masz wystarczającego doświadczenia, by bezpiecznie jeździć skuterem lub motocyklem, zastrzegamy sobie prawo odmowy najmu. Zaliczka w takim przypadku nie podlega zwrotowi, dlatego przy rezerwacji szczerze opisz swoje doświadczenie."
+    },
+    {
+      "question": "Jakie szczególne warunki drogowe i jezdne obowiązują w Zadarze?",
+      "answer": "Podpisując umowę najemca potwierdza:\nPosiadanie ważnego prawa jazdy odpowiedniej kategorii oraz wystarczające doświadczenie w prowadzeniu pojazdu.\nZapoznanie się z trudnymi lokalnymi warunkami drogowymi w Zadarze i okolicach (w szczególności niezwykle śliski, polerowany asfalt nadmorski, nagromadzenie pyłu i ryzyko poślizgu na mokrej nawierzchni).\nUwaga: Wiążące dla stosunku najmu są warunki umowy (Terms & Conditions) SickMotos d.o.o. podpisane podczas przekazania pojazdu."
     }
   ],
   "common": {
@@ -595,7 +606,12 @@
       "cancelLine": "Plany się zmieniły?",
       "cancelLink": "Anuluj tę rezerwację",
       "cancelTail": ", terminy od razu zwolnią się dla kogoś innego.",
-      "lateLine": "Jeśli spóźnisz się ponad 1 godzinę bez uprzedzenia, rezerwacja zostanie automatycznie anulowana, bez zwrotu pieniędzy."
+      "lateLine": "Jeśli spóźnisz się ponad 1 godzinę bez uprzedzenia, rezerwacja zostanie automatycznie anulowana, bez zwrotu pieniędzy.",
+      "readHeader": "Przeczytaj przed odbiorem",
+      "readLine": "Do Twojej rezerwacji mają zastosowanie nasze FAQ i warunki wynajmu. Przeczytaj je przed odbiorem pojazdu.",
+      "faqLink": "Przeczytaj FAQ",
+      "agreementLink": "Umowa najmu (PDF)",
+      "toursHeader": "Pomysły na trasy dla Ciebie"
     },
     "bookingDeclined": {
       "subject": "Aktualizacja twojej rezerwacji, {bike}",
@@ -706,7 +722,8 @@
     "at": "o",
     "freeIfReturnBy": "Wolne przy zwrocie do",
     "useReturn": "Użyj tego zwrotu",
-    "depositSummary": "Kaucja: {count} × {each} = {total}"
+    "depositSummary": "Kaucja: {count} × {each} = {total}",
+    "errFaq": "Potwierdź, że przeczytałeś/aś FAQ i warunki wynajmu."
   },
   "chatbot": {
     "openLabel": "Otwórz czat",

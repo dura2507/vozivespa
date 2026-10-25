@@ -170,7 +170,10 @@
       "ride": "Durante il noleggio",
       "return": "Restituzione",
       "incidents": "Danni e assistenza"
-    }
+    },
+    "docsTitle": "Documenti",
+    "agreementDownload": "Contratto di noleggio (PDF, tutte le lingue)",
+    "manualDownload": "FAQ e condizioni di noleggio (PDF, tutte le lingue)"
   },
   "terms": {
     "eyebrow": "Termini di prenotazione",
@@ -398,7 +401,11 @@
       "submit": "Invia richiesta",
       "submitting": "Invio in corso...",
       "reviewLine": "Esamineremo il tuo screenshot di pagamento e confermeremo via email, di solito entro poche ore. Inviando accetti i nostri",
-      "termsLink": "termini"
+      "termsLink": "termini",
+      "faqConfirm": "Ho letto le FAQ e le condizioni di noleggio.",
+      "faqLinkShort": "FAQ",
+      "agreementLinkShort": "Contratto di noleggio (PDF)",
+      "experienceMeaning": "Esperienza di guida significa: hai preso la patente AM prima della patente A o B."
     },
     "reservation": {
       "title": "Prenotazione",
@@ -509,36 +516,36 @@
   },
   "faqItems": [
     {
-      "question": "Cosa include il servizio di soccorso?",
-      "answer": "Il soccorso stradale per guasti tecnici o di manutenzione e il recupero dopo furto sono gratuiti. Per i casi causati dall'utente (foratura, batteria scarica, traino dopo incidente): fino a 20 km gratis per guasti meccanici, con 30€ di costo servizio per forature e altri casi causati dall'utente; oltre 20 km il costo parte da 50€ in base alla distanza, più i costi reali di trasporto e recupero. Supplementi isole: Preko 150€, Dugi Otok 500€. Sostituzione chiave: 50€ in caso di smarrimento, danneggiamento o chiave chiusa nel mezzo."
+      "question": "Cosa include l'assistenza stradale e quali sono i costi?",
+      "answer": "L'assistenza stradale per guasti tecnici/meccanici (es. guasto al motore) o gestione furto è GRATUITA incl. ritiro e trasporto del veicolo.\nPer incidenti causati dal cliente (es. foratura, batteria scarica, smarrimento chiavi, caduta/incidente) si applicano le seguenti tariffe:\nFino a 20 km: GRATIS per guasto meccanico, 30 € costo servizio per colpa del cliente, pneumatico o incidente.\nOltre 20 km di distanza: GRATIS per guasto meccanico, da 50 € (in base a distanza + trasporto) per colpa del cliente, pneumatico o incidente.\nIsola di Preko: GRATIS per guasto meccanico, 150 € quota fissa per colpa del cliente, pneumatico o incidente.\nIsola di Dugi Otok: GRATIS per guasto meccanico, 500 € quota fissa per colpa del cliente, pneumatico o incidente."
     },
     {
-      "question": "In che condizioni viene consegnata la moto?",
-      "answer": "Tutte le moto e gli scooter vengono consegnati in perfette condizioni di funzionamento. Chiediamo al cliente di ispezionare la moto, fare foto e video chiari al ritiro documentando graffi o danni esistenti, e restituirla nelle stesse condizioni. Queste registrazioni sono prova ufficiale in caso di contestazione."
+      "question": "In quali condizioni viene consegnato il veicolo e cosa devo verificare?",
+      "answer": "Tutti i veicoli sono consegnati in perfette condizioni di funzionamento. Per garanzia reciproca il cliente è tenuto a:\nControllare attentamente il veicolo prima di partire.\nScattare foto e video chiari da ogni angolazione al momento del ritiro (inclusi graffi/danni preesistenti).\nRestituire il veicolo nello stesso stato documentato (eccetto normale usura).\nTali prove serviranno in caso di contestazioni."
     },
     {
-      "question": "Che assicurazione è inclusa?",
-      "answer": "L'assicurazione base copre furto della moto e danni al motore. Incidenti, graffi, danni e forature sono a carico del cliente. Se un terzo causa un incidente, devi chiamare la polizia e ottenere un rapporto ufficiale. Il responsabile paga."
+      "question": "Quale assicurazione è inclusa nel prezzo di noleggio?",
+      "answer": "Il prezzo di noleggio include un'assicurazione base.\nCoperto: Furto del veicolo e guasti meccanici/motore (se non causati da errori di manovra o negligenza).\nNON coperto (Cliente responsabile al 100%): Tutti i danni estetici, strutturali o fisici causati da cadute, incidenti, atti vandalici, graffi e forature dei pneumatici."
     },
     {
-      "question": "Qual è la politica di cancellazione?",
-      "answer": "Tutte le prenotazioni non sono rimborsabili. Il 20% di caparra blocca le tue date e non viene restituito in caso di cancellazione. Se una moto non è disponibile per incidente o danno causato da un altro cliente, annulliamo e rimborsiamo l'intero importo."
+      "question": "Quali sono le condizioni di cancellazione?",
+      "answer": "Tutte le prenotazioni sono vincolanti e non rimborsabili. In caso di cancellazione da parte del cliente non è previsto alcun rimborso."
     },
     {
-      "question": "Quando e dove riconsegno la moto?",
-      "answer": "All'orario e luogo concordati. Diamo 15 minuti di tolleranza. Ritardi oltre questa soglia comportano costi extra. Riconsegna al nostro indirizzo: Velebitska Ulica 2, 23000 Zadar."
+      "question": "Quando e dove deve essere restituito il veicolo? Cosa succede in caso di ritardo?",
+      "answer": "Il veicolo deve essere restituito all'orario e nel luogo concordati.\nTolleranza: È prevista una tolleranza di 15 minuti. Per restituzioni oltre i 15 minuti o fuori orario di apertura si applica una penale amministrativa/operativa da 30 € a 50 €."
     },
     {
-      "question": "Chi è responsabile per incidenti o lesioni?",
-      "answer": "Il cliente si assume la piena responsabilità per tutti gli incidenti, danni o lesioni che si verificano durante il periodo di noleggio."
+      "question": "Chi è responsabile in caso di incidenti o danni causati da terzi?",
+      "answer": "Il cliente è pienamente responsabile per tutti gli incidenti, danni o lesioni durante il noleggio. FONDAMENTALE in caso di colpa di terzi: SE l'incidente è stato causato da terzi, È OBBLIGATORIO chiamare la polizia e far redigere un verbale ufficiale (Police Report). Il responsabile o la sua assicurazione risponderà dei danni."
     },
     {
-      "question": "Cosa succede se la moto si danneggia?",
-      "answer": "In caso di danni durante il noleggio tratteniamo la cauzione per coprire i primi costi di riparazione. Il mezzo viene portato a un concessionario autorizzato del marchio (es. Piaggio Center Zadar, KTM Moto Špica) per una valutazione professionale. Il noleggiatore paga l'intero costo della riparazione secondo il preventivo o la fattura ufficiale del concessionario; se supera la cauzione, paga la differenza. Tutte le riparazioni usano ricambi originali (OEM) e ricevi sempre una copia ufficiale del preventivo, massima trasparenza."
+      "question": "Cosa succede in caso di danni al veicolo? (Fatturazione e Riparazione)",
+      "answer": "In caso di danni al veicolo si applica la seguente procedura trasparente:\n1. Il deposito cauzionale viene trattenuto per coprire le prime spese di riparazione.\n2. Il veicolo viene portato presso un'officina autorizzata per perizia e riparazione (es. Piaggio Center Zadar, KTM Moto Špica).\n3. Le riparazioni avvengono esclusivamente con ricambi originali OEM.\n4. Il cliente si impegna a saldare l'importo totale secondo il preventivo/fattura dell'officina. Se i costi superano la cauzione, occorre integrare la differenza.\n5. Per la massima trasparenza, il cliente riceverà copia della fattura ufficiale dell'officina."
     },
     {
-      "question": "Cosa succede se perdo la chiave?",
-      "answer": "Una chiave di ricambio viene consegnata per 50€ più la tariffa di soccorso applicabile in base alla tua posizione."
+      "question": "Cosa devo fare se perdo la chiave del veicolo?",
+      "answer": "In caso di smarrimento, danno o chiusura della chiave all'interno, verrà fornita una chiave di riserva. Viene addebitata una quota fissa di 50 €, più eventuali spese di chiamata o assistenza in base alla posizione."
     },
     {
       "question": "Come faccio una prenotazione?",
@@ -558,7 +565,11 @@
     },
     {
       "question": "E se decidete che non ho abbastanza esperienza?",
-      "answer": "Guidare richiede esperienza pregressa. Se al ritiro riteniamo che tu non abbia abbastanza esperienza per gestire in sicurezza lo scooter o la moto, ci riserviamo il diritto di rifiutare il noleggio. In tal caso l'acconto non è rimborsabile, quindi sii sincero sulla tua esperienza al momento della prenotazione."
+      "answer": "Guidare richiede esperienza pregressa. Per esperienza di guida si intende che hai conseguito la patente AM prima della patente A o B. Se al ritiro riteniamo che tu non abbia abbastanza esperienza per gestire in sicurezza lo scooter o la moto, ci riserviamo il diritto di rifiutare il noleggio. In tal caso l'acconto non è rimborsabile, quindi sii sincero sulla tua esperienza al momento della prenotazione."
+    },
+    {
+      "question": "Quali condizioni stradali particolari valgono a Zara (Zadar)?",
+      "answer": "Con la firma il cliente conferma:\nDi possedere una patente valida per la categoria di veicolo e sufficiente esperienza di guida.\nDi essere informato sulle impegnative condizioni del traffico locale a Zara (in particolare asfalto costiero levigato e scivoloso, accumuli di polvere e pericolo di sbandamento con la pioggia).\nNota: Fanno fede le Condizioni Generali di Noleggio (Terms & Conditions) della SickMotos d.o.o. firmate al momento della consegna."
     }
   ],
   "common": {
@@ -595,7 +606,12 @@
       "cancelLine": "Cambiati i piani?",
       "cancelLink": "Annulla la prenotazione",
       "cancelTail": ", le date si liberano subito per qualcun altro.",
-      "lateLine": "Se arrivi con più di 1 ora di ritardo senza avvisare, la prenotazione viene annullata automaticamente, senza rimborso."
+      "lateLine": "Se arrivi con più di 1 ora di ritardo senza avvisare, la prenotazione viene annullata automaticamente, senza rimborso.",
+      "readHeader": "Da leggere prima del ritiro",
+      "readLine": "Alla tua prenotazione si applicano le nostre FAQ e le condizioni di noleggio. Leggile prima di ritirare il mezzo.",
+      "faqLink": "Leggi le FAQ",
+      "agreementLink": "Contratto di noleggio (PDF)",
+      "toursHeader": "Itinerari consigliati per il tuo giro"
     },
     "bookingDeclined": {
       "subject": "Aggiornamento sulla tua prenotazione, {bike}",
@@ -706,7 +722,8 @@
     "at": "alle",
     "freeIfReturnBy": "Libera se reso entro",
     "useReturn": "Usa quest'orario di reso",
-    "depositSummary": "Cauzione: {count} × {each} = {total}"
+    "depositSummary": "Cauzione: {count} × {each} = {total}",
+    "errFaq": "Conferma di aver letto le FAQ e le condizioni di noleggio."
   },
   "chatbot": {
     "openLabel": "Apri chat",

@@ -146,11 +146,11 @@ WHAT'S NOT ALLOWED / NOT INCLUDED
 - Phone holders on the bike (not allowed).
 - Children under 16 as passengers.
 - Riding without a valid licence.
-- Riding without enough real experience (we can refuse at pickup, without refund).
+- Riding without enough real experience (we can refuse at pickup, without refund). Riding experience means: the AM licence was obtained BEFORE the A or B licence (owner definition, 2026-10).
 
 INSURANCE & LIABILITY (owner-confirmed, official FAQ - you may state this)
-- Included: basic protection covering theft of the bike and engine/maintenance-fault damage. This cover includes pickup and/or a replacement bike, wherever the renter is; for engine damage we cover all costs.
-- The renter is fully responsible for accidents, damage, scratches and tyre damage - i.e. everything except theft and engine/maintenance faults. If a third party causes an accident, the renter must call the police and get an official report; the responsible party is liable.
+- Included: basic protection covering theft of the bike and mechanical/engine breakdowns (unless caused by operating error or negligence). This cover includes pickup and/or a replacement bike, wherever the renter is; for engine damage we cover all costs.
+- NOT covered, the renter is fully liable: all external, cosmetic, structural or physical damage from falls, accidents, vandalism, scratches, and tyre punctures/flats - i.e. everything except theft and mechanical/engine faults. If a third party causes an accident, the renter must call the police and get an official report; the responsible party is liable.
 - No fully-comprehensive ("Vollkasko") insurance is offered on any model.
 
 ROADSIDE ASSISTANCE & LOST KEY (official figures, updated 2026-08-29 - you may state these)
@@ -163,12 +163,17 @@ DAMAGE HANDLING (official FAQ, updated 2026-08-29)
 - The deposit is held to cover the initial repair; the vehicle goes to an authorized brand dealership (e.g. Piaggio Center Zadar, KTM Moto Spica) for professional assessment; the renter pays the full repair cost per the dealer's official quotation or invoice, and the difference if it exceeds the deposit. Repairs use original OEM parts only; an official copy of the quotation is always shared for transparency.
 - Tip you can give: at pickup, photograph/film the bike from all sides (including any existing scratches) - it documents the condition and protects both sides in case of a dispute.
 
-LATE RETURN
-- 15-minute grace period, then extra fees apply.
+LATE RETURN (owner FAQ, 2026-10)
+- 15-minute grace period. Returns after that, or outside standard business hours, cost an administrative/operational fee of 30 to 50 euro.
+- A late return BOOKED IN ADVANCE as an add-on is the flat 30 euro from OUTSIDE-HOURS SURCHARGE below.
 
-CANCELLATION
-- If the customer cancels: the 20% reservation fee is not refunded.
+CANCELLATION (owner FAQ, 2026-10)
+- All bookings are binding and non-refundable: if the customer cancels, there is no refund (in practice the 20% reservation fee paid upfront is kept).
 - If we cancel at handover (unsafe behaviour / insufficient riding experience): the fee is not refunded.
+
+ROAD CONDITIONS (owner FAQ, 2026-10)
+- By signing the rental agreement the renter confirms a valid licence for the vehicle category and sufficient riding experience, and that they were told about the demanding local roads: very slippery polished coastal asphalt, dust, and slip risk when wet. Mention this when someone asks about safety or riding in Zadar.
+- The signed terms at pickup are what legally applies; the FAQ explains them.
 
 OUTSIDE-HOURS SURCHARGE
 - Early pickup 07:00-08:59, or late return 19:00-22:00: flat 30€ per rental. Can be added directly to the booking.
@@ -285,7 +290,8 @@ function pageLinks(locale: Locale): string {
     `- Photo gallery: ${base}/gallery`,
     `- Contact (WhatsApp / email): ${base}/contact`,
     `- Reservation terms (PDF, share if a visitor wants the full booking terms): ${SITE_URL}/docs/reservation-terms.pdf`,
-    `- Detailed rental FAQ (PDF, in German): ${SITE_URL}/docs/sickmotos-faq-de.pdf`,
+    `- FAQ & rental terms (PDF, all 11 site languages): ${SITE_URL}/docs/sickmotos-faq.pdf`,
+    `- Rental agreement (PDF, all languages; it is signed at pickup): ${SITE_URL}/docs/sickmotos-rental-agreement.pdf`,
   ].join("\n");
 }
 

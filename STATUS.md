@@ -10,7 +10,40 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-10-15 (Krileo credit in chat widget + customer emails).
+Last updated: 2026-10-25 (Thomas' list of 05.10: the non-billable items).
+
+## Thomas' list from 2026-10-05: non-billable items shipped 2026-10-25
+
+Source: Thomas' message + 8 PDFs, forwarded privately to the bot on 2026-10-21. The
+authoritative content is his "SickMotos_Rental_Zadar_Multilingual_FAQ_Manual.pdf"
+(9 Q&A in all 11 site languages); older PDFs contradict it and are superseded.
+1. Admin "Mark as returned" looked hung: the button waited for router.refresh() (which keeps
+   client state) before un-busying. Now shows "✓ Returned" immediately, refresh runs in a
+   transition, state resets when the instance gets another booking/action.
+2. Confirmation emails (single + group, HTML + text): "please read before pickup" box with
+   FAQ link + rental agreement PDF, and tour tips for the booked model(s) from lib/tours.ts
+   (deduped in groups; Liberty 125 has no tour by Thomas' mapping, so no block).
+3. Mandatory checkbox "I have read the FAQ and rental terms" in BikeDetail (canSubmit) and
+   GroupBooking (handleSubmit, group.errFaq). CLIENT-SIDE ONLY on purpose: a cached old
+   page bundle must never get a hard server error. Plus fleet.form.experienceMeaning
+   ("riding experience = AM licence obtained before A or B", Kristian's definition).
+4. FAQ: faqItems 0-7 replaced by Thomas' manual (verbatim, PDF artifacts cleaned, every
+   amount verified per language by a second agent), 12 got the experience definition,
+   13 is new (road conditions). The FAQ page maps categories BY POSITION (ITEM_CATEGORIES,
+   now 14) - keep the order. Accordion is now grid 0fr/1fr + whitespace-pre-line (a fixed
+   max-h clipped the roadside fee lines on phones; found by the cross-check).
+   NOTE: Thomas' cancellation text drops the old clause "if a bike becomes unavailable due
+   to damage by another client we refund in full" - flagged to him.
+5. public/docs: sickmotos-rental-agreement.pdf + sickmotos-faq.pdf (multilingual manual);
+   sickmotos-faq-de.pdf overwritten with the manual (the chatbot used to hand out the OLD
+   German FAQ with the outdated "free up to 20 km even if self-caused" rule). FAQ page has
+   a Documents box. Chatbot knowledge aligned (insurance, late fee 30-50 EUR, cancellation,
+   road conditions, experience definition, PDF links).
+OPEN: DMARC record for rentamotozadar.com (domain lives in another Vercel account than
+this machine's CLI, Kristian adds it); /terms page still carries older roadside/repair
+wording (pre-existing, needs Thomas' OK to align).
+
+Previously: 2026-10-15 (Krileo credit in chat widget + customer emails).
 
 ## Krileo credit (2026-10-15)
 

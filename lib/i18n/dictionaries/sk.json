@@ -170,7 +170,10 @@
       "ride": "Počas jazdy",
       "return": "Vrátenie",
       "incidents": "Poškodenie a asistencia"
-    }
+    },
+    "docsTitle": "Dokumenty",
+    "agreementDownload": "Zmluva o prenájme (PDF, všetky jazyky)",
+    "manualDownload": "FAQ a podmienky prenájmu (PDF, všetky jazyky)"
   },
   "terms": {
     "eyebrow": "Podmienky rezervácie",
@@ -398,7 +401,11 @@
       "submit": "Odoslať žiadosť",
       "submitting": "Odosielanie...",
       "reviewLine": "Skontrolujeme screenshot tvojej rezervácie a potvrdíme e-mailom, zvyčajne do pár hodín. Odoslaním súhlasíš s našimi",
-      "termsLink": "podmienkami"
+      "termsLink": "podmienkami",
+      "faqConfirm": "Prečítal/a som si FAQ a podmienky prenájmu.",
+      "faqLinkShort": "FAQ",
+      "agreementLinkShort": "Zmluva o prenájme (PDF)",
+      "experienceMeaning": "Skúsenosť s jazdou znamená: vodičský preukaz AM si získal/a pred skupinou A alebo B."
     },
     "reservation": {
       "title": "Rezervácia",
@@ -509,36 +516,36 @@
   },
   "faqItems": [
     {
-      "question": "Čo zahŕňa asistenčná služba?",
-      "answer": "Asistenčná služba pri technických poruchách a vyzdvihnutie po krádeži sú zadarmo. Pri prípadoch zavinených používateľom (defekt, vybitá batéria, odtiahnutie po nehode): do 20 km zadarmo pri mechanickej poruche, 30€ servisný poplatok za defekt a iné zavinené prípady; nad 20 km poplatok od 50€ podľa vzdialenosti plus skutočné náklady na prepravu. Príplatky za ostrovy: Preko 150€, Dugi Otok 500€. Náhradný kľúč: 50€ pri strate, poškodení alebo zabuchnutí kľúča vo vozidle."
+      "question": "Čo zahŕňa cestná pomoc a aké poplatky sa uplatňujú?",
+      "answer": "Cestná pomoc pri technických/mechanických poruchách (napr. porucha motora) alebo pri krádeži je BEZPLATNÁ vrátane odtahu a prepravy vozidla.\nZa incidenty spôsobené nájomcom (napr. defekt, vybitá batéria, strata kľúča, pád/nehoda) platia nasledujúce poplatky:\nDo okruhu 20 km: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode 30 € servisný poplatok.\nVzdialenosť nad 20 km: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode od 50 € (podľa vzdialenosti + dopravy).\nOstrov Preko: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode 150 € paušál.\nOstrov Dugi Otok: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode 500 € paušál."
     },
     {
-      "question": "V akom stave je bike odovzdaný?",
-      "answer": "Všetky biky a skútre odovzdávame v dokonalom prevádzkovom stave. Žiadame nájomcov, aby si bike skontrolovali, urobili jasné fotky a videá pri vyzdvihnutí dokumentujúce akékoľvek existujúce škrabance alebo poškodenia, a vrátili ho v rovnakom stave. Tieto záznamy sú oficiálnym dôkazom v prípade sporu."
+      "question": "V akom stave sa vozidlo odovzdáva a na čo dbať pri prevzatí?",
+      "answer": "Všetky vozidlá sa odovzdávajú v bezchybnom, práceschopnom stave. Pre vzájomnú ochranu je nájomca povinný:\nPred jazdou vozidlo dôkladne skontrolovať.\nPri prevzatí urobiť jasné fotografie a videá zo všetkých uhlov (vrátane existujúcich škrabancov/poškodení).\nVrátiť vozidlo v rovnakom zdokumentovanom stave (okrem bežného opotrebovania).\nTieto záznamy slúžia ako oficiálny dôkaz v prípade nejasností."
     },
     {
-      "question": "Aké poistenie je v cene?",
-      "answer": "Základné poistenie kryje krádež bika a poškodenie motora. Nehody, škrabance, poškodenia a defekty pneumatík sú zodpovednosťou nájomcu. Ak nehodu spôsobí tretia strana, musíš zavolať políciu a získať oficiálnu správu. Zodpovedná strana ručí."
+      "question": "Aké poistenie je zahrnuté v cene prenájmu?",
+      "answer": "V cene prenájmu je zahrnuté základné poistenie.\nKryté: Krádež vozidla a mechanické poruchy/poruchy motora (pokiaľ neboli spôsobené chybou obsluhy alebo nedbanlivosťou).\nNEKRYTÉ (Nájomca zodpovedá v plnom rozsahu): Všetky vonkajšie, optické, štrukturálne alebo fyzické poškodenia spôsobené pádom, nehodou, vandalizmom, škrabancami a defektmi pneumatík."
     },
     {
-      "question": "Aké sú vaše storno podmienky?",
-      "answer": "Všetky rezervácie sú nevratné. 20% rezervačný poplatok zaistí tvoje termíny a v prípade zrušenia sa nevracia. Ak sa bike stane nedostupným pre nehodu alebo poškodenie spôsobené iným klientom, zrušíme a vrátime celú sumu."
+      "question": "Aké sú storno podmienky?",
+      "answer": "Všetky rezervácie sú záväzné a nevratné (non-refundable). V prípade storna zo strany nájomcu sa nájomné nevracia."
     },
     {
-      "question": "Kedy a kde bike vraciam?",
-      "answer": "V dohodnutom čase a na dohodnutom mieste. Poskytujeme 15-minútovú toleranciu. Neskoré vrátenia nad tento rámec sú spoplatnené. Odovzdanie na našej adrese: Velebitska Ulica 2, 23000 Zadar."
+      "question": "Kedy a kde sa musí vozidlo vrátiť? Čo platí pri meškaní?",
+      "answer": "Vozidlo sa musí vrátiť v dohodnutom čase a na dohodnutom mieste.\nTolerancia: Platí dodatočná lehota (Grace Period) 15 minút. Pri vrátení po uplynutí 15 minút alebo mimo otváracích hodín sa účtuje administratívny/prevádzkový poplatok 30 € až 50 €."
     },
     {
-      "question": "Kto je zodpovedný za nehody alebo zranenia?",
-      "answer": "Nájomca preberá plnú zodpovednosť za všetky nehody, škody alebo zranenia, ktoré sa stanú počas obdobia prenájmu."
+      "question": "Kto zodpovedá za nehody alebo škody spôsobené treťou stranou?",
+      "answer": "Nájomca nesie plnú zodpovednosť za všetky nehody, škody alebo zranenia počas doby prenájmu. Dôležité pri zavinení treťou stranou: AK bola nehoda spôsobená treťou stranou, MUSÍ byť privolaná polícia a vyhotovená oficiálna policajná správa (Police Report). Vinník alebo jeho poisťovňa hradí škody."
     },
     {
-      "question": "Čo sa stane, ak je bike poškodený?",
-      "answer": "Pri poškodení počas prenájmu zadržíme kauciu na pokrytie prvotných nákladov na opravu. Bike odvezieme k autorizovanému predajcovi značky (napr. Piaggio Center Zadar, KTM Moto Špica) na odborné posúdenie. Nájomca hradí plné náklady na opravu podľa oficiálnej kalkulácie alebo faktúry predajcu; ak presiahnu kauciu, doplatí rozdiel. Opravuje sa výhradne originálnymi dielmi (OEM) a vždy dostaneš oficiálnu kópiu kalkulácie, plná transparentnosť."
+      "question": "Čo sa stane v prípade poškodenia vozidla? (Zúčtovanie a Oprava)",
+      "answer": "Pri poškodení vozidla platí nasledujúci transparentný postup:\n1. Kaucia sa najprv zadrží na pokrytie prvotných nákladov na opravu.\n2. Vozidlo sa odvezie do autorizovaného servisu na odbornú prehliadku a opravu (napr. Piaggio Center Zadar, KTM Moto Špica).\n3. Oprava sa vykonáva výhradne s originálnymi OEM náhradnými dielmi.\n4. Nájomca sa zaväzuje uhradiť celkové náklady podľa oficiálnej faktúry/rozpočtu servisu. Ak náklady prekročia kauciu, rozdiel je potrebné doplatiť.\n5. Pre úplnú transparentnosť dostane nájomca kópiu oficiálnej faktúry."
     },
     {
-      "question": "Čo ak stratím kľúč?",
-      "answer": "Náhradný kľúč dodáme za 50€ plus prípadný poplatok za asistenčnú službu podľa tvojej lokality."
+      "question": "Čo mám robiť v prípade straty kľúča od vozidla?",
+      "answer": "V prípade straty, poškodenia alebo zabuchnutia kľúča bude doručený náhradný kľúč. Účtuje sa paušálny poplatok 50 €, plus prípadné výjazdové náklady podľa lokality."
     },
     {
       "question": "Ako urobím rezerváciu?",
@@ -558,7 +565,11 @@
     },
     {
       "question": "Čo ak rozhodnete, že nemám dosť skúseností?",
-      "answer": "Jazda vyžaduje predchádzajúcu skúsenosť. Ak pri vyzdvihnutí usúdime, že nemáš dosť skúseností na bezpečné ovládanie skútra alebo motorky, vyhradzujeme si právo prenájom odmietnuť. Záloha sa v takom prípade nevracia, preto pri rezervácii uveď svoje skúsenosti pravdivo."
+      "answer": "Jazda vyžaduje predchádzajúcu skúsenosť. Skúsenosť s jazdou znamená, že si vodičský preukaz skupiny AM urobil pred vodičským preukazom skupiny A alebo B. Ak pri vyzdvihnutí usúdime, že nemáš dosť skúseností na bezpečné ovládanie skútra alebo motorky, vyhradzujeme si právo prenájom odmietnuť. Záloha sa v takom prípade nevracia, preto pri rezervácii uveď svoje skúsenosti pravdivo."
+    },
+    {
+      "question": "Aké osobitné cestné a jazdné podmienky platia v Zadare?",
+      "answer": "Podpisom nájomca potvrdzuje:\nŽe je držiteľom platného vodičského preukazu pre príslušnú kategóriu a má dostatočné skúsenosti s jazdou.\nŽe bol informovaný o náročných miestnych podmienkach v Zadare (najmä extrémne šmykľavý leštený pobrežný asfalt, prach a riziko šmyku za mokra).\nPoznámka: Pre nájomný vzťah sú rozhodujúce podmienky prenájmu (Terms & Conditions) spoločnosti SickMotos d.o.o. podpísané pri odovzdaní."
     }
   ],
   "common": {
@@ -595,7 +606,12 @@
       "cancelLine": "Zmenili sa plány?",
       "cancelLink": "Zrušiť túto rezerváciu",
       "cancelTail": ", termíny sa okamžite uvoľnia pre niekoho iného.",
-      "lateLine": "Ak prídeš s viac ako hodinovým meškaním bez ohlásenia, rezervácia sa automaticky zruší bez náhrady."
+      "lateLine": "Ak prídeš s viac ako hodinovým meškaním bez ohlásenia, rezervácia sa automaticky zruší bez náhrady.",
+      "readHeader": "Prečítaj si pred vyzdvihnutím",
+      "readLine": "Na tvoju rezerváciu sa vzťahujú naše časté otázky (FAQ) a podmienky prenájmu. Prečítaj si ich, prosím, pred vyzdvihnutím vozidla.",
+      "faqLink": "Prečítať FAQ",
+      "agreementLink": "Zmluva o prenájme (PDF)",
+      "toursHeader": "Tipy na výlety pre tvoju jazdu"
     },
     "bookingDeclined": {
       "subject": "Aktualizácia tvojej rezervácie, {bike}",
@@ -706,7 +722,8 @@
     "at": "o",
     "freeIfReturnBy": "Voľné, ak vrátiš do",
     "useReturn": "Použiť čas vrátenia",
-    "depositSummary": "Kaucia: {count} × {each} = {total}"
+    "depositSummary": "Kaucia: {count} × {each} = {total}",
+    "errFaq": "Potvrď, prosím, že si si prečítal/a FAQ a podmienky prenájmu."
   },
   "chatbot": {
     "openLabel": "Otvoriť chat",

@@ -112,6 +112,8 @@ export default function GroupBooking({
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [driversLicence, setDriversLicence] = useState<string>("");
+  // "FAQ gelesen" (Thomas 2026-10-05). Client-side only, see BikeDetail.
+  const [faqAccepted, setFaqAccepted] = useState(false);
   const [licenceCountry, setLicenceCountry] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod["id"]>("paypal_ff");
   const [receipt, setReceipt] = useState<File | null>(null);
@@ -320,6 +322,10 @@ export default function GroupBooking({
     }
     if (!driversLicence) {
       setSubmitError(dict.group.errLicence);
+      return;
+    }
+    if (!faqAccepted) {
+      setSubmitError(dict.group.errFaq);
       return;
     }
     const online = payMode !== "screenshot";
@@ -888,11 +894,12 @@ export default function GroupBooking({
                   <label className="block">
                     <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.lblLicence} *</span>
                     <select value={driversLicence} onChange={(e) => setDriversLicence(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white">
-                      <option value="">—</option>
+                      <option value="">-</option>
                       {LICENCE_OPTIONS.map((l) => (
                         <option key={l.value} value={l.value}>{l.label}</option>
                       ))}
                     </select>
+                    <span className="block text-muted text-xs mt-1 leading-snug">{dict.fleet.form.experienceMeaning}</span>
                   </label>
                   <label className="block">
                     <span className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{g.lblLicenceCountry}</span>
@@ -1076,6 +1083,25 @@ export default function GroupBooking({
                   </>
                   )}
                 </div>
+
+                <label className="flex items-start gap-3 text-sm text-ink cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={faqAccepted}
+                    onChange={(e) => setFaqAccepted(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 shrink-0 accent-red"
+                  />
+                  <span>
+                    {dict.fleet.form.faqConfirm} *{" "}
+                    <a href={`/${lang}/faq`} target="_blank" rel="noopener noreferrer" className="text-red underline">
+                      {dict.fleet.form.faqLinkShort}
+                    </a>
+                    {" · "}
+                    <a href="/docs/sickmotos-rental-agreement.pdf" target="_blank" rel="noopener noreferrer" className="text-red underline">
+                      {dict.fleet.form.agreementLinkShort}
+                    </a>
+                  </span>
+                </label>
 
                 {submitError && <p className="text-red text-sm font-semibold">{submitError}</p>}
 

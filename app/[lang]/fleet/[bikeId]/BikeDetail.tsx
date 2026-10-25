@@ -112,6 +112,10 @@ export default function BikeDetail({
     notes: "",
   });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId>("paypal_ff");
+  // Thomas 2026-10-05: "FAQ muss gelesen werden". Client-side gate only:
+  // the server deliberately does NOT require it, so a visitor with an older
+  // cached page bundle can still book instead of hitting a hard error.
+  const [faqAccepted, setFaqAccepted] = useState(false);
   const [driversLicence, setDriversLicence] = useState<Licence | "">("");
   const [licenceCountry, setLicenceCountry] = useState("");
   const [ridingStyle, setRidingStyle] = useState<RidingStyleId | "">("");
@@ -760,7 +764,8 @@ export default function BikeDetail({
     totalPrice > 0 &&
     (payMode !== "screenshot" || (!!receipt && !receiptError)) &&
     !!driversLicence &&
-    !!ridingStyle;
+    !!ridingStyle &&
+    faqAccepted;
 
   const specs: { label: string; value: string }[] = [
     { label: tF.specs.engine, value: bike.displacement },
@@ -1608,6 +1613,9 @@ export default function BikeDetail({
                       <p className="text-red text-xs font-semibold mt-1.5 leading-snug">
                         * {tF.form.experienceWarning}
                       </p>
+                      <p className="text-muted text-xs mt-1 leading-snug">
+                        {tF.form.experienceMeaning}
+                      </p>
                     </label>
                   </div>
 
@@ -1849,6 +1857,25 @@ export default function BikeDetail({
                     </>
                     )}
                   </div>
+
+                  <label className="flex items-start gap-3 text-sm text-ink cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={faqAccepted}
+                      onChange={(e) => setFaqAccepted(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 shrink-0 accent-red"
+                    />
+                    <span>
+                      {tF.form.faqConfirm} *{" "}
+                      <a href={`/${lang}/faq`} target="_blank" rel="noopener noreferrer" className="text-red underline">
+                        {tF.form.faqLinkShort}
+                      </a>
+                      {" · "}
+                      <a href="/docs/sickmotos-rental-agreement.pdf" target="_blank" rel="noopener noreferrer" className="text-red underline">
+                        {tF.form.agreementLinkShort}
+                      </a>
+                    </span>
+                  </label>
 
                   {submitError && (
                     <p className="text-red text-sm text-center font-semibold">{submitError}</p>

@@ -170,7 +170,10 @@
       "ride": "A vezetés alatt",
       "return": "Visszaadás",
       "incidents": "Sérülés és útszéli segély"
-    }
+    },
+    "docsTitle": "Dokumentumok",
+    "agreementDownload": "Bérleti szerződés (PDF, minden nyelven)",
+    "manualDownload": "GYIK és bérleti feltételek (PDF, minden nyelven)"
   },
   "terms": {
     "eyebrow": "Foglalási feltételek",
@@ -398,7 +401,11 @@
       "submit": "Kérés küldése",
       "submitting": "Küldés...",
       "reviewLine": "Átnézzük a foglalási képernyőképed, és e-mailben visszaigazolunk, általában néhány órán belül. A küldéssel elfogadod a",
-      "termsLink": "feltételeinket"
+      "termsLink": "feltételeinket",
+      "faqConfirm": "Elolvastam a GYIK-et és a bérleti feltételeket.",
+      "faqLinkShort": "GYIK",
+      "agreementLinkShort": "Bérleti szerződés (PDF)",
+      "experienceMeaning": "Vezetési tapasztalat azt jelenti: az AM jogosítványt az A vagy B kategória előtt szerezted meg."
     },
     "reservation": {
       "title": "Foglalás",
@@ -509,36 +516,36 @@
   },
   "faqItems": [
     {
-      "question": "Mit tartalmaz a meghibásodási szerviz?",
-      "answer": "A műszaki vagy karbantartási hibák miatti országúti segítség és a lopás utáni visszaszerzés ingyenes. A felhasználó által okozott eseteknél (defekt, lemerült akkumulátor, baleseti vontatás): 20 km-ig ingyenes mechanikai hibánál, defektnél és más okozott eseteknél 30€ szolgáltatási díj; 20 km felett a díj 50€-tól indul távolságtól függően, plusz a tényleges szállítási költségek. Sziget-felárak: Preko 150€, Dugi Otok 500€. Kulcspótlás: 50€ elvesztés, sérülés vagy a járműbe zárt kulcs esetén."
+      "question": "Mit tartalmaz az autómentő/segélyszolgálat és milyen költségek merülnek fel?",
+      "answer": "Műszaki/mechanikai meghibásodás (pl. motorkár) vagy lopás esetén a segélyszolgálat INGYENES, beleértve a jármű elszállítását és visszaszállítását.\nA bérlő által okozott eseményeknél (pl. defekt, lemerült akkumulátor, kulcselvesztés, bukás/baleset) a következő díjak érvényesek:\n20 km-es körzeten belül: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 30 € szervizdíj.\n20 km távolság felett: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 50 €-tól (távolság + szállítás alapján).\nPreko-sziget: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 150 € átalánydíj.\nDugi Otok-sziget: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 500 € átalánydíj."
     },
     {
-      "question": "Milyen állapotban kapom meg a motort?",
-      "answer": "Minden motort és robogót kifogástalan, működőképes állapotban adunk át. Kérjük a bérlőket, hogy vizsgálják meg a motort, készítsenek tiszta fotókat és videókat átvételkor a meglévő karcolásokról vagy sérülésekről, és ugyanabban az állapotban adják vissza. Ezek a felvételek hivatalos bizonyítékok bármilyen vita esetén."
+      "question": "Milyen állapotban kerül átadásra a jármű és mire kell figyelni?",
+      "answer": "Minden jármű kifogástalan, üzemkész állapotban kerül átadásra. A kölcsönös biztonság érdekében a bérlő köteles:\nA járművet az indulás előtt alaposan átvizsgálni.\nÁtvételkor minden szögből tiszta fotókat és videókat készíteni (a meglévő karcokról/sérülésekről is).\nA járművet ugyanabban a dokumentált állapotban visszaadni (a normál elhasználódás kivételével).\nEzek a felvételek hivatalos bizonyítékként szolgálnak vita esetén."
     },
     {
-      "question": "Milyen biztosítás van benne?",
-      "answer": "Az alapbiztosítás fedezi a motor lopását és a motorkárt. A balesetek, karcolások, sérülések és defektek a bérlő felelőssége. Ha egy harmadik fél okoz balesetet, fel kell hívnod a rendőrséget és hivatalos jegyzőkönyvet kell beszerezned. A felelős fél felel."
+      "question": "Milyen biztosítást tartalmaz a bérleti díj?",
+      "answer": "A bérleti díj tartalmazza az alapbiztosítást.\nFedezett: Járműlopás és mechanikai/motorhibák (kivéve kezelési hiba vagy gondatlanság esetén).\nNEM fedezett (Bérlő teljes felelőssége): Minden külső, esztétikai, szerkezeti vagy fizikai sérülés (bukás, baleset, rongálás, karcolás és defekt)."
     },
     {
-      "question": "Mi a lemondási feltételetek?",
-      "answer": "Minden foglalás nem visszatéríthető. A 20%-os foglalási díj rögzíti a dátumaidat, és lemondás esetén nem jár vissza. Ha egy motor egy másik ügyfél által okozott baleset vagy kár miatt elérhetetlenné válik, törlünk és teljes egészében visszatérítünk."
+      "question": "Milyenek a lemondási feltételek?",
+      "answer": "Minden foglalás kötelező érvényű és nem visszatérítendő (non-refundable). A bérlő általi lemondás esetén a bérleti díj nem jár vissza."
     },
     {
-      "question": "Mikor és hol adom vissza a motort?",
-      "answer": "A megbeszélt időpontban és helyen. 15 perc türelmi időt adunk. Az ezen túli késedelmes visszaadás extra díjat von maga után. Visszaadás a címünkön: Velebitska Ulica 2, 23000 Zadar."
+      "question": "Mikor és hol kell visszaadni a járművet? Mi érvényes késés esetén?",
+      "answer": "A járművet a megbeszélt időpontban és helyen kell visszaadni.\nTürelmi idő: 15 perc türelmi idő érvényes. A 15 perc letelte utáni vagy nyitvatartási időn kívüli visszaadás esetén 30 € - 50 € kezelési/üzemeltetési díj kerül felszámításra."
     },
     {
-      "question": "Ki felel a balesetekért vagy sérülésekért?",
-      "answer": "A bérlő teljes felelősséget vállal a bérlési időszak alatt bekövetkező minden balesetért, kárért vagy sérülésért."
+      "question": "Ki a felelős harmadik fél által okozott balesetért vagy kárért?",
+      "answer": "A bérlő teljes felelősséget vállal a bérleti időszak alatti balesetekért és károkért. Különösen fontos harmadik fél hibája esetén: HA a balesetet harmadik fél okozta, KÖTELEZŐ rendőrt hívni és hivatalos rendőrségi jegyzőkönyvet (Police Report) felvenni. A károkért a károkozó vagy annak biztosítója felel."
     },
     {
-      "question": "Mi történik, ha a motor megsérül?",
-      "answer": "A bérlés alatti károk esetén a kauciót visszatartjuk a kezdeti javítási költségek fedezésére. A járművet a márka hivatalos szervizébe visszük (pl. Piaggio Center Zadar, KTM Moto Špica) szakszerű felmérésre. A bérlő a szerviz hivatalos ajánlata vagy számlája szerinti teljes javítási költséget fizeti; ha ez meghaladja a kauciót, a különbözetet is. Minden javítás eredeti (OEM) alkatrészekkel történik, és mindig kapsz hivatalos másolatot az ajánlatról, teljes átláthatóság."
+      "question": "Mi történik járműkár esetén? (Elszámolás és Javítás)",
+      "answer": "Járműkár esetén a következő átlátható eljárás érvényes:\n1. A kauciót először az elsődleges javítási költségek fedezésére visszatartjuk.\n2. A járművet hivatalos márkaszervizbe szállítjuk bevizsgálásra és javításra (pl. Piaggio Center Zadar, KTM Moto Špica).\n3. A javítás kizárólag eredeti OEM alkatrészekkel történik.\n4. A bérlő vállalja a teljes költség megfizetését a hivatalos szerviz számlája/árajánlata alapján. Ha a javítás meghaladja a kauciót, a különbözetet meg kell fizetni.\n5. A teljes átláthatóság érdekében a bérlő megkapja a hivatalos szervizszámla másolatát."
     },
     {
-      "question": "Mi van, ha elveszítem a kulcsot?",
-      "answer": "Egy pótkulcsot 50€-ért szállítunk, plusz a helyszínedtől függő esetleges meghibásodási szervizdíj."
+      "question": "Mi a teendő a járműkulcs elvesztése esetén?",
+      "answer": "A kulcs elvesztése, sérülése vagy bezárása esetén pótkulcsot biztosítunk. Ennek átalánydíja 50 €, plusz az esetleges kiszállási díj a helyszíntől függően."
     },
     {
       "question": "Hogyan foglalhatok?",
@@ -558,7 +565,11 @@
     },
     {
       "question": "Mi van, ha úgy döntötök, hogy nem vagyok elég tapasztalt?",
-      "answer": "A vezetéshez előzetes tapasztalat kell. Ha átvételkor úgy ítéljük meg, hogy nincs elég tapasztalatod a robogó vagy a motor biztonságos kezeléséhez, fenntartjuk a jogot a bérlés megtagadására. Ilyenkor a foglaló nem jár vissza, ezért foglaláskor őszintén add meg a tapasztalatodat."
+      "answer": "A vezetéshez előzetes tapasztalat kell. Vezetési tapasztalat alatt azt értjük, hogy az AM-jogosítványodat az A-, illetve B-jogosítványod előtt szerezted meg. Ha átvételkor úgy ítéljük meg, hogy nincs elég tapasztalatod a robogó vagy a motor biztonságos kezeléséhez, fenntartjuk a jogot a bérlés megtagadására. Ilyenkor a foglaló nem jár vissza, ezért foglaláskor őszintén add meg a tapasztalatodat."
+    },
+    {
+      "question": "Milyen különleges út- és vezetési viszonyok érvényesek Zadarban?",
+      "answer": "Aláírásával a bérlő igazolja:\nHogy rendelkezik a megfelelő járműkategóriára érvényes jogosítvánnyal és elegendő vezetési tapasztalattal.\nHogy tájékoztatták a Zadar környéki kihívást jelentő útviszonyokról (különösen a rendkívül csúszós, polírozott tengerparti aszfaltról, porrétegről és esős időben tapasztalható csúszásveszélyről).\nMegjegyzés: A bérleti jogviszonyra a SickMotos d.o.o. átadáskor aláírt Szerződési Feltételei (Terms & Conditions) az irányadók."
     }
   ],
   "common": {
@@ -595,7 +606,12 @@
       "cancelLine": "Megváltoztak a terveid?",
       "cancelLink": "Foglalás lemondása",
       "cancelTail": ", a dátumok azonnal felszabadulnak valaki más számára.",
-      "lateLine": "Ha több mint 1 órát késel előzetes jelzés nélkül, a foglalás automatikusan törlődik, visszatérítés nélkül."
+      "lateLine": "Ha több mint 1 órát késel előzetes jelzés nélkül, a foglalás automatikusan törlődik, visszatérítés nélkül.",
+      "readHeader": "Átvétel előtt olvasd el",
+      "readLine": "A foglalásodra a GYIK és a bérleti feltételeink vonatkoznak. Kérjük, olvasd el őket, mielőtt átveszed a járművet.",
+      "faqLink": "GYIK elolvasása",
+      "agreementLink": "Bérleti szerződés (PDF)",
+      "toursHeader": "Túratippek a kirándulásodhoz"
     },
     "bookingDeclined": {
       "subject": "Frissítés a foglalásoddal kapcsolatban, {bike}",
@@ -706,7 +722,8 @@
     "at": "ekkor:",
     "freeIfReturnBy": "Szabad, ha visszaadod eddig:",
     "useReturn": "Visszaadási idő használata",
-    "depositSummary": "Kaució: {count} × {each} = {total}"
+    "depositSummary": "Kaució: {count} × {each} = {total}",
+    "errFaq": "Kérjük, erősítsd meg, hogy elolvastad a GYIK-et és a bérleti feltételeket."
   },
   "chatbot": {
     "openLabel": "Chat megnyitása",

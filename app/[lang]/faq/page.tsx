@@ -27,6 +27,7 @@ const ITEM_CATEGORIES: CategoryId[] = [
   "ride",      // 10 · fuel handling
   "ride",      // 11 · navigation without holder
   "pickup",    // 12 · experience check
+  "ride",      // 13 · road and riding conditions in Zadar (Thomas, 2026-10)
 ];
 
 // Render order — controls which group shows up first on the page.
@@ -87,6 +88,31 @@ export default async function FaqPage({
               </section>
             ))}
           </div>
+
+          {/* Thomas' signed-at-pickup documents, for reading before arrival. */}
+          <section className="mb-10">
+            <h2 className="font-barlow font-black uppercase text-xl tracking-[0.05em] text-ink mb-3">
+              {t.docsTitle}
+            </h2>
+            <div className="bg-white border border-ink/8 px-6 py-5 flex flex-col gap-3">
+              <a
+                href="/docs/sickmotos-rental-agreement.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-ink hover:text-red transition-colors"
+              >
+                {t.agreementDownload} →
+              </a>
+              <a
+                href="/docs/sickmotos-faq.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-ink hover:text-red transition-colors"
+              >
+                {t.manualDownload} →
+              </a>
+            </div>
+          </section>
 
           <div className="bg-sand px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div>

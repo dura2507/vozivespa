@@ -170,7 +170,10 @@
       "ride": "Durante el alquiler",
       "return": "Devolución",
       "incidents": "Daños y asistencia"
-    }
+    },
+    "docsTitle": "Documentos",
+    "agreementDownload": "Contrato de alquiler (PDF, todos los idiomas)",
+    "manualDownload": "Preguntas frecuentes y condiciones de alquiler (PDF, todos los idiomas)"
   },
   "terms": {
     "eyebrow": "Términos de reserva",
@@ -398,7 +401,11 @@
       "submit": "Enviar solicitud",
       "submitting": "Enviando...",
       "reviewLine": "Revisaremos tu screenshot de pago y confirmaremos por email, normalmente en pocas horas. Al enviar aceptas nuestros",
-      "termsLink": "términos"
+      "termsLink": "términos",
+      "faqConfirm": "He leído las preguntas frecuentes y las condiciones de alquiler.",
+      "faqLinkShort": "FAQ",
+      "agreementLinkShort": "Contrato de alquiler (PDF)",
+      "experienceMeaning": "Experiencia de conducción significa: obtuviste tu carné AM antes que tu carné A o B."
     },
     "reservation": {
       "title": "Reserva",
@@ -509,36 +516,36 @@
   },
   "faqItems": [
     {
-      "question": "¿Qué incluye el servicio de asistencia?",
-      "answer": "La asistencia en carretera por averías técnicas o de mantenimiento y la recuperación por robo son gratuitas. Para incidentes causados por el usuario (pinchazos, batería descargada, remolque tras accidente): hasta 20 km gratis si es avería mecánica, con una tarifa de 30€ por pinchazos y otros casos causados por el usuario; a partir de 20 km la tarifa empieza en 50€ según la distancia, más los costes reales de transporte y recuperación. Recargos por islas: Preko 150€, Dugi Otok 500€. Reposición de llave: 50€ en caso de pérdida, daño o dejarla dentro del vehículo."
+      "question": "¿Qué incluye la asistencia en carretera y qué costes se aplican?",
+      "answer": "La asistencia en carretera por averías técnicas/mecánicas (ej. fallo de motor) o gestión de robo es GRATUITA e incluye recogida y transporte del vehículo.\nPara incidentes causados por el arrendatario (ej. pinchazo, batería descargada, pérdida de llave, caída/accidente), se aplican las siguientes tarifas:\nHasta 20 km de radio: GRATIS en caso de avería mecánica, 30 € cuota de servicio por culpa del arrendatario, neumático o accidente.\nMás de 20 km de distancia: GRATIS en caso de avería mecánica, desde 50 € (según distancia + transporte) por culpa del arrendatario, neumático o accidente.\nIsla de Preko: GRATIS en caso de avería mecánica, 150 € tarifa fija por culpa del arrendatario, neumático o accidente.\nIsla de Dugi Otok: GRATIS en caso de avería mecánica, 500 € tarifa fija por culpa del arrendatario, neumático o accidente."
     },
     {
-      "question": "¿En qué estado se entrega la moto?",
-      "answer": "Todas las motos y scooters se entregan en perfecto estado de funcionamiento. Pedimos a los clientes inspeccionar la moto, hacer fotos y vídeos claros en la recogida documentando cualquier arañazo o daño existente, y devolverla en el mismo estado. Estas grabaciones son prueba oficial en caso de disputa."
+      "question": "¿En qué estado se entrega el vehículo y qué debo inspeccionar?",
+      "answer": "Todos los vehículos se entregan en perfecto estado de funcionamiento. Para protección mutua, el arrendatario debe:\nInspeccionar minuciosamente el vehículo antes de circular.\nTomar fotos y vídeos claros desde todos los ángulos al recogerlo (incluidos arañazos/daños previos).\nDevolver el vehículo en el mismo estado documentado (salvo desgaste normal).\nEstas pruebas servirán en caso de cualquier discrepancia."
     },
     {
-      "question": "¿Qué seguro está incluido?",
-      "answer": "El seguro básico cubre robo de la moto y daños al motor. Accidentes, arañazos, daños y pinchazos son responsabilidad del cliente. Si un tercero causa un accidente, debes llamar a la policía y obtener un parte oficial. El responsable paga."
+      "question": "¿Qué seguro está incluido en el precio de alquiler?",
+      "answer": "El precio de alquiler incluye un seguro básico.\nCubierto: Robo del vehículo y averías mecánicas/motor (siempre que no sean por mal uso o negligencia).\nNO cubierto (Arrendatario responsable al 100%): Todo daño exterior, óptico, estructural o físico por caídas, accidentes, vandalismo, arañazos y pinchazos de neumáticos."
     },
     {
       "question": "¿Cuál es la política de cancelación?",
-      "answer": "Todas las reservas no son reembolsables. El 20% de reserva asegura tus fechas y no se devuelve en caso de cancelación. Si una moto queda no disponible por accidente o daño causado por otro cliente, cancelamos y devolvemos el importe completo."
+      "answer": "Todas las reservas son vinculantes y no reembolsables. En caso de cancelación por parte del arrendatario, no se realizará ningún reembolso del importe del alquiler."
     },
     {
-      "question": "¿Cuándo y dónde devuelvo la moto?",
-      "answer": "A la hora y lugar acordados. Damos 15 minutos de cortesía. Retrasos mayores conllevan costes extra. Devolución en nuestra dirección: Velebitska Ulica 2, 23000 Zadar."
+      "question": "¿Cuándo y dónde debe devolverse el vehículo? ¿Qué pasa si hay retraso?",
+      "answer": "El vehículo debe devolverse a la hora y en el lugar acordados.\nPeríodo de gracia: Se aplica un margen de 15 minutos. Para devoluciones tras estos 15 minutos o fuera del horario comercial, se aplicará un recargo de gestión/operativo de 30 € a 50 €."
     },
     {
-      "question": "¿Quién es responsable de accidentes o lesiones?",
-      "answer": "El cliente asume la responsabilidad total por todos los accidentes, daños o lesiones que ocurran durante el alquiler."
+      "question": "¿Quién es responsable en caso de accidentes o daños por terceros?",
+      "answer": "El arrendatario asume toda la responsabilidad por accidentes, daños o lesiones durante el alquiler. IMPORTANTE en caso de culpa de terceros: SI el accidente fue causado por un tercero, SE DEBE llamar inmediatamente a la policía y redactar un informe policial oficial (Police Report). El culpable o su seguro cubrirá los daños."
     },
     {
-      "question": "¿Qué pasa si la moto se daña?",
-      "answer": "En caso de daños durante el alquiler, retenemos la fianza para cubrir los costes iniciales de reparación. Llevamos el vehículo a un concesionario oficial de la marca (p. ej. Piaggio Center Zadar, KTM Moto Špica) para una evaluación profesional. El arrendatario paga el coste total de la reparación según el presupuesto o la factura oficial del concesionario; si supera la fianza, paga la diferencia. Todas las reparaciones usan piezas originales (OEM) y siempre recibes una copia oficial del presupuesto, transparencia total."
+      "question": "¿Qué ocurre en caso de daños en el vehículo? (Facturación y Reparación)",
+      "answer": "En caso de daños en el vehículo se aplica el siguiente procedimiento transparente:\n1. La fianza se retiene inicialmente para cubrir los primeros gastos de reparación.\n2. El vehículo se lleva a un taller oficial autorizado para su inspección y reparación (ej. Piaggio Center Zadar, KTM Moto Špica).\n3. Las reparaciones se realizan exclusivamente con piezas originales OEM.\n4. El arrendatario se compromete a pagar el coste total según el presupuesto/factura del taller. Si el coste supera la fianza, se debe abonar la diferencia.\n5. Para una transparencia total, el cliente recibirá una copia de la factura oficial."
     },
     {
-      "question": "¿Qué pasa si pierdo la llave?",
-      "answer": "Se entrega una llave de repuesto por 50€ más la asistencia de carretera correspondiente según tu ubicación."
+      "question": "¿Qué debo hacer si pierdo la llave del vehículo?",
+      "answer": "En caso de pérdida, daño o cierre de la llave dentro del vehículo, se entregará una llave de repuesto. Se cobra una tarifa fija de 50 €, más los posibles costes de desplazamiento/asistencia según la ubicación."
     },
     {
       "question": "¿Cómo hago una reserva?",
@@ -558,7 +565,11 @@
     },
     {
       "question": "¿Qué pasa si decidís que no tengo suficiente experiencia?",
-      "answer": "Conducir requiere experiencia previa. Si en la recogida determinamos que no tienes experiencia suficiente para manejar con seguridad el scooter o la moto, nos reservamos el derecho de rechazar el alquiler. En ese caso la señal no se devuelve, así que sé sincero sobre tu experiencia al reservar."
+      "answer": "Conducir requiere experiencia previa. Experiencia de conducción significa que obtuviste tu carnet AM antes que tu carnet A o B. Si en la recogida determinamos que no tienes experiencia suficiente para manejar con seguridad el scooter o la moto, nos reservamos el derecho de rechazar el alquiler. En ese caso la señal no se devuelve, así que sé sincero sobre tu experiencia al reservar."
+    },
+    {
+      "question": "¿Qué condiciones especiales de tráfico aplican en Zadar?",
+      "answer": "Con su firma, el arrendatario confirma:\nPoseer un carnet de conducir válido para la categoría de vehículo y suficiente experiencia de conducción.\nEstar informado sobre las exigentes condiciones del tráfico local en Zadar (especialmente asfalto costero pulido muy resbaladizo, polvo y riesgo de deslice con lluvia).\nNota: Serán determinantes las Condiciones Generales (Terms & Conditions) de SickMotos d.o.o. firmadas en la entrega del vehículo."
     }
   ],
   "common": {
@@ -595,7 +606,12 @@
       "cancelLine": "¿Cambiaron los planes?",
       "cancelLink": "Cancelar reserva",
       "cancelTail": ", las fechas vuelven a estar libres al instante.",
-      "lateLine": "Si llegas con más de 1 hora de retraso sin avisar, la reserva se cancela automáticamente sin reembolso."
+      "lateLine": "Si llegas con más de 1 hora de retraso sin avisar, la reserva se cancela automáticamente sin reembolso.",
+      "readHeader": "Léelo antes de la recogida",
+      "readLine": "Nuestras preguntas frecuentes y condiciones de alquiler se aplican a tu reserva. Léelas antes de recoger tu vehículo.",
+      "faqLink": "Leer las preguntas frecuentes",
+      "agreementLink": "Contrato de alquiler (PDF)",
+      "toursHeader": "Rutas recomendadas para tu salida"
     },
     "bookingDeclined": {
       "subject": "Actualización de tu reserva, {bike}",
@@ -706,7 +722,8 @@
     "at": "a las",
     "freeIfReturnBy": "Libre si se devuelve antes de",
     "useReturn": "Usar esta devolución",
-    "depositSummary": "Fianza: {count} × {each} = {total}"
+    "depositSummary": "Fianza: {count} × {each} = {total}",
+    "errFaq": "Confirma que has leído las preguntas frecuentes y las condiciones de alquiler."
   },
   "chatbot": {
     "openLabel": "Abrir chat",

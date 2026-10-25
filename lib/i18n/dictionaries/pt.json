@@ -170,7 +170,10 @@
       "ride": "Durante a pilotagem",
       "return": "Devolução",
       "incidents": "Danos e socorro na estrada"
-    }
+    },
+    "docsTitle": "Documentos",
+    "agreementDownload": "Contrato de aluguer (PDF, todos os idiomas)",
+    "manualDownload": "Perguntas frequentes e condições de aluguer (PDF, todos os idiomas)"
   },
   "terms": {
     "eyebrow": "Condições de reserva",
@@ -398,7 +401,11 @@
       "submit": "Enviar solicitação",
       "submitting": "Enviando...",
       "reviewLine": "Vamos analisar o print da sua reserva e confirmar por email, geralmente em poucas horas. Ao enviar, você concorda com nossos",
-      "termsLink": "termos"
+      "termsLink": "termos",
+      "faqConfirm": "Li as perguntas frequentes e as condições de aluguer.",
+      "faqLinkShort": "FAQ",
+      "agreementLinkShort": "Contrato de aluguer (PDF)",
+      "experienceMeaning": "Experiência de condução significa: tiraste a carta AM antes da carta A ou B."
     },
     "reservation": {
       "title": "Reserva",
@@ -509,36 +516,36 @@
   },
   "faqItems": [
     {
-      "question": "O que inclui o serviço de socorro na estrada?",
-      "answer": "A assistência em estrada por avarias técnicas ou de manutenção e a recuperação após roubo são gratuitas. Para incidentes causados pelo utilizador (pneu furado, bateria descarregada, reboque após acidente): até 20 km grátis em avarias mecânicas, com taxa de serviço de 30€ para pneus furados e outros casos causados pelo utilizador; acima de 20 km a taxa começa em 50€ conforme a distância, mais os custos reais de transporte e recuperação. Sobretaxas de ilhas: Preko 150€, Dugi Otok 500€. Substituição de chave: 50€ em caso de perda, dano ou chave trancada no veículo."
+      "question": "O que inclui a assistência em estrada e quais os custos aplicáveis?",
+      "answer": "A assistência em estrada para avarias técnicas/mecânicas (ex. avaria no motor) ou roubo é GRATUITA, incluindo recolha e transporte do veículo.\nPara incidentes causados pelo locatário (ex. pneu furado, bateria descarregada, perda de chave, queda/acidente), aplicam-se as seguintes taxas:\nAté 20 km de raio: grátis em avaria mecânica, 30 € taxa de serviço em culpa do locatário, pneu ou acidente.\nMais de 20 km de distância: grátis em avaria mecânica, a partir de 50 € (segundo distância + transporte) em culpa do locatário, pneu ou acidente.\nIlha de Preko: grátis em avaria mecânica, 150 € taxa fixa em culpa do locatário, pneu ou acidente.\nIlha de Dugi Otok: grátis em avaria mecânica, 500 € taxa fixa em culpa do locatário, pneu ou acidente."
     },
     {
-      "question": "Em que condições a moto é entregue?",
-      "answer": "Todas as motos e scooters são entregues em perfeitas condições de funcionamento. Pedimos aos locatários que inspecionem a moto, tirem fotos e vídeos nítidos na retirada documentando arranhões ou danos existentes, e a devolvam nas mesmas condições. Esses registros são prova oficial em caso de qualquer disputa."
+      "question": "Em que estado o veículo é entregue e o que devo verificar?",
+      "answer": "Todos os veículos são entregues em perfeito estado de funcionamento. Para proteção mútua, o locatário deve:\nInspecionar cuidadosamente o veículo antes de circular.\nTirar fotos e vídeos claros de todos os ângulos no momento da recolha (incluindo riscos/danos existentes).\nDevolver o veículo no mesmo estado documentado (exceto desgaste normal).\nEstes registos servem como prova oficial em caso de divergências."
     },
     {
-      "question": "Qual seguro está incluso?",
-      "answer": "O seguro básico cobre roubo da moto e danos ao motor. Acidentes, arranhões, danos e pneus furados são de responsabilidade do locatário. Se um terceiro causar um acidente, você deve chamar a polícia e obter um boletim oficial. O responsável responde pelos danos."
+      "question": "Que seguro está incluído no preço do aluguel?",
+      "answer": "O preço do aluguel inclui um seguro básico.\nCoberto: Roubo do veículo e avarias mecânicas/motor (desde que não causados por mau uso ou negligência).\nNÃO coberto (Locatário totalmente responsável): Todos os danos externos, óticos, estruturais ou físicos causados por quedas, acidentes, vandalismo, riscos e furos de pneus."
     },
     {
       "question": "Qual é a política de cancelamento?",
-      "answer": "Todas as reservas são não reembolsáveis. A taxa de reserva de 20% garante suas datas e não é devolvida em caso de cancelamento. Se uma moto ficar indisponível por acidente ou dano causado por outro cliente, cancelamos e reembolsamos integralmente."
+      "answer": "Todas as reservas são vinculativas e não reembolsáveis. Em caso de cancelamento pelo locatário, nenhum valor será reembolsado."
     },
     {
-      "question": "Quando e onde devolvo a moto?",
-      "answer": "No horário e local combinados. Damos uma tolerância de 15 minutos. Devoluções atrasadas além disso geram taxas extras. Devolução no nosso endereço: Velebitska Ulica 2, 23000 Zadar."
+      "question": "Quando e onde o veículo deve ser devolvido? O que acontece em caso de atraso?",
+      "answer": "O veículo deve ser devolvido na hora e local acordados.\nTolerância: Aplica-se um período de tolerância de 15 minutos. Devoluções após esses 15 minutos ou fora do horário de funcionamento sujeitam-se a uma taxa administrativa/operacional de 30 € a 50 €."
     },
     {
-      "question": "Quem é responsável por acidentes ou lesões?",
-      "answer": "O locatário assume total responsabilidade por todos os acidentes, danos ou lesões que ocorram durante o período de aluguel."
+      "question": "Quem é responsável em caso de acidentes ou danos causados por terceiros?",
+      "answer": "O locatário assume total responsabilidade por acidentes, danos ou lesões durante o aluguel. IMPORTANTE em caso de culpa de terceiros: SE o acidente foi provocado por terceiros, É OBRIGATÓRIO chamar a polícia e lavrar um relatório policial oficial (Police Report). O culpado ou o seu seguro cobrirá os danos."
     },
     {
-      "question": "O que acontece se a moto for danificada?",
-      "answer": "Em caso de danos durante o aluguer, retemos a caução para cobrir os custos iniciais de reparação. O veículo é levado a um concessionário autorizado da marca (p. ex. Piaggio Center Zadar, KTM Moto Špica) para avaliação profissional. O locatário paga o custo total da reparação conforme o orçamento ou fatura oficial do concessionário; se exceder a caução, paga a diferença. Todas as reparações usam peças originais (OEM) e recebes sempre uma cópia oficial do orçamento, transparência total."
+      "question": "O que acontece em caso de danos no veículo? (Faturação e Reparação)",
+      "answer": "Em caso de danos no veículo, aplica-se o seguinte procedimento transparente:\n1. A caução é retida inicialmente para cobrir as primeiras despesas de reparação.\n2. O veículo é levado a uma oficina autorizada para perícia e reparação (ex. Piaggio Center Zadar, KTM Moto Špica).\n3. A reparação é feita exclusivamente com peças originais OEM.\n4. O locatário compromete-se a pagar o valor total segundo o orçamento/fatura oficial da oficina. Se os custos superarem a caução, a diferença deve ser paga.\n5. Para total transparência, o locatário receberá uma cópia da fatura oficial."
     },
     {
-      "question": "E se eu perder a chave?",
-      "answer": "Uma chave de reposição será entregue por 50€ mais o serviço de socorro aplicável conforme sua localização."
+      "question": "O que devo fazer se perder a chave do veículo?",
+      "answer": "Em caso de perda, dano ou chave trancada no veículo, será fornecida uma chave de substituição. É cobrada uma taxa fixa de 50 €, acrescida de eventuais custos de deslocação/assistência conforme o local."
     },
     {
       "question": "Como faço uma reserva?",
@@ -558,7 +565,11 @@
     },
     {
       "question": "E se vocês decidirem que não tenho experiência suficiente?",
-      "answer": "Conduzir exige experiência prévia. Se na recolha determinarmos que não tens experiência suficiente para conduzir a scooter ou a mota em segurança, reservamo-nos o direito de recusar o aluguer. Nesse caso o sinal não é reembolsável, por isso sê honesto sobre a tua experiência ao reservar."
+      "answer": "Conduzir exige experiência prévia. Experiência de condução significa que tiraste a tua carta AM antes da tua carta A ou B. Se na recolha determinarmos que não tens experiência suficiente para conduzir a scooter ou a mota em segurança, reservamo-nos o direito de recusar o aluguer. Nesse caso o sinal não é reembolsável, por isso sê honesto sobre a tua experiência ao reservar."
+    },
+    {
+      "question": "Que condições especiais de trânsito se aplicam em Zadar?",
+      "answer": "Ao assinar, o locatário confirma:\nPossuir carta de condução válida para a categoria de veículo e experiência de condução suficiente.\nEstar informado sobre as exigentes condições de trânsito em Zadar (especialmente asfalto costeiro polido extremamente escorregadio, acumulação de poeira e perigo de derrapagem à chuva).\nNota: As Condições Gerais (Terms & Conditions) da SickMotos d.o.o. assinadas na entrega do veículo são determinantes."
     }
   ],
   "common": {
@@ -595,7 +606,12 @@
       "cancelLine": "Os planos mudaram?",
       "cancelLink": "Cancelar esta reserva",
       "cancelTail": ", as datas ficam livres na hora para outra pessoa.",
-      "lateLine": "Se chegares com mais de 1 hora de atraso sem avisar, a reserva é cancelada automaticamente, sem reembolso."
+      "lateLine": "Se chegares com mais de 1 hora de atraso sem avisar, a reserva é cancelada automaticamente, sem reembolso.",
+      "readHeader": "Por favor, lê antes da recolha",
+      "readLine": "As nossas perguntas frequentes e condições de aluguer aplicam-se à tua reserva. Lê-as antes de recolheres o teu veículo.",
+      "faqLink": "Ler as perguntas frequentes",
+      "agreementLink": "Contrato de aluguer (PDF)",
+      "toursHeader": "Sugestões de rotas para o teu passeio"
     },
     "bookingDeclined": {
       "subject": "Atualização sobre sua reserva, {bike}",
@@ -706,7 +722,8 @@
     "at": "às",
     "freeIfReturnBy": "Livre se devolvida até",
     "useReturn": "Usar hora de devolução",
-    "depositSummary": "Caução: {count} × {each} = {total}"
+    "depositSummary": "Caução: {count} × {each} = {total}",
+    "errFaq": "Confirma que leste as perguntas frequentes e as condições de aluguer."
   },
   "chatbot": {
     "openLabel": "Abrir chat",
