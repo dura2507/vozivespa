@@ -73,7 +73,7 @@
         },
         "roadside": {
           "label": "Roadside help",
-          "sub": "Free up to 20km, then 50€ plus"
+          "sub": "Always free within 5 km, anywhere for defects"
         },
         "transparent": {
           "label": "Transparent pricing",
@@ -146,7 +146,7 @@
     "title": "Info",
     "licenceRequirements": {
       "title": "Licence requirements",
-      "scooter50": "Scooter 50cc: B or AM category licence plus scooter experience",
+      "scooter50": "Scooter 50cc: B or AM category licence plus scooter experience (with B: AM licence issued at least 6 months before B)",
       "scooter125": "Scooter 125cc and motorbike 125cc: A1 category licence",
       "motorbike390": "Motorbike 390cc: A2 category licence",
       "verify": "We verify your licence at pickup"
@@ -172,8 +172,7 @@
       "incidents": "Damage & Roadside"
     },
     "docsTitle": "Documents",
-    "agreementDownload": "Rental agreement (PDF, all languages)",
-    "manualDownload": "FAQ and rental terms (PDF, all languages)"
+    "agreementDownload": "Rental agreement (PDF, all languages)"
   },
   "terms": {
     "eyebrow": "Reservation terms",
@@ -191,14 +190,14 @@
           "Payment methods: PayPal, bank transfer, Revolut, or cash in person (if you are already in Zadar). We don't accept credit cards.",
           "After making the payment, please send us a screenshot of the transaction as proof. Not needed if paid in cash.",
           "If you arrive more than 1 hour late without notice, your reservation will be automatically cancelled and the booking fee is non-refundable.",
-          "If a scooter or motorbike becomes unavailable due to an accident or damage caused by another client, we may cancel your reservation and issue a full refund of your booking fee.",
+          "If we cannot provide your booked scooter or motorbike (e.g. after an accident or damage caused by another client), you get a replacement vehicle or a full refund of your booking fee.",
           "Driving a scooter or motorbike requires prior experience. If we notice that you don't have sufficient experience to ride safely, we reserve the right to decline the reservation without refund."
         ]
       },
       {
         "heading": "Deposit & Payment",
         "bullets": [
-          "Security deposit: 250€ per bike, refunded after drop-off if no damage.",
+          "Security deposit: €250 per bike, refunded after drop-off if no damage.",
           "Booking fee: 20% of total. Secures your dates, non-refundable on cancellation.",
           "Payment methods: PayPal (Friends & Family preferred, no fee), bank transfer, Revolut, or cash on arrival.",
           "We don't accept credit cards."
@@ -210,15 +209,15 @@
           "Pick-up and drop-off at Velebitska Ulica 2, 23000 Zadar.",
           "Open Mon-Sun, 09:00 to 19:00.",
           "Pick-up and return slots are 30-minute intervals between 09:00 and 19:00.",
-          "15-minute grace period at return. Late drop-offs beyond that incur extra fees.",
+          "15-minute grace period at return. 15 to 30 minutes late: €15. More than 30 minutes up to 2 hours: €50. More than 2 hours: one additional rental day. Return outside business hours: flat fee of €30.",
           "Send the deposit transaction screenshot after paying so we can verify and confirm."
         ]
       },
       {
         "heading": "Insurance & Safety",
         "bullets": [
-          "Basic insurance is included in every rental and covers theft of the bike and engine damage.",
-          "Accidents, scratches, damage and flat tires are the renter's responsibility.",
+          "Basic insurance is included in every rental and covers theft of the bike as well as engine damage and mechanical defects, unless caused by operating error or negligence.",
+          "All external, cosmetic and structural damage from falls, accidents, vandalism or scratches, as well as tire damage and flats, is the renter's responsibility.",
           "If a third party causes an accident, you must call the police and obtain an official report. The responsible party is liable.",
           "Helmets are always provided.",
           "All bikes are handed over in perfect working condition. We ask renters to inspect the bike, take photos and videos at pickup, and return it in the same condition."
@@ -227,9 +226,9 @@
       {
         "heading": "Damage, repair and breakdown",
         "bullets": [
-          "The deposit covers initial repair costs. We take the bike to a local mechanic for assessment. The renter pays the full repair cost per the mechanic's invoice (a copy is always provided).",
-          "Roadside breakdown service: free up to 20 km. Over 20 km: 50€. Islands: Preko 150€, Dugi Otok 500€.",
-          "Lost key: 50€ replacement fee plus any applicable breakdown service depending on location.",
+          "The deposit is retained to cover the initial repair costs. The bike is assessed at an authorized dealer workshop (e.g. Piaggio Center Zadar, KTM Moto Špica) and repaired with original parts. The renter pays the costs per the workshop invoice; if they exceed the deposit, the difference must be paid. A copy of the invoice is always provided.",
+          "Roadside breakdown service: always free for mechanical defects. For renter fault, tire or accident: free up to 5 km, 5 to 20 km €30, over 20 km from €50 (depending on distance and transport), Preko Island €150, Dugi Otok Island €500.",
+          "Lost key: €50 replacement fee plus any applicable breakdown service depending on location.",
           "In case of engine failure unrelated to renter behaviour, we cover all costs."
         ]
       },
@@ -244,7 +243,7 @@
         "heading": "Driver requirements",
         "bullets": [
           "Bring your valid licence to pickup. No licence, no ride. Owner verifies the licence category matches the bike's class.",
-          "Driving requires prior riding experience. If we determine at pickup that experience is insufficient to safely handle the bike, we reserve the right to decline. The booking fee is non-refundable in that case, so please be honest about your experience when booking.",
+          "Driving requires prior riding experience. For 50cc scooters with a B licence, the AM licence must have been issued at least 6 months before the B licence; this does not apply with an A1, A2 or A licence. If we determine at pickup that experience is insufficient to safely handle the bike, we reserve the right to decline the rental. The booking fee is non-refundable in that case, so please be honest about your experience when booking.",
           "The renter assumes full responsibility for all accidents, damages and injuries during the rental period."
         ]
       }
@@ -389,7 +388,7 @@
         "A1": "A1 (up to 125cc)",
         "A2": "A2 (up to 35 kW)",
         "A": "A (unrestricted)",
-        "B": "B (car licence, covers AM/50cc)"
+        "B": "B (car licence)"
       },
       "ridingStyle": "Riding style",
       "ridingStyleSolo": "Solo",
@@ -405,7 +404,7 @@
       "faqConfirm": "I have read the FAQ and the rental terms.",
       "faqLinkShort": "FAQ",
       "agreementLinkShort": "Rental agreement (PDF)",
-      "experienceMeaning": "Riding experience means: you got your AM licence before your A or B licence."
+      "experienceMeaning": "For 50cc scooters with a B licence: your AM licence must have been issued at least 6 months before your B licence (see the dates on your licence). This does not apply with an A1, A2 or A licence."
     },
     "reservation": {
       "title": "Reservation",
@@ -517,7 +516,7 @@
   "faqItems": [
     {
       "question": "What does roadside assistance include and what costs apply?",
-      "answer": "Roadside assistance for technical/mechanical defects (e.g. engine failure) or theft processing is FREE OF CHARGE including vehicle pickup and return transport.\nFor incidents caused by the renter (e.g., flat tire, dead battery, key loss, fall/accident), the following fees apply:\nUp to 20 km radius: free for mechanical defects, €30 service fee for renter fault, tire or accident.\nOver 20 km distance: free for mechanical defects, from €50 (variable by distance + transport) for renter fault, tire or accident.\nPreko Island: free for mechanical defects, €150 flat fee for renter fault, tire or accident.\nDugi Otok Island: free for mechanical defects, €500 flat fee for renter fault, tire or accident."
+      "answer": "Roadside assistance for technical/mechanical defects (e.g. engine failure) or theft processing is FREE OF CHARGE including vehicle pickup and return transport.\nFor incidents caused by the renter (e.g., flat tire, dead battery, key loss, fall/accident), the following fees apply:\nUp to 5 km radius: always free, even for renter fault.\n5 to 20 km: free for mechanical defects, €30 service fee for renter fault, tire or accident.\nOver 20 km distance: free for mechanical defects, from €50 (variable by distance + transport) for renter fault, tire or accident.\nPreko Island: free for mechanical defects, €150 flat fee for renter fault, tire or accident.\nDugi Otok Island: free for mechanical defects, €500 flat fee for renter fault, tire or accident."
     },
     {
       "question": "What condition is the vehicle handed over in and what must I inspect?",
@@ -529,11 +528,11 @@
     },
     {
       "question": "What is the cancellation policy?",
-      "answer": "All bookings are binding and non-refundable. In the event of a cancellation by the renter, no refund of the rental amount will be issued."
+      "answer": "The booking fee (20% of the total amount) is not refunded in any case if the renter cancels. The renter can cancel at any time via the link in the booking confirmation.\nIf we cannot provide the booked vehicle (e.g. because it is out of service after an accident or damage caused by another customer), the renter gets a replacement vehicle or a full refund of the booking fee."
     },
     {
       "question": "When and where must the vehicle be returned? What about delays?",
-      "answer": "The vehicle must be returned at the agreed time and location.\nGrace Period: A 15-minute grace period applies. For returns after this 15-minute period or outside standard business hours, an administrative/operational fee of €30 to €50 will be charged."
+      "answer": "The vehicle must be returned at the agreed time and location.\nGrace Period: A 15-minute grace period applies.\n15 to 30 minutes late: €15.\nMore than 30 minutes up to 2 hours late: €50.\nMore than 2 hours late: one additional rental day is charged.\nReturn outside business hours: flat fee of €30."
     },
     {
       "question": "Who is liable in case of accidents or third-party damage?",
@@ -565,7 +564,7 @@
     },
     {
       "question": "What if you decide I'm not experienced enough?",
-      "answer": "Riding requires prior experience. Riding experience means you got your AM licence before your A or B licence. If at pickup we determine you don't have enough experience to safely handle the scooter or bike, we reserve the right to decline the rental. In that case the booking fee is non-refundable, so please be honest about your experience when booking."
+      "answer": "Riding requires prior experience. For 50cc scooters rented with a B licence, this means: your AM licence must have been issued at least 6 months before your B licence (see the dates on your licence). If that is not the case, you cannot rent a 50cc scooter with a B licence. With a motorcycle licence (A1, A2 or A) you do not need an AM licence. If at pickup we determine you don't have enough experience to safely handle the scooter or bike, we reserve the right to decline the rental. In that case the booking fee is non-refundable, so please be honest about your experience when booking."
     },
     {
       "question": "What special road and driving conditions apply in Zadar?",
@@ -587,7 +586,8 @@
       "urgentLine": "In the meantime, anything urgent?",
       "signoff": "See you in Zadar.",
       "refLabel": "Booking number",
-      "refLine": "Please include your booking number and phone number when you pay, so we can match your payment."
+      "refLine": "Please include your booking number and phone number when you pay, so we can match your payment.",
+      "groupPreheader": "We got your group booking request ({bike}). Owner confirms shortly."
     },
     "bookingConfirmed": {
       "subject": "Confirmed, {bike} {from} to {to}",
@@ -611,7 +611,10 @@
       "readLine": "Our FAQ and rental terms apply to your booking. Please read them before you pick up your vehicle.",
       "faqLink": "Read the FAQ",
       "agreementLink": "Rental agreement (PDF)",
-      "toursHeader": "Tour tips for your ride"
+      "toursHeader": "Tour tips for your ride",
+      "openHoursValue": "Mon to Sun, 09:00 to 19:00",
+      "groupIntro": "your group booking ({bike}) is locked in. See you in Zadar.",
+      "groupPreheader": "Your group booking ({bike}) is confirmed for {from} to {to}."
     },
     "bookingDeclined": {
       "subject": "Update on your booking, {bike}",
@@ -619,7 +622,9 @@
       "headline": "Update on your booking",
       "greeting": "Hi {name},",
       "intro": "unfortunately we can't accommodate the {bike} for these dates. Sorry about that.",
-      "tryOther": "Want to try other dates or another bike? Drop us a line and we'll do our best to find something that works."
+      "tryOther": "Want to try other dates or another bike? Drop us a line and we'll do our best to find something that works.",
+      "groupIntro": "unfortunately we can't accommodate your group booking ({bike}) for these dates. Sorry about that.",
+      "groupPreheader": "Update on your group booking ({bike}), these dates didn't work out."
     },
     "contactReceived": {
       "subject": "Thanks for your message",
@@ -657,13 +662,11 @@
     "seats": "seats",
     "yourGroup": "Your group",
     "noBikes": "No bikes yet",
-    "bikesWord": "bikes",
-    "helmetsWord": "helmets",
     "oneDeposit": "one deposit",
     "continue": "Continue",
     "ridingPerBike": "Riding style per bike",
     "helmetsHint": "So we prep the right helmets",
-    "helmetsTotal": "helmets total",
+    "helmetsTotal": "in total",
     "spokenLanguage": "Spoken language",
     "fromDialCode": "from dial code",
     "override": "Override (€)",
@@ -723,7 +726,19 @@
     "freeIfReturnBy": "Free if returned by",
     "useReturn": "Use return time",
     "depositSummary": "Deposit: {count} × {each} = {total}",
-    "errFaq": "Please confirm that you have read the FAQ and the rental terms."
+    "errFaq": "Please confirm that you have read the FAQ and the rental terms.",
+    "bikeForms": {
+      "one": "bike",
+      "few": "bikes",
+      "many": "bikes",
+      "other": "bikes"
+    },
+    "helmetForms": {
+      "one": "helmet",
+      "few": "helmets",
+      "many": "helmets",
+      "other": "helmets"
+    }
   },
   "chatbot": {
     "openLabel": "Open chat",

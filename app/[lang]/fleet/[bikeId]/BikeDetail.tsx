@@ -51,7 +51,7 @@ const LICENCE_OPTIONS = [
   { value: "A1", label: "A1 (up to 125cc)" },
   { value: "A2", label: "A2 (up to 35 kW)" },
   { value: "A", label: "A (unrestricted)" },
-  { value: "B", label: "B (car licence, covers AM/50cc)" },
+  { value: "B", label: "B (car licence)" },
 ] as const;
 type Licence = (typeof LICENCE_OPTIONS)[number]["value"];
 

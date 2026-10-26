@@ -24,6 +24,12 @@ function fmt(template: string, vars: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/g, (_, key) => vars[key] ?? "");
 }
 
+// "1 Bike" / "3 Bikes" in the customer's language (same plural forms as the
+// group booking page), for the group email subject and intro.
+function bikeCount(n: number, forms: Record<string, string>, locale: Locale): string {
+  return `${n} ${forms[new Intl.PluralRules(locale).select(n)] ?? forms.other}`;
+}
+
 function bookingLocale(booking: BookingRow): Locale {
   return isLocale(booking.locale) ? booking.locale : "en";
 }
@@ -734,7 +740,7 @@ export async function sendCustomerBookingDecidedEmail(
       ${bookingSummaryHtml(booking, dict.emails.summary)}
       <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).pickupHeader)}</h3>
       <p style="margin:0 0 4px;font-size:14px;line-height:1.6;font-weight:600;">${escape(BRAND.address)}</p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).openHoursLabel)} ${escape(BRAND.hours)}</p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).openHoursLabel)} ${escape((t as Dictionary["emails"]["bookingConfirmed"]).openHoursValue)}</p>
       <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringHeader)}</h3>
       <ul style="margin:0 0 16px;padding-left:18px;font-size:14px;line-height:1.7;">
         <li>${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringLicence)}</li>
@@ -775,7 +781,7 @@ ${dict.emails.summary.return}: ${fmtDate(booking.date_to)} ${fmtTimeOfDay(bookin
 ${dict.emails.summary.total}: ${totalEur(booking)}
 
 ${(t as Dictionary["emails"]["bookingConfirmed"]).pickupHeader}: ${BRAND.address}
-${(t as Dictionary["emails"]["bookingConfirmed"]).openHoursLabel}: ${BRAND.hours}
+${(t as Dictionary["emails"]["bookingConfirmed"]).openHoursLabel}: ${(t as Dictionary["emails"]["bookingConfirmed"]).openHoursValue}
 
 ${readBeforePickupText(t as ConfirmedStrings, locale)}
 ${(() => { const tt = toursText([booking.bike_id], t as ConfirmedStrings, dict.fleet.tours); return tt ? `\n${tt}\n` : ""; })()}
@@ -817,7 +823,7 @@ export async function sendCustomerGroupBookingReceivedEmail(bookings: BookingRow
   const ref = bookingRef(primary.booking_group_id ?? primary.id);
   const vars = {
     name: primary.customer_name,
-    bike: `${bookings.length} bikes`,
+    bike: bikeCount(bookings.length, dict.group.bikeForms, locale),
     from: fmtDate(primary.date_from),
     to: fmtDate(primary.date_to),
   };
@@ -830,7 +836,7 @@ export async function sendCustomerGroupBookingReceivedEmail(bookings: BookingRow
     ${contactButtonsHtml()}
     <p style="margin:24px 0 0;font-size:13px;color:#6b6b6b;line-height:1.6;">${escape(t.signoff)}</p>
   `;
-  const html = htmlLayout({ preheader: fmt(t.preheader, vars), headline: t.headline, accent: "ink", bodyHtml, credit: locale });
+  const html = htmlLayout({ preheader: fmt(t.groupPreheader, vars), headline: t.headline, accent: "ink", bodyHtml, credit: locale });
   await sendWithRetry("customerGroupReceived", {
     from: fromAddress(),
     to: primary.customer_email,
@@ -849,12 +855,16 @@ export async function sendCustomerGroupBookingDecidedEmail(
   const primary = bookings[0];
   if (!primary?.customer_email || !primary.customer_email.includes("@")) return;
   const isConfirmed = decision === "confirmed";
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+  // Self-cancel link, same as the single-bike email. Any row's token works:
+  // the cancel page/API drops the whole booking_group_id.
+  const cancelUrl = `${siteUrl}/booking/${encodeURIComponent(primary.secret_token)}/cancel`;
   const locale = bookingLocale(primary);
   const dict = await getDictionary(locale);
   const t = isConfirmed ? dict.emails.bookingConfirmed : dict.emails.bookingDeclined;
   const vars = {
     name: primary.customer_name,
-    bike: `${bookings.length} bikes`,
+    bike: bikeCount(bookings.length, dict.group.bikeForms, locale),
     from: fmtDate(primary.date_from),
     to: fmtDate(primary.date_to),
     pickupTime: fmtTimeOfDay(primary.pickup_time),
@@ -868,11 +878,11 @@ export async function sendCustomerGroupBookingDecidedEmail(
   const bodyHtml = isConfirmed
     ? `
       <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${escape(fmt(t.greeting, vars))}</p>
-      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(fmt(t.intro, vars))}</p>
+      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(fmt(t.groupIntro, vars))}</p>
       ${groupSummaryHtml(bookings, dict.emails.summary)}
       <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).pickupHeader)}</h3>
       <p style="margin:0 0 4px;font-size:14px;line-height:1.6;font-weight:600;">${escape(BRAND.address)}</p>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).openHoursLabel)} ${escape(BRAND.hours)}</p>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).openHoursLabel)} ${escape((t as Dictionary["emails"]["bookingConfirmed"]).openHoursValue)}</p>
       <h3 style="margin:24px 0 8px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#6b6b6b;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringHeader)}</h3>
       <ul style="margin:0 0 16px;padding-left:18px;font-size:14px;line-height:1.7;">
         <li>${escape((t as Dictionary["emails"]["bookingConfirmed"]).bringLicence)}</li>
@@ -883,23 +893,24 @@ export async function sendCustomerGroupBookingDecidedEmail(
       ${toursHtml(bookings.map((b) => b.bike_id), t as ConfirmedStrings, dict.fleet.tours)}
       <p style="margin:0 0 8px;font-size:13px;color:#B61F36;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).lateLine)}</p>
       ${contactButtonsHtml()}
+      <p style="margin:32px 0 0;padding-top:18px;border-top:1px solid #e6e4dd;font-size:12px;color:#6b6b6b;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).cancelLine)} <a href="${cancelUrl}" style="color:#B61F36;">${escape((t as Dictionary["emails"]["bookingConfirmed"]).cancelLink)}</a>${escape((t as Dictionary["emails"]["bookingConfirmed"]).cancelTail)}</p>
     `
     : `
       <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${escape(fmt(t.greeting, vars))}</p>
-      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(fmt(t.intro, vars))}</p>
+      <p style="margin:0 0 18px;font-size:15px;line-height:1.6;">${escape(fmt(t.groupIntro, vars))}</p>
       ${groupSummaryHtml(bookings, dict.emails.summary)}
       <p style="margin:24px 0 8px;font-size:14px;line-height:1.6;">${escape((t as Dictionary["emails"]["bookingDeclined"]).tryOther)}</p>
       ${contactButtonsHtml()}
     `;
-  const html = htmlLayout({ preheader: fmt(t.preheader, vars), headline: t.headline, accent: isConfirmed ? "green" : "ink", bodyHtml, credit: locale });
+  const html = htmlLayout({ preheader: fmt(t.groupPreheader, vars), headline: t.headline, accent: isConfirmed ? "green" : "ink", bodyHtml, credit: locale });
   await sendWithRetry(`customerGroup${isConfirmed ? "Confirmed" : "Declined"}`, {
     from: fromAddress(),
     to: primary.customer_email,
     subject: fmt(t.subject, vars),
     html,
     text: isConfirmed
-      ? `${fmt(t.greeting, vars)}\n\n${fmt(t.intro, vars)}\n\n${readBeforePickupText(t as ConfirmedStrings, locale)}\n${(() => { const tt = toursText(bookings.map((b) => b.bike_id), t as ConfirmedStrings, dict.fleet.tours); return tt ? `\n${tt}\n` : ""; })()}\nWhatsApp: ${ownerWaLink()}\n\n${BRAND.name}${krileoCreditText(locale)}`
-      : `${fmt(t.greeting, vars)}\n\n${fmt(t.intro, vars)}\n\nWhatsApp: ${ownerWaLink()}\n\n${BRAND.name}${krileoCreditText(locale)}`,
+      ? `${fmt(t.greeting, vars)}\n\n${fmt(t.groupIntro, vars)}\n\n${readBeforePickupText(t as ConfirmedStrings, locale)}\n${(() => { const tt = toursText(bookings.map((b) => b.bike_id), t as ConfirmedStrings, dict.fleet.tours); return tt ? `\n${tt}\n` : ""; })()}\nWhatsApp: ${ownerWaLink()}\n\n${(t as Dictionary["emails"]["bookingConfirmed"]).cancelLine} ${cancelUrl}\n\n${BRAND.name}${krileoCreditText(locale)}`
+      : `${fmt(t.greeting, vars)}\n\n${fmt(t.groupIntro, vars)}\n\nWhatsApp: ${ownerWaLink()}\n\n${BRAND.name}${krileoCreditText(locale)}`,
     replyTo: BRAND.email,
   });
 }

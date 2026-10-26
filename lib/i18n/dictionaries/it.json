@@ -73,7 +73,7 @@
         },
         "roadside": {
           "label": "Soccorso stradale",
-          "sub": "Gratis fino a 20km, poi 50€ e oltre"
+          "sub": "Sempre gratis entro 5 km, ovunque per guasti"
         },
         "transparent": {
           "label": "Prezzi trasparenti",
@@ -146,7 +146,7 @@
     "title": "Info",
     "licenceRequirements": {
       "title": "Requisiti patente",
-      "scooter50": "Scooter 50cc: patente B o AM più esperienza con scooter",
+      "scooter50": "Scooter 50cc: patente B o AM più esperienza con scooter (con patente B: patente AM conseguita almeno 6 mesi prima della B)",
       "scooter125": "Scooter 125cc e moto 125cc: patente A1",
       "motorbike390": "Moto 390cc: patente A2",
       "verify": "Verifichiamo la patente al ritiro"
@@ -172,8 +172,7 @@
       "incidents": "Danni e assistenza"
     },
     "docsTitle": "Documenti",
-    "agreementDownload": "Contratto di noleggio (PDF, tutte le lingue)",
-    "manualDownload": "FAQ e condizioni di noleggio (PDF, tutte le lingue)"
+    "agreementDownload": "Contratto di noleggio (PDF, tutte le lingue)"
   },
   "terms": {
     "eyebrow": "Termini di prenotazione",
@@ -191,14 +190,14 @@
           "Metodi di pagamento: PayPal, bonifico bancario, Revolut o contanti in persona (se sei già a Zara). Non accettiamo carte di credito.",
           "Dopo il pagamento inviaci uno screenshot della transazione come prova. Non serve se paghi in contanti.",
           "Se arrivi più di 1 ora in ritardo senza preavviso, la prenotazione viene annullata automaticamente e la caparra non è rimborsabile.",
-          "Se uno scooter o una moto non è più disponibile per incidente o danno causato da un altro cliente, possiamo annullare la prenotazione e rimborsare per intero la caparra.",
+          "Se non possiamo mettere a disposizione lo scooter o la moto che hai prenotato (es. dopo un incidente o un danno causato da un altro cliente), ricevi un veicolo sostitutivo o il rimborso integrale della caparra.",
           "Guidare uno scooter o una moto richiede esperienza. Se notiamo che non hai esperienza sufficiente per guidare in sicurezza, ci riserviamo il diritto di rifiutare la prenotazione senza rimborso."
         ]
       },
       {
         "heading": "Cauzione e pagamento",
         "bullets": [
-          "Cauzione di sicurezza: 250€ per moto, restituita dopo la riconsegna se non ci sono danni.",
+          "Cauzione di sicurezza: 250 € per moto, restituita dopo la riconsegna se non ci sono danni.",
           "Caparra: 20% del totale. Blocca le date, non rimborsabile in caso di cancellazione.",
           "Metodi di pagamento: PayPal (preferito Friends & Family, senza commissioni), bonifico, Revolut o contanti all'arrivo.",
           "Non accettiamo carte di credito."
@@ -210,15 +209,15 @@
           "Ritiro e riconsegna a Velebitska Ulica 2, 23000 Zadar.",
           "Aperto lunedì a domenica, dalle 09:00 alle 19:00.",
           "Fasce orarie di ritiro e riconsegna a intervalli di 30 minuti tra le 09:00 e le 19:00.",
-          "15 minuti di tolleranza alla riconsegna. Ritardi oltre comportano costi extra.",
+          "15 minuti di tolleranza alla riconsegna. Ritardo da 15 a 30 minuti: 15 €. Oltre i 30 minuti e fino a 2 ore: 50 €. Oltre le 2 ore: un giorno di noleggio in più. Riconsegna fuori orario di apertura: quota fissa di 30 €.",
           "Inviaci lo screenshot della caparra dopo il pagamento per poter verificare e confermare."
         ]
       },
       {
         "heading": "Assicurazione e sicurezza",
         "bullets": [
-          "L'assicurazione base è inclusa in ogni noleggio e copre furto della moto e danni al motore.",
-          "Incidenti, graffi, danni e forature sono a carico del cliente.",
+          "L'assicurazione base è inclusa in ogni noleggio e copre furto della moto, danni al motore e guasti meccanici, purché non causati da errori di utilizzo o negligenza.",
+          "Tutti i danni esterni, estetici e strutturali dovuti a cadute, incidenti, atti vandalici o graffi, così come i danni agli pneumatici e le forature, sono a carico del cliente.",
           "Se un terzo causa un incidente, devi chiamare la polizia e ottenere un rapporto ufficiale. Il responsabile paga.",
           "I caschi sono sempre forniti.",
           "Tutte le moto vengono consegnate in perfette condizioni di funzionamento. Chiediamo al cliente di ispezionare la moto, fare foto e video al ritiro e restituirla nelle stesse condizioni."
@@ -227,9 +226,9 @@
       {
         "heading": "Danni, riparazione e soccorso",
         "bullets": [
-          "La cauzione copre i primi costi di riparazione. Portiamo la moto da un meccanico locale per la valutazione. Il cliente paga il costo completo secondo la fattura del meccanico (una copia è sempre fornita).",
-          "Soccorso stradale: gratis fino a 20 km. Oltre 20 km: 50€. Isole: Preko 150€, Dugi Otok 500€.",
-          "Chiave persa: 50€ di costo per la sostituzione più soccorso applicabile in base alla posizione.",
+          "La cauzione viene trattenuta per coprire i primi costi di riparazione. La moto viene valutata presso un'officina autorizzata (es. Piaggio Center Zadar, KTM Moto Špica) e riparata con ricambi originali. Il cliente paga i costi secondo la fattura dell'officina; se superano la cauzione, la differenza va pagata. Una copia della fattura è sempre fornita.",
+          "Soccorso stradale: sempre gratis per guasto meccanico. Per colpa del cliente, pneumatico o incidente: gratis fino a 5 km, da 5 a 20 km 30 €, oltre 20 km da 50 € (in base a distanza e trasporto), isola di Preko 150 €, isola di Dugi Otok 500 €.",
+          "Chiave persa: 50 € di costo per la sostituzione più soccorso applicabile in base alla posizione.",
           "In caso di guasto al motore non causato dal cliente, copriamo tutti i costi."
         ]
       },
@@ -244,7 +243,7 @@
         "heading": "Requisiti del conducente",
         "bullets": [
           "Porta la tua patente valida al ritiro. Niente patente, niente moto. Verifichiamo che la categoria della patente corrisponda alla classe della moto.",
-          "Guidare richiede esperienza precedente. Se al ritiro stabiliamo che la tua esperienza non è sufficiente per gestire la moto in sicurezza, ci riserviamo il diritto di rifiutare. La caparra non è rimborsabile in quel caso, sii onesto sulla tua esperienza al momento della prenotazione.",
+          "Guidare richiede esperienza precedente. Per gli scooter 50cc con patente B, la patente AM deve essere stata rilasciata almeno 6 mesi prima della patente B; con patente A1, A2 o A questo non vale. Se al ritiro stabiliamo che la tua esperienza non è sufficiente per gestire la moto in sicurezza, ci riserviamo il diritto di rifiutare il noleggio. La caparra non è rimborsabile in quel caso, quindi sii onesto sulla tua esperienza al momento della prenotazione.",
           "Il cliente si assume la piena responsabilità per tutti gli incidenti, danni e lesioni durante il periodo di noleggio."
         ]
       }
@@ -389,7 +388,7 @@
         "A1": "A1 (fino a 125cc)",
         "A2": "A2 (fino a 35 kW)",
         "A": "A (senza limiti)",
-        "B": "B (patente auto, copre AM/50cc)"
+        "B": "B (patente auto)"
       },
       "ridingStyle": "Tipo di viaggio",
       "ridingStyleSolo": "Da solo",
@@ -405,7 +404,7 @@
       "faqConfirm": "Ho letto le FAQ e le condizioni di noleggio.",
       "faqLinkShort": "FAQ",
       "agreementLinkShort": "Contratto di noleggio (PDF)",
-      "experienceMeaning": "Esperienza di guida significa: hai preso la patente AM prima della patente A o B."
+      "experienceMeaning": "Per gli scooter 50cc con patente B: la tua patente AM deve essere stata rilasciata almeno 6 mesi prima della patente B (vedi le date sulla patente). Con la patente A1, A2 o A questo requisito non si applica."
     },
     "reservation": {
       "title": "Prenotazione",
@@ -517,7 +516,7 @@
   "faqItems": [
     {
       "question": "Cosa include l'assistenza stradale e quali sono i costi?",
-      "answer": "L'assistenza stradale per guasti tecnici/meccanici (es. guasto al motore) o gestione furto è GRATUITA incl. ritiro e trasporto del veicolo.\nPer incidenti causati dal cliente (es. foratura, batteria scarica, smarrimento chiavi, caduta/incidente) si applicano le seguenti tariffe:\nFino a 20 km: GRATIS per guasto meccanico, 30 € costo servizio per colpa del cliente, pneumatico o incidente.\nOltre 20 km di distanza: GRATIS per guasto meccanico, da 50 € (in base a distanza + trasporto) per colpa del cliente, pneumatico o incidente.\nIsola di Preko: GRATIS per guasto meccanico, 150 € quota fissa per colpa del cliente, pneumatico o incidente.\nIsola di Dugi Otok: GRATIS per guasto meccanico, 500 € quota fissa per colpa del cliente, pneumatico o incidente."
+      "answer": "L'assistenza stradale per guasti tecnici/meccanici (es. guasto al motore) o gestione furto è GRATUITA incl. ritiro e trasporto del veicolo.\nPer incidenti causati dal cliente (es. foratura, batteria scarica, smarrimento chiavi, caduta/incidente) si applicano le seguenti tariffe:\nFino a 5 km: sempre GRATIS, anche in caso di colpa del cliente.\nDa 5 a 20 km: GRATIS per guasto meccanico, 30 € costo servizio per colpa del cliente, pneumatico o incidente.\nOltre 20 km di distanza: GRATIS per guasto meccanico, da 50 € (in base a distanza + trasporto) per colpa del cliente, pneumatico o incidente.\nIsola di Preko: GRATIS per guasto meccanico, 150 € quota fissa per colpa del cliente, pneumatico o incidente.\nIsola di Dugi Otok: GRATIS per guasto meccanico, 500 € quota fissa per colpa del cliente, pneumatico o incidente."
     },
     {
       "question": "In quali condizioni viene consegnato il veicolo e cosa devo verificare?",
@@ -529,11 +528,11 @@
     },
     {
       "question": "Quali sono le condizioni di cancellazione?",
-      "answer": "Tutte le prenotazioni sono vincolanti e non rimborsabili. In caso di cancellazione da parte del cliente non è previsto alcun rimborso."
+      "answer": "L'acconto (20% dell'importo totale) non viene rimborsato in nessun caso se la prenotazione viene annullata dal cliente. Il cliente può annullare autonomamente in qualsiasi momento tramite il link nella conferma di prenotazione.\nSe non possiamo mettere a disposizione il veicolo prenotato (es. perché è fuori servizio dopo un incidente o un danno causato da un altro cliente), il cliente riceve un veicolo sostitutivo o il rimborso completo dell'acconto."
     },
     {
       "question": "Quando e dove deve essere restituito il veicolo? Cosa succede in caso di ritardo?",
-      "answer": "Il veicolo deve essere restituito all'orario e nel luogo concordati.\nTolleranza: È prevista una tolleranza di 15 minuti. Per restituzioni oltre i 15 minuti o fuori orario di apertura si applica una penale amministrativa/operativa da 30 € a 50 €."
+      "answer": "Il veicolo deve essere restituito all'orario e nel luogo concordati.\nTolleranza: È prevista una tolleranza di 15 minuti.\nRitardo da 15 a 30 minuti: 15 €.\nRitardo oltre i 30 minuti e fino a 2 ore: 50 €.\nRitardo oltre le 2 ore: viene addebitato un giorno di noleggio in più.\nRestituzione fuori orario di apertura: quota fissa di 30 €."
     },
     {
       "question": "Chi è responsabile in caso di incidenti o danni causati da terzi?",
@@ -565,7 +564,7 @@
     },
     {
       "question": "E se decidete che non ho abbastanza esperienza?",
-      "answer": "Guidare richiede esperienza pregressa. Per esperienza di guida si intende che hai conseguito la patente AM prima della patente A o B. Se al ritiro riteniamo che tu non abbia abbastanza esperienza per gestire in sicurezza lo scooter o la moto, ci riserviamo il diritto di rifiutare il noleggio. In tal caso l'acconto non è rimborsabile, quindi sii sincero sulla tua esperienza al momento della prenotazione."
+      "answer": "Guidare richiede esperienza pregressa. Per gli scooter 50cc noleggiati con patente B, questo significa che la tua patente AM deve essere stata rilasciata almeno 6 mesi prima della patente B (vedi le date sulla patente). Se non è così, con la patente B non puoi noleggiare uno scooter 50cc. Con una patente moto (A1, A2 o A) non ti serve la patente AM. Se al ritiro riteniamo che tu non abbia abbastanza esperienza per gestire in sicurezza lo scooter o la moto, ci riserviamo il diritto di rifiutare il noleggio. In tal caso l'acconto non è rimborsabile, quindi sii sincero sulla tua esperienza al momento della prenotazione."
     },
     {
       "question": "Quali condizioni stradali particolari valgono a Zara (Zadar)?",
@@ -587,7 +586,8 @@
       "urgentLine": "Intanto, qualcosa di urgente?",
       "signoff": "A presto a Zara.",
       "refLabel": "Numero di prenotazione",
-      "refLine": "Indica il numero di prenotazione e il telefono al momento del pagamento, così possiamo abbinare il pagamento."
+      "refLine": "Indica il numero di prenotazione e il telefono al momento del pagamento, così possiamo abbinare il pagamento.",
+      "groupPreheader": "Abbiamo la tua richiesta di gruppo ({bike}). Conferma a breve."
     },
     "bookingConfirmed": {
       "subject": "Confermata, {bike} {from} a {to}",
@@ -611,7 +611,10 @@
       "readLine": "Alla tua prenotazione si applicano le nostre FAQ e le condizioni di noleggio. Leggile prima di ritirare il mezzo.",
       "faqLink": "Leggi le FAQ",
       "agreementLink": "Contratto di noleggio (PDF)",
-      "toursHeader": "Itinerari consigliati per il tuo giro"
+      "toursHeader": "Itinerari consigliati per il tuo giro",
+      "openHoursValue": "da lunedì a domenica, dalle 09:00 alle 19:00",
+      "groupIntro": "la tua prenotazione di gruppo ({bike}) è confermata. A presto a Zara.",
+      "groupPreheader": "La tua prenotazione di gruppo ({bike}) è confermata dal {from} al {to}."
     },
     "bookingDeclined": {
       "subject": "Aggiornamento sulla tua prenotazione, {bike}",
@@ -619,7 +622,9 @@
       "headline": "Aggiornamento prenotazione",
       "greeting": "Ciao {name},",
       "intro": "purtroppo non possiamo darti la {bike} per queste date. Ci dispiace.",
-      "tryOther": "Vuoi provare altre date o un'altra moto? Scrivici e troviamo qualcosa che funziona."
+      "tryOther": "Vuoi provare altre date o un'altra moto? Scrivici e troviamo qualcosa che funziona.",
+      "groupIntro": "purtroppo non possiamo confermare la tua prenotazione di gruppo ({bike}) per queste date. Ci dispiace.",
+      "groupPreheader": "Aggiornamento sulla tua prenotazione di gruppo ({bike}), queste date non sono andate."
     },
     "contactReceived": {
       "subject": "Grazie per il tuo messaggio",
@@ -657,13 +662,11 @@
     "seats": "posti",
     "yourGroup": "Il tuo gruppo",
     "noBikes": "Ancora nessuna moto",
-    "bikesWord": "moto",
-    "helmetsWord": "caschi",
     "oneDeposit": "un deposito",
     "continue": "Continua",
     "ridingPerBike": "Stile di guida per moto",
     "helmetsHint": "Così prepariamo i caschi giusti",
-    "helmetsTotal": "caschi in totale",
+    "helmetsTotal": "in totale",
     "spokenLanguage": "Lingua parlata",
     "fromDialCode": "dal prefisso",
     "override": "Modifica (€)",
@@ -723,7 +726,19 @@
     "freeIfReturnBy": "Libera se reso entro",
     "useReturn": "Usa quest'orario di reso",
     "depositSummary": "Cauzione: {count} × {each} = {total}",
-    "errFaq": "Conferma di aver letto le FAQ e le condizioni di noleggio."
+    "errFaq": "Conferma di aver letto le FAQ e le condizioni di noleggio.",
+    "bikeForms": {
+      "one": "moto",
+      "few": "moto",
+      "many": "moto",
+      "other": "moto"
+    },
+    "helmetForms": {
+      "one": "casco",
+      "few": "caschi",
+      "many": "caschi",
+      "other": "caschi"
+    }
   },
   "chatbot": {
     "openLabel": "Apri chat",

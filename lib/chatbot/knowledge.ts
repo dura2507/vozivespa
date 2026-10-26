@@ -98,7 +98,7 @@ const THOMAS_FAQ = `
     A: Yes, a second driver is possible if that person also has real riding experience (for a 50cc scooter) and a valid driving licence.
 
 17. Q: What is your cancellation / refund policy?
-    A: If you cancel, the 20% reservation fee is not refunded. We may also cancel at pickup if the rider behaves unsafely or clearly lacks riding experience — in that case the fee is not refunded either.
+    A: If you cancel, the 20% reservation fee is not refunded in any case; you can cancel yourself via the link in your confirmation email. If WE cannot provide the booked vehicle (e.g. after an accident or damage by another customer), you get a replacement vehicle or a full refund of the fee. We may also cancel at pickup if the rider behaves unsafely or clearly lacks riding experience, in that case the fee is not refunded.
 
 18. Q: Can I pick up or drop off outside opening hours?
     A: Yes. Early pickup 07:00–08:59 or late return 19:00–22:00 costs a flat 30€ per rental, and you can add it directly to your booking.
@@ -146,16 +146,16 @@ WHAT'S NOT ALLOWED / NOT INCLUDED
 - Phone holders on the bike (not allowed).
 - Children under 16 as passengers.
 - Riding without a valid licence.
-- Riding without enough real experience (we can refuse at pickup, without refund). Riding experience means: the AM licence was obtained BEFORE the A or B licence (owner definition, 2026-10).
+- Riding without enough real experience (we can refuse at pickup, without refund). Riding experience rule (owner, 2026-10): for a 50cc scooter rented with a B (car) licence, the AM licence must have been issued at least 6 months before the B licence (dates on the licence). If not, a B-licence holder cannot rent a 50cc scooter. Riders with a motorcycle licence (A1, A2 or A) do not need an AM licence.
 
 INSURANCE & LIABILITY (owner-confirmed, official FAQ - you may state this)
 - Included: basic protection covering theft of the bike and mechanical/engine breakdowns (unless caused by operating error or negligence). This cover includes pickup and/or a replacement bike, wherever the renter is; for engine damage we cover all costs.
 - NOT covered, the renter is fully liable: all external, cosmetic, structural or physical damage from falls, accidents, vandalism, scratches, and tyre punctures/flats - i.e. everything except theft and mechanical/engine faults. If a third party causes an accident, the renter must call the police and get an official report; the responsible party is liable.
 - No fully-comprehensive ("Vollkasko") insurance is offered on any model.
 
-ROADSIDE ASSISTANCE & LOST KEY (official figures, updated 2026-08-29 - you may state these)
-- Technical/maintenance failures and theft recovery: free of charge.
-- User-caused incidents (flat tire, drained battery, accident towing): up to 20 km free for mechanical failures, 30 euro service fee for flat tires and other user-caused issues; over 20 km from 50 euro depending on distance, plus actual transport/recovery costs.
+ROADSIDE ASSISTANCE & LOST KEY (official figures, updated 2026-10 - you may state these)
+- Technical/mechanical failures and theft recovery: free of charge everywhere, incl. pickup and transport back.
+- Renter-caused incidents (flat tire, drained battery, key loss, fall/accident): within 5 km always free, even if the renter caused it; 5 to 20 km: 30 euro service fee; over 20 km: from 50 euro depending on distance plus transport.
 - Islands: Preko 150 euro, Dugi Otok 500 euro.
 - Key replacement: 50 euro in case of loss, physical damage or locking the key inside the vehicle.
 
@@ -164,12 +164,14 @@ DAMAGE HANDLING (official FAQ, updated 2026-08-29)
 - Tip you can give: at pickup, photograph/film the bike from all sides (including any existing scratches) - it documents the condition and protects both sides in case of a dispute.
 
 LATE RETURN (owner FAQ, 2026-10)
-- 15-minute grace period. Returns after that, or outside standard business hours, cost an administrative/operational fee of 30 to 50 euro.
-- A late return BOOKED IN ADVANCE as an add-on is the flat 30 euro from OUTSIDE-HOURS SURCHARGE below.
+- 15-minute grace period.
+- 15 to 30 minutes late: 15 euro. More than 30 minutes up to 2 hours late: 50 euro. More than 2 hours late: one additional rental day is charged.
+- Return outside business hours: flat 30 euro. A late return BOOKED IN ADVANCE as an add-on is that same flat 30 euro (see OUTSIDE-HOURS SURCHARGE below).
 
 CANCELLATION (owner FAQ, 2026-10)
-- All bookings are binding and non-refundable: if the customer cancels, there is no refund (in practice the 20% reservation fee paid upfront is kept).
-- If we cancel at handover (unsafe behaviour / insufficient riding experience): the fee is not refunded.
+- If the customer cancels, the 20% reservation fee is not refunded in any case. Customers can cancel themselves at any time via the link in their booking confirmation email.
+- If WE cannot provide the booked vehicle (e.g. it is out of service after an accident or damage by another customer): replacement vehicle or full refund of the reservation fee.
+- If we refuse the handover (unsafe behaviour / insufficient riding experience): the fee is not refunded.
 
 ROAD CONDITIONS (owner FAQ, 2026-10)
 - By signing the rental agreement the renter confirms a valid licence for the vehicle category and sufficient riding experience, and that they were told about the demanding local roads: very slippery polished coastal asphalt, dust, and slip risk when wet. Mention this when someone asks about safety or riding in Zadar.
@@ -213,7 +215,7 @@ FLEET (models, licence, top speed, seats, pricing)
 __FLEET_PLACEHOLDER__
 
 LICENCE HELP
-- AM/B: any driving licence (car licence works for 50cc AM/B category scooters).
+- AM/B (50cc scooters): an AM licence, or a B (car) licence only if the AM licence was issued at least 6 months before the B licence (dates on the licence); otherwise a B-licence holder cannot rent a 50cc scooter. Riders with an A1, A2 or A licence do not need an AM licence.
 - A1: A1 or higher motorcycle licence (needed for 125cc bikes).
 - A2 / A: bigger bikes like the KTM 390.
 
@@ -291,7 +293,6 @@ function pageLinks(locale: Locale): string {
     `- Photo gallery: ${base}/gallery`,
     `- Contact (WhatsApp / email): ${base}/contact`,
     `- Reservation terms (PDF, share if a visitor wants the full booking terms): ${SITE_URL}/docs/reservation-terms.pdf`,
-    `- FAQ & rental terms (PDF, all 11 site languages): ${SITE_URL}/docs/sickmotos-faq.pdf`,
     `- Rental agreement (PDF, all languages; it is signed at pickup): ${SITE_URL}/docs/sickmotos-rental-agreement.pdf`,
   ].join("\n");
 }

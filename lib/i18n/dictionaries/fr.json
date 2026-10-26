@@ -73,7 +73,7 @@
         },
         "roadside": {
           "label": "Assistance routière",
-          "sub": "Gratuite jusqu'à 20 km, puis 50 € et plus"
+          "sub": "Gratuite jusqu'à 5 km, partout en cas de panne"
         },
         "transparent": {
           "label": "Tarifs transparents",
@@ -146,7 +146,7 @@
     "title": "Infos",
     "licenceRequirements": {
       "title": "Permis requis",
-      "scooter50": "Scooter 50cc : permis B ou AM plus expérience du scooter",
+      "scooter50": "Scooter 50cc : permis B ou AM plus expérience du scooter (avec le permis B : permis AM obtenu au moins 6 mois avant le B)",
       "scooter125": "Scooter 125cc et moto 125cc : permis A1",
       "motorbike390": "Moto 390cc : permis A2",
       "verify": "Nous vérifions votre permis au retrait"
@@ -172,8 +172,7 @@
       "incidents": "Dommages et assistance"
     },
     "docsTitle": "Documents",
-    "agreementDownload": "Contrat de location (PDF, toutes les langues)",
-    "manualDownload": "FAQ et conditions de location (PDF, toutes les langues)"
+    "agreementDownload": "Contrat de location (PDF, toutes les langues)"
   },
   "terms": {
     "eyebrow": "Conditions de réservation",
@@ -191,7 +190,7 @@
           "Moyens de paiement : PayPal, virement bancaire, Revolut ou espèces sur place (si vous êtes déjà à Zadar). Nous n'acceptons pas les cartes de crédit.",
           "Après le paiement, envoyez-nous une capture d'écran de la transaction comme preuve. Pas nécessaire pour les paiements en espèces.",
           "Si vous arrivez avec plus d'1 heure de retard sans prévenir, votre réservation est automatiquement annulée et l'acompte n'est pas remboursable.",
-          "Si un scooter ou une moto devient indisponible suite à un accident ou un dommage causé par un autre client, nous pouvons annuler votre réservation et rembourser intégralement l'acompte.",
+          "Si nous ne pouvons pas mettre à disposition le véhicule réservé (par exemple suite à un accident ou un dommage causé par un autre client), vous recevez un véhicule de remplacement ou le remboursement intégral de l'acompte.",
           "Conduire un scooter ou une moto nécessite une expérience préalable. Si nous constatons que vous n'avez pas l'expérience suffisante pour rouler en sécurité, nous nous réservons le droit de refuser la réservation sans remboursement."
         ]
       },
@@ -210,15 +209,15 @@
           "Retrait et restitution à Velebitska Ulica 2, 23000 Zadar.",
           "Ouvert du lundi au dimanche, de 09:00 à 19:00.",
           "Les créneaux de retrait et de restitution sont par tranches de 30 minutes entre 09:00 et 19:00.",
-          "15 minutes de tolérance à la restitution. Tout retard au-delà entraîne des frais supplémentaires.",
+          "15 minutes de tolérance à la restitution. Retard de 15 à 30 minutes : 15 €. Plus de 30 minutes et jusqu'à 2 heures : 50 €. Plus de 2 heures : une journée de location supplémentaire. Restitution en dehors des heures d'ouverture : forfait de 30 €.",
           "Envoyez la capture d'écran du paiement de la caution après le règlement pour que nous puissions vérifier et confirmer."
         ]
       },
       {
         "heading": "Assurance et sécurité",
         "bullets": [
-          "L'assurance de base est incluse dans chaque location et couvre le vol de la moto et les dommages moteur.",
-          "Les accidents, rayures, dommages et crevaisons sont à la charge du locataire.",
+          "L'assurance de base est incluse dans chaque location et couvre le vol de la moto ainsi que les dommages moteur et les pannes mécaniques, sauf s'ils sont causés par une erreur de manipulation ou une négligence.",
+          "Tous les dommages extérieurs, esthétiques et structurels dus à des chutes, accidents, actes de vandalisme ou rayures, ainsi que les dommages aux pneus et les crevaisons, sont à la charge du locataire.",
           "Si un tiers est à l'origine d'un accident, vous devez appeler la police et obtenir un rapport officiel. Le responsable est tenu de payer.",
           "Les casques sont toujours fournis.",
           "Toutes les motos sont remises en parfait état de fonctionnement. Nous demandons aux locataires d'inspecter la moto, de prendre des photos et vidéos au retrait, et de la restituer dans le même état."
@@ -227,8 +226,8 @@
       {
         "heading": "Dommages, réparation et panne",
         "bullets": [
-          "La caution couvre les premiers frais de réparation. Nous emmenons la moto chez un mécanicien local pour évaluation. Le locataire paie l'intégralité des frais de réparation selon la facture du mécanicien (une copie est toujours fournie).",
-          "Assistance routière en cas de panne : gratuite jusqu'à 20 km. Au-delà de 20 km : 50 €. Îles : Preko 150 €, Dugi Otok 500 €.",
+          "La caution est retenue pour couvrir les premiers frais de réparation. La moto est expertisée dans l'atelier d'un concessionnaire agréé (ex. Piaggio Center Zadar, KTM Moto Špica) et réparée avec des pièces d'origine. Le locataire paie les frais selon la facture de l'atelier, et s'ils dépassent la caution, la différence doit être réglée. Une copie de la facture est toujours fournie.",
+          "Assistance routière : toujours gratuite en cas de panne mécanique. En cas de faute du locataire, de pneu endommagé ou d'accident : gratuite jusqu'à 5 km, 30 € de 5 à 20 km, à partir de 50 € au-delà de 20 km (selon la distance et le transport), 150 € pour l'île de Preko, 500 € pour l'île de Dugi Otok.",
           "Clé perdue : 50 € de frais de remplacement plus l'éventuelle intervention d'assistance selon le lieu.",
           "En cas de panne moteur sans lien avec le comportement du locataire, nous prenons en charge tous les frais."
         ]
@@ -244,7 +243,7 @@
         "heading": "Conditions pour le conducteur",
         "bullets": [
           "Apportez votre permis valide au retrait. Pas de permis, pas de location. Nous vérifions que la catégorie de permis correspond à la classe de la moto.",
-          "La conduite nécessite une expérience préalable. Si nous estimons au retrait que votre expérience est insuffisante pour piloter la moto en sécurité, nous nous réservons le droit de refuser. L'acompte n'est pas remboursable dans ce cas, soyez donc honnête sur votre expérience lors de la réservation.",
+          "La conduite nécessite une expérience préalable. Pour les scooters 50cc avec un permis B, le permis AM doit avoir été délivré au moins 6 mois avant le permis B. Cette règle ne s'applique pas aux titulaires d'un permis A1, A2 ou A. Si nous estimons au retrait que votre expérience est insuffisante pour piloter la moto en sécurité, nous nous réservons le droit de refuser la location. L'acompte n'est pas remboursable dans ce cas, soyez donc honnête sur votre expérience lors de la réservation.",
           "Le locataire assume l'entière responsabilité de tous les accidents, dommages et blessures pendant la période de location."
         ]
       }
@@ -389,7 +388,7 @@
         "A1": "A1 (jusqu'à 125cc)",
         "A2": "A2 (jusqu'à 35 kW)",
         "A": "A (sans restriction)",
-        "B": "B (permis voiture, couvre AM/50cc)"
+        "B": "B (permis voiture)"
       },
       "ridingStyle": "Type de conduite",
       "ridingStyleSolo": "Seul",
@@ -405,7 +404,7 @@
       "faqConfirm": "J'ai lu la FAQ et les conditions de location.",
       "faqLinkShort": "FAQ",
       "agreementLinkShort": "Contrat de location (PDF)",
-      "experienceMeaning": "Expérience de conduite signifie : tu as obtenu ton permis AM avant ton permis A ou B."
+      "experienceMeaning": "Pour les scooters 50cc avec un permis B : le permis AM doit avoir été délivré au moins 6 mois avant le permis B (voir les dates sur le permis). Cette règle ne s'applique pas aux titulaires d'un permis A1, A2 ou A."
     },
     "reservation": {
       "title": "Réservation",
@@ -517,7 +516,7 @@
   "faqItems": [
     {
       "question": "Que comprend l'assistance routière et quels sont les coûts ?",
-      "answer": "L'assistance routière pour les pannes techniques/mécaniques (ex. panne moteur) ou le vol est GRATUITE, incluant le remorquage et le transport du véhicule.\nPour les incidents causés par le locataire (ex. crevaison, batterie à plat, perte de clé, chute/accident), les frais suivants s'appliquent :\nJusqu'à 20 km de rayon : GRATUIT en cas de panne mécanique, 30 € de frais de service en cas de faute du locataire, de pneu ou d'accident.\nPlus de 20 km : GRATUIT en cas de panne mécanique, à partir de 50 € (selon distance + transport) en cas de faute du locataire, de pneu ou d'accident.\nÎle de Preko : GRATUIT en cas de panne mécanique, 150 € forfait en cas de faute du locataire, de pneu ou d'accident.\nÎle de Dugi Otok : GRATUIT en cas de panne mécanique, 500 € forfait en cas de faute du locataire, de pneu ou d'accident."
+      "answer": "L'assistance routière pour les pannes techniques/mécaniques (ex. panne moteur) ou le vol est GRATUITE, incluant le remorquage et le transport du véhicule.\nPour les incidents causés par le locataire (ex. crevaison, batterie à plat, perte de clé, chute/accident), les frais suivants s'appliquent :\nJusqu'à 5 km de rayon : toujours GRATUIT, même en cas de faute du locataire.\nDe 5 à 20 km : GRATUIT en cas de panne mécanique, 30 € de frais de service en cas de faute du locataire, de pneu ou d'accident.\nPlus de 20 km : GRATUIT en cas de panne mécanique, à partir de 50 € (selon distance + transport) en cas de faute du locataire, de pneu ou d'accident.\nÎle de Preko : GRATUIT en cas de panne mécanique, 150 € forfait en cas de faute du locataire, de pneu ou d'accident.\nÎle de Dugi Otok : GRATUIT en cas de panne mécanique, 500 € forfait en cas de faute du locataire, de pneu ou d'accident."
     },
     {
       "question": "Dans quel état le véhicule est-il remis et que vérifier à la prise en main ?",
@@ -529,11 +528,11 @@
     },
     {
       "question": "Quelles sont les conditions d'annulation ?",
-      "answer": "Toutes les réservations sont fermes et non remboursables. En cas d'annulation par le locataire, aucun remboursement ne sera effectué."
+      "answer": "Si le locataire annule, l'acompte (20 % du montant total) n'est en aucun cas remboursé. Le locataire peut annuler lui-même à tout moment via le lien figurant dans la confirmation de réservation.\nSi nous ne pouvons pas mettre à disposition le véhicule réservé (par exemple parce qu'il est immobilisé à la suite d'un accident ou d'un dommage causé par un autre client), le locataire reçoit un véhicule de remplacement ou le remboursement intégral de l'acompte."
     },
     {
       "question": "Quand et où le véhicule doit-il être restitué ? Que se passe-t-il en cas de retard ?",
-      "answer": "Le véhicule doit être restitué à l'heure et au lieu convenus.\nDélai de grâce : Une tolérance de 15 minutes s'applique. Pour les retours après ces 15 minutes ou en dehors des heures d'ouverture, des frais de gestion/service de 30 € à 50 € s'appliquent."
+      "answer": "Le véhicule doit être restitué à l'heure et au lieu convenus.\nDélai de grâce : Une tolérance de 15 minutes s'applique.\nRetard de 15 à 30 minutes : 15 €.\nRetard de plus de 30 minutes et jusqu'à 2 heures : 50 €.\nRetard de plus de 2 heures : une journée de location supplémentaire est facturée.\nRestitution en dehors des heures d'ouverture : forfait de 30 €."
     },
     {
       "question": "Qui est responsable en cas d'accident ou de dommage causé par un tiers ?",
@@ -565,7 +564,7 @@
     },
     {
       "question": "Et si vous estimez que je n'ai pas assez d'expérience ?",
-      "answer": "Conduire exige une expérience préalable. Par expérience de conduite, on entend que tu as obtenu ton permis AM avant ton permis A ou B. Si au retrait nous estimons que tu n'as pas assez d'expérience pour maîtriser le scooter ou la moto en toute sécurité, nous nous réservons le droit de refuser la location. Dans ce cas l'acompte n'est pas remboursé, sois donc honnête sur ton expérience au moment de réserver."
+      "answer": "Conduire exige une expérience préalable. Pour les scooters 50cc loués avec un permis B, cela signifie : ton permis AM doit avoir été délivré au moins 6 mois avant ton permis B (voir les dates sur ton permis). Si ce n'est pas le cas, tu ne peux pas louer de scooter 50cc avec un permis B. Avec un permis moto (A1, A2 ou A), tu n'as pas besoin de permis AM. Si au retrait nous estimons que tu n'as pas assez d'expérience pour maîtriser le scooter ou la moto en toute sécurité, nous nous réservons le droit de refuser la location. Dans ce cas l'acompte n'est pas remboursé, sois donc honnête sur ton expérience au moment de réserver."
     },
     {
       "question": "Quelles conditions de circulation particulières s'appliquent à Zadar ?",
@@ -587,7 +586,8 @@
       "urgentLine": "En attendant, quelque chose d'urgent ?",
       "signoff": "À bientôt à Zadar.",
       "refLabel": "Numéro de réservation",
-      "refLine": "Indique ton numéro de réservation et ton téléphone lors du paiement, pour que nous puissions l'associer."
+      "refLine": "Indique ton numéro de réservation et ton téléphone lors du paiement, pour que nous puissions l'associer.",
+      "groupPreheader": "Nous avons reçu votre demande de groupe ({bike}). Confirmation rapidement."
     },
     "bookingConfirmed": {
       "subject": "Confirmée, {bike} du {from} au {to}",
@@ -611,7 +611,10 @@
       "readLine": "Notre FAQ et nos conditions de location s'appliquent à ta réservation. Lis-les avant de retirer ton véhicule.",
       "faqLink": "Lire la FAQ",
       "agreementLink": "Contrat de location (PDF)",
-      "toursHeader": "Idées de balades pour ta sortie"
+      "toursHeader": "Idées de balades pour ta sortie",
+      "openHoursValue": "du lundi au dimanche, de 09:00 à 19:00",
+      "groupIntro": "votre réservation de groupe ({bike}) est confirmée. À bientôt à Zadar.",
+      "groupPreheader": "Votre réservation de groupe ({bike}) est confirmée du {from} au {to}."
     },
     "bookingDeclined": {
       "subject": "Mise à jour sur votre réservation, {bike}",
@@ -619,7 +622,9 @@
       "headline": "Mise à jour de votre réservation",
       "greeting": "Bonjour {name},",
       "intro": "malheureusement, nous ne pouvons pas vous proposer la {bike} pour ces dates. Désolé.",
-      "tryOther": "Envie d'essayer d'autres dates ou une autre moto ? Écrivez-nous, nous ferons de notre mieux pour trouver quelque chose qui convient."
+      "tryOther": "Envie d'essayer d'autres dates ou une autre moto ? Écrivez-nous, nous ferons de notre mieux pour trouver quelque chose qui convient.",
+      "groupIntro": "malheureusement, nous ne pouvons pas confirmer votre réservation de groupe ({bike}) pour ces dates. Désolé.",
+      "groupPreheader": "Mise à jour sur votre réservation de groupe ({bike}), ces dates n'ont pas pu être confirmées."
     },
     "contactReceived": {
       "subject": "Merci pour votre message",
@@ -657,13 +662,11 @@
     "seats": "places",
     "yourGroup": "Ton groupe",
     "noBikes": "Encore aucune moto",
-    "bikesWord": "motos",
-    "helmetsWord": "casques",
     "oneDeposit": "une caution",
     "continue": "Continuer",
     "ridingPerBike": "Style de conduite par moto",
     "helmetsHint": "Pour préparer les bons casques",
-    "helmetsTotal": "casques au total",
+    "helmetsTotal": "au total",
     "spokenLanguage": "Langue parlée",
     "fromDialCode": "selon l'indicatif",
     "override": "Modifier (€)",
@@ -723,7 +726,19 @@
     "freeIfReturnBy": "Libre si rendu avant",
     "useReturn": "Utiliser ce retour",
     "depositSummary": "Caution : {count} × {each} = {total}",
-    "errFaq": "Confirme que tu as lu la FAQ et les conditions de location."
+    "errFaq": "Confirme que tu as lu la FAQ et les conditions de location.",
+    "bikeForms": {
+      "one": "moto",
+      "few": "motos",
+      "many": "motos",
+      "other": "motos"
+    },
+    "helmetForms": {
+      "one": "casque",
+      "few": "casques",
+      "many": "casques",
+      "other": "casques"
+    }
   },
   "chatbot": {
     "openLabel": "Ouvrir le chat",

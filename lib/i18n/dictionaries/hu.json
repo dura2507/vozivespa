@@ -73,7 +73,7 @@
         },
         "roadside": {
           "label": "Útszéli segély",
-          "sub": "20 km-ig ingyenes, utána 50€-tól"
+          "sub": "5 km-ig mindig ingyenes, műszaki hibánál bárhol"
         },
         "transparent": {
           "label": "Átlátható árak",
@@ -146,7 +146,7 @@
     "title": "Infó",
     "licenceRequirements": {
       "title": "Jogosítvány-követelmények",
-      "scooter50": "Robogó 50cc: B vagy AM kategóriás jogosítvány plusz robogós tapasztalat",
+      "scooter50": "Robogó 50cc: B vagy AM kategóriás jogosítvány plusz robogós tapasztalat (B kategóriával: az AM jogosítványt legalább 6 hónappal a B előtt kellett megszerezni)",
       "scooter125": "Robogó 125cc és motor 125cc: A1 kategóriás jogosítvány",
       "motorbike390": "Motor 390cc: A2 kategóriás jogosítvány",
       "verify": "Átvételkor ellenőrizzük a jogosítványod"
@@ -172,8 +172,7 @@
       "incidents": "Sérülés és útszéli segély"
     },
     "docsTitle": "Dokumentumok",
-    "agreementDownload": "Bérleti szerződés (PDF, minden nyelven)",
-    "manualDownload": "GYIK és bérleti feltételek (PDF, minden nyelven)"
+    "agreementDownload": "Bérleti szerződés (PDF, minden nyelven)"
   },
   "terms": {
     "eyebrow": "Foglalási feltételek",
@@ -191,7 +190,7 @@
           "Fizetési módok: PayPal, banki átutalás, Revolut vagy készpénz személyesen (ha már Zadarban vagy). Bankkártyát nem fogadunk el.",
           "A fizetés után küldj nekünk egy képernyőképet a tranzakcióról igazolásként. Készpénzes fizetésnél nem szükséges.",
           "Ha értesítés nélkül több mint 1 órát késel, a foglalásod automatikusan törlésre kerül, és a foglalási díj nem visszatéríthető.",
-          "Ha egy robogó vagy motor egy másik ügyfél által okozott baleset vagy kár miatt elérhetetlenné válik, törölhetjük a foglalásod, és teljes egészében visszatérítjük a foglalási díjat.",
+          "Ha a lefoglalt robogót vagy motort nem tudjuk biztosítani (pl. egy másik ügyfél által okozott baleset vagy kár miatt), cserejárművet kapsz, vagy teljes egészében visszatérítjük a foglalási díjat.",
           "Robogó vagy motor vezetéséhez előzetes tapasztalat szükséges. Ha azt vesszük észre, hogy nincs elegendő tapasztalatod a biztonságos vezetéshez, fenntartjuk a jogot, hogy a foglalást visszatérítés nélkül elutasítsuk."
         ]
       },
@@ -210,15 +209,15 @@
           "Átvétel és visszaadás itt: Velebitska Ulica 2, 23000 Zadar.",
           "Nyitva hétfőtől vasárnapig, 09:00 és 19:00 között.",
           "Az átvételi és visszaadási idősávok 30 perces időközök 09:00 és 19:00 között.",
-          "Visszaadáskor 15 perc türelmi idő. Az ezen túli késedelmes visszaadás extra díjat von maga után.",
+          "Visszaadáskor 15 perc türelmi idő. 15 és 30 perc közötti késés: 15€. 30 percet meghaladó, legfeljebb 2 órás késés: 50€. 2 órát meghaladó késés: egy további bérleti nap. Nyitvatartási időn kívüli visszaadás: 30€ átalánydíj.",
           "Fizetés után küldd el a kaució tranzakciójának képernyőképét, hogy ellenőrizhessük és megerősíthessük."
         ]
       },
       {
         "heading": "Biztosítás és biztonság",
         "bullets": [
-          "Az alapbiztosítás minden bérléshez jár, és fedezi a motor lopását és a motorkárt.",
-          "A balesetek, karcolások, sérülések és defektek a bérlő felelőssége.",
+          "Az alapbiztosítás minden bérléshez jár, és fedezi a motor lopását, valamint a motorkárt és a mechanikai meghibásodásokat, amennyiben azokat nem kezelési hiba vagy gondatlanság okozta.",
+          "A bukásokból, balesetekből, vandalizmusból vagy karcolásokból eredő minden külső, esztétikai és szerkezeti kár, valamint a gumiabroncs-sérülések és defektek a bérlő felelőssége.",
           "Ha egy harmadik fél okoz balesetet, fel kell hívnod a rendőrséget és hivatalos jegyzőkönyvet kell beszerezned. A felelős fél felel.",
           "Bukósisakot mindig biztosítunk.",
           "Minden motort kifogástalan, működőképes állapotban adunk át. Kérjük a bérlőket, hogy vizsgálják meg a motort, készítsenek fotókat és videókat átvételkor, és ugyanabban az állapotban adják vissza."
@@ -227,8 +226,8 @@
       {
         "heading": "Sérülés, javítás és meghibásodás",
         "bullets": [
-          "A kaució fedezi a kezdeti javítási költségeket. A motort egy helyi szerelőhöz visszük felmérésre. A bérlő a teljes javítási költséget a szerelő számlája szerint fizeti (mindig adunk másolatot).",
-          "Útszéli meghibásodási szerviz: 20 km-ig ingyenes. 20 km felett: 50€. Szigetek: Preko 150€, Dugi Otok 500€.",
+          "A kauciót a kezdeti javítási költségek fedezésére visszatartjuk. A motort egy hivatalos márkaszervizben (pl. Piaggio Center Zadar, KTM Moto Špica) mérik fel, és eredeti alkatrészekkel javítják. A bérlő a költségeket a szerviz számlája szerint fizeti; ha ezek meghaladják a kauciót, a különbözetet is meg kell fizetnie. A számláról mindig adunk másolatot.",
+          "Útszéli meghibásodási szerviz: mechanikai hiba esetén mindig ingyenes. Bérlő hibája, defekt vagy baleset esetén: 5 km-ig ingyenes, 5 és 20 km között 30€, 20 km felett 50€-tól (távolságtól és szállítástól függően), Preko-sziget 150€, Dugi Otok-sziget 500€.",
           "Elveszett kulcs: 50€ pótlási díj plusz a helyszíntől függő esetleges meghibásodási szerviz.",
           "A bérlő magatartásától független motorhiba esetén minden költséget mi állunk."
         ]
@@ -244,7 +243,7 @@
         "heading": "Vezetői követelmények",
         "bullets": [
           "Hozd magaddal az érvényes jogosítványod átvételkor. Jogosítvány nélkül nincs vezetés. A tulajdonos ellenőrzi, hogy a jogosítvány kategóriája megfelel-e a motor osztályának.",
-          "A vezetéshez előzetes vezetési tapasztalat szükséges. Ha átvételkor azt állapítjuk meg, hogy a tapasztalat nem elegendő a motor biztonságos kezeléséhez, fenntartjuk a jogot az elutasításra. Ilyen esetben a foglalási díj nem visszatéríthető, ezért kérjük, légy őszinte a tapasztalatoddal kapcsolatban a foglaláskor.",
+          "A vezetéshez előzetes vezetési tapasztalat szükséges. B-jogosítvánnyal bérelt 50 köbcentis robogóknál az AM-jogosítvány kiállításának legalább 6 hónappal meg kell előznie a B-jogosítványét; A1, A2 vagy A kategóriás jogosítványra ez nem vonatkozik. Ha átvételkor azt állapítjuk meg, hogy a tapasztalat nem elegendő a motor biztonságos kezeléséhez, fenntartjuk a jogot az elutasításra. Ilyen esetben a foglalási díj nem visszatéríthető, ezért kérjük, légy őszinte a tapasztalatoddal kapcsolatban a foglaláskor.",
           "A bérlő teljes felelősséget vállal a bérlési időszak alatti minden balesetért, kárért és sérülésért."
         ]
       }
@@ -389,7 +388,7 @@
         "A1": "A1 (125cc-ig)",
         "A2": "A2 (35 kW-ig)",
         "A": "A (korlátozás nélküli)",
-        "B": "B (autós jogosítvány, fedi az AM/50cc-t)"
+        "B": "B (autós jogosítvány)"
       },
       "ridingStyle": "Vezetési stílus",
       "ridingStyleSolo": "Egyedül",
@@ -405,7 +404,7 @@
       "faqConfirm": "Elolvastam a GYIK-et és a bérleti feltételeket.",
       "faqLinkShort": "GYIK",
       "agreementLinkShort": "Bérleti szerződés (PDF)",
-      "experienceMeaning": "Vezetési tapasztalat azt jelenti: az AM jogosítványt az A vagy B kategória előtt szerezted meg."
+      "experienceMeaning": "B-jogosítvánnyal bérelt 50 köbcentis robogóknál: az AM-jogosítványod kiállításának legalább 6 hónappal meg kell előznie a B-jogosítványodét (a dátumok a jogosítványodon láthatók). A1, A2 vagy A kategóriás jogosítványra ez nem vonatkozik."
     },
     "reservation": {
       "title": "Foglalás",
@@ -517,7 +516,7 @@
   "faqItems": [
     {
       "question": "Mit tartalmaz az autómentő/segélyszolgálat és milyen költségek merülnek fel?",
-      "answer": "Műszaki/mechanikai meghibásodás (pl. motorkár) vagy lopás esetén a segélyszolgálat INGYENES, beleértve a jármű elszállítását és visszaszállítását.\nA bérlő által okozott eseményeknél (pl. defekt, lemerült akkumulátor, kulcselvesztés, bukás/baleset) a következő díjak érvényesek:\n20 km-es körzeten belül: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 30 € szervizdíj.\n20 km távolság felett: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 50 €-tól (távolság + szállítás alapján).\nPreko-sziget: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 150 € átalánydíj.\nDugi Otok-sziget: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 500 € átalánydíj."
+      "answer": "Műszaki/mechanikai meghibásodás (pl. motorkár) vagy lopás esetén a segélyszolgálat INGYENES, beleértve a jármű elszállítását és visszaszállítását.\nA bérlő által okozott eseményeknél (pl. defekt, lemerült akkumulátor, kulcselvesztés, bukás/baleset) a következő díjak érvényesek:\n5 km-es körzeten belül: mindig INGYENES, a bérlő hibája esetén is.\n5 és 20 km között: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 30 € szervizdíj.\n20 km távolság felett: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 50 €-tól (távolság + szállítás alapján).\nPreko-sziget: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 150 € átalánydíj.\nDugi Otok-sziget: mechanikai meghibásodás esetén INGYENES, bérlő hibája, defekt vagy baleset esetén 500 € átalánydíj."
     },
     {
       "question": "Milyen állapotban kerül átadásra a jármű és mire kell figyelni?",
@@ -529,11 +528,11 @@
     },
     {
       "question": "Milyenek a lemondási feltételek?",
-      "answer": "Minden foglalás kötelező érvényű és nem visszatérítendő (non-refundable). A bérlő általi lemondás esetén a bérleti díj nem jár vissza."
+      "answer": "Ha a bérlő lemondja a foglalást, a foglalási díj (a teljes összeg 20%-a) semmilyen esetben nem jár vissza. A bérlő a foglalási visszaigazolásban található linken keresztül bármikor saját maga lemondhatja a foglalást.\nHa a lefoglalt járművet nem tudjuk biztosítani (pl. azért, mert egy másik ügyfél által okozott baleset vagy kár miatt nem használható), a bérlő cserejárművet kap, vagy a foglalási díjat teljes egészében visszatérítjük."
     },
     {
       "question": "Mikor és hol kell visszaadni a járművet? Mi érvényes késés esetén?",
-      "answer": "A járművet a megbeszélt időpontban és helyen kell visszaadni.\nTürelmi idő: 15 perc türelmi idő érvényes. A 15 perc letelte utáni vagy nyitvatartási időn kívüli visszaadás esetén 30 € - 50 € kezelési/üzemeltetési díj kerül felszámításra."
+      "answer": "A járművet a megbeszélt időpontban és helyen kell visszaadni.\nTürelmi idő: 15 perc türelmi idő érvényes.\n15 és 30 perc közötti késés: 15 €.\n30 percet meghaladó, legfeljebb 2 órás késés: 50 €.\n2 órát meghaladó késés: egy további bérleti nap kerül felszámításra.\nNyitvatartási időn kívüli visszaadás: 30 € átalánydíj."
     },
     {
       "question": "Ki a felelős harmadik fél által okozott balesetért vagy kárért?",
@@ -549,7 +548,7 @@
     },
     {
       "question": "Hogyan foglalhatok?",
-      "answer": "Foglaláshoz válaszd ki az oldalunkon a neked tetsző járművet, kattints a “Book Now” gombra a szabad időpontok ellenőrzéséhez, majd válaszd ki a dátumot és időpontot. Több jármű együttes foglalásához használd a menü “Multibooking” opcióját. Ha egyik online fizetési mód sem megfelelő, személyesen is foglalhatsz, de érkezés előtt egyeztess velünk a szabad kapacitásról, mert gyorsan változhat. A 20% foglaló biztosítja az időpontjaidat. Fizethetsz PayPallal, banki átutalással, Revoluttal vagy készpénzzel érkezéskor; fizetés után küldj nekünk képernyőképet a tranzakcióról megerősítésként. Hitelkártyát nem fogadunk el. Ha több mint 1 órát késel előzetes jelzés nélkül, a foglalás automatikusan törlődik."
+      "answer": "Foglaláshoz válaszd ki az oldalunkon a neked tetsző járművet, kattints a “Book Now” gombra a szabad időpontok ellenőrzéséhez, majd válaszd ki a dátumot és időpontot. Több jármű együttes foglalásához használd a menü “Multibooking” opcióját. Ha egyik online fizetési mód sem megfelelő, személyesen is foglalhatsz, de érkezés előtt egyeztess velünk a szabad kapacitásról, mert gyorsan változhat. A 20%-os foglalási díj biztosítja az időpontjaidat. Fizethetsz PayPallal, banki átutalással, Revoluttal vagy készpénzzel érkezéskor; fizetés után küldj nekünk képernyőképet a tranzakcióról megerősítésként. Hitelkártyát nem fogadunk el. Ha több mint 1 órát késel előzetes jelzés nélkül, a foglalás automatikusan törlődik."
     },
     {
       "question": "Kínáltok telefontartót?",
@@ -565,7 +564,7 @@
     },
     {
       "question": "Mi van, ha úgy döntötök, hogy nem vagyok elég tapasztalt?",
-      "answer": "A vezetéshez előzetes tapasztalat kell. Vezetési tapasztalat alatt azt értjük, hogy az AM-jogosítványodat az A-, illetve B-jogosítványod előtt szerezted meg. Ha átvételkor úgy ítéljük meg, hogy nincs elég tapasztalatod a robogó vagy a motor biztonságos kezeléséhez, fenntartjuk a jogot a bérlés megtagadására. Ilyenkor a foglaló nem jár vissza, ezért foglaláskor őszintén add meg a tapasztalatodat."
+      "answer": "A vezetéshez előzetes tapasztalat kell. B-jogosítvánnyal bérelt 50 köbcentis robogóknál ez azt jelenti, hogy az AM-jogosítványod kiállításának legalább 6 hónappal meg kell előznie a B-jogosítványodét (a dátumok a jogosítványodon láthatók). Ha ez nem teljesül, B-jogosítvánnyal nem bérelhetsz 50 köbcentis robogót. Motoros jogosítvánnyal (A1, A2 vagy A) nincs szükséged AM-jogosítványra. Ha átvételkor úgy ítéljük meg, hogy nincs elég tapasztalatod a robogó vagy a motor biztonságos kezeléséhez, fenntartjuk a jogot a bérlés megtagadására. Ilyenkor a foglalási díj nem jár vissza, ezért foglaláskor őszintén add meg a tapasztalatodat."
     },
     {
       "question": "Milyen különleges út- és vezetési viszonyok érvényesek Zadarban?",
@@ -587,7 +586,8 @@
       "urgentLine": "Addig is, sürgős valami?",
       "signoff": "Találkozunk Zadarban.",
       "refLabel": "Foglalási szám",
-      "refLine": "Kérjük, add meg a foglalási számodat és telefonszámodat fizetéskor, hogy össze tudjuk párosítani a befizetésed."
+      "refLine": "Kérjük, add meg a foglalási számodat és telefonszámodat fizetéskor, hogy össze tudjuk párosítani a befizetésed.",
+      "groupPreheader": "Megkaptuk a csoportos foglalási kérésed ({bike}). A tulajdonos hamarosan visszaigazol."
     },
     "bookingConfirmed": {
       "subject": "Visszaigazolva, {bike} {from} - {to}",
@@ -611,7 +611,10 @@
       "readLine": "A foglalásodra a GYIK és a bérleti feltételeink vonatkoznak. Kérjük, olvasd el őket, mielőtt átveszed a járművet.",
       "faqLink": "GYIK elolvasása",
       "agreementLink": "Bérleti szerződés (PDF)",
-      "toursHeader": "Túratippek a kirándulásodhoz"
+      "toursHeader": "Túratippek a kirándulásodhoz",
+      "openHoursValue": "hétfőtől vasárnapig, 09:00 és 19:00 között",
+      "groupIntro": "a csoportos foglalásod ({bike}) visszaigazolva. Találkozunk Zadarban.",
+      "groupPreheader": "A csoportos foglalásod ({bike}) visszaigazolva erre: {from} - {to}."
     },
     "bookingDeclined": {
       "subject": "Frissítés a foglalásoddal kapcsolatban, {bike}",
@@ -619,7 +622,9 @@
       "headline": "Frissítés a foglalásoddal kapcsolatban",
       "greeting": "Szia {name},",
       "intro": "sajnos nem tudjuk biztosítani a {bike} járművet ezekre a dátumokra. Sajnáljuk.",
-      "tryOther": "Szeretnél más dátumokat vagy másik motort kipróbálni? Írj nekünk, és mindent megteszünk, hogy találjunk valami megfelelőt."
+      "tryOther": "Szeretnél más dátumokat vagy másik motort kipróbálni? Írj nekünk, és mindent megteszünk, hogy találjunk valami megfelelőt.",
+      "groupIntro": "sajnos ezekre a dátumokra nem tudjuk visszaigazolni a csoportos foglalásodat ({bike}). Sajnáljuk.",
+      "groupPreheader": "Frissítés a csoportos foglalásoddal kapcsolatban ({bike}), ezek a dátumok nem jöttek össze."
     },
     "contactReceived": {
       "subject": "Köszönjük az üzeneted",
@@ -657,13 +662,11 @@
     "seats": "ülés",
     "yourGroup": "A csoportod",
     "noBikes": "Még nincs motor",
-    "bikesWord": "motor",
-    "helmetsWord": "bukósisak",
     "oneDeposit": "egy kaució",
     "continue": "Tovább",
     "ridingPerBike": "Vezetési stílus motoronként",
     "helmetsHint": "Hogy a megfelelő bukósisakokat készítsük elő",
-    "helmetsTotal": "bukósisak összesen",
+    "helmetsTotal": "összesen",
     "spokenLanguage": "Beszélt nyelv",
     "fromDialCode": "hívókódból",
     "override": "Felülírás (€)",
@@ -723,7 +726,19 @@
     "freeIfReturnBy": "Szabad, ha visszaadod eddig:",
     "useReturn": "Visszaadási idő használata",
     "depositSummary": "Kaució: {count} × {each} = {total}",
-    "errFaq": "Kérjük, erősítsd meg, hogy elolvastad a GYIK-et és a bérleti feltételeket."
+    "errFaq": "Kérjük, erősítsd meg, hogy elolvastad a GYIK-et és a bérleti feltételeket.",
+    "bikeForms": {
+      "one": "motor",
+      "few": "motor",
+      "many": "motor",
+      "other": "motor"
+    },
+    "helmetForms": {
+      "one": "bukósisak",
+      "few": "bukósisak",
+      "many": "bukósisak",
+      "other": "bukósisak"
+    }
   },
   "chatbot": {
     "openLabel": "Chat megnyitása",

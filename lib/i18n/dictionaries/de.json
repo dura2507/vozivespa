@@ -73,7 +73,7 @@
         },
         "roadside": {
           "label": "Pannenhilfe",
-          "sub": "Bis 20km kostenlos, danach 50€ und mehr"
+          "sub": "Bis 5 km immer kostenlos, bei Defekt überall"
         },
         "transparent": {
           "label": "Transparente Preise",
@@ -146,7 +146,7 @@
     "title": "Info",
     "licenceRequirements": {
       "title": "Führerschein-Anforderungen",
-      "scooter50": "Roller 50ccm: Führerschein der Klasse B oder AM plus Rollererfahrung",
+      "scooter50": "Roller 50ccm: Führerschein der Klasse B oder AM plus Rollererfahrung (mit B: AM-Führerschein mindestens 6 Monate vor B)",
       "scooter125": "Roller 125ccm und Motorrad 125ccm: Führerschein Klasse A1",
       "motorbike390": "Motorrad 390ccm: Führerschein Klasse A2",
       "verify": "Wir prüfen den Führerschein bei der Abholung"
@@ -172,8 +172,7 @@
       "incidents": "Schaden & Pannenhilfe"
     },
     "docsTitle": "Dokumente",
-    "agreementDownload": "Mietvertrag (PDF, alle Sprachen)",
-    "manualDownload": "FAQ und Mietbedingungen (PDF, alle Sprachen)"
+    "agreementDownload": "Mietvertrag (PDF, alle Sprachen)"
   },
   "terms": {
     "eyebrow": "Buchungsbedingungen",
@@ -191,14 +190,14 @@
           "Zahlungsarten: PayPal, Banküberweisung, Revolut oder Bargeld vor Ort (wenn du schon in Zadar bist). Wir akzeptieren keine Kreditkarten.",
           "Nach der Zahlung schick uns bitte einen Screenshot der Transaktion als Beleg. Bei Barzahlung nicht nötig.",
           "Kommst du mehr als 1 Stunde zu spät ohne Bescheid, wird deine Buchung automatisch storniert und die Anzahlung verfällt.",
-          "Wird ein Roller oder Motorrad durch einen Unfall oder Schaden eines anderen Kunden nicht verfügbar, können wir deine Buchung stornieren und die Anzahlung in voller Höhe erstatten.",
+          "Können wir deinen gebuchten Roller oder dein gebuchtes Motorrad nicht bereitstellen (z. B. nach einem Unfall oder Schaden eines anderen Kunden), bekommst du ein Ersatzfahrzeug oder die Anzahlung in voller Höhe zurück.",
           "Roller- oder Motorradfahren erfordert Vorerfahrung. Stellen wir fest dass du nicht über genügend Erfahrung verfügst um sicher zu fahren, behalten wir uns das Recht vor die Buchung ohne Rückerstattung abzulehnen."
         ]
       },
       {
         "heading": "Kaution und Zahlung",
         "bullets": [
-          "Kaution: 250€ pro Bike, wird nach unbeschadeter Rückgabe zurückerstattet.",
+          "Kaution: 250 € pro Bike, wird nach unbeschadeter Rückgabe zurückerstattet.",
           "Anzahlung: 20% des Gesamtbetrags. Sichert deine Termine, nicht erstattungsfähig bei Stornierung.",
           "Zahlungsarten: PayPal (Friends & Family bevorzugt, keine Gebühr), Banküberweisung, Revolut oder Bargeld bei Anreise.",
           "Wir akzeptieren keine Kreditkarten."
@@ -210,15 +209,15 @@
           "Abholung und Rückgabe bei Velebitska Ulica 2, 23000 Zadar.",
           "Geöffnet Mo bis So, 09:00 bis 19:00 Uhr.",
           "Abhol- und Rückgabezeitfenster sind 30-Minuten-Intervalle zwischen 09:00 und 19:00 Uhr.",
-          "15 Minuten Karenzzeit bei der Rückgabe. Spätere Rückgaben kosten extra.",
+          "15 Minuten Karenzzeit bei der Rückgabe. 15 bis 30 Minuten Verspätung: 15 €. Mehr als 30 Minuten bis 2 Stunden: 50 €. Mehr als 2 Stunden: ein zusätzlicher Miettag. Rückgabe außerhalb der Öffnungszeiten: pauschal 30 €.",
           "Schick uns den Screenshot der Anzahlung nach der Zahlung damit wir prüfen und bestätigen können."
         ]
       },
       {
         "heading": "Versicherung und Sicherheit",
         "bullets": [
-          "Die Basisversicherung ist bei jedem Verleih enthalten und deckt Diebstahl des Bikes sowie Motorschäden ab.",
-          "Unfälle, Kratzer, Schäden und platte Reifen liegen in der Verantwortung des Mieters.",
+          "Die Basisversicherung ist bei jedem Verleih enthalten und deckt Diebstahl des Bikes sowie Motorschäden und mechanische Defekte ab, sofern sie nicht durch Bedienungsfehler oder Fahrlässigkeit verursacht wurden.",
+          "Alle äußeren, optischen und strukturellen Schäden durch Stürze, Unfälle, Vandalismus oder Kratzer sowie Reifenschäden und Platten liegen in der Verantwortung des Mieters.",
           "Verursacht ein Dritter einen Unfall, musst du die Polizei rufen und einen offiziellen Bericht einholen. Der Verursacher haftet.",
           "Helme werden immer zur Verfügung gestellt.",
           "Alle Bikes werden in einwandfreiem Zustand übergeben. Wir bitten Mieter das Bike zu inspizieren, Fotos und Videos bei der Abholung zu machen und es im gleichen Zustand zurückzugeben."
@@ -227,9 +226,9 @@
       {
         "heading": "Schäden, Reparatur und Pannenhilfe",
         "bullets": [
-          "Die Kaution deckt die ersten Reparaturkosten. Wir bringen das Bike zu einer lokalen Werkstatt zur Begutachtung. Der Mieter zahlt die vollen Reparaturkosten gemäß Werkstattrechnung (eine Kopie wird immer zur Verfügung gestellt).",
-          "Pannenhilfe: bis 20 km kostenlos. Über 20 km: 50€. Inseln: Preko 150€, Dugi Otok 500€.",
-          "Schlüsselverlust: 50€ Ersatzgebühr plus eventuell anfallende Pannenhilfegebühr je nach Standort.",
+          "Die Kaution wird zur Deckung der ersten Reparaturkosten einbehalten. Das Bike wird in einer autorisierten Vertragswerkstatt (z. B. Piaggio Center Zadar, KTM Moto Špica) begutachtet und mit Original-Ersatzteilen repariert. Der Mieter zahlt die Kosten laut Werkstattrechnung, übersteigen sie die Kaution, ist die Differenz nachzuzahlen. Eine Kopie der Rechnung wird immer zur Verfügung gestellt.",
+          "Pannenhilfe: Bei mechanischem Defekt immer kostenlos. Bei Eigenverschulden, Reifen oder Unfall: bis 5 km kostenlos, 5 bis 20 km 30 €, über 20 km ab 50 € (je nach Distanz und Transport), Insel Preko 150 €, Insel Dugi Otok 500 €.",
+          "Schlüsselverlust: 50 € Ersatzgebühr plus eventuell anfallende Pannenhilfegebühr je nach Standort.",
           "Bei Motorschäden ohne Verschulden des Mieters übernehmen wir alle Kosten."
         ]
       },
@@ -244,7 +243,7 @@
         "heading": "Anforderungen an Fahrer",
         "bullets": [
           "Bring deinen gültigen Führerschein zur Abholung mit. Kein Führerschein, keine Fahrt. Wir prüfen dass die Führerscheinklasse zur Bike-Klasse passt.",
-          "Fahren erfordert Vorerfahrung. Stellen wir bei der Abholung fest dass deine Erfahrung nicht ausreicht das Bike sicher zu fahren, behalten wir uns das Recht vor die Vermietung abzulehnen. Die Anzahlung ist in dem Fall nicht erstattungsfähig, sei also ehrlich was deine Erfahrung bei der Buchung angeht.",
+          "Fahren erfordert Vorerfahrung. Für 50er Roller mit B-Führerschein muss der AM-Führerschein mindestens 6 Monate vor dem B-Führerschein ausgestellt worden sein, mit A1, A2 oder A gilt das nicht. Stellen wir bei der Abholung fest dass deine Erfahrung nicht ausreicht das Bike sicher zu fahren, behalten wir uns das Recht vor die Vermietung abzulehnen. Die Anzahlung ist in dem Fall nicht erstattungsfähig, sei also ehrlich was deine Erfahrung bei der Buchung angeht.",
           "Der Mieter trägt die volle Verantwortung für alle Unfälle, Schäden und Verletzungen während der Mietzeit."
         ]
       }
@@ -385,11 +384,11 @@
       "licenceCountry": "Ausstellungsland",
       "licenceCountryPlaceholder": "z.B. Deutschland, Österreich, Italien...",
       "licenceOptions": {
-        "AM": "AM (Mofa / 50ccm)",
+        "AM": "AM (Roller / 50ccm)",
         "A1": "A1 (bis 125ccm)",
         "A2": "A2 (bis 35 kW)",
         "A": "A (uneingeschränkt)",
-        "B": "B (Pkw-Führerschein, deckt AM/50ccm)"
+        "B": "B (Pkw-Führerschein)"
       },
       "ridingStyle": "Fahrstil",
       "ridingStyleSolo": "Alleine",
@@ -405,7 +404,7 @@
       "faqConfirm": "Ich habe die FAQ und die Mietbedingungen gelesen.",
       "faqLinkShort": "FAQ",
       "agreementLinkShort": "Mietvertrag (PDF)",
-      "experienceMeaning": "Fahrerfahrung bedeutet: Du hast deinen AM-Führerschein vor deinem A- bzw. B-Führerschein gemacht."
+      "experienceMeaning": "Für 50er Roller mit B-Führerschein: Dein AM-Führerschein muss mindestens 6 Monate vor dem B-Führerschein ausgestellt sein (Datum im Führerschein). Mit A1, A2 oder A gilt das nicht."
     },
     "reservation": {
       "title": "Anzahlung",
@@ -517,7 +516,7 @@
   "faqItems": [
     {
       "question": "Was beinhaltet der Pannendienst und welche Kosten fallen an?",
-      "answer": "Pannenhilfe für technische/mechanische Defekte (z. B. Motorschaden) oder Diebstahlabwicklung ist kostenlos inkl. Fahrzeugabholung und Rücktransport.\nFür vom Mieter verursachte Vorfälle (z. B. Reifenschaden, leere Batterie, Schlüsselverlust, Sturz/Unfall) gelten folgende Gebühren:\nBis 20 km Umkreis: kostenlos bei mechanischem Defekt, 30 € Servicegebühr bei Eigenverschulden, Reifen oder Unfall.\nÜber 20 km Entfernung: kostenlos bei mechanischem Defekt, ab 50 € (nach Distanz + Transport) bei Eigenverschulden, Reifen oder Unfall.\nInsel Preko: kostenlos bei mechanischem Defekt, 150 € Pauschale bei Eigenverschulden, Reifen oder Unfall.\nInsel Dugi Otok: kostenlos bei mechanischem Defekt, 500 € Pauschale bei Eigenverschulden, Reifen oder Unfall."
+      "answer": "Pannenhilfe für technische/mechanische Defekte (z. B. Motorschaden) oder Diebstahlabwicklung ist kostenlos inkl. Fahrzeugabholung und Rücktransport.\nFür vom Mieter verursachte Vorfälle (z. B. Reifenschaden, leere Batterie, Schlüsselverlust, Sturz/Unfall) gelten folgende Gebühren:\nBis 5 km Umkreis: immer kostenlos, auch bei Eigenverschulden.\n5 bis 20 km: kostenlos bei mechanischem Defekt, 30 € Servicegebühr bei Eigenverschulden, Reifen oder Unfall.\nÜber 20 km Entfernung: kostenlos bei mechanischem Defekt, ab 50 € (nach Distanz + Transport) bei Eigenverschulden, Reifen oder Unfall.\nInsel Preko: kostenlos bei mechanischem Defekt, 150 € Pauschale bei Eigenverschulden, Reifen oder Unfall.\nInsel Dugi Otok: kostenlos bei mechanischem Defekt, 500 € Pauschale bei Eigenverschulden, Reifen oder Unfall."
     },
     {
       "question": "In welchem Zustand wird das Fahrzeug übergeben und was muss ich bei der Übernahme beachten?",
@@ -529,11 +528,11 @@
     },
     {
       "question": "Wie lauten die Stornierungsbedingungen?",
-      "answer": "Alle Buchungen sind verbindlich und nicht erstattungsfähig (non-refundable). Im Falle einer Stornierung durch den Mieter erfolgt keine Rückerstattung des Mietbetrags."
+      "answer": "Die Anzahlung (20 % des Gesamtbetrags) wird bei einer Stornierung durch den Mieter in keinem Fall erstattet. Stornieren kann der Mieter jederzeit selbst über den Link in der Buchungsbestätigung.\nKönnen wir das gebuchte Fahrzeug nicht bereitstellen (z. B. weil es durch einen Unfall oder Schaden eines anderen Kunden ausfällt), erhält der Mieter ein Ersatzfahrzeug oder die volle Erstattung der Anzahlung."
     },
     {
       "question": "Wann und wo muss das Fahrzeug zurückgegeben werden? Was gilt bei Verspätung?",
-      "answer": "Das Fahrzeug muss zum vereinbarten Zeitpunkt am vereinbarten Ort zurückgegeben werden.\nKulanzregelung: Es gilt eine Toleranzzeit (Grace Period) von 15 Minuten. Bei Rückgaben nach Ablauf dieser 15 Minuten oder außerhalb der regulären Öffnungszeiten fällt eine Bearbeitungs- / Betriebspauschale von 30 € bis 50 € an."
+      "answer": "Das Fahrzeug muss zum vereinbarten Zeitpunkt am vereinbarten Ort zurückgegeben werden.\nKulanzregelung: Es gilt eine Toleranzzeit (Grace Period) von 15 Minuten.\n15 bis 30 Minuten Verspätung: 15 €.\nMehr als 30 Minuten bis 2 Stunden Verspätung: 50 €.\nMehr als 2 Stunden Verspätung: Es wird ein zusätzlicher Miettag berechnet.\nRückgabe außerhalb der Öffnungszeiten: pauschal 30 €."
     },
     {
       "question": "Wer haftet bei Unfällen oder Schäden durch Dritte?",
@@ -565,7 +564,7 @@
     },
     {
       "question": "Was wenn ihr entscheidet ich habe nicht genug Erfahrung?",
-      "answer": "Fahren erfordert Vorerfahrung. Fahrerfahrung bedeutet, dass du deinen AM-Führerschein vor deinem A- bzw. B-Führerschein gemacht hast. Wenn wir bei der Abholung feststellen, dass du nicht genug Erfahrung hast, um den Roller oder das Motorrad sicher zu fahren, behalten wir uns vor, die Vermietung abzulehnen. Die Anzahlung wird in dem Fall nicht erstattet, sei bei der Buchung also ehrlich, was deine Erfahrung angeht."
+      "answer": "Fahren erfordert Vorerfahrung. Für 50er Roller mit B-Führerschein heißt das: Dein AM-Führerschein muss mindestens 6 Monate vor deinem B-Führerschein ausgestellt worden sein (Datum im Führerschein). Ist das nicht der Fall, kannst du mit dem B-Führerschein keinen 50er Roller mieten. Mit einem Motorradführerschein (A1, A2 oder A) brauchst du keinen AM-Nachweis. Wenn wir bei der Abholung feststellen, dass du nicht genug Erfahrung hast, um den Roller oder das Motorrad sicher zu fahren, behalten wir uns vor, die Vermietung abzulehnen. Die Anzahlung wird in dem Fall nicht erstattet, sei bei der Buchung also ehrlich, was deine Erfahrung angeht."
     },
     {
       "question": "Welche besonderen Straßen- und Fahrbedingungen gelten in Zadar?",
@@ -587,7 +586,8 @@
       "urgentLine": "In der Zwischenzeit, etwas Dringendes?",
       "signoff": "Bis bald in Zadar.",
       "refLabel": "Buchungsnummer",
-      "refLine": "Bitte gib deine Buchungsnummer und Telefonnummer bei der Zahlung an, damit wir deine Zahlung zuordnen können."
+      "refLine": "Bitte gib deine Buchungsnummer und Telefonnummer bei der Zahlung an, damit wir deine Zahlung zuordnen können.",
+      "groupPreheader": "Wir haben deine Gruppenanfrage ({bike}) erhalten. Antwort folgt in Kürze."
     },
     "bookingConfirmed": {
       "subject": "Bestätigt, {bike} {from} bis {to}",
@@ -611,7 +611,10 @@
       "readLine": "Für deine Buchung gelten unsere FAQ und Mietbedingungen. Bitte lies sie, bevor du dein Fahrzeug abholst.",
       "faqLink": "FAQ lesen",
       "agreementLink": "Mietvertrag (PDF)",
-      "toursHeader": "Touren-Tipps für deine Fahrt"
+      "toursHeader": "Touren-Tipps für deine Fahrt",
+      "openHoursValue": "Mo bis So, 09:00 bis 19:00 Uhr",
+      "groupIntro": "deine Gruppenbuchung ({bike}) ist bestätigt. Bis bald in Zadar.",
+      "groupPreheader": "Deine Gruppenbuchung ({bike}) ist bestätigt für {from} bis {to}."
     },
     "bookingDeclined": {
       "subject": "Update zu deiner Buchung, {bike}",
@@ -619,7 +622,9 @@
       "headline": "Update zu deiner Buchung",
       "greeting": "Hi {name},",
       "intro": "leider können wir die {bike} für diese Termine nicht anbieten. Sorry dafür.",
-      "tryOther": "Andere Termine oder ein anderes Bike testen? Schreib uns kurz und wir suchen was passendes."
+      "tryOther": "Andere Termine oder ein anderes Bike testen? Schreib uns kurz und wir suchen was passendes.",
+      "groupIntro": "leider können wir deine Gruppenbuchung ({bike}) für diese Termine nicht bestätigen. Sorry dafür.",
+      "groupPreheader": "Update zu deiner Gruppenbuchung ({bike}), diese Termine haben nicht geklappt."
     },
     "contactReceived": {
       "subject": "Danke für deine Nachricht",
@@ -657,13 +662,11 @@
     "seats": "Sitze",
     "yourGroup": "Deine Gruppe",
     "noBikes": "Noch keine Bikes",
-    "bikesWord": "Bikes",
-    "helmetsWord": "Helme",
     "oneDeposit": "eine Kaution",
     "continue": "Weiter",
     "ridingPerBike": "Fahrweise pro Bike",
     "helmetsHint": "Damit wir die richtigen Helme vorbereiten",
-    "helmetsTotal": "Helme gesamt",
+    "helmetsTotal": "insgesamt",
     "spokenLanguage": "Gesprochene Sprache",
     "fromDialCode": "aus Vorwahl",
     "override": "Überschreiben (€)",
@@ -723,7 +726,19 @@
     "freeIfReturnBy": "Frei, wenn Rückgabe bis",
     "useReturn": "Rückgabe übernehmen",
     "depositSummary": "Kaution: {count} × {each} = {total}",
-    "errFaq": "Bitte bestätige, dass du die FAQ und die Mietbedingungen gelesen hast."
+    "errFaq": "Bitte bestätige, dass du die FAQ und die Mietbedingungen gelesen hast.",
+    "bikeForms": {
+      "one": "Bike",
+      "few": "Bikes",
+      "many": "Bikes",
+      "other": "Bikes"
+    },
+    "helmetForms": {
+      "one": "Helm",
+      "few": "Helme",
+      "many": "Helme",
+      "other": "Helme"
+    }
   },
   "chatbot": {
     "openLabel": "Chat öffnen",

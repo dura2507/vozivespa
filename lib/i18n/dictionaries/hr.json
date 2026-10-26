@@ -73,7 +73,7 @@
         },
         "roadside": {
           "label": "Cestovna pomoć",
-          "sub": "Besplatno do 20km, dalje 50€ i više"
+          "sub": "Do 5 km uvijek besplatno, kod kvara svugdje"
         },
         "transparent": {
           "label": "Transparentne cijene",
@@ -146,7 +146,7 @@
     "title": "Info",
     "licenceRequirements": {
       "title": "Uvjeti za vozačku",
-      "scooter50": "Skuter 50ccm: B ili AM kategorija plus iskustvo sa skuterom",
+      "scooter50": "Skuter 50ccm: B ili AM kategorija plus iskustvo sa skuterom (uz B: dozvola kategorije AM najmanje 6 mjeseci prije B)",
       "scooter125": "Skuter 125ccm i motocikl 125ccm: A1 kategorija",
       "motorbike390": "Motocikl 390ccm: A2 kategorija",
       "verify": "Vozačku provjeravamo pri preuzimanju"
@@ -172,8 +172,7 @@
       "incidents": "Šteta i pomoć na cesti"
     },
     "docsTitle": "Dokumenti",
-    "agreementDownload": "Ugovor o najmu (PDF, svi jezici)",
-    "manualDownload": "FAQ i uvjeti najma (PDF, svi jezici)"
+    "agreementDownload": "Ugovor o najmu (PDF, svi jezici)"
   },
   "terms": {
     "eyebrow": "Uvjeti rezervacije",
@@ -191,14 +190,14 @@
           "Načini plaćanja: PayPal, bankovna uplata, Revolut ili gotovina na licu mjesta (ako si već u Zadru). Ne primamo kreditne kartice.",
           "Nakon plaćanja pošalji nam snimku transakcije kao dokaz. Nije potrebno za plaćanje gotovinom.",
           "Ako kasniš više od 1 sata bez najave, rezervacija se automatski otkazuje i predujam se ne vraća.",
-          "Ako skuter ili motocikl postane nedostupan zbog nesreće ili oštećenja drugog klijenta, možemo otkazati rezervaciju i vratiti puni iznos predujma.",
+          "Ako ne možemo osigurati tvoj rezervirani skuter ili motocikl (npr. nakon nesreće ili oštećenja drugog klijenta), dobivaš zamjensko vozilo ili povrat punog iznosa predujma.",
           "Za vožnju skutera ili motocikla potrebno je iskustvo. Ako uočimo da nemaš dovoljno iskustva za sigurnu vožnju, zadržavamo pravo odbiti rezervaciju bez povrata."
         ]
       },
       {
         "heading": "Polog i plaćanje",
         "bullets": [
-          "Sigurnosni polog: 250€ po motoru, vraća se nakon povrata ako nema oštećenja.",
+          "Sigurnosni polog: 250 € po motoru, vraća se nakon povrata ako nema oštećenja.",
           "Predujam: 20% ukupnog iznosa. Osigurava tvoje termine, ne vraća se pri otkazu.",
           "Načini plaćanja: PayPal (Friends & Family preporučeno, bez naknade), bankovna uplata, Revolut ili gotovina pri dolasku.",
           "Ne primamo kreditne kartice."
@@ -210,15 +209,15 @@
           "Preuzimanje i povrat na adresi Velebitska Ulica 2, 23000 Zadar.",
           "Otvoreno pon do ned, 09:00 do 19:00.",
           "Termini preuzimanja i povrata u intervalima od 30 minuta između 09:00 i 19:00.",
-          "15 minuta tolerancije pri povratu. Kasniji povrat se dodatno naplaćuje.",
+          "15 minuta tolerancije pri povratu. Od 15 do 30 minuta kašnjenja: 15 €. Više od 30 minuta do 2 sata: 50 €. Više od 2 sata: dodatni dan najma. Povrat izvan radnog vremena: paušalno 30 €.",
           "Pošalji nam snimku uplate nakon plaćanja kako bismo mogli provjeriti i potvrditi."
         ]
       },
       {
         "heading": "Osiguranje i sigurnost",
         "bullets": [
-          "Osnovno osiguranje uključeno je u svaki najam i pokriva krađu motora i štetu na motoru.",
-          "Nesreće, ogrebotine, štete i ispuhane gume su odgovornost najmoprimca.",
+          "Osnovno osiguranje uključeno je u svaki najam i pokriva krađu motora te štetu na motoru i mehaničke kvarove, osim ako nisu uzrokovani pogreškom pri rukovanju ili nemarom.",
+          "Sva vanjska, estetska i strukturna oštećenja nastala padom, nesrećom, vandalizmom ili ogrebotinama, kao i oštećenja guma i ispuhane gume, odgovornost su najmoprimca.",
           "Ako treća strana uzrokuje nesreću, moraš pozvati policiju i dobiti službeni izvještaj. Odgovorna strana plaća.",
           "Kacige se uvijek osiguravaju.",
           "Svi motori predaju se u savršenom stanju. Tražimo od najmoprimaca da pregledaju motor, snime fotografije i videozapise pri preuzimanju i vrate ga u istom stanju."
@@ -227,9 +226,9 @@
       {
         "heading": "Šteta, popravak i pomoć",
         "bullets": [
-          "Polog pokriva početne troškove popravka. Vodimo motor lokalnom mehaničaru na procjenu. Najmoprimac plaća puni trošak prema računu mehaničara (kopija se uvijek dostavlja).",
-          "Cestovna pomoć: besplatno do 20 km. Preko 20 km: 50€. Otoci: Preko 150€, Dugi Otok 500€.",
-          "Izgubljeni ključ: 50€ zamjenska naknada plus moguća cestovna pomoć ovisno o lokaciji.",
+          "Polog se zadržava za pokriće početnih troškova popravka. Motor se pregledava u ovlaštenom servisu (npr. Piaggio Center Zadar, KTM Moto Špica) i popravlja originalnim rezervnim dijelovima. Najmoprimac plaća troškove prema računu servisa, a ako premašuju polog, razliku mora doplatiti. Kopija računa uvijek se dostavlja.",
+          "Cestovna pomoć: kod mehaničkog kvara uvijek besplatno. U slučaju krivnje najmoprimca, gume ili nesreće: do 5 km besplatno, od 5 do 20 km 30 €, preko 20 km od 50 € (ovisno o udaljenosti i prijevozu), otok Preko 150 €, Dugi Otok 500 €.",
+          "Izgubljeni ključ: 50 € zamjenska naknada plus moguća cestovna pomoć ovisno o lokaciji.",
           "U slučaju kvara motora koji nije uzrokovan ponašanjem najmoprimca, pokrivamo sve troškove."
         ]
       },
@@ -244,7 +243,7 @@
         "heading": "Uvjeti za vozača",
         "bullets": [
           "Donesi važeću vozačku pri preuzimanju. Nema vozačke, nema vožnje. Provjeravamo da kategorija vozačke odgovara klasi motora.",
-          "Za vožnju je potrebno iskustvo. Ako pri preuzimanju utvrdimo da iskustvo nije dovoljno za sigurnu vožnju, zadržavamo pravo odbiti. Predujam se ne vraća u tom slučaju, budi iskren oko svog iskustva pri rezervaciji.",
+          "Za vožnju je potrebno iskustvo. Za skutere od 50ccm s vozačkom dozvolom kategorije B to znači: dozvola kategorije AM mora biti izdana najmanje 6 mjeseci prije kategorije B. S kategorijom A1, A2 ili A to ne vrijedi. Ako pri preuzimanju utvrdimo da iskustvo nije dovoljno za sigurnu vožnju, zadržavamo pravo odbiti najam. Predujam se ne vraća u tom slučaju, budi iskren oko svog iskustva pri rezervaciji.",
           "Najmoprimac preuzima punu odgovornost za sve nesreće, štete i ozljede tijekom najma."
         ]
       }
@@ -389,7 +388,7 @@
         "A1": "A1 (do 125cc)",
         "A2": "A2 (do 35 kW)",
         "A": "A (bez ograničenja)",
-        "B": "B (vozačka za auto, pokriva AM/50cc)"
+        "B": "B (vozačka za auto)"
       },
       "ridingStyle": "Način vožnje",
       "ridingStyleSolo": "Sam",
@@ -405,7 +404,7 @@
       "faqConfirm": "Pročitao/la sam FAQ i uvjete najma.",
       "faqLinkShort": "FAQ",
       "agreementLinkShort": "Ugovor o najmu (PDF)",
-      "experienceMeaning": "Iskustvo u vožnji znači: AM vozačku dozvolu stekao/la si prije A ili B kategorije."
+      "experienceMeaning": "Za skutere od 50ccm s vozačkom dozvolom kategorije B: tvoja dozvola kategorije AM mora biti izdana najmanje 6 mjeseci prije kategorije B (vidi datume u vozačkoj dozvoli). S kategorijom A1, A2 ili A to ne vrijedi."
     },
     "reservation": {
       "title": "Rezervacija",
@@ -517,7 +516,7 @@
   "faqItems": [
     {
       "question": "Što uključuje pomoć na cesti i koji su troškovi?",
-      "answer": "Pomoć na cesti za tehničke/mehaničke kvarove (npr. kvar motora) ili postupak u slučaju krađe je BESPLATNA uključujući preuzimanje i povratak vozila.\nZa incidente uzrokovane od strane najmoprimca (npr. bušotina gume, prazna baterija, gubitak ključa, pad/nesreća) vrijede sljedeće naknade:\nDo 20 km radijusa: besplatno kod mehaničkog kvara, 30 € naknada za uslugu u slučaju krivnje najmoprimca, gume ili nesreće.\nPreko 20 km udaljenosti: besplatno kod mehaničkog kvara, od 50 € (ovisno o udaljenosti + prijevozu) u slučaju krivnje najmoprimca, gume ili nesreće.\nOtok Preko: besplatno kod mehaničkog kvara, 150 € paušal u slučaju krivnje najmoprimca, gume ili nesreće.\nOtok Dugi Otok: besplatno kod mehaničkog kvara, 500 € paušal u slučaju krivnje najmoprimca, gume ili nesreće."
+      "answer": "Pomoć na cesti za tehničke/mehaničke kvarove (npr. kvar motora) ili postupak u slučaju krađe je BESPLATNA uključujući preuzimanje i povratak vozila.\nZa incidente uzrokovane od strane najmoprimca (npr. bušotina gume, prazna baterija, gubitak ključa, pad/nesreća) vrijede sljedeće naknade:\nDo 5 km radijusa: uvijek besplatno, čak i u slučaju krivnje najmoprimca.\nOd 5 do 20 km: besplatno kod mehaničkog kvara, 30 € naknada za uslugu u slučaju krivnje najmoprimca, gume ili nesreće.\nPreko 20 km udaljenosti: besplatno kod mehaničkog kvara, od 50 € (ovisno o udaljenosti + prijevozu) u slučaju krivnje najmoprimca, gume ili nesreće.\nOtok Preko: besplatno kod mehaničkog kvara, 150 € paušal u slučaju krivnje najmoprimca, gume ili nesreće.\nOtok Dugi Otok: besplatno kod mehaničkog kvara, 500 € paušal u slučaju krivnje najmoprimca, gume ili nesreće."
     },
     {
       "question": "U kojem se stanju vozilo predaje i na što moram paziti pri preuzimanju?",
@@ -529,11 +528,11 @@
     },
     {
       "question": "Koji su uvjeti otkazivanja?",
-      "answer": "Sve su rezervacije obvezujuće i nepovratne (non-refundable). U slučaju otkazivanja od strane najmoprimca nema povrata iznosa najma."
+      "answer": "Kapara (20% ukupnog iznosa) ni u kojem se slučaju ne vraća ako rezervaciju otkaže najmoprimac. Najmoprimac može sam otkazati rezervaciju u bilo kojem trenutku putem poveznice u potvrdi rezervacije.\nAko ne možemo osigurati rezervirano vozilo (npr. zato što nije u voznom stanju nakon nesreće ili štete koju je prouzročio drugi klijent), najmoprimac dobiva zamjensko vozilo ili puni povrat kapare."
     },
     {
       "question": "Kada i gdje se vozilo mora vratiti? Što vrijedi u slučaju kašnjenja?",
-      "answer": "Vozilo se mora vratiti u dogovoreno vrijeme i na dogovorenom mjestu.\nTolerancija: Vrijedi razdoblje tolerancije (Grace Period) od 15 minuta. Za povratke nakon tih 15 minuta ili izvan redovnog radnog vremena naplaćuje se administrativna/operativna naknada od 30 € do 50 €."
+      "answer": "Vozilo se mora vratiti u dogovoreno vrijeme i na dogovorenom mjestu.\nTolerancija: Vrijedi razdoblje tolerancije (Grace Period) od 15 minuta.\nOd 15 do 30 minuta kašnjenja: 15 €.\nViše od 30 minuta do 2 sata kašnjenja: 50 €.\nViše od 2 sata kašnjenja: naplaćuje se dodatni dan najma.\nPovrat izvan radnog vremena: paušalno 30 €."
     },
     {
       "question": "Tko odgovara u slučaju nesreće ili štete uzrokovane od trećih strana?",
@@ -565,7 +564,7 @@
     },
     {
       "question": "Što ako odlučite da nemam dovoljno iskustva?",
-      "answer": "Vožnja zahtijeva prethodno iskustvo. Vozačko iskustvo znači da si vozačku dozvolu kategorije AM položio prije vozačke dozvole kategorije A odnosno B. Ako pri preuzimanju procijenimo da nemaš dovoljno iskustva za sigurno upravljanje skuterom ili motociklom, zadržavamo pravo odbiti najam. Kapara se u tom slučaju ne vraća, zato pri rezervaciji budi iskren o svom iskustvu."
+      "answer": "Vožnja zahtijeva prethodno iskustvo. Za skutere od 50ccm koje unajmljuješ s vozačkom dozvolom kategorije B to znači: tvoja vozačka dozvola kategorije AM mora biti izdana najmanje 6 mjeseci prije vozačke dozvole kategorije B (vidi datume u vozačkoj dozvoli). Ako nije tako, s vozačkom dozvolom kategorije B ne možeš unajmiti skuter od 50ccm. S vozačkom dozvolom za motocikl (A1, A2 ili A) ne trebaš dozvolu kategorije AM. Ako pri preuzimanju procijenimo da nemaš dovoljno iskustva za sigurno upravljanje skuterom ili motociklom, zadržavamo pravo odbiti najam. Kapara se u tom slučaju ne vraća, zato pri rezervaciji budi iskren o svom iskustvu."
     },
     {
       "question": "Koji posebni uvjeti na cestama i vožnji vrijede u Zadru?",
@@ -587,7 +586,8 @@
       "urgentLine": "U međuvremenu, nešto hitno?",
       "signoff": "Vidimo se u Zadru.",
       "refLabel": "Broj rezervacije",
-      "refLine": "Molimo navedi broj rezervacije i broj telefona pri plaćanju kako bismo povezali tvoju uplatu."
+      "refLine": "Molimo navedi broj rezervacije i broj telefona pri plaćanju kako bismo povezali tvoju uplatu.",
+      "groupPreheader": "Primili smo tvoj grupni zahtjev ({bike}). Vlasnik potvrđuje uskoro."
     },
     "bookingConfirmed": {
       "subject": "Potvrđeno, {bike} {from} do {to}",
@@ -611,7 +611,10 @@
       "readLine": "Za tvoju rezervaciju vrijede naša česta pitanja (FAQ) i uvjeti najma. Molimo pročitaj ih prije nego što preuzmeš vozilo.",
       "faqLink": "Pročitaj FAQ",
       "agreementLink": "Ugovor o najmu (PDF)",
-      "toursHeader": "Prijedlozi tura za tvoju vožnju"
+      "toursHeader": "Prijedlozi tura za tvoju vožnju",
+      "openHoursValue": "od ponedjeljka do nedjelje, od 09:00 do 19:00",
+      "groupIntro": "tvoja grupna rezervacija ({bike}) je potvrđena. Vidimo se u Zadru.",
+      "groupPreheader": "Tvoja grupna rezervacija ({bike}) je potvrđena za {from} do {to}."
     },
     "bookingDeclined": {
       "subject": "Ažuriranje rezervacije, {bike}",
@@ -619,7 +622,9 @@
       "headline": "Ažuriranje rezervacije",
       "greeting": "Bok {name},",
       "intro": "nažalost ne možemo ti dati {bike} za ove datume. Žao nam je.",
-      "tryOther": "Želiš probati druge datume ili drugi motor? Piši nam i potrudit ćemo se naći nešto što odgovara."
+      "tryOther": "Želiš probati druge datume ili drugi motor? Piši nam i potrudit ćemo se naći nešto što odgovara.",
+      "groupIntro": "nažalost ne možemo potvrditi tvoju grupnu rezervaciju ({bike}) za ove datume. Žao nam je.",
+      "groupPreheader": "Ažuriranje tvoje grupne rezervacije ({bike}), ovi termini nisu odgovarali."
     },
     "contactReceived": {
       "subject": "Hvala na poruci",
@@ -657,13 +662,11 @@
     "seats": "sjedala",
     "yourGroup": "Tvoja grupa",
     "noBikes": "Još nema vozila",
-    "bikesWord": "vozila",
-    "helmetsWord": "kacige",
     "oneDeposit": "jedan polog",
     "continue": "Nastavi",
     "ridingPerBike": "Stil vožnje po vozilu",
     "helmetsHint": "Da pripremimo prave kacige",
-    "helmetsTotal": "kaciga ukupno",
+    "helmetsTotal": "ukupno",
     "spokenLanguage": "Jezik",
     "fromDialCode": "iz pozivnog broja",
     "override": "Promijeni (€)",
@@ -723,7 +726,19 @@
     "freeIfReturnBy": "Slobodno uz povrat do",
     "useReturn": "Primijeni povrat",
     "depositSummary": "Polog: {count} × {each} = {total}",
-    "errFaq": "Molimo potvrdi da si pročitao/la FAQ i uvjete najma."
+    "errFaq": "Molimo potvrdi da si pročitao/la FAQ i uvjete najma.",
+    "bikeForms": {
+      "one": "vozilo",
+      "few": "vozila",
+      "many": "vozila",
+      "other": "vozila"
+    },
+    "helmetForms": {
+      "one": "kaciga",
+      "few": "kacige",
+      "many": "kaciga",
+      "other": "kaciga"
+    }
   },
   "chatbot": {
     "openLabel": "Otvori chat",

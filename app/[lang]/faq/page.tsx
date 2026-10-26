@@ -103,14 +103,6 @@ export default async function FaqPage({
               >
                 {t.agreementDownload} →
               </a>
-              <a
-                href="/docs/sickmotos-faq.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-semibold text-ink hover:text-red transition-colors"
-              >
-                {t.manualDownload} →
-              </a>
             </div>
           </section>
 

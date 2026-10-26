@@ -10,7 +10,45 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-10-25 (Thomas' list of 05.10: the non-billable items).
+Last updated: 2026-10-26 (Thomas' answers of 26.10: new rules live in all 11 languages).
+
+## Thomas' answers 2026-10-26: rules now live (supersede the 2026-10-25 notes below)
+
+- Roadside: up to 5 km always free (even renter fault); 5-20 km free for mechanical defects,
+  30 EUR renter fault/tyre/accident; over 20 km from 50 EUR; Preko 150, Dugi Otok 500;
+  mechanical defects free everywhere. (Kristian merged Thomas' "bis 5 km kostenlos auch bei
+  Selbstverschulden" with his manual's 20 km table; shown to Thomas in the screenshots.)
+- Late return: 15 min grace; 15-30 min 15 EUR; >30 min up to 2 h 50 EUR; >2 h one extra
+  rental day; return outside opening hours flat 30 EUR (= the bookable late-return add-on).
+- Cancellation: 20% fee never refunded when the CUSTOMER cancels; self-cancel link stays
+  (now also in the GROUP confirmation email, the cancel page drops the whole group); if WE
+  cannot provide the vehicle: replacement or full refund (restores the clause in 4. below).
+- Riding experience: only 50cc with a B licence: AM licence issued >= 6 months before B
+  (date on licence), else no 50cc on B; A1/A2/A exempt. Licence option B no longer claims
+  "covers AM/50cc"; group page now renders the localized licence labels; de AM label
+  "Mofa" -> "Roller".
+- Where: FAQ items 0,3,4,12; /terms bullets (0.6, 2.3, 3.0, 3.1, 4.0, 4.1, 6.1 - the old
+  OPEN "/terms older wording" is resolved); home roadside teaser; fleet.form.experienceMeaning;
+  info.licenceRequirements.scooter50; chatbot knowledge incl. LICENCE HELP.
+- public/docs/sickmotos-faq*.pdf DELETED (Thomas' manual had the old 20 km / 30-50 EUR rules
+  and would go stale again); the FAQ page Documents box links only the rental agreement.
+  The rental agreement PDF itself (signed at pickup) STILL has the old rules - Thomas must
+  update his contract; we do not edit it.
+- Plurals: group.bikeForms / group.helmetForms (Intl.PluralRules categories) replace
+  bikesWord/helmetsWord ("1 Bike", Slavic 1/2-4/5+); group emails use bikeCount() and the new
+  agreement-neutral emails.*.groupIntro / groupPreheader keys. Email opening hours are
+  localized (emails.bookingConfirmed.openHoursValue) instead of English BRAND.hours.
+- Checked: 3 translation agents + 3 adversarial verifiers, then two Komplettcheck rounds
+  (code, old-rule sweep, per-language UX; each finding re-verified by a skeptic).
+- Decided for the BILLABLE items (not built yet, waiting for go): seasons 04-05 / 06-08 /
+  09-10 day prices from Thomas (Haupt: Roller 30, TC 39, 125 55, Duke 125 55, Duke 390 75;
+  Vor/Nach = current); Beta RR 125 stays 55 all year; weekend/week/month tiers unchanged in
+  all seasons; season-boundary rentals priced PER DAY with a visible split; season
+  01.04-31.10 every year, last return 31.10, bookable all year round; deposit stays 250 EUR
+  (per-class deposit postponed until Thomas sends amounts); licence photos deleted 1 day
+  after return unless a damage case holds them.
+
+Earlier: 2026-10-25 (Thomas' list of 05.10: the non-billable items).
 
 ## Thomas' list from 2026-10-05: non-billable items shipped 2026-10-25
 

@@ -73,7 +73,7 @@
         },
         "roadside": {
           "label": "Pomoc drogowa",
-          "sub": "Bezpłatnie do 20km, potem od 50€"
+          "sub": "Do 5 km zawsze za darmo, przy awarii wszędzie"
         },
         "transparent": {
           "label": "Przejrzyste ceny",
@@ -146,7 +146,7 @@
     "title": "Info",
     "licenceRequirements": {
       "title": "Wymagane prawo jazdy",
-      "scooter50": "Skuter 50cc: prawo jazdy kat. B lub AM plus doświadczenie w jeździe skuterem",
+      "scooter50": "Skuter 50cc: prawo jazdy kat. B lub AM plus doświadczenie w jeździe skuterem (przy kat. B: prawo jazdy kat. AM co najmniej 6 miesięcy przed kat. B)",
       "scooter125": "Skuter 125cc i motocykl 125cc: prawo jazdy kat. A1",
       "motorbike390": "Motocykl 390cc: prawo jazdy kat. A2",
       "verify": "Sprawdzamy prawo jazdy przy odbiorze"
@@ -172,8 +172,7 @@
       "incidents": "Szkody i pomoc drogowa"
     },
     "docsTitle": "Dokumenty",
-    "agreementDownload": "Umowa najmu (PDF, wszystkie języki)",
-    "manualDownload": "FAQ i warunki wynajmu (PDF, wszystkie języki)"
+    "agreementDownload": "Umowa najmu (PDF, wszystkie języki)"
   },
   "terms": {
     "eyebrow": "Warunki rezerwacji",
@@ -191,14 +190,14 @@
           "Metody płatności: PayPal, przelew bankowy, Revolut lub gotówka osobiście (jeśli jesteś już w Zadarze). Nie akceptujemy kart kredytowych.",
           "Po dokonaniu płatności prosimy przesłać zrzut ekranu transakcji jako potwierdzenie. Przy płatności gotówką nie jest to wymagane.",
           "Jeśli spóźnisz się więcej niż 1 godzinę bez uprzedzenia, rezerwacja zostanie automatycznie anulowana, a zaliczka nie podlega zwrotowi.",
-          "Jeśli skuter lub motocykl stanie się niedostępny z powodu wypadku lub szkody wyrządzonej przez innego klienta, możemy anulować twoją rezerwację i zwrócić pełną kwotę zaliczki.",
+          "Jeśli nie możemy zapewnić zarezerwowanego skutera lub motocykla (np. po wypadku lub szkodzie wyrządzonej przez innego klienta), otrzymasz pojazd zastępczy lub zwrot pełnej kwoty zaliczki.",
           "Jazda skuterem lub motocyklem wymaga wcześniejszego doświadczenia. Jeśli zauważymy, że nie masz wystarczającego doświadczenia, by jeździć bezpiecznie, zastrzegamy sobie prawo do odrzucenia rezerwacji bez zwrotu."
         ]
       },
       {
         "heading": "Kaucja i płatność",
         "bullets": [
-          "Kaucja: 250€ za pojazd, zwracana po oddaniu bez uszkodzeń.",
+          "Kaucja: 250 € za pojazd, zwracana po oddaniu bez uszkodzeń.",
           "Zaliczka: 20% wartości całkowitej. Zabezpiecza twoje terminy, nie podlega zwrotowi w przypadku anulowania.",
           "Metody płatności: PayPal (preferowane Friends & Family, bez prowizji), przelew bankowy, Revolut lub gotówka po przyjeździe.",
           "Nie akceptujemy kart kredytowych."
@@ -210,15 +209,15 @@
           "Odbiór i zwrot pod adresem Velebitska Ulica 2, 23000 Zadar.",
           "Otwarte pn-nd, 09:00 do 19:00.",
           "Okna odbioru i zwrotu to 30-minutowe przedziały między 09:00 a 19:00.",
-          "15 minut tolerancji przy zwrocie. Spóźnienia powyżej tego wiążą się z dodatkowymi opłatami.",
+          "15 minut tolerancji przy zwrocie. Spóźnienie od 15 do 30 minut: 15 €. Powyżej 30 minut do 2 godzin: 50 €. Powyżej 2 godzin: dodatkowy dzień wynajmu. Zwrot poza godzinami otwarcia: opłata ryczałtowa 30 €.",
           "Po dokonaniu zaliczki prześlij zrzut ekranu transakcji, abyśmy mogli zweryfikować i potwierdzić."
         ]
       },
       {
         "heading": "Ubezpieczenie i bezpieczeństwo",
         "bullets": [
-          "Ubezpieczenie podstawowe jest wliczone w każdy wynajem i obejmuje kradzież pojazdu oraz awarię silnika.",
-          "Wypadki, zarysowania, uszkodzenia i przebite opony są odpowiedzialnością wypożyczającego.",
+          "Ubezpieczenie podstawowe jest wliczone w każdy wynajem i obejmuje kradzież pojazdu oraz awarie silnika i usterki mechaniczne, o ile nie wynikają z błędu obsługi lub zaniedbania.",
+          "Za wszelkie uszkodzenia zewnętrzne, wizualne i konstrukcyjne spowodowane upadkami, wypadkami, wandalizmem lub zarysowaniami, a także za uszkodzenia i przebicia opon, odpowiada wypożyczający.",
           "Jeśli wypadek spowoduje osoba trzecia, musisz wezwać policję i uzyskać oficjalny raport. Odpowiedzialność ponosi sprawca.",
           "Kaski są zawsze zapewniane.",
           "Wszystkie pojazdy przekazujemy w idealnym stanie technicznym. Prosimy wypożyczających o sprawdzenie pojazdu, zrobienie zdjęć i nagrań przy odbiorze oraz zwrot w tym samym stanie."
@@ -227,9 +226,9 @@
       {
         "heading": "Szkody, naprawa i awaria",
         "bullets": [
-          "Kaucja pokrywa wstępne koszty naprawy. Zawozimy pojazd do lokalnego mechanika w celu wyceny. Wypożyczający płaci pełny koszt naprawy zgodnie z fakturą mechanika (kopia jest zawsze przekazywana).",
-          "Pomoc drogowa: bezpłatnie do 20 km. Powyżej 20 km: 50€. Wyspy: Preko 150€, Dugi Otok 500€.",
-          "Zgubiony kluczyk: 50€ za wymianę plus ewentualna opłata za pomoc drogową w zależności od lokalizacji.",
+          "Kaucja jest zatrzymywana na pokrycie wstępnych kosztów naprawy. Pojazd trafia do autoryzowanego serwisu (np. Piaggio Center Zadar, KTM Moto Špica), gdzie jest wyceniany i naprawiany przy użyciu oryginalnych części. Wypożyczający płaci koszty zgodnie z fakturą serwisu, a jeśli przekraczają one kaucję, musi dopłacić różnicę. Kopia faktury jest zawsze przekazywana.",
+          "Pomoc drogowa: przy awarii mechanicznej zawsze bezpłatnie. Przy winie wypożyczającego, uszkodzeniu opony lub wypadku: do 5 km bezpłatnie, od 5 do 20 km 30 €, powyżej 20 km od 50 € (zależnie od dystansu i transportu), wyspa Preko 150 €, wyspa Dugi Otok 500 €.",
+          "Zgubiony kluczyk: 50 € za wymianę plus ewentualna opłata za pomoc drogową w zależności od lokalizacji.",
           "W przypadku awarii silnika niezwiązanej z zachowaniem wypożyczającego pokrywamy wszystkie koszty."
         ]
       },
@@ -244,7 +243,7 @@
         "heading": "Wymagania wobec kierowcy",
         "bullets": [
           "Przywieź ważne prawo jazdy do odbioru. Bez prawa jazdy nie ma jazdy. Sprawdzamy, czy kategoria prawa jazdy odpowiada klasie pojazdu.",
-          "Jazda wymaga wcześniejszego doświadczenia. Jeśli przy odbiorze stwierdzimy, że doświadczenie jest niewystarczające do bezpiecznej obsługi pojazdu, zastrzegamy sobie prawo do odmowy. Zaliczka w takim wypadku nie podlega zwrotowi, dlatego prosimy o szczerość przy rezerwacji.",
+          "Jazda wymaga wcześniejszego doświadczenia. W przypadku skuterów 50cc na prawo jazdy kategorii B wymagane jest prawo jazdy kategorii AM wydane co najmniej 6 miesięcy przed kategorią B; przy kategorii A1, A2 lub A ten wymóg nie obowiązuje. Jeśli przy odbiorze stwierdzimy, że doświadczenie jest niewystarczające do bezpiecznej obsługi pojazdu, zastrzegamy sobie prawo do odmowy wynajmu. Zaliczka w takim wypadku nie podlega zwrotowi, dlatego prosimy o szczerość przy rezerwacji.",
           "Wypożyczający bierze pełną odpowiedzialność za wszystkie wypadki, szkody i obrażenia w okresie wynajmu."
         ]
       }
@@ -389,7 +388,7 @@
         "A1": "A1 (do 125cc)",
         "A2": "A2 (do 35 kW)",
         "A": "A (bez ograniczeń)",
-        "B": "B (prawo jazdy samochodowe, obejmuje AM/50cc)"
+        "B": "B (prawo jazdy samochodowe)"
       },
       "ridingStyle": "Styl jazdy",
       "ridingStyleSolo": "Solo",
@@ -405,7 +404,7 @@
       "faqConfirm": "Przeczytałem/am FAQ i warunki wynajmu.",
       "faqLinkShort": "FAQ",
       "agreementLinkShort": "Umowa najmu (PDF)",
-      "experienceMeaning": "Doświadczenie w jeździe oznacza: prawo jazdy kat. AM zdobyłeś/aś przed kat. A lub B."
+      "experienceMeaning": "Dla skuterów 50cc na prawo jazdy kategorii B: twoje prawo jazdy kategorii AM musiało zostać wydane co najmniej 6 miesięcy przed kategorią B (daty znajdziesz w prawie jazdy). Przy kategorii A1, A2 lub A ten wymóg nie obowiązuje."
     },
     "reservation": {
       "title": "Rezerwacja",
@@ -517,7 +516,7 @@
   "faqItems": [
     {
       "question": "Co obejmuje pomoc drogowa i jakie są koszty?",
-      "answer": "Pomoc drogowa w przypadku awarii technicznych/mechanicznych (np. uszkodzenie silnika) lub kradzieży jest BEZPŁATNA wraz z odbiorem i transportem pojazdu.\nW przypadku zdarzeń z winy najemcy (np. uszkodzenie opony, rozładowany akumulator, zgubienie kluczyka, upadek/wypadek) obowiązują następujące opłaty:\nDo 20 km promienia: bezpłatnie przy awarii mechanicznej, 30 € opłaty serwisowej przy winie najemcy, oponie lub wypadku.\nPowyżej 20 km: bezpłatnie przy awarii mechanicznej, od 50 € (zależnie od dystansu + transportu) przy winie najemcy, oponie lub wypadku.\nWyspa Preko: bezpłatnie przy awarii mechanicznej, 150 € ryczałtu przy winie najemcy, oponie lub wypadku.\nWyspa Dugi Otok: bezpłatnie przy awarii mechanicznej, 500 € ryczałtu przy winie najemcy, oponie lub wypadku."
+      "answer": "Pomoc drogowa w przypadku awarii technicznych/mechanicznych (np. uszkodzenie silnika) lub kradzieży jest BEZPŁATNA wraz z odbiorem i transportem pojazdu.\nW przypadku zdarzeń z winy najemcy (np. uszkodzenie opony, rozładowany akumulator, zgubienie kluczyka, upadek/wypadek) obowiązują następujące opłaty:\nDo 5 km promienia: zawsze bezpłatnie, nawet przy winie najemcy.\nOd 5 do 20 km: bezpłatnie przy awarii mechanicznej, 30 € opłaty serwisowej przy winie najemcy, oponie lub wypadku.\nPowyżej 20 km: bezpłatnie przy awarii mechanicznej, od 50 € (zależnie od dystansu + transportu) przy winie najemcy, oponie lub wypadku.\nWyspa Preko: bezpłatnie przy awarii mechanicznej, 150 € ryczałtu przy winie najemcy, oponie lub wypadku.\nWyspa Dugi Otok: bezpłatnie przy awarii mechanicznej, 500 € ryczałtu przy winie najemcy, oponie lub wypadku."
     },
     {
       "question": "W jakim stanie pojazd jest przekazywany i na co zwrócić uwagę?",
@@ -529,11 +528,11 @@
     },
     {
       "question": "Jakie są warunki anulowania rezerwacji?",
-      "answer": "Wszystkie rezerwacje są wiążące i bezzwrotne (non-refundable). W przypadku anulowania rezerwacji przez najemcę opłata za wynajem nie podlega zwrotowi."
+      "answer": "Zaliczka (20% wartości całkowitej) w żadnym wypadku nie podlega zwrotowi, jeśli rezerwację anuluje najemca. Najemca może w każdej chwili samodzielnie anulować rezerwację za pomocą linku w potwierdzeniu rezerwacji.\nJeśli nie możemy zapewnić zarezerwowanego pojazdu (np. dlatego, że po wypadku lub szkodzie spowodowanej przez innego klienta jest wyłączony z eksploatacji), najemca otrzymuje pojazd zastępczy lub pełny zwrot zaliczki."
     },
     {
       "question": "Kiedy i gdzie należy zwrócić pojazd? Co w przypadku opóźnienia?",
-      "answer": "Pojazd należy zwrócić w uzgodnionym czasie i miejscu.\nOkres tolerancji: Obowiązuje 15 minut tolerancji. W przypadku zwrotu po upływie 15 minut lub poza godzinami otwarcia pobierana jest opłata manipulacyjna/operacyjna w wysokości 30 € do 50 €."
+      "answer": "Pojazd należy zwrócić w uzgodnionym czasie i miejscu.\nOkres tolerancji: Obowiązuje 15 minut tolerancji.\nSpóźnienie od 15 do 30 minut: 15 €.\nSpóźnienie powyżej 30 minut do 2 godzin: 50 €.\nSpóźnienie powyżej 2 godzin: naliczany jest dodatkowy dzień wynajmu.\nZwrot poza godzinami otwarcia: opłata ryczałtowa 30 €."
     },
     {
       "question": "Kto odpowiada za wypadki lub szkody wyrządzone przez osoby trzecie?",
@@ -565,7 +564,7 @@
     },
     {
       "question": "Co jeśli uznacie, że nie mam wystarczającego doświadczenia?",
-      "answer": "Jazda wymaga wcześniejszego doświadczenia. Doświadczenie w jeździe oznacza, że twoje prawo jazdy kategorii AM zostało wydane przed twoim prawem jazdy kategorii A lub B. Jeśli przy odbiorze uznamy, że nie masz wystarczającego doświadczenia, by bezpiecznie jeździć skuterem lub motocyklem, zastrzegamy sobie prawo odmowy najmu. Zaliczka w takim przypadku nie podlega zwrotowi, dlatego przy rezerwacji szczerze opisz swoje doświadczenie."
+      "answer": "Jazda wymaga wcześniejszego doświadczenia. W przypadku skuterów 50cc wynajmowanych na prawo jazdy kategorii B oznacza to, że twoje prawo jazdy kategorii AM musiało zostać wydane co najmniej 6 miesięcy przed twoim prawem jazdy kategorii B (daty znajdziesz w prawie jazdy). Jeśli tak nie jest, na prawo jazdy kategorii B nie możesz wynająć skutera 50cc. Z prawem jazdy na motocykl (A1, A2 lub A) nie potrzebujesz kategorii AM. Jeśli przy odbiorze uznamy, że nie masz wystarczającego doświadczenia, by bezpiecznie jeździć skuterem lub motocyklem, zastrzegamy sobie prawo odmowy najmu. Zaliczka w takim przypadku nie podlega zwrotowi, dlatego przy rezerwacji szczerze opisz swoje doświadczenie."
     },
     {
       "question": "Jakie szczególne warunki drogowe i jezdne obowiązują w Zadarze?",
@@ -587,7 +586,8 @@
       "urgentLine": "W międzyczasie coś pilnego?",
       "signoff": "Do zobaczenia w Zadarze.",
       "refLabel": "Numer rezerwacji",
-      "refLine": "Podaj numer rezerwacji i numer telefonu przy płatności, abyśmy mogli powiązać Twoją wpłatę."
+      "refLine": "Podaj numer rezerwacji i numer telefonu przy płatności, abyśmy mogli powiązać Twoją wpłatę.",
+      "groupPreheader": "Otrzymaliśmy twoje grupowe zgłoszenie rezerwacji ({bike}). Wkrótce potwierdzimy."
     },
     "bookingConfirmed": {
       "subject": "Potwierdzone, {bike} {from} do {to}",
@@ -611,7 +611,10 @@
       "readLine": "Do Twojej rezerwacji mają zastosowanie nasze FAQ i warunki wynajmu. Przeczytaj je przed odbiorem pojazdu.",
       "faqLink": "Przeczytaj FAQ",
       "agreementLink": "Umowa najmu (PDF)",
-      "toursHeader": "Pomysły na trasy dla Ciebie"
+      "toursHeader": "Pomysły na trasy dla Ciebie",
+      "openHoursValue": "od poniedziałku do niedzieli, od 09:00 do 19:00",
+      "groupIntro": "twoja rezerwacja grupowa ({bike}) jest potwierdzona. Do zobaczenia w Zadarze.",
+      "groupPreheader": "Twoja rezerwacja grupowa ({bike}) jest potwierdzona na {from} do {to}."
     },
     "bookingDeclined": {
       "subject": "Aktualizacja twojej rezerwacji, {bike}",
@@ -619,7 +622,9 @@
       "headline": "Aktualizacja twojej rezerwacji",
       "greeting": "Cześć {name},",
       "intro": "niestety nie możemy zapewnić {bike} w tych terminach. Przepraszamy za to.",
-      "tryOther": "Chcesz spróbować innych terminów lub innego pojazdu? Napisz do nas, a postaramy się znaleźć coś pasującego."
+      "tryOther": "Chcesz spróbować innych terminów lub innego pojazdu? Napisz do nas, a postaramy się znaleźć coś pasującego.",
+      "groupIntro": "niestety nie możemy potwierdzić twojej rezerwacji grupowej ({bike}) w tych terminach. Przepraszamy za to.",
+      "groupPreheader": "Aktualizacja twojej rezerwacji grupowej ({bike}), te terminy nie wyszły."
     },
     "contactReceived": {
       "subject": "Dzięki za wiadomość",
@@ -657,13 +662,11 @@
     "seats": "miejsca",
     "yourGroup": "Twoja grupa",
     "noBikes": "Brak motorów",
-    "bikesWord": "motory",
-    "helmetsWord": "kaski",
     "oneDeposit": "jedna kaucja",
     "continue": "Dalej",
     "ridingPerBike": "Styl jazdy na motor",
     "helmetsHint": "Abyśmy przygotowali właściwe kaski",
-    "helmetsTotal": "kasków łącznie",
+    "helmetsTotal": "łącznie",
     "spokenLanguage": "Język",
     "fromDialCode": "z numeru kierunkowego",
     "override": "Zmień (€)",
@@ -723,7 +726,19 @@
     "freeIfReturnBy": "Wolne przy zwrocie do",
     "useReturn": "Użyj tego zwrotu",
     "depositSummary": "Kaucja: {count} × {each} = {total}",
-    "errFaq": "Potwierdź, że przeczytałeś/aś FAQ i warunki wynajmu."
+    "errFaq": "Potwierdź, że przeczytałeś/aś FAQ i warunki wynajmu.",
+    "bikeForms": {
+      "one": "motor",
+      "few": "motory",
+      "many": "motorów",
+      "other": "motoru"
+    },
+    "helmetForms": {
+      "one": "kask",
+      "few": "kaski",
+      "many": "kasków",
+      "other": "kasku"
+    }
   },
   "chatbot": {
     "openLabel": "Otwórz czat",

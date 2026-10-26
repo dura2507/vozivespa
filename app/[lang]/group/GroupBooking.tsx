@@ -38,7 +38,7 @@ const LICENCE_OPTIONS = [
   { value: "A1", label: "A1 (up to 125cc)" },
   { value: "A2", label: "A2 (up to 35 kW)" },
   { value: "A", label: "A (unrestricted)" },
-  { value: "B", label: "B (car licence, covers AM/50cc)" },
+  { value: "B", label: "B (car licence)" },
 ] as const;
 
 const DATE_FNS_LOCALES: Partial<Record<Locale, DateFnsLocale>> = {
@@ -415,6 +415,13 @@ export default function GroupBooking({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const dfLocale = DATE_FNS_LOCALES[lang] ?? enUS;
+  // "1 Bike" / "3 Bikes", "1 Helm" / "3 Helme": the noun after a count follows
+  // the locale's plural rules (Slavic 1 / 2-4 / 5+ forms included).
+  const pluralRules = new Intl.PluralRules(lang);
+  const countWord = (n: number, forms: Record<string, string>) =>
+    forms[pluralRules.select(n)] ?? forms.other;
+  const bikesLabel = (n: number) => `${n} ${countWord(n, g.bikeForms)}`;
+  const helmetsLabel = (n: number) => `${n} ${countWord(n, g.helmetForms)}`;
 
   return (
     <>
@@ -493,7 +500,7 @@ export default function GroupBooking({
                 ))}
               <p className="text-ink mt-2 pt-2 border-t border-ink/10">
                 <span className="text-muted">{dict.fleet.success.summaryTotal}: </span>
-                {cartTotal}€ · {cartCount} {g.bikesWord} · {helmetCount} {g.helmetsWord}
+                {cartTotal}€ · {bikesLabel(cartCount)} · {helmetsLabel(helmetCount)}
               </p>
             </div>
             <a
@@ -841,7 +848,7 @@ export default function GroupBooking({
                 {cartCount > 0 && (
                   <>
                     <p className="text-xs text-muted mt-0.5">
-                      {cartCount} {g.bikesWord} · {helmetCount} {g.helmetsWord}
+                      {bikesLabel(cartCount)} · {helmetsLabel(helmetCount)}
                     </p>
                     <p className="text-xs text-ink font-semibold mt-0.5">
                       {g.depositSummary
@@ -896,7 +903,7 @@ export default function GroupBooking({
                     <select value={driversLicence} onChange={(e) => setDriversLicence(e.target.value)} className="mt-1 w-full border border-ink/15 px-3 py-2 text-sm bg-white">
                       <option value="">-</option>
                       {LICENCE_OPTIONS.map((l) => (
-                        <option key={l.value} value={l.value}>{l.label}</option>
+                        <option key={l.value} value={l.value}>{dict.fleet.form.licenceOptions[l.value as keyof typeof dict.fleet.form.licenceOptions] ?? l.label}</option>
                       ))}
                     </select>
                     <span className="block text-muted text-xs mt-1 leading-snug">{dict.fleet.form.experienceMeaning}</span>
@@ -913,7 +920,7 @@ export default function GroupBooking({
                     {g.ridingPerBike}
                   </p>
                   <p className="text-xs text-muted mb-3">
-                    {g.helmetsHint} · {helmetCount} {g.helmetsTotal}
+                    {g.helmetsHint} · {helmetsLabel(helmetCount)} {g.helmetsTotal}
                   </p>
                   <div className="space-y-2">
                     {bikes
@@ -1110,7 +1117,7 @@ export default function GroupBooking({
                     ← {g.backToBikes}
                   </button>
                   <button type="submit" disabled={submitting} className="bg-red text-white font-bold text-xs tracking-widest uppercase px-6 py-3 hover:bg-red-dark disabled:opacity-50">
-                    {submitting ? dict.fleet.form.submitting : `${g.submit} · ${cartCount} ${g.bikesWord}`}
+                    {submitting ? dict.fleet.form.submitting : `${g.submit} · ${bikesLabel(cartCount)}`}
                   </button>
                 </div>
               </form>

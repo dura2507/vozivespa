@@ -73,7 +73,7 @@
         },
         "roadside": {
           "label": "Asistenčná služba",
-          "sub": "Do 20km zdarma, potom 50€ a viac"
+          "sub": "Do 5 km vždy zdarma, pri poruche kdekoľvek"
         },
         "transparent": {
           "label": "Transparentné ceny",
@@ -146,7 +146,7 @@
     "title": "Info",
     "licenceRequirements": {
       "title": "Požiadavky na vodičský preukaz",
-      "scooter50": "Skúter 50cc: vodičský preukaz skupiny B alebo AM plus skúsenosť so skútrom",
+      "scooter50": "Skúter 50cc: vodičský preukaz skupiny B alebo AM plus skúsenosť so skútrom (so skupinou B: vodičský preukaz AM aspoň 6 mesiacov pred skupinou B)",
       "scooter125": "Skúter 125cc a motorka 125cc: vodičský preukaz skupiny A1",
       "motorbike390": "Motorka 390cc: vodičský preukaz skupiny A2",
       "verify": "Vodičský preukaz overujeme pri vyzdvihnutí"
@@ -172,8 +172,7 @@
       "incidents": "Poškodenie a asistencia"
     },
     "docsTitle": "Dokumenty",
-    "agreementDownload": "Zmluva o prenájme (PDF, všetky jazyky)",
-    "manualDownload": "FAQ a podmienky prenájmu (PDF, všetky jazyky)"
+    "agreementDownload": "Zmluva o prenájme (PDF, všetky jazyky)"
   },
   "terms": {
     "eyebrow": "Podmienky rezervácie",
@@ -191,7 +190,7 @@
           "Spôsoby platby: PayPal, bankový prevod, Revolut alebo hotovosť osobne (ak si už v Zadare). Neprijímame kreditné karty.",
           "Po uskutočnení platby nám prosím pošli screenshot transakcie ako doklad. Pri platbe v hotovosti nie je potrebný.",
           "Ak prídeš o viac ako 1 hodinu neskôr bez upozornenia, tvoja rezervácia bude automaticky zrušená a rezervačný poplatok je nevratný.",
-          "Ak sa skúter alebo motorka stane nedostupnou pre nehodu alebo poškodenie spôsobené iným klientom, môžeme tvoju rezerváciu zrušiť a vrátiť celý rezervačný poplatok.",
+          "Ak ti nemôžeme poskytnúť rezervovaný skúter alebo motorku (napr. po nehode alebo poškodení spôsobenom iným klientom), dostaneš náhradné vozidlo alebo ti vrátime celý rezervačný poplatok.",
           "Jazda na skútri alebo motorke vyžaduje predchádzajúcu skúsenosť. Ak zistíme, že nemáš dostatočné skúsenosti na bezpečnú jazdu, vyhradzujeme si právo rezerváciu odmietnuť bez vrátenia peňazí."
         ]
       },
@@ -210,15 +209,15 @@
           "Vyzdvihnutie a odovzdanie na Velebitska Ulica 2, 23000 Zadar.",
           "Otvorené po-ne, 09:00 až 19:00.",
           "Termíny vyzdvihnutia a vrátenia sú 30-minútové intervaly medzi 09:00 a 19:00.",
-          "15-minútová tolerancia pri vrátení. Neskoré odovzdania nad tento rámec sú spoplatnené.",
+          "15-minútová tolerancia pri vrátení. Meškanie 15 až 30 minút: 15€. Nad 30 minút do 2 hodín: 50€. Nad 2 hodiny: jeden deň prenájmu navyše. Vrátenie mimo otváracích hodín: paušálny poplatok 30€.",
           "Po zaplatení pošli screenshot transakcie kaucie, aby sme mohli overiť a potvrdiť."
         ]
       },
       {
         "heading": "Poistenie a bezpečnosť",
         "bullets": [
-          "Základné poistenie je súčasťou každého prenájmu a kryje krádež bika a poškodenie motora.",
-          "Nehody, škrabance, poškodenia a defekty pneumatík sú zodpovednosťou nájomcu.",
+          "Základné poistenie je súčasťou každého prenájmu a kryje krádež bika, ako aj poškodenie motora a mechanické poruchy, pokiaľ neboli spôsobené chybnou obsluhou alebo nedbanlivosťou.",
+          "Všetky vonkajšie, kozmetické a konštrukčné poškodenia v dôsledku pádov, nehôd, vandalizmu alebo škrabancov, ako aj poškodenia a defekty pneumatík, sú zodpovednosťou nájomcu.",
           "Ak nehodu spôsobí tretia strana, musíš zavolať políciu a získať oficiálnu správu. Zodpovedná strana ručí.",
           "Helmy vždy poskytujeme.",
           "Všetky biky odovzdávame v dokonalom prevádzkovom stave. Žiadame nájomcov, aby si bike skontrolovali, urobili fotky a videá pri vyzdvihnutí a vrátili ho v rovnakom stave."
@@ -227,8 +226,8 @@
       {
         "heading": "Poškodenie, oprava a porucha",
         "bullets": [
-          "Kaucia kryje počiatočné náklady na opravu. Bike vezmeme k miestnemu mechanikovi na posúdenie. Nájomca platí plnú cenu opravy podľa faktúry mechanika (kópiu vždy poskytneme).",
-          "Asistenčná služba pri poruche: do 20 km zdarma. Nad 20 km: 50€. Ostrovy: Preko 150€, Dugi Otok 500€.",
+          "Kaucia sa zadrží na pokrytie počiatočných nákladov na opravu. Bike posúdi autorizovaný značkový servis (napr. Piaggio Center Zadar, KTM Moto Špica) a opraví ho originálnymi dielmi. Nájomca platí náklady podľa faktúry servisu; ak presiahnu výšku kaucie, rozdiel musí doplatiť. Kópiu faktúry vždy poskytneme.",
+          "Asistenčná služba pri poruche: mechanické poruchy vždy zdarma. Pri zavinení nájomcu, defekte alebo nehode: do 5 km zdarma, od 5 do 20 km 30€, nad 20 km od 50€ (podľa vzdialenosti a prepravy), ostrov Preko 150€, ostrov Dugi Otok 500€.",
           "Stratený kľúč: 50€ poplatok za náhradu plus prípadná asistenčná služba podľa lokality.",
           "V prípade poruchy motora nesúvisiacej so správaním nájomcu kryjeme všetky náklady."
         ]
@@ -244,7 +243,7 @@
         "heading": "Požiadavky na vodiča",
         "bullets": [
           "Prines si k vyzdvihnutiu platný vodičský preukaz. Bez preukazu žiadna jazda. Majiteľ overí, že skupina preukazu zodpovedá triede bika.",
-          "Jazda vyžaduje predchádzajúcu skúsenosť. Ak pri vyzdvihnutí zistíme, že skúsenosť nepostačuje na bezpečné ovládanie bika, vyhradzujeme si právo odmietnuť. Rezervačný poplatok je v takom prípade nevratný, preto buď pri rezervácii úprimný ohľadom svojich skúseností.",
+          "Jazda vyžaduje predchádzajúcu skúsenosť. Pri skútroch 50 ccm s vodičským preukazom skupiny B musí byť preukaz AM vydaný najmenej 6 mesiacov pred preukazom B; s preukazom A1, A2 alebo A to neplatí. Ak pri vyzdvihnutí zistíme, že skúsenosť nepostačuje na bezpečné ovládanie bika, vyhradzujeme si právo odmietnuť. Rezervačný poplatok je v takom prípade nevratný, preto buď pri rezervácii úprimný ohľadom svojich skúseností.",
           "Nájomca preberá plnú zodpovednosť za všetky nehody, škody a zranenia počas obdobia prenájmu."
         ]
       }
@@ -389,7 +388,7 @@
         "A1": "A1 (do 125cc)",
         "A2": "A2 (do 35 kW)",
         "A": "A (bez obmedzenia)",
-        "B": "B (vodičák na auto, kryje AM/50cc)"
+        "B": "B (vodičák na auto)"
       },
       "ridingStyle": "Štýl jazdy",
       "ridingStyleSolo": "Sám",
@@ -405,7 +404,7 @@
       "faqConfirm": "Prečítal/a som si FAQ a podmienky prenájmu.",
       "faqLinkShort": "FAQ",
       "agreementLinkShort": "Zmluva o prenájme (PDF)",
-      "experienceMeaning": "Skúsenosť s jazdou znamená: vodičský preukaz AM si získal/a pred skupinou A alebo B."
+      "experienceMeaning": "Pri skútroch 50 ccm s vodičským preukazom skupiny B: tvoj vodičský preukaz AM musí byť vydaný najmenej 6 mesiacov pred preukazom B (dátumy nájdeš vo vodičskom preukaze). S preukazom A1, A2 alebo A to neplatí."
     },
     "reservation": {
       "title": "Rezervácia",
@@ -517,7 +516,7 @@
   "faqItems": [
     {
       "question": "Čo zahŕňa cestná pomoc a aké poplatky sa uplatňujú?",
-      "answer": "Cestná pomoc pri technických/mechanických poruchách (napr. porucha motora) alebo pri krádeži je BEZPLATNÁ vrátane odtahu a prepravy vozidla.\nZa incidenty spôsobené nájomcom (napr. defekt, vybitá batéria, strata kľúča, pád/nehoda) platia nasledujúce poplatky:\nDo okruhu 20 km: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode 30 € servisný poplatok.\nVzdialenosť nad 20 km: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode od 50 € (podľa vzdialenosti + dopravy).\nOstrov Preko: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode 150 € paušál.\nOstrov Dugi Otok: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode 500 € paušál."
+      "answer": "Cestná pomoc pri technických/mechanických poruchách (napr. porucha motora) alebo pri krádeži je BEZPLATNÁ vrátane odtahu a prepravy vozidla.\nZa incidenty spôsobené nájomcom (napr. defekt, vybitá batéria, strata kľúča, pád/nehoda) platia nasledujúce poplatky:\nDo okruhu 5 km: vždy BEZPLATNE, aj pri zavinení nájomcu.\nOd 5 do 20 km: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode 30 € servisný poplatok.\nVzdialenosť nad 20 km: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode od 50 € (podľa vzdialenosti + dopravy).\nOstrov Preko: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode 150 € paušál.\nOstrov Dugi Otok: pri mechanickej poruche BEZPLATNE, pri zavinení nájomcu, defekte alebo nehode 500 € paušál."
     },
     {
       "question": "V akom stave sa vozidlo odovzdáva a na čo dbať pri prevzatí?",
@@ -529,11 +528,11 @@
     },
     {
       "question": "Aké sú storno podmienky?",
-      "answer": "Všetky rezervácie sú záväzné a nevratné (non-refundable). V prípade storna zo strany nájomcu sa nájomné nevracia."
+      "answer": "Ak nájomca rezerváciu zruší, rezervačný poplatok (20 % z celkovej sumy) sa v žiadnom prípade nevracia. Nájomca môže rezerváciu kedykoľvek zrušiť sám cez odkaz v potvrdení rezervácie.\nAk nemôžeme poskytnúť rezervované vozidlo (napr. preto, že je mimo prevádzky po nehode alebo poškodení spôsobenom iným klientom), nájomca dostane náhradné vozidlo alebo mu vrátime celý rezervačný poplatok."
     },
     {
       "question": "Kedy a kde sa musí vozidlo vrátiť? Čo platí pri meškaní?",
-      "answer": "Vozidlo sa musí vrátiť v dohodnutom čase a na dohodnutom mieste.\nTolerancia: Platí dodatočná lehota (Grace Period) 15 minút. Pri vrátení po uplynutí 15 minút alebo mimo otváracích hodín sa účtuje administratívny/prevádzkový poplatok 30 € až 50 €."
+      "answer": "Vozidlo sa musí vrátiť v dohodnutom čase a na dohodnutom mieste.\nTolerancia: Platí dodatočná lehota (Grace Period) 15 minút.\nMeškanie 15 až 30 minút: 15 €.\nMeškanie nad 30 minút do 2 hodín: 50 €.\nMeškanie nad 2 hodiny: účtuje sa jeden deň prenájmu navyše.\nVrátenie mimo otváracích hodín: paušálny poplatok 30 €."
     },
     {
       "question": "Kto zodpovedá za nehody alebo škody spôsobené treťou stranou?",
@@ -549,7 +548,7 @@
     },
     {
       "question": "Ako urobím rezerváciu?",
-      "answer": "Rezerváciu urobíš tak, že si na našom webe vyberieš bike, klikneš na „Book Now“, overíš dostupnosť a zvolíš dátumy a časy. Viac bikov naraz zarezervuješ cez „Multibooking“ v menu. Ak ti nevyhovuje žiadna online platba, môžeš rezervovať aj osobne, ale pred príchodom si u nás over dostupnosť, rýchlo sa mení. Termíny ti drží záloha 20 %. Platí sa cez PayPal, bankovým prevodom, cez Revolut alebo v hotovosti pri príchode; po zaplatení nám pošli screenshot transakcie ako potvrdenie. Kreditné karty neprijímame. Ak prídeš s viac ako hodinovým meškaním bez ohlásenia, rezervácia sa automaticky zruší."
+      "answer": "Rezerváciu urobíš tak, že si na našom webe vyberieš bike, klikneš na „Book Now“, overíš dostupnosť a zvolíš dátumy a časy. Viac bikov naraz zarezervuješ cez „Multibooking“ v menu. Ak ti nevyhovuje žiadna online platba, môžeš rezervovať aj osobne, ale pred príchodom si u nás over dostupnosť, rýchlo sa mení. Termíny ti drží rezervačný poplatok 20 %. Platí sa cez PayPal, bankovým prevodom, cez Revolut alebo v hotovosti pri príchode; po zaplatení nám pošli screenshot transakcie ako potvrdenie. Kreditné karty neprijímame. Ak prídeš s viac ako hodinovým meškaním bez ohlásenia, rezervácia sa automaticky zruší."
     },
     {
       "question": "Ponúkate držiaky na telefón?",
@@ -565,7 +564,7 @@
     },
     {
       "question": "Čo ak rozhodnete, že nemám dosť skúseností?",
-      "answer": "Jazda vyžaduje predchádzajúcu skúsenosť. Skúsenosť s jazdou znamená, že si vodičský preukaz skupiny AM urobil pred vodičským preukazom skupiny A alebo B. Ak pri vyzdvihnutí usúdime, že nemáš dosť skúseností na bezpečné ovládanie skútra alebo motorky, vyhradzujeme si právo prenájom odmietnuť. Záloha sa v takom prípade nevracia, preto pri rezervácii uveď svoje skúsenosti pravdivo."
+      "answer": "Jazda vyžaduje predchádzajúcu skúsenosť. Pri skútroch 50 ccm prenajatých s vodičským preukazom skupiny B to znamená: tvoj vodičský preukaz skupiny AM musí byť vydaný najmenej 6 mesiacov pred preukazom skupiny B (dátumy nájdeš vo vodičskom preukaze). Ak to tak nie je, s preukazom skupiny B si skúter 50 ccm prenajať nemôžeš. S vodičským preukazom na motorku (A1, A2 alebo A) preukaz AM nepotrebuješ. Ak pri vyzdvihnutí usúdime, že nemáš dosť skúseností na bezpečné ovládanie skútra alebo motorky, vyhradzujeme si právo prenájom odmietnuť. Rezervačný poplatok sa v takom prípade nevracia, preto pri rezervácii uveď svoje skúsenosti pravdivo."
     },
     {
       "question": "Aké osobitné cestné a jazdné podmienky platia v Zadare?",
@@ -587,7 +586,8 @@
       "urgentLine": "Medzitým, niečo súrne?",
       "signoff": "Uvidíme sa v Zadare.",
       "refLabel": "Číslo rezervácie",
-      "refLine": "Pri platbe uveď číslo rezervácie a telefónne číslo, aby sme mohli priradiť tvoju platbu."
+      "refLine": "Pri platbe uveď číslo rezervácie a telefónne číslo, aby sme mohli priradiť tvoju platbu.",
+      "groupPreheader": "Máme tvoju skupinovú žiadosť o rezerváciu ({bike}). Majiteľ čoskoro potvrdí."
     },
     "bookingConfirmed": {
       "subject": "Potvrdené, {bike} {from} do {to}",
@@ -611,7 +611,10 @@
       "readLine": "Na tvoju rezerváciu sa vzťahujú naše časté otázky (FAQ) a podmienky prenájmu. Prečítaj si ich, prosím, pred vyzdvihnutím vozidla.",
       "faqLink": "Prečítať FAQ",
       "agreementLink": "Zmluva o prenájme (PDF)",
-      "toursHeader": "Tipy na výlety pre tvoju jazdu"
+      "toursHeader": "Tipy na výlety pre tvoju jazdu",
+      "openHoursValue": "po-ne, 09:00 až 19:00",
+      "groupIntro": "tvoja skupinová rezervácia ({bike}) je potvrdená. Uvidíme sa v Zadare.",
+      "groupPreheader": "Tvoja skupinová rezervácia ({bike}) je potvrdená na {from} do {to}."
     },
     "bookingDeclined": {
       "subject": "Aktualizácia tvojej rezervácie, {bike}",
@@ -619,7 +622,9 @@
       "headline": "Aktualizácia tvojej rezervácie",
       "greeting": "Ahoj {name},",
       "intro": "bohužiaľ nemôžeme poskytnúť {bike} na tieto termíny. Mrzí nás to.",
-      "tryOther": "Chceš skúsiť iné termíny alebo iný bike? Napíš nám a urobíme maximum, aby sme našli niečo vhodné."
+      "tryOther": "Chceš skúsiť iné termíny alebo iný bike? Napíš nám a urobíme maximum, aby sme našli niečo vhodné.",
+      "groupIntro": "bohužiaľ nemôžeme potvrdiť tvoju skupinovú rezerváciu ({bike}) na tieto termíny. Mrzí nás to.",
+      "groupPreheader": "Aktualizácia tvojej skupinovej rezervácie ({bike}), tieto termíny nevyšli."
     },
     "contactReceived": {
       "subject": "Vďaka za tvoju správu",
@@ -657,13 +662,11 @@
     "seats": "sedadlá",
     "yourGroup": "Tvoja skupina",
     "noBikes": "Zatiaľ žiadne biky",
-    "bikesWord": "bikov",
-    "helmetsWord": "heliem",
     "oneDeposit": "jedna kaucia",
     "continue": "Pokračovať",
     "ridingPerBike": "Štýl jazdy na bike",
     "helmetsHint": "Aby sme pripravili správne helmy",
-    "helmetsTotal": "heliem spolu",
+    "helmetsTotal": "spolu",
     "spokenLanguage": "Hovorený jazyk",
     "fromDialCode": "z predvoľby",
     "override": "Prepísať (€)",
@@ -723,7 +726,19 @@
     "freeIfReturnBy": "Voľné, ak vrátiš do",
     "useReturn": "Použiť čas vrátenia",
     "depositSummary": "Kaucia: {count} × {each} = {total}",
-    "errFaq": "Potvrď, prosím, že si si prečítal/a FAQ a podmienky prenájmu."
+    "errFaq": "Potvrď, prosím, že si si prečítal/a FAQ a podmienky prenájmu.",
+    "bikeForms": {
+      "one": "bike",
+      "few": "biky",
+      "many": "bika",
+      "other": "bikov"
+    },
+    "helmetForms": {
+      "one": "helma",
+      "few": "helmy",
+      "many": "helmy",
+      "other": "heliem"
+    }
   },
   "chatbot": {
     "openLabel": "Otvoriť chat",

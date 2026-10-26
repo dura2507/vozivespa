@@ -73,7 +73,7 @@
         },
         "roadside": {
           "label": "Socorro na estrada",
-          "sub": "Grátis até 20km, depois 50€ ou mais"
+          "sub": "Grátis até 5 km e sempre em caso de defeito"
         },
         "transparent": {
           "label": "Preços transparentes",
@@ -146,7 +146,7 @@
     "title": "Info",
     "licenceRequirements": {
       "title": "Requisitos de habilitação",
-      "scooter50": "Scooter 50cc: habilitação categoria B ou AM mais experiência com scooter",
+      "scooter50": "Scooter 50cc: habilitação categoria B ou AM mais experiência com scooter (com categoria B: habilitação AM obtida pelo menos 6 meses antes da B)",
       "scooter125": "Scooter 125cc e moto 125cc: habilitação categoria A1",
       "motorbike390": "Moto 390cc: habilitação categoria A2",
       "verify": "Verificamos sua habilitação na retirada"
@@ -172,8 +172,7 @@
       "incidents": "Danos e socorro na estrada"
     },
     "docsTitle": "Documentos",
-    "agreementDownload": "Contrato de aluguer (PDF, todos os idiomas)",
-    "manualDownload": "Perguntas frequentes e condições de aluguer (PDF, todos os idiomas)"
+    "agreementDownload": "Contrato de aluguer (PDF, todos os idiomas)"
   },
   "terms": {
     "eyebrow": "Condições de reserva",
@@ -191,7 +190,7 @@
           "Formas de pagamento: PayPal, transferência bancária, Revolut ou dinheiro pessoalmente (se você já estiver em Zadar). Não aceitamos cartão de crédito.",
           "Após fazer o pagamento, envie um print da transação como comprovante. Não é necessário se pagar em dinheiro.",
           "Se você chegar mais de 1 hora atrasado sem avisar, sua reserva será cancelada automaticamente e a taxa de reserva não será reembolsada.",
-          "Se uma scooter ou moto ficar indisponível por acidente ou dano causado por outro cliente, podemos cancelar sua reserva e reembolsar integralmente a taxa de reserva.",
+          "Se não pudermos disponibilizar a scooter ou moto que você reservou (por exemplo, após um acidente ou dano causado por outro cliente), você recebe um veículo substituto ou o reembolso integral da taxa de reserva.",
           "Pilotar uma scooter ou moto exige experiência prévia. Se percebermos que você não tem experiência suficiente para pilotar com segurança, reservamos o direito de recusar a reserva sem reembolso."
         ]
       },
@@ -210,15 +209,15 @@
           "Retirada e devolução em Velebitska Ulica 2, 23000 Zadar.",
           "Aberto de segunda a domingo, das 09:00 às 19:00.",
           "Os horários de retirada e devolução são em intervalos de 30 minutos entre 09:00 e 19:00.",
-          "Tolerância de 15 minutos na devolução. Atrasos além disso geram taxas extras.",
+          "Tolerância de 15 minutos na devolução. Atraso de 15 a 30 minutos: 15€. Mais de 30 minutos e até 2 horas: 50€. Mais de 2 horas: um dia adicional de aluguel. Devolução fora do horário de funcionamento: taxa fixa de 30€.",
           "Envie o print da transação da caução depois de pagar para que possamos verificar e confirmar."
         ]
       },
       {
         "heading": "Seguro e segurança",
         "bullets": [
-          "O seguro básico está incluso em todo aluguel e cobre roubo da moto e danos ao motor.",
-          "Acidentes, arranhões, danos e pneus furados são de responsabilidade do locatário.",
+          "O seguro básico está incluso em todo aluguel e cobre roubo da moto, além de danos ao motor e defeitos mecânicos, desde que não sejam causados por erro de manuseio ou negligência.",
+          "Todos os danos externos, estéticos e estruturais causados por quedas, acidentes, vandalismo ou arranhões, assim como danos e furos nos pneus, são de responsabilidade do locatário.",
           "Se um terceiro causar um acidente, você deve chamar a polícia e obter um boletim oficial. O responsável responde pelos danos.",
           "Capacetes são sempre fornecidos.",
           "Todas as motos são entregues em perfeitas condições de funcionamento. Pedimos aos locatários que inspecionem a moto, tirem fotos e vídeos na retirada e a devolvam nas mesmas condições."
@@ -227,8 +226,8 @@
       {
         "heading": "Danos, reparo e pane",
         "bullets": [
-          "A caução cobre os custos iniciais de reparo. Levamos a moto a um mecânico local para avaliação. O locatário paga o custo total do reparo conforme a nota fiscal do mecânico (uma cópia é sempre fornecida).",
-          "Serviço de socorro na estrada: grátis até 20 km. Acima de 20 km: 50€. Ilhas: Preko 150€, Dugi Otok 500€.",
+          "A caução é retida para cobrir os custos iniciais de reparo. A moto é avaliada em uma oficina autorizada da marca (ex. Piaggio Center Zadar, KTM Moto Špica) e reparada com peças originais. O locatário paga os custos conforme a nota fiscal da oficina e, se ultrapassarem a caução, a diferença deve ser paga. Uma cópia da nota fiscal é sempre fornecida.",
+          "Serviço de socorro na estrada: sempre grátis em caso de defeito mecânico. Em caso de culpa do locatário, problema no pneu ou acidente: grátis até 5 km, de 5 a 20 km 30€, acima de 20 km a partir de 50€ (conforme distância e transporte), ilha de Preko 150€, ilha de Dugi Otok 500€.",
           "Perda de chave: taxa de reposição de 50€ mais o serviço de socorro aplicável conforme a localização.",
           "Em caso de falha de motor não relacionada ao comportamento do locatário, cobrimos todos os custos."
         ]
@@ -244,7 +243,7 @@
         "heading": "Requisitos do piloto",
         "bullets": [
           "Traga sua habilitação válida na retirada. Sem habilitação, sem pilotagem. O proprietário verifica se a categoria da habilitação corresponde à classe da moto.",
-          "Pilotar exige experiência prévia. Se na retirada determinarmos que sua experiência é insuficiente para conduzir a moto com segurança, reservamos o direito de recusar. A taxa de reserva não é reembolsável nesse caso, então seja honesto sobre sua experiência ao reservar.",
+          "Pilotar exige experiência prévia. Para scooters de 50cc com habilitação B, a habilitação AM precisa ter sido emitida pelo menos 6 meses antes da habilitação B; isso não se aplica a quem tem habilitação A1, A2 ou A. Se na retirada determinarmos que sua experiência é insuficiente para conduzir a moto com segurança, reservamos o direito de recusar o aluguel. A taxa de reserva não é reembolsável nesse caso, então seja honesto sobre sua experiência ao reservar.",
           "O locatário assume total responsabilidade por todos os acidentes, danos e lesões durante o período de aluguel."
         ]
       }
@@ -389,7 +388,7 @@
         "A1": "A1 (até 125cc)",
         "A2": "A2 (até 35 kW)",
         "A": "A (sem restrição)",
-        "B": "B (habilitação de carro, cobre AM/50cc)"
+        "B": "B (habilitação de carro)"
       },
       "ridingStyle": "Estilo de pilotagem",
       "ridingStyleSolo": "Sozinho",
@@ -405,7 +404,7 @@
       "faqConfirm": "Li as perguntas frequentes e as condições de aluguer.",
       "faqLinkShort": "FAQ",
       "agreementLinkShort": "Contrato de aluguer (PDF)",
-      "experienceMeaning": "Experiência de condução significa: tiraste a carta AM antes da carta A ou B."
+      "experienceMeaning": "Para scooters de 50cc com habilitação B: sua habilitação AM precisa ter sido emitida pelo menos 6 meses antes da sua habilitação B (veja as datas na sua habilitação). Isso não se aplica se você tiver habilitação A1, A2 ou A."
     },
     "reservation": {
       "title": "Reserva",
@@ -517,7 +516,7 @@
   "faqItems": [
     {
       "question": "O que inclui a assistência em estrada e quais os custos aplicáveis?",
-      "answer": "A assistência em estrada para avarias técnicas/mecânicas (ex. avaria no motor) ou roubo é GRATUITA, incluindo recolha e transporte do veículo.\nPara incidentes causados pelo locatário (ex. pneu furado, bateria descarregada, perda de chave, queda/acidente), aplicam-se as seguintes taxas:\nAté 20 km de raio: grátis em avaria mecânica, 30 € taxa de serviço em culpa do locatário, pneu ou acidente.\nMais de 20 km de distância: grátis em avaria mecânica, a partir de 50 € (segundo distância + transporte) em culpa do locatário, pneu ou acidente.\nIlha de Preko: grátis em avaria mecânica, 150 € taxa fixa em culpa do locatário, pneu ou acidente.\nIlha de Dugi Otok: grátis em avaria mecânica, 500 € taxa fixa em culpa do locatário, pneu ou acidente."
+      "answer": "A assistência em estrada para avarias técnicas/mecânicas (ex. avaria no motor) ou roubo é GRATUITA, incluindo recolha e transporte do veículo.\nPara incidentes causados pelo locatário (ex. pneu furado, bateria descarregada, perda de chave, queda/acidente), aplicam-se as seguintes taxas:\nAté 5 km de raio: sempre grátis, mesmo em caso de culpa do locatário.\nDe 5 a 20 km: grátis em avaria mecânica, 30 € taxa de serviço em culpa do locatário, pneu ou acidente.\nMais de 20 km de distância: grátis em avaria mecânica, a partir de 50 € (segundo distância + transporte) em culpa do locatário, pneu ou acidente.\nIlha de Preko: grátis em avaria mecânica, 150 € taxa fixa em culpa do locatário, pneu ou acidente.\nIlha de Dugi Otok: grátis em avaria mecânica, 500 € taxa fixa em culpa do locatário, pneu ou acidente."
     },
     {
       "question": "Em que estado o veículo é entregue e o que devo verificar?",
@@ -529,11 +528,11 @@
     },
     {
       "question": "Qual é a política de cancelamento?",
-      "answer": "Todas as reservas são vinculativas e não reembolsáveis. Em caso de cancelamento pelo locatário, nenhum valor será reembolsado."
+      "answer": "O sinal de reserva (20% do valor total) não é reembolsado em caso algum se o locatário cancelar. O locatário pode cancelar a qualquer momento através do link na confirmação da reserva.\nSe não pudermos disponibilizar o veículo reservado (por exemplo, por estar fora de serviço após um acidente ou dano causado por outro cliente), o locatário recebe um veículo de substituição ou o reembolso total do sinal de reserva."
     },
     {
       "question": "Quando e onde o veículo deve ser devolvido? O que acontece em caso de atraso?",
-      "answer": "O veículo deve ser devolvido na hora e local acordados.\nTolerância: Aplica-se um período de tolerância de 15 minutos. Devoluções após esses 15 minutos ou fora do horário de funcionamento sujeitam-se a uma taxa administrativa/operacional de 30 € a 50 €."
+      "answer": "O veículo deve ser devolvido na hora e local acordados.\nTolerância: Aplica-se um período de tolerância de 15 minutos.\nAtraso de 15 a 30 minutos: 15 €.\nAtraso de mais de 30 minutos e até 2 horas: 50 €.\nAtraso de mais de 2 horas: é cobrado um dia de aluguer adicional.\nDevolução fora do horário de funcionamento: taxa fixa de 30 €."
     },
     {
       "question": "Quem é responsável em caso de acidentes ou danos causados por terceiros?",
@@ -565,7 +564,7 @@
     },
     {
       "question": "E se vocês decidirem que não tenho experiência suficiente?",
-      "answer": "Conduzir exige experiência prévia. Experiência de condução significa que tiraste a tua carta AM antes da tua carta A ou B. Se na recolha determinarmos que não tens experiência suficiente para conduzir a scooter ou a mota em segurança, reservamo-nos o direito de recusar o aluguer. Nesse caso o sinal não é reembolsável, por isso sê honesto sobre a tua experiência ao reservar."
+      "answer": "Conduzir exige experiência prévia. Para scooters de 50cc alugadas com carta B, isto significa: a tua carta AM tem de ter sido emitida pelo menos 6 meses antes da tua carta B (vê as datas na tua carta). Se não for o caso, não podes alugar uma scooter de 50cc com carta B. Com uma carta de mota (A1, A2 ou A) não precisas de carta AM. Se na recolha determinarmos que não tens experiência suficiente para conduzir a scooter ou a mota em segurança, reservamo-nos o direito de recusar o aluguer. Nesse caso o sinal não é reembolsável, por isso sê honesto sobre a tua experiência ao reservar."
     },
     {
       "question": "Que condições especiais de trânsito se aplicam em Zadar?",
@@ -587,7 +586,8 @@
       "urgentLine": "Enquanto isso, algo urgente?",
       "signoff": "Até logo em Zadar.",
       "refLabel": "Número da reserva",
-      "refLine": "Informe seu número de reserva e telefone ao pagar para que possamos associar seu pagamento."
+      "refLine": "Informe seu número de reserva e telefone ao pagar para que possamos associar seu pagamento.",
+      "groupPreheader": "Recebemos sua solicitação de reserva em grupo ({bike}). O proprietário confirma em breve."
     },
     "bookingConfirmed": {
       "subject": "Confirmada, {bike} {from} a {to}",
@@ -611,7 +611,10 @@
       "readLine": "As nossas perguntas frequentes e condições de aluguer aplicam-se à tua reserva. Lê-as antes de recolheres o teu veículo.",
       "faqLink": "Ler as perguntas frequentes",
       "agreementLink": "Contrato de aluguer (PDF)",
-      "toursHeader": "Sugestões de rotas para o teu passeio"
+      "toursHeader": "Sugestões de rotas para o teu passeio",
+      "openHoursValue": "de segunda a domingo, das 09:00 às 19:00",
+      "groupIntro": "sua reserva em grupo ({bike}) está confirmada. Até logo em Zadar.",
+      "groupPreheader": "Sua reserva em grupo ({bike}) está confirmada de {from} a {to}."
     },
     "bookingDeclined": {
       "subject": "Atualização sobre sua reserva, {bike}",
@@ -619,7 +622,9 @@
       "headline": "Atualização sobre sua reserva",
       "greeting": "Oi {name},",
       "intro": "infelizmente não conseguimos disponibilizar a {bike} para essas datas. Desculpe por isso.",
-      "tryOther": "Quer tentar outras datas ou outra moto? Manda um alô e a gente faz o possível para encontrar algo que funcione."
+      "tryOther": "Quer tentar outras datas ou outra moto? Manda um alô e a gente faz o possível para encontrar algo que funcione.",
+      "groupIntro": "infelizmente não conseguimos confirmar sua reserva em grupo ({bike}) para essas datas. Desculpe por isso.",
+      "groupPreheader": "Atualização sobre sua reserva em grupo ({bike}), essas datas não deram certo."
     },
     "contactReceived": {
       "subject": "Obrigado pela sua mensagem",
@@ -657,13 +662,11 @@
     "seats": "lugares",
     "yourGroup": "Seu grupo",
     "noBikes": "Nenhuma moto ainda",
-    "bikesWord": "motos",
-    "helmetsWord": "capacetes",
     "oneDeposit": "uma caução",
     "continue": "Continuar",
     "ridingPerBike": "Estilo de pilotagem por moto",
     "helmetsHint": "Para prepararmos os capacetes certos",
-    "helmetsTotal": "capacetes no total",
+    "helmetsTotal": "no total",
     "spokenLanguage": "Idioma falado",
     "fromDialCode": "pelo código de área",
     "override": "Substituir (€)",
@@ -723,7 +726,19 @@
     "freeIfReturnBy": "Livre se devolvida até",
     "useReturn": "Usar hora de devolução",
     "depositSummary": "Caução: {count} × {each} = {total}",
-    "errFaq": "Confirma que leste as perguntas frequentes e as condições de aluguer."
+    "errFaq": "Confirma que leste as perguntas frequentes e as condições de aluguer.",
+    "bikeForms": {
+      "one": "moto",
+      "few": "motos",
+      "many": "motos",
+      "other": "motos"
+    },
+    "helmetForms": {
+      "one": "capacete",
+      "few": "capacetes",
+      "many": "capacetes",
+      "other": "capacetes"
+    }
   },
   "chatbot": {
     "openLabel": "Abrir chat",
