@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { buildSlots, buildPickupSlots, calculatePrice } from "@/lib/pricing";
 import { groupBookingsForDisplay } from "@/lib/admin-data";
 import type { EnrichedBlock, EnrichedBooking } from "@/lib/admin-data";
@@ -10,6 +9,7 @@ import type { PricingTiers } from "@/lib/mockData";
 import { LocaleFlag } from "@/components/Flag";
 import type { Locale } from "@/lib/i18n/config";
 import { ConflictCard } from "@/app/admin/_components/conflict-card";
+import { Spinner, useSettledRefresh } from "@/app/admin/_components/pending";
 import type { ConflictCardData } from "@/lib/availability";
 
 type Bike = { id: string; name: string; pricing: PricingTiers };
@@ -88,7 +88,7 @@ export function BlocksManager({
   // handed out deliberately.
   reserveByBike: Record<string, Unit>;
 }) {
-  const router = useRouter();
+  const { refreshing, settling, refresh } = useSettledRefresh<string>();
   // Explicit mode toggle: a paying walk-in vs a service/repair block.
   // Used to be inferred from whether a customer name was typed, which
   // mixed the two flows in one long form. The toggle keeps them apart.
@@ -132,6 +132,7 @@ export function BlocksManager({
   const [langEdited, setLangEdited] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [conflictCard, setConflictCard] = useState<ConflictCardData | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -361,7 +362,7 @@ export function BlocksManager({
         }
       }
       resetFields();
-      router.refresh();
+      refresh("save");
     } catch {
       setError("Network error");
     } finally {
@@ -372,6 +373,7 @@ export function BlocksManager({
   async function remove(id: string) {
     if (!confirm("Delete this block?")) return;
     setError(null);
+    setDeleting(id);
     try {
       const res = await fetch(`/api/admin/blocks/${id}`, { method: "DELETE" });
       if (!res.ok) {
@@ -379,9 +381,11 @@ export function BlocksManager({
         setError(body?.error || "Could not delete");
         return;
       }
-      router.refresh();
+      refresh("delete:" + id);
     } catch {
       setError("Network error");
+    } finally {
+      setDeleting(null);
     }
   }
 
@@ -852,10 +856,11 @@ export function BlocksManager({
         <div className="flex items-center justify-end gap-4 pt-2">
           <button
             type="submit"
-            disabled={busy || fleetSize === 0}
-            className="bg-red text-white font-bold text-xs tracking-widest uppercase px-5 py-2.5 hover:bg-red-dark disabled:opacity-50"
+            disabled={busy || refreshing || fleetSize === 0}
+            className="bg-red text-white font-bold text-xs tracking-widest uppercase px-5 py-2.5 hover:bg-red-dark active:brightness-90 disabled:opacity-50 inline-flex items-center gap-2"
           >
-            {busy ? "Saving…" : isWalkIn ? "Save booking" : "Add block"}
+            {(busy || settling === "save") && <Spinner />}
+            {busy || settling === "save" ? "Saving…" : isWalkIn ? "Save booking" : "Add block"}
           </button>
         </div>
       </form>
@@ -918,8 +923,10 @@ export function BlocksManager({
               <button
                 type="button"
                 onClick={() => remove(b.id)}
-                className="text-xs font-bold tracking-widest uppercase text-ink/40 hover:text-red transition-colors"
+                disabled={deleting !== null || refreshing}
+                className="text-xs font-bold tracking-widest uppercase text-ink/40 hover:text-red transition-colors disabled:opacity-50 inline-flex items-center gap-1.5"
               >
+                {(deleting === b.id || settling === "delete:" + b.id) && <Spinner />}
                 Delete
               </button>
             </div>
@@ -930,7 +937,7 @@ export function BlocksManager({
               <Link
                 key={`walkin-${g.key}`}
                 href={`/admin/bookings/${g.primaryId}`}
-                className="flex items-center justify-between bg-white border border-ink/10 px-4 py-3 gap-4 hover:border-red transition-colors"
+                className="flex items-center justify-between bg-white border border-ink/10 px-4 py-3 gap-4 hover:border-red active:bg-ink/5 transition-colors"
               >
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-ink truncate flex items-center gap-2 flex-wrap">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SubmitButton } from "@/app/admin/_components/pending";
 import { notFound } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
@@ -83,8 +84,7 @@ export default async function AdminChatDetail({
         <form action={toggleReviewed}>
           <input type="hidden" name="id" value={conv.id} />
           <input type="hidden" name="reviewed" value={conv.reviewed ? "0" : "1"} />
-          <button
-            type="submit"
+          <SubmitButton
             className={`text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 border transition-colors ${
               conv.reviewed
                 ? "border-ink/15 text-ink/50 hover:text-ink"
@@ -92,7 +92,7 @@ export default async function AdminChatDetail({
             }`}
           >
             {conv.reviewed ? "Mark as unread" : "Mark as read"}
-          </button>
+          </SubmitButton>
         </form>
       </div>
 
@@ -126,12 +126,11 @@ export default async function AdminChatDetail({
         <form action={updateNote} className="flex flex-col gap-2">
           <input type="hidden" name="id" value={conv.id} />
           <textarea name="note" rows={2} defaultValue={conv.note ?? ""} className={inputClass} />
-          <button
-            type="submit"
+          <SubmitButton
             className="self-start text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 border border-ink/15 text-ink/60 hover:text-ink transition-colors"
           >
             Save note
-          </button>
+          </SubmitButton>
         </form>
       </div>
 
@@ -157,12 +156,11 @@ export default async function AdminChatDetail({
             Correct answer / rule *
             <textarea name="correction" rows={3} required className={inputClass} />
           </label>
-          <button
-            type="submit"
+          <SubmitButton
             className="self-start text-xs font-bold uppercase tracking-[0.15em] px-5 py-2.5 bg-red text-white hover:bg-red-dark transition-colors"
           >
             Save correction
-          </button>
+          </SubmitButton>
         </form>
       </div>
     </div>

@@ -69,7 +69,7 @@ export default async function AdminChats({
             <li key={c.id}>
               <Link
                 href={`/admin/chats/${c.id}`}
-                className="flex items-center gap-3 px-4 py-3.5 hover:bg-ink/[0.03] transition-colors"
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-ink/[0.03] active:bg-ink/5 transition-colors"
               >
                 <span
                   className={`w-2 h-2 shrink-0 rounded-full ${c.reviewed ? "bg-ink/15" : "bg-red"}`}

@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import type { EnrichedBooking } from "@/lib/admin-data";
 import { buildSlots, buildPickupSlots, isValidSlot } from "@/lib/pricing";
 import { CATEGORIES } from "@/lib/mockData";
 import { ConflictCard } from "@/app/admin/_components/conflict-card";
+import { Spinner, useSettledRefresh } from "@/app/admin/_components/pending";
 import type { ConflictCardData } from "@/lib/availability";
 
 type Decision = "confirmed" | "declined" | "cancelled";
@@ -41,8 +41,8 @@ function stripLicenceCountry(notes: string | null): string {
 }
 
 export function BookingActions({ booking }: { booking: EnrichedBooking }) {
-  const router = useRouter();
   const [busy, setBusy] = useState<Decision | "edit" | Fulfillment | null>(null);
+  const { refreshing, settling, refresh } = useSettledRefresh<Decision | "edit" | Fulfillment>();
   const [error, setError] = useState<string | null>(null);
   const [conflictCard, setConflictCard] = useState<ConflictCardData | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -115,7 +115,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
         return;
       }
       setInfo(`Status set to ${status}.`);
-      router.refresh();
+      refresh(status);
     } catch {
       setError("Network error");
     } finally {
@@ -139,7 +139,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
         setBusy(null);
         return;
       }
-      router.refresh();
+      refresh(action);
     } catch {
       setError("Network error");
     } finally {
@@ -199,7 +199,7 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
       }
       setInfo("Booking updated.");
       setEditOpen(false);
-      router.refresh();
+      refresh("edit");
     } catch {
       setError("Network error");
     } finally {
@@ -232,15 +232,15 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
                 label="Confirm"
                 tone="green"
                 onClick={() => decide("confirmed")}
-                disabled={busy !== null}
-                pending={busy === "confirmed"}
+                disabled={busy !== null || refreshing}
+                pending={busy === "confirmed" || settling === "confirmed"}
               />
               <ActionButton
                 label="Decline"
                 tone="ink"
                 onClick={() => decide("declined")}
-                disabled={busy !== null}
-                pending={busy === "declined"}
+                disabled={busy !== null || refreshing}
+                pending={busy === "declined" || settling === "declined"}
               />
             </>
           )}
@@ -249,8 +249,8 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
               label="Release dates / Cancel"
               tone="red"
               onClick={() => decide("cancelled")}
-              disabled={busy !== null}
-              pending={busy === "cancelled"}
+              disabled={busy !== null || refreshing}
+              pending={busy === "cancelled" || settling === "cancelled"}
             />
           )}
           {(status === "declined" || status === "cancelled") && (
@@ -258,8 +258,8 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
               label="Re-confirm"
               tone="green"
               onClick={() => decide("confirmed")}
-              disabled={busy !== null}
-              pending={busy === "confirmed"}
+              disabled={busy !== null || refreshing}
+              pending={busy === "confirmed" || settling === "confirmed"}
             />
           )}
         </div>
@@ -277,8 +277,8 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
                 label="Mark picked up"
                 tone="green"
                 onClick={() => fulfill("pickup")}
-                disabled={busy !== null}
-                pending={busy === "pickup"}
+                disabled={busy !== null || refreshing}
+                pending={busy === "pickup" || settling === "pickup"}
               />
             )}
             {booking.picked_up_at && !booking.returned_at && (
@@ -287,15 +287,15 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
                   label="Mark returned"
                   tone="green"
                   onClick={() => fulfill("return")}
-                  disabled={busy !== null}
-                  pending={busy === "return"}
+                  disabled={busy !== null || refreshing}
+                  pending={busy === "return" || settling === "return"}
                 />
                 <ActionButton
                   label="Undo pickup"
                   tone="ink"
                   onClick={() => fulfill("undo_pickup")}
-                  disabled={busy !== null}
-                  pending={busy === "undo_pickup"}
+                  disabled={busy !== null || refreshing}
+                  pending={busy === "undo_pickup" || settling === "undo_pickup"}
                 />
               </>
             )}
@@ -304,8 +304,8 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
                 label="Undo return"
                 tone="ink"
                 onClick={() => fulfill("undo_return")}
-                disabled={busy !== null}
-                pending={busy === "undo_return"}
+                disabled={busy !== null || refreshing}
+                pending={busy === "undo_return" || settling === "undo_return"}
               />
             )}
           </div>
@@ -563,8 +563,9 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
                 type="button"
                 onClick={saveEdit}
                 disabled={busy === "edit"}
-                className="bg-red text-white font-bold text-xs tracking-widest uppercase px-5 py-2.5 hover:bg-red-dark disabled:opacity-50"
+                className="bg-red text-white font-bold text-xs tracking-widest uppercase px-5 py-2.5 hover:bg-red-dark active:brightness-90 disabled:opacity-50 inline-flex items-center gap-2"
               >
+                {busy === "edit" && <Spinner />}
                 {busy === "edit" ? "Saving…" : "Save"}
               </button>
               <button
@@ -591,7 +592,9 @@ export function BookingActions({ booking }: { booking: EnrichedBooking }) {
         </div>
       )}
       {info && (
-        <div className="bg-green-100 border border-green-300 px-4 py-3 text-sm text-ink font-semibold">
+        <div className="bg-green-100 border border-green-300 px-4 py-3 text-sm text-ink font-semibold flex items-center gap-2">
+          {/* Saved; the page above is still being reloaded with the new data. */}
+          {refreshing && <Spinner />}
           {info}
         </div>
       )}
@@ -623,9 +626,13 @@ function ActionButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`${colors} font-bold text-xs tracking-widest uppercase px-5 py-3 disabled:opacity-30 disabled:cursor-not-allowed transition-colors`}
+      aria-busy={pending}
+      className={`${colors} font-bold text-xs tracking-widest uppercase px-5 py-3 active:brightness-90 transition-colors inline-flex items-center gap-2 ${
+        pending ? "cursor-wait" : "disabled:opacity-30 disabled:cursor-not-allowed"
+      }`}
     >
-      {pending ? "…" : label}
+      {pending && <Spinner />}
+      {label}
     </button>
   );
 }

@@ -125,7 +125,7 @@ function BookingRow({
     <Link
       href={`/admin/bookings/${group.primaryId}`}
       prefetch={false}
-      className="block flex-1 min-w-0 px-4 py-3"
+      className="block flex-1 min-w-0 px-4 py-3 active:bg-ink/5"
     >
       <div className="flex items-center justify-between gap-3 mb-1">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
@@ -287,7 +287,7 @@ function FleetCard({ entry }: { entry: FleetEntry }) {
           : freeUnits < entry.totalUnits
           ? "bg-yellow-50 border-yellow-300"
           : "bg-emerald-50 border-emerald-300"
-      } hover:border-red`}
+      } hover:border-red active:brightness-95`}
     >
       <p className="text-xs font-bold text-ink truncate">{entry.bikeName}</p>
       <p className="font-bold text-2xl text-ink mt-1 leading-none tabular-nums">
@@ -331,7 +331,7 @@ function ReserveCard({ entry }: { entry: ReserveEntry }) {
     <Link
       href="/admin?ghost=1"
       prefetch={false}
-      className={`block p-4 border transition-colors hover:border-violet-600 ${
+      className={`block p-4 border transition-colors hover:border-violet-600 active:brightness-95 ${
         entry.out ? "bg-violet-100 border-violet-400" : "bg-violet-50 border-violet-300"
       }`}
     >

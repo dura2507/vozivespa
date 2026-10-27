@@ -10,7 +10,25 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-10-27 (rental agreement handed out per language; cancellation wording).
+Last updated: 2026-10-27 (admin: instant tap feedback on the phone; rental agreement per language).
+
+## 2026-10-27: admin dashboard tap feedback (phone)
+
+- Kristian: on the phone a tap in the dashboard reacted very late. Cause: admin <Link>s keep
+  prefetch={false} (Vercel CPU limit, do NOT turn it back on), so a tap waits for the server
+  and loading.tsx can't show early; action buttons showed a tiny "..." and snapped back
+  before router.refresh() had the new data.
+- app/admin/nav-progress.tsx (in the admin layout): red bar on top + faded <main> from the
+  tap until the new URL renders (same-URL taps, back-forward cache and the login page clear
+  it; 15 s cap). app/admin/_components/pending.tsx: Spinner, useSettledRefresh (refresh/push
+  in a transition: the tapped button spins and the others stay disabled until the fresh page
+  is there), SubmitButton for server-action forms (group inbox, bot chats). Used in booking
+  actions, group bike manager, blocks (also per-row delete), fulfill button, visitors refresh;
+  pressed (:active) look on cards. Only perceived speed: the server wait itself is unchanged.
+- Checked: local headless phone test against a 2.5 s slow page, two Komplettcheck rounds
+  (3 edge cases found and fixed in round 1, round 2 clean), production build.
+
+Previously: 2026-10-27 (rental agreement handed out per language; cancellation wording).
 
 ## 2026-10-27: rental agreement per language, cancellation wording
 

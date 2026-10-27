@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 // Manual refresh + "Last updated" stamp for the visitors dashboard.
 // Avoids polling on a timer (extra DB load every X seconds even when
@@ -10,6 +10,8 @@ import { useState } from "react";
 export function RefreshButton({ loadedAt }: { loadedAt: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [refreshing, startRefresh] = useTransition();
+  const spinning = busy || refreshing;
 
   return (
     <div className="flex items-center gap-3 text-xs text-muted">
@@ -18,16 +20,16 @@ export function RefreshButton({ loadedAt }: { loadedAt: string }) {
         type="button"
         onClick={() => {
           setBusy(true);
-          router.refresh();
-          // Visual feedback for ~600ms even if the refresh is faster,
-          // so the click feels acknowledged.
+          startRefresh(() => router.refresh());
+          // Visual feedback for at least ~600ms even if the refresh is
+          // faster, so the click feels acknowledged; longer while it runs.
           setTimeout(() => setBusy(false), 600);
         }}
         className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-ink/15 hover:border-red hover:text-red transition-colors disabled:opacity-50"
-        disabled={busy}
+        disabled={spinning}
       >
         <svg
-          className={`w-3.5 h-3.5 ${busy ? "animate-spin" : ""}`}
+          className={`w-3.5 h-3.5 ${spinning ? "animate-spin" : ""}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -40,7 +42,7 @@ export function RefreshButton({ loadedAt }: { loadedAt: string }) {
           />
         </svg>
         <span className="font-bold tracking-[0.1em] uppercase">
-          {busy ? "Refreshing…" : "Refresh"}
+          {spinning ? "Refreshing…" : "Refresh"}
         </span>
       </button>
     </div>

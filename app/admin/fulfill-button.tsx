@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
+import { Spinner } from "@/app/admin/_components/pending";
 
 function alertOnce(msg: string) {
   if (typeof window !== "undefined") window.alert(msg);
@@ -98,9 +99,10 @@ export function FulfillButton({
       type="button"
       onClick={run}
       disabled={busy || done}
+      aria-busy={busy}
       className="shrink-0 w-28 sm:w-32 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold tracking-[0.1em] uppercase leading-tight text-center px-3 disabled:opacity-50 transition-colors flex items-center justify-center"
     >
-      {busy ? "…" : label}
+      {busy ? <Spinner className="w-4 h-4" /> : label}
     </button>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SubmitButton } from "@/app/admin/_components/pending";
 import { revalidatePath } from "next/cache";
 import { listInbox, markDone, monitorBotToken, type InboxRow } from "@/lib/telegram-inbox";
 
@@ -103,12 +104,11 @@ export default async function TelegramInbox({
           {openIds.length > 1 && (
             <form action={setAllDone}>
               <input type="hidden" name="ids" value={openIds.join(",")} />
-              <button
-                type="submit"
+              <SubmitButton
                 className="px-3 py-1.5 border border-ink/15 text-ink/60 hover:text-ink transition-colors"
               >
                 Mark all done
-              </button>
+              </SubmitButton>
             </form>
           )}
         </div>
@@ -173,8 +173,7 @@ export default async function TelegramInbox({
                   <form action={setDone}>
                     <input type="hidden" name="id" value={r.update_id} />
                     <input type="hidden" name="done" value={r.done ? "0" : "1"} />
-                    <button
-                      type="submit"
+                    <SubmitButton
                       className={`text-[10px] font-bold uppercase tracking-[0.15em] px-3 py-1.5 border transition-colors ${
                         r.done
                           ? "border-ink/15 text-ink/40 hover:text-ink"
@@ -182,7 +181,7 @@ export default async function TelegramInbox({
                       }`}
                     >
                       {r.done ? "Reopen" : "Done"}
-                    </button>
+                    </SubmitButton>
                   </form>
                 </li>
               );

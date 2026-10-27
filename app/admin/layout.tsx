@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { AdminNav } from "./admin-nav";
+import { NavProgress } from "./nav-progress";
 import { SESSION_COOKIE_NAME, isValidSession } from "@/lib/admin-session";
 
 export const metadata = { title: "Admin · SickMotos" };
@@ -26,6 +28,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!authed) return <>{children}</>;
   return (
     <div className="min-h-screen bg-off-white">
+      <Suspense fallback={null}>
+        <NavProgress />
+      </Suspense>
       <header className="bg-ink text-white relative">
         <div className="max-w-7xl mx-auto px-5 md:px-8 py-4 flex items-center justify-between gap-4">
           <Link href="/admin" className="flex items-baseline gap-3">

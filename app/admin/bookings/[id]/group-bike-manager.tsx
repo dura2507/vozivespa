@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Spinner, useSettledRefresh } from "@/app/admin/_components/pending";
 
 type GroupBike = {
   id: string;
@@ -27,9 +27,11 @@ export default function GroupBikeManager({
   fleet: Fleet[];
   window: { from: string; to: string; pickupTime: string; returnTime: string };
 }) {
-  const router = useRouter();
   const [avail, setAvail] = useState<Record<string, number> | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const { refreshing, settling, refresh } = useSettledRefresh<string>();
+  // Spinning while the request runs and until the updated page is back.
+  const isPending = (key: string) => busy === key || settling === key;
   const [error, setError] = useState<string | null>(null);
   const [ride, setRide] = useState<Record<string, "solo" | "with_passenger">>({});
 
@@ -69,7 +71,7 @@ export default function GroupBikeManager({
         setError(data.error ?? "Could not add the bike");
         return;
       }
-      router.refresh();
+      refresh("add:" + bikeId);
     } catch {
       setError("Network error");
     } finally {
@@ -91,7 +93,7 @@ export default function GroupBikeManager({
         setError(data.error ?? "Could not reassign the bike");
         return;
       }
-      router.refresh();
+      refresh("ghost:" + rowId);
     } catch {
       setError("Network error");
     } finally {
@@ -114,8 +116,7 @@ export default function GroupBikeManager({
         setError(data.error ?? "Could not remove the bike");
         return;
       }
-      if (data.redirectTo) router.push(`/admin/bookings/${data.redirectTo}`);
-      else router.refresh();
+      refresh("rm:" + rowId, data.redirectTo ? `/admin/bookings/${data.redirectTo}` : undefined);
     } catch {
       setError("Network error");
     } finally {
@@ -155,30 +156,28 @@ export default function GroupBikeManager({
               {gb.canGhost && (
                 <button
                   type="button"
-                  disabled={busy != null}
+                  disabled={busy != null || refreshing}
                   onClick={() => swapGhost(gb.id, !gb.onGhost)}
                   title={
                     gb.onGhost
                       ? "Move back onto a regular bike"
                       : "Swap onto the hidden Ghost Bike (frees the regular unit)"
                   }
-                  className="text-xs font-bold uppercase tracking-widest text-violet-600 disabled:opacity-30 hover:underline"
+                  className="text-xs font-bold uppercase tracking-widest text-violet-600 disabled:opacity-30 hover:underline inline-flex items-center gap-1.5"
                 >
-                  {busy === "ghost:" + gb.id
-                    ? "..."
-                    : gb.onGhost
-                      ? "Regular"
-                      : "Ghost Bike"}
+                  {isPending("ghost:" + gb.id) && <Spinner />}
+                  {gb.onGhost ? "Regular" : "Ghost Bike"}
                 </button>
               )}
               <button
                 type="button"
-                disabled={busy != null || groupBikes.length <= 1}
+                disabled={busy != null || refreshing || groupBikes.length <= 1}
                 onClick={() => removeBike(gb.id)}
                 title={groupBikes.length <= 1 ? "Cancel the booking instead" : undefined}
-                className="text-xs font-bold uppercase tracking-widest text-red disabled:opacity-30 hover:underline"
+                className="text-xs font-bold uppercase tracking-widest text-red disabled:opacity-30 hover:underline inline-flex items-center gap-1.5"
               >
-                {busy === "rm:" + gb.id ? "..." : "Remove"}
+                {isPending("rm:" + gb.id) && <Spinner />}
+                Remove
               </button>
             </span>
           </div>
@@ -219,11 +218,12 @@ export default function GroupBikeManager({
                     </select>
                     <button
                       type="button"
-                      disabled={busy != null || free <= 0}
+                      disabled={busy != null || refreshing || free <= 0}
                       onClick={() => addBike(f.id)}
-                      className="text-xs font-bold uppercase tracking-widest bg-ink text-white px-3 py-1.5 disabled:opacity-30 hover:bg-red transition-colors"
+                      className="text-xs font-bold uppercase tracking-widest bg-ink text-white px-3 py-1.5 disabled:opacity-30 hover:bg-red active:brightness-90 transition-colors inline-flex items-center gap-1.5"
                     >
-                      {busy === "add:" + f.id ? "..." : "Add"}
+                      {isPending("add:" + f.id) && <Spinner />}
+                      Add
                     </button>
                   </span>
                 </div>

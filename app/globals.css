@@ -91,3 +91,17 @@ html { scrollbar-width: none; -ms-overflow-style: none; }
   --rdp-today-color: #B61F36;
   --rdp-disabled-opacity: 0.25;
 }
+
+/* Admin: instant answer to a tap while the next page loads (admin links don't
+   prefetch). Bar sweeps along the top, the page fades; see
+   app/admin/nav-progress.tsx. */
+@keyframes admin-progress {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+.admin-progress { transition: opacity 0.15s; }
+.admin-progress-bar { animation: admin-progress 0.9s ease-in-out infinite; }
+html[data-admin-loading] main { opacity: 0.45; transition: opacity 0.15s; }
+@media (prefers-reduced-motion: reduce) {
+  .admin-progress-bar { animation: none; width: 100%; }
+}
