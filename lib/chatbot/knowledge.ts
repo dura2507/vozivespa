@@ -98,7 +98,7 @@ const THOMAS_FAQ = `
     A: Yes, a second driver is possible if that person also has real riding experience (for a 50cc scooter) and a valid driving licence.
 
 17. Q: What is your cancellation / refund policy?
-    A: If you cancel, the 20% reservation fee is not refunded in any case; you can cancel yourself via the link in your confirmation email. If WE cannot provide the booked vehicle (e.g. after an accident or damage by another customer), you get a replacement vehicle or a full refund of the fee. We may also cancel at pickup if the rider behaves unsafely or clearly lacks riding experience, in that case the fee is not refunded.
+    A: If you cancel, the 20% reservation fee is not refunded; you can cancel yourself via the link in your confirmation email. If WE cannot provide the booked vehicle (e.g. after an accident or damage by another customer), you get a replacement vehicle or a full refund of the fee. We may also cancel at pickup if the rider behaves unsafely or clearly lacks riding experience, in that case the fee is not refunded.
 
 18. Q: Can I pick up or drop off outside opening hours?
     A: Yes. Early pickup 07:00–08:59 or late return 19:00–22:00 costs a flat 30€ per rental, and you can add it directly to your booking.
@@ -169,7 +169,7 @@ LATE RETURN (owner FAQ, 2026-10)
 - Return outside business hours: flat 30 euro. A late return BOOKED IN ADVANCE as an add-on is that same flat 30 euro (see OUTSIDE-HOURS SURCHARGE below).
 
 CANCELLATION (owner FAQ, 2026-10)
-- If the customer cancels, the 20% reservation fee is not refunded in any case. Customers can cancel themselves at any time via the link in their booking confirmation email.
+- If the customer cancels, the 20% reservation fee is not refunded. Customers can cancel themselves at any time via the link in their booking confirmation email.
 - If WE cannot provide the booked vehicle (e.g. it is out of service after an accident or damage by another customer): replacement vehicle or full refund of the reservation fee.
 - If we refuse the handover (unsafe behaviour / insufficient riding experience): the fee is not refunded.
 
@@ -293,7 +293,7 @@ function pageLinks(locale: Locale): string {
     `- Photo gallery: ${base}/gallery`,
     `- Contact (WhatsApp / email): ${base}/contact`,
     `- Reservation terms (PDF, share if a visitor wants the full booking terms): ${SITE_URL}/docs/reservation-terms.pdf`,
-    `- Rental agreement (PDF, all languages; it is signed at pickup): ${SITE_URL}/docs/sickmotos-rental-agreement.pdf`,
+    `- Rental agreement (PDF; it is signed at pickup): ${SITE_URL}/docs/sickmotos-rental-agreement.pdf`,
   ].join("\n");
 }
 

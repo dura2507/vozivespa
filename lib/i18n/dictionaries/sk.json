@@ -172,7 +172,7 @@
       "incidents": "Poškodenie a asistencia"
     },
     "docsTitle": "Dokumenty",
-    "agreementDownload": "Zmluva o prenájme (PDF, všetky jazyky)"
+    "agreementDownload": "Zmluva o prenájme (PDF)"
   },
   "terms": {
     "eyebrow": "Podmienky rezervácie",
@@ -528,7 +528,7 @@
     },
     {
       "question": "Aké sú storno podmienky?",
-      "answer": "Ak nájomca rezerváciu zruší, rezervačný poplatok (20 % z celkovej sumy) sa v žiadnom prípade nevracia. Nájomca môže rezerváciu kedykoľvek zrušiť sám cez odkaz v potvrdení rezervácie.\nAk nemôžeme poskytnúť rezervované vozidlo (napr. preto, že je mimo prevádzky po nehode alebo poškodení spôsobenom iným klientom), nájomca dostane náhradné vozidlo alebo mu vrátime celý rezervačný poplatok."
+      "answer": "Ak nájomca rezerváciu zruší, rezervačný poplatok (20 % z celkovej sumy) sa nevracia. Nájomca môže rezerváciu kedykoľvek zrušiť sám cez odkaz v potvrdení rezervácie.\nAk nemôžeme poskytnúť rezervované vozidlo (napr. preto, že je mimo prevádzky po nehode alebo poškodení spôsobenom iným klientom), nájomca dostane náhradné vozidlo alebo mu vrátime celý rezervačný poplatok."
     },
     {
       "question": "Kedy a kde sa musí vozidlo vrátiť? Čo platí pri meškaní?",

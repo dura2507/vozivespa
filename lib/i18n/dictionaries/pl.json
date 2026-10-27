@@ -172,7 +172,7 @@
       "incidents": "Szkody i pomoc drogowa"
     },
     "docsTitle": "Dokumenty",
-    "agreementDownload": "Umowa najmu (PDF, wszystkie języki)"
+    "agreementDownload": "Umowa najmu (PDF)"
   },
   "terms": {
     "eyebrow": "Warunki rezerwacji",
@@ -528,7 +528,7 @@
     },
     {
       "question": "Jakie są warunki anulowania rezerwacji?",
-      "answer": "Zaliczka (20% wartości całkowitej) w żadnym wypadku nie podlega zwrotowi, jeśli rezerwację anuluje najemca. Najemca może w każdej chwili samodzielnie anulować rezerwację za pomocą linku w potwierdzeniu rezerwacji.\nJeśli nie możemy zapewnić zarezerwowanego pojazdu (np. dlatego, że po wypadku lub szkodzie spowodowanej przez innego klienta jest wyłączony z eksploatacji), najemca otrzymuje pojazd zastępczy lub pełny zwrot zaliczki."
+      "answer": "Zaliczka (20% wartości całkowitej) nie podlega zwrotowi, jeśli rezerwację anuluje najemca. Najemca może w każdej chwili samodzielnie anulować rezerwację za pomocą linku w potwierdzeniu rezerwacji.\nJeśli nie możemy zapewnić zarezerwowanego pojazdu (np. dlatego, że po wypadku lub szkodzie spowodowanej przez innego klienta jest wyłączony z eksploatacji), najemca otrzymuje pojazd zastępczy lub pełny zwrot zaliczki."
     },
     {
       "question": "Kiedy i gdzie należy zwrócić pojazd? Co w przypadku opóźnienia?",

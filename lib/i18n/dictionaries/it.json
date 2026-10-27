@@ -172,7 +172,7 @@
       "incidents": "Danni e assistenza"
     },
     "docsTitle": "Documenti",
-    "agreementDownload": "Contratto di noleggio (PDF, tutte le lingue)"
+    "agreementDownload": "Contratto di noleggio (PDF)"
   },
   "terms": {
     "eyebrow": "Termini di prenotazione",
@@ -528,7 +528,7 @@
     },
     {
       "question": "Quali sono le condizioni di cancellazione?",
-      "answer": "L'acconto (20% dell'importo totale) non viene rimborsato in nessun caso se la prenotazione viene annullata dal cliente. Il cliente può annullare autonomamente in qualsiasi momento tramite il link nella conferma di prenotazione.\nSe non possiamo mettere a disposizione il veicolo prenotato (es. perché è fuori servizio dopo un incidente o un danno causato da un altro cliente), il cliente riceve un veicolo sostitutivo o il rimborso completo dell'acconto."
+      "answer": "L'acconto (20% dell'importo totale) non viene rimborsato se la prenotazione viene annullata dal cliente. Il cliente può annullare autonomamente in qualsiasi momento tramite il link nella conferma di prenotazione.\nSe non possiamo mettere a disposizione il veicolo prenotato (es. perché è fuori servizio dopo un incidente o un danno causato da un altro cliente), il cliente riceve un veicolo sostitutivo o il rimborso completo dell'acconto."
     },
     {
       "question": "Quando e dove deve essere restituito il veicolo? Cosa succede in caso di ritardo?",

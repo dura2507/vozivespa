@@ -172,7 +172,7 @@
       "incidents": "Daños y asistencia"
     },
     "docsTitle": "Documentos",
-    "agreementDownload": "Contrato de alquiler (PDF, todos los idiomas)"
+    "agreementDownload": "Contrato de alquiler (PDF)"
   },
   "terms": {
     "eyebrow": "Términos de reserva",
@@ -528,7 +528,7 @@
     },
     {
       "question": "¿Cuál es la política de cancelación?",
-      "answer": "La señal de reserva (20% del importe total) no se reembolsa en ningún caso si el arrendatario cancela. El arrendatario puede cancelar en cualquier momento a través del enlace de la confirmación de reserva.\nSi no podemos proporcionar el vehículo reservado (por ejemplo, porque está fuera de servicio tras un accidente o un daño causado por otro cliente), el arrendatario recibe un vehículo de sustitución o el reembolso íntegro de la señal de reserva."
+      "answer": "La señal de reserva (20% del importe total) no se reembolsa si el arrendatario cancela. El arrendatario puede cancelar en cualquier momento a través del enlace de la confirmación de reserva.\nSi no podemos proporcionar el vehículo reservado (por ejemplo, porque está fuera de servicio tras un accidente o un daño causado por otro cliente), el arrendatario recibe un vehículo de sustitución o el reembolso íntegro de la señal de reserva."
     },
     {
       "question": "¿Cuándo y dónde debe devolverse el vehículo? ¿Qué pasa si hay retraso?",

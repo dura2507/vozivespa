@@ -172,7 +172,7 @@
       "incidents": "Danos e socorro na estrada"
     },
     "docsTitle": "Documentos",
-    "agreementDownload": "Contrato de aluguer (PDF, todos os idiomas)"
+    "agreementDownload": "Contrato de aluguer (PDF)"
   },
   "terms": {
     "eyebrow": "Condições de reserva",
@@ -528,7 +528,7 @@
     },
     {
       "question": "Qual é a política de cancelamento?",
-      "answer": "O sinal de reserva (20% do valor total) não é reembolsado em caso algum se o locatário cancelar. O locatário pode cancelar a qualquer momento através do link na confirmação da reserva.\nSe não pudermos disponibilizar o veículo reservado (por exemplo, por estar fora de serviço após um acidente ou dano causado por outro cliente), o locatário recebe um veículo de substituição ou o reembolso total do sinal de reserva."
+      "answer": "O sinal de reserva (20% do valor total) não é reembolsado se o locatário cancelar. O locatário pode cancelar a qualquer momento através do link na confirmação da reserva.\nSe não pudermos disponibilizar o veículo reservado (por exemplo, por estar fora de serviço após um acidente ou dano causado por outro cliente), o locatário recebe um veículo de substituição ou o reembolso total do sinal de reserva."
     },
     {
       "question": "Quando e onde o veículo deve ser devolvido? O que acontece em caso de atraso?",

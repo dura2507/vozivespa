@@ -172,7 +172,7 @@
       "incidents": "Schaden & Pannenhilfe"
     },
     "docsTitle": "Dokumente",
-    "agreementDownload": "Mietvertrag (PDF, alle Sprachen)"
+    "agreementDownload": "Mietvertrag (PDF)"
   },
   "terms": {
     "eyebrow": "Buchungsbedingungen",
@@ -528,7 +528,7 @@
     },
     {
       "question": "Wie lauten die Stornierungsbedingungen?",
-      "answer": "Die Anzahlung (20 % des Gesamtbetrags) wird bei einer Stornierung durch den Mieter in keinem Fall erstattet. Stornieren kann der Mieter jederzeit selbst über den Link in der Buchungsbestätigung.\nKönnen wir das gebuchte Fahrzeug nicht bereitstellen (z. B. weil es durch einen Unfall oder Schaden eines anderen Kunden ausfällt), erhält der Mieter ein Ersatzfahrzeug oder die volle Erstattung der Anzahlung."
+      "answer": "Die Anzahlung (20 % des Gesamtbetrags) wird bei einer Stornierung durch den Mieter nicht erstattet. Stornieren kann der Mieter jederzeit selbst über den Link in der Buchungsbestätigung.\nKönnen wir das gebuchte Fahrzeug nicht bereitstellen (z. B. weil es durch einen Unfall oder Schaden eines anderen Kunden ausfällt), erhält der Mieter ein Ersatzfahrzeug oder die volle Erstattung der Anzahlung."
     },
     {
       "question": "Wann und wo muss das Fahrzeug zurückgegeben werden? Was gilt bei Verspätung?",

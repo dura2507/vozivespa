@@ -172,7 +172,7 @@
       "incidents": "Sérülés és útszéli segély"
     },
     "docsTitle": "Dokumentumok",
-    "agreementDownload": "Bérleti szerződés (PDF, minden nyelven)"
+    "agreementDownload": "Bérleti szerződés (PDF)"
   },
   "terms": {
     "eyebrow": "Foglalási feltételek",
@@ -528,7 +528,7 @@
     },
     {
       "question": "Milyenek a lemondási feltételek?",
-      "answer": "Ha a bérlő lemondja a foglalást, a foglalási díj (a teljes összeg 20%-a) semmilyen esetben nem jár vissza. A bérlő a foglalási visszaigazolásban található linken keresztül bármikor saját maga lemondhatja a foglalást.\nHa a lefoglalt járművet nem tudjuk biztosítani (pl. azért, mert egy másik ügyfél által okozott baleset vagy kár miatt nem használható), a bérlő cserejárművet kap, vagy a foglalási díjat teljes egészében visszatérítjük."
+      "answer": "Ha a bérlő lemondja a foglalást, a foglalási díj (a teljes összeg 20%-a) nem jár vissza. A bérlő a foglalási visszaigazolásban található linken keresztül bármikor saját maga lemondhatja a foglalást.\nHa a lefoglalt járművet nem tudjuk biztosítani (pl. azért, mert egy másik ügyfél által okozott baleset vagy kár miatt nem használható), a bérlő cserejárművet kap, vagy a foglalási díjat teljes egészében visszatérítjük."
     },
     {
       "question": "Mikor és hol kell visszaadni a járművet? Mi érvényes késés esetén?",

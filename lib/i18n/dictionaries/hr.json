@@ -172,7 +172,7 @@
       "incidents": "Šteta i pomoć na cesti"
     },
     "docsTitle": "Dokumenti",
-    "agreementDownload": "Ugovor o najmu (PDF, svi jezici)"
+    "agreementDownload": "Ugovor o najmu (PDF)"
   },
   "terms": {
     "eyebrow": "Uvjeti rezervacije",
@@ -528,7 +528,7 @@
     },
     {
       "question": "Koji su uvjeti otkazivanja?",
-      "answer": "Kapara (20% ukupnog iznosa) ni u kojem se slučaju ne vraća ako rezervaciju otkaže najmoprimac. Najmoprimac može sam otkazati rezervaciju u bilo kojem trenutku putem poveznice u potvrdi rezervacije.\nAko ne možemo osigurati rezervirano vozilo (npr. zato što nije u voznom stanju nakon nesreće ili štete koju je prouzročio drugi klijent), najmoprimac dobiva zamjensko vozilo ili puni povrat kapare."
+      "answer": "Kapara (20% ukupnog iznosa) ne vraća se ako rezervaciju otkaže najmoprimac. Najmoprimac može sam otkazati rezervaciju u bilo kojem trenutku putem poveznice u potvrdi rezervacije.\nAko ne možemo osigurati rezervirano vozilo (npr. zato što nije u voznom stanju nakon nesreće ili štete koju je prouzročio drugi klijent), najmoprimac dobiva zamjensko vozilo ili puni povrat kapare."
     },
     {
       "question": "Kada i gdje se vozilo mora vratiti? Što vrijedi u slučaju kašnjenja?",

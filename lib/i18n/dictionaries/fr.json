@@ -172,7 +172,7 @@
       "incidents": "Dommages et assistance"
     },
     "docsTitle": "Documents",
-    "agreementDownload": "Contrat de location (PDF, toutes les langues)"
+    "agreementDownload": "Contrat de location (PDF)"
   },
   "terms": {
     "eyebrow": "Conditions de réservation",
@@ -528,7 +528,7 @@
     },
     {
       "question": "Quelles sont les conditions d'annulation ?",
-      "answer": "Si le locataire annule, l'acompte (20 % du montant total) n'est en aucun cas remboursé. Le locataire peut annuler lui-même à tout moment via le lien figurant dans la confirmation de réservation.\nSi nous ne pouvons pas mettre à disposition le véhicule réservé (par exemple parce qu'il est immobilisé à la suite d'un accident ou d'un dommage causé par un autre client), le locataire reçoit un véhicule de remplacement ou le remboursement intégral de l'acompte."
+      "answer": "Si le locataire annule, l'acompte (20 % du montant total) n'est pas remboursé. Le locataire peut annuler lui-même à tout moment via le lien figurant dans la confirmation de réservation.\nSi nous ne pouvons pas mettre à disposition le véhicule réservé (par exemple parce qu'il est immobilisé à la suite d'un accident ou d'un dommage causé par un autre client), le locataire reçoit un véhicule de remplacement ou le remboursement intégral de l'acompte."
     },
     {
       "question": "Quand et où le véhicule doit-il être restitué ? Que se passe-t-il en cas de retard ?",

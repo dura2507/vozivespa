@@ -172,7 +172,7 @@
       "incidents": "Damage & Roadside"
     },
     "docsTitle": "Documents",
-    "agreementDownload": "Rental agreement (PDF, all languages)"
+    "agreementDownload": "Rental agreement (PDF)"
   },
   "terms": {
     "eyebrow": "Reservation terms",
@@ -528,7 +528,7 @@
     },
     {
       "question": "What is the cancellation policy?",
-      "answer": "The booking fee (20% of the total amount) is not refunded in any case if the renter cancels. The renter can cancel at any time via the link in the booking confirmation.\nIf we cannot provide the booked vehicle (e.g. because it is out of service after an accident or damage caused by another customer), the renter gets a replacement vehicle or a full refund of the booking fee."
+      "answer": "The booking fee (20% of the total amount) is not refunded if the renter cancels. The renter can cancel at any time via the link in the booking confirmation.\nIf we cannot provide the booked vehicle (e.g. because it is out of service after an accident or damage caused by another customer), the renter gets a replacement vehicle or a full refund of the booking fee."
     },
     {
       "question": "When and where must the vehicle be returned? What about delays?",
