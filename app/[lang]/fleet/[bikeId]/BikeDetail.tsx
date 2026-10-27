@@ -35,6 +35,7 @@ import {
 } from "@/lib/pricing";
 import { SEASON_END_DATE, zagrebNow } from "@/lib/season";
 import { TOURS } from "@/lib/tours";
+import { agreementPdfPath } from "@/lib/docs";
 import SumUpCardWidget from "@/components/SumUpCardWidget";
 
 type CustomerForm = {
@@ -1871,7 +1872,7 @@ export default function BikeDetail({
                         {tF.form.faqLinkShort}
                       </a>
                       {" · "}
-                      <a href="/docs/sickmotos-rental-agreement.pdf" target="_blank" rel="noopener noreferrer" className="text-red underline">
+                      <a href={agreementPdfPath(lang)} target="_blank" rel="noopener noreferrer" className="text-red underline">
                         {tF.form.agreementLinkShort}
                       </a>
                     </span>

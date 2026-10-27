@@ -5,6 +5,7 @@ import { billableDays } from "@/lib/pricing";
 import type { BookingRow } from "@/lib/supabase";
 import { getDictionary, type Dictionary } from "@/lib/i18n/dictionaries";
 import { TOURS, type Tour } from "@/lib/tours";
+import { agreementPdfPath } from "@/lib/docs";
 import { type Locale, isLocale } from "@/lib/i18n/config";
 import { translate } from "@/lib/translate";
 import { bookingRef } from "@/lib/booking-ref";
@@ -635,7 +636,6 @@ ${BRAND.name}${krileoCreditText(locale)}`;
 // "FAQ must be read" + rental agreement download, and the tour tips for the
 // booked models. Shared by the single and the group confirmation so both say
 // the same. Tours come from lib/tours.ts (Thomas' Maps links, verbatim).
-const AGREEMENT_PATH = "/docs/sickmotos-rental-agreement.pdf";
 type ConfirmedStrings = Dictionary["emails"]["bookingConfirmed"];
 type TourStrings = Dictionary["fleet"]["tours"];
 
@@ -649,13 +649,13 @@ function readBeforePickupHtml(t: ConfirmedStrings, locale: Locale): string {
       <div style="margin:24px 0 16px;padding:14px 16px;border:1px solid #B61F36;background:#fdf3f4;">
         <p style="margin:0 0 6px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:#B61F36;font-weight:700;">${escape(t.readHeader)}</p>
         <p style="margin:0 0 10px;font-size:14px;line-height:1.6;">${escape(t.readLine)}</p>
-        <p style="margin:0;font-size:14px;line-height:1.6;"><a href="${base}/${locale}/faq" style="color:#B61F36;font-weight:600;">${escape(t.faqLink)}</a> &nbsp;&middot;&nbsp; <a href="${base}${AGREEMENT_PATH}" style="color:#B61F36;font-weight:600;">${escape(t.agreementLink)}</a></p>
+        <p style="margin:0;font-size:14px;line-height:1.6;"><a href="${base}/${locale}/faq" style="color:#B61F36;font-weight:600;">${escape(t.faqLink)}</a> &nbsp;&middot;&nbsp; <a href="${base}${agreementPdfPath(locale)}" style="color:#B61F36;font-weight:600;">${escape(t.agreementLink)}</a></p>
       </div>`;
 }
 
 function readBeforePickupText(t: ConfirmedStrings, locale: Locale): string {
   const base = siteBase();
-  return `${t.readHeader}: ${t.readLine}\n${t.faqLink}: ${base}/${locale}/faq\n${t.agreementLink}: ${base}${AGREEMENT_PATH}`;
+  return `${t.readHeader}: ${t.readLine}\n${t.faqLink}: ${base}/${locale}/faq\n${t.agreementLink}: ${base}${agreementPdfPath(locale)}`;
 }
 
 // Two Liberty 50s in one group must not list the same tour twice.

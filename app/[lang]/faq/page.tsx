@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { BRAND } from "@/lib/mockData";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
+import { agreementPdfPath } from "@/lib/docs";
 import Accordion from "./Accordion";
 
 type CategoryId = "booking" | "pickup" | "ride" | "return" | "incidents";
@@ -96,7 +97,7 @@ export default async function FaqPage({
             </h2>
             <div className="bg-white border border-ink/8 px-6 py-5 flex flex-col gap-3">
               <a
-                href="/docs/sickmotos-rental-agreement.pdf"
+                href={agreementPdfPath(lang as Locale)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-semibold text-ink hover:text-red transition-colors"

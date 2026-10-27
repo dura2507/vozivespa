@@ -293,7 +293,7 @@ function pageLinks(locale: Locale): string {
     `- Photo gallery: ${base}/gallery`,
     `- Contact (WhatsApp / email): ${base}/contact`,
     `- Reservation terms (PDF, share if a visitor wants the full booking terms): ${SITE_URL}/docs/reservation-terms.pdf`,
-    `- Rental agreement (PDF; it is signed at pickup): ${SITE_URL}/docs/sickmotos-rental-agreement.pdf`,
+    `- Rental agreement (PDF; it is signed at pickup), one file per language: ${SITE_URL}/docs/sickmotos-rental-agreement-${locale}.pdf (the 2 letters before .pdf are the language: set them to the language you reply in, one of en, de, hr, it, fr, es, pl, pt, hu, sk, cs; Czech is cs; for any other language use en)`,
   ].join("\n");
 }
 

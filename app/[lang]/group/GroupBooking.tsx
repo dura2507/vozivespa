@@ -27,6 +27,7 @@ import {
   outsideHoursSurcharge,
 } from "@/lib/pricing";
 import { SEASON_END_DATE, zagrebNow } from "@/lib/season";
+import { agreementPdfPath } from "@/lib/docs";
 import SumUpCardWidget from "@/components/SumUpCardWidget";
 
 // Return may be at closing (19:00); pickup never is (buildPickupSlots).
@@ -1104,7 +1105,7 @@ export default function GroupBooking({
                       {dict.fleet.form.faqLinkShort}
                     </a>
                     {" · "}
-                    <a href="/docs/sickmotos-rental-agreement.pdf" target="_blank" rel="noopener noreferrer" className="text-red underline">
+                    <a href={agreementPdfPath(lang)} target="_blank" rel="noopener noreferrer" className="text-red underline">
                       {dict.fleet.form.agreementLinkShort}
                     </a>
                   </span>

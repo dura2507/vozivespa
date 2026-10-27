@@ -10,7 +10,26 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-10-26 (Thomas' answers of 26.10: new rules live in all 11 languages).
+Last updated: 2026-10-27 (rental agreement handed out per language; cancellation wording).
+
+## 2026-10-27: rental agreement per language, cancellation wording
+
+- Rental agreement: Thomas' PDF is ONE multilingual file (cover + 2 pages per language).
+  scripts/split-agreement.swift (macOS, PDFKit) splits it into
+  public/docs/sickmotos-rental-agreement-<locale>.pdf (Czech = -cs although the PDF prints
+  CZ); lib/docs.ts agreementPdfPath(locale) is used by the FAQ Documents box, the FAQ
+  checkbox line on bike + group booking, the single + group confirmation emails and the
+  chatbot (route.ts maps an invented code such as -cz to the page language). The multilingual
+  original stays for links in already-sent emails. WHEN THOMAS SENDS A NEW AGREEMENT: replace
+  public/docs/sickmotos-rental-agreement.pdf, run `swift scripts/split-agreement.swift`
+  (it refuses to write if a page does not carry the expected language code), commit all 12.
+  Known: the footer printed in his PDF says e.g. "Page 4 of 23". OPEN: hu/sk/cs/pt
+  bookings are still stored as "en" (locale clamp + bookings_locale_check, see backlog), so
+  their emails, agreement link included, are English until that migration ships.
+- Wording (Kristian): FAQ cancellation "nicht erstattet" instead of "in keinem Fall
+  erstattet" (all 11 languages + chatbot); agreement link label is just "Mietvertrag (PDF)".
+
+Previously: 2026-10-26 (Thomas' answers of 26.10: new rules live in all 11 languages).
 
 ## Thomas' answers 2026-10-26: rules now live (supersede the 2026-10-25 notes below)
 
