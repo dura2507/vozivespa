@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getServiceClient } from "@/lib/supabase";
+import { getServiceClient, isLocaleCheckError } from "@/lib/supabase";
+import { isLocale } from "@/lib/i18n/config";
 import {
   findFreeUnit,
   findFreeUnits,
@@ -133,12 +134,7 @@ export async function POST(request: Request) {
       : null;
   // Spoken language for this walk-in. Mirrors the locales the public
   // site ships; anything unexpected falls back to English.
-  const SPOKEN_LOCALES = ["en", "de", "hr", "it", "es", "fr", "pl"] as const;
-  const locale =
-    typeof body.locale === "string" &&
-    (SPOKEN_LOCALES as readonly string[]).includes(body.locale)
-      ? (body.locale as (typeof SPOKEN_LOCALES)[number])
-      : "en";
+  const locale = typeof body.locale === "string" && isLocale(body.locale) ? body.locale : "en";
   // Mirror the public booking flow: licenceCountry isn't its own
   // column, it lives prepended to notes so owner sees it in Telegram
   // / email / detail view without a schema change.
@@ -412,10 +408,14 @@ export async function POST(request: Request) {
     status: "confirmed" as const,
     decided_at: nowIso,
   }));
-  const { data: bookings, error: insertErr } = await supabase
+  const insertRows = (rowsToInsert: typeof rows) => supabase
     .from("bookings")
-    .insert(rows)
+    .insert(rowsToInsert)
     .select("id, status");
+  let { data: bookings, error: insertErr } = await insertRows(rows);
+  if (isLocaleCheckError(insertErr)) {
+    ({ data: bookings, error: insertErr } = await insertRows(rows.map((r) => ({ ...r, locale: "en" as const }))));
+  }
   if (insertErr || !bookings || bookings.length === 0) {
     console.error("[/api/admin/bookings/manual] insert", insertErr);
     return NextResponse.json({ error: "Could not save booking" }, { status: 500 });

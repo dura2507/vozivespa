@@ -47,6 +47,10 @@ const LOCALE_NAME: Record<string, string> = {
   hr: "Hrvatski",
   pl: "Polski",
   fr: "Français",
+  hu: "Magyar",
+  sk: "Slovenčina",
+  cs: "Čeština",
+  pt: "Português",
 };
 
 export default async function AdminBookingDetail({

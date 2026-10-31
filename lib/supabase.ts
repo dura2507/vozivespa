@@ -1,4 +1,5 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient, type PostgrestError, type SupabaseClient } from "@supabase/supabase-js";
+import type { Locale } from "@/lib/i18n/config";
 
 // ----- Types matching the DB schema -----
 
@@ -17,6 +18,14 @@ export type BikeUnitRow = {
 };
 
 export type BookingStatus = "pending" | "confirmed" | "declined" | "cancelled";
+
+// bookings_locale_check only knew 7 languages until
+// supabase/migrations/2026-10-31_booking_locale_all.sql ran on the live DB.
+// Before that a hu/sk/cs/pt booking is rejected outright; the insert sites
+// then retry it as English (as before) so the booking is never lost.
+export function isLocaleCheckError(error: PostgrestError | null): boolean {
+  return error?.code === "23514" && (error.message ?? "").includes("bookings_locale_check");
+}
 
 export type BookingRow = {
   id: string;
@@ -46,7 +55,7 @@ export type BookingRow = {
   riding_style: "solo" | "with_passenger" | null;
   // UI locale the customer used when submitting. Drives the language
   // of the receipt / confirmed / declined emails.
-  locale: "en" | "de" | "es" | "it" | "hr" | "pl" | "fr";
+  locale: Locale;
   // Telegram message refs captured at send-time so the admin status
   // endpoint can edit the existing messages instead of leaving stale
   // "pending" messages around. Null on bookings created before the

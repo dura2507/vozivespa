@@ -1,5 +1,6 @@
 import { NextResponse, after } from "next/server";
-import { getServiceClient, type BookingRow } from "@/lib/supabase";
+import { getServiceClient, isLocaleCheckError, type BookingRow } from "@/lib/supabase";
+import { isLocale, type Locale } from "@/lib/i18n/config";
 import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail, sendOwnerBookingEmail } from "@/lib/email";
 import { markEmailReadByHeader } from "@/lib/imap-mark";
@@ -124,11 +125,7 @@ export async function POST(request: Request) {
   // is recomputed server-side below from the model's real pricing, because
   // this value drives the deposit and the card charge.
   const localeRaw = form.get("locale");
-  const locale: "en" | "de" | "es" | "it" | "hr" | "pl" | "fr" =
-    typeof localeRaw === "string" &&
-    ["en", "de", "es", "it", "hr", "pl", "fr"].includes(localeRaw)
-      ? (localeRaw as "en" | "de" | "es" | "it" | "hr" | "pl" | "fr")
-      : "en";
+  const locale: Locale = typeof localeRaw === "string" && isLocale(localeRaw) ? localeRaw : "en";
   const receipt = form.get("receipt");
   // Online-payment path: the customer pays the deposit by card next, so no
   // screenshot is uploaded. Only honoured when online payment is actually
@@ -265,7 +262,7 @@ export async function POST(request: Request) {
   const assignedUnitId = availability.unitId;
 
   // 3. Insert
-  const { data: booking, error: insertError } = await supabase
+  const insertBooking = (bookingLocale: Locale) => supabase
     .from("bookings")
     .insert({
       bike_id: bikeId,
@@ -282,10 +279,12 @@ export async function POST(request: Request) {
       bike_unit_id: assignedUnitId,
       drivers_licence: driversLicence,
       riding_style: ridingStyle,
-      locale,
+      locale: bookingLocale,
     })
     .select("*")
     .single();
+  let { data: booking, error: insertError } = await insertBooking(locale);
+  if (isLocaleCheckError(insertError)) ({ data: booking, error: insertError } = await insertBooking("en"));
   if (insertError || !booking) {
     console.error("[/api/bookings] insert error", insertError);
     return NextResponse.json({ error: "Could not save booking" }, { status: 500 });

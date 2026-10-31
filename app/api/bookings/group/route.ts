@@ -1,5 +1,6 @@
 import { NextResponse, after } from "next/server";
-import { getServiceClient, type BookingRow } from "@/lib/supabase";
+import { getServiceClient, isLocaleCheckError, type BookingRow } from "@/lib/supabase";
+import { LOCALES } from "@/lib/i18n/config";
 import { isBookableReturnSlot, isBookablePickupSlot, parseTime, calculatePrice, outsideHoursSurcharge } from "@/lib/pricing";
 import { isBookingInSeason, isPickupInPast, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
 import { findFreeUnits } from "@/lib/availability";
@@ -34,7 +35,6 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const PAYMENT_METHODS = ["paypal_ff", "paypal_company", "bank", "revolut"] as const;
 const LICENCES = ["A", "A1", "A2", "AM", "B"] as const;
 const RIDING_STYLES = ["solo", "with_passenger"] as const;
-const LOCALES = ["en", "de", "es", "it", "hr", "pl", "fr"] as const;
 
 function asString(v: FormDataEntryValue | null): string | null {
   return typeof v === "string" && v.trim().length > 0 ? v.trim() : null;
@@ -279,10 +279,14 @@ export async function POST(request: Request) {
     groupTotalCents += surchargeCents;
   }
 
-  const { data: inserted, error: insertError } = await supabase
+  const insertRows = (rowsToInsert: typeof rows) => supabase
     .from("bookings")
-    .insert(rows)
+    .insert(rowsToInsert)
     .select("*");
+  let { data: inserted, error: insertError } = await insertRows(rows);
+  if (isLocaleCheckError(insertError)) {
+    ({ data: inserted, error: insertError } = await insertRows(rows.map((r) => ({ ...r, locale: "en" as const }))));
+  }
   if (insertError || !inserted || inserted.length === 0) {
     console.error("[/api/bookings/group] insert error", insertError);
     return NextResponse.json({ error: "Could not save booking" }, { status: 500 });

@@ -27,6 +27,10 @@ const SPOKEN_LANGUAGES: Array<{ code: Locale; label: string }> = [
   { code: "es", label: "Español" },
   { code: "fr", label: "Français" },
   { code: "pl", label: "Polski" },
+  { code: "hu", label: "Magyar" },
+  { code: "sk", label: "Slovenčina" },
+  { code: "cs", label: "Čeština" },
+  { code: "pt", label: "Português" },
 ];
 
 // Map a phone's country dial code to the most likely spoken language.
@@ -37,6 +41,9 @@ const DIAL_TO_LOCALE: Array<[string, Locale]> = [
   ["423", "de"], // Liechtenstein
   ["378", "it"], // San Marino
   ["353", "en"], // Ireland
+  ["421", "sk"], // Slovakia
+  ["420", "cs"], // Czechia
+  ["351", "pt"], // Portugal
   ["49", "de"], // Germany
   ["43", "de"], // Austria
   ["41", "de"], // Switzerland (default to German)
@@ -44,6 +51,8 @@ const DIAL_TO_LOCALE: Array<[string, Locale]> = [
   ["34", "es"], // Spain
   ["33", "fr"], // France
   ["48", "pl"], // Poland
+  ["36", "hu"], // Hungary
+  ["55", "pt"], // Brazil
   ["44", "en"], // UK
   ["1", "en"], // US / Canada
 ];
