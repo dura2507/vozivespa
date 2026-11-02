@@ -13,7 +13,7 @@ Reihenfolge zum Bauen (Vorschlag): 1 Multi-Buchung → 2 Chatbot → 3 Apple Pay
 | 3 | Apple Pay / Online-Zahlung | 3-5 Tage | freigegeben. Provider Mollie/Viva statt Stripe; eigener Meilenstein (Risiko-Stück) |
 | 4 | Aufpreis außerhalb Geschäftszeiten | 1-2 Tage | **GEBAUT + live verifiziert (06.07): 30€ pauschal pro Anmietung** für früh 7:00-8:59 ODER spät 19:00-22:00, direkt dazubuchbar. Als Add-on in BEIDEN Flows (Einzel-Bike + `/group`), Bot nennt es. Live gegen Produktion geprüft: 90€ → 150€, Gebühr 30€ / Rest 120€ stimmen. |
 
-Hinweis Preis: alle 4 = grob 12-18 Tage Aufwand; 1000-1500 € ist deutlich unter dem alten Freundschaftspreis (2000 € + 20 €/Mon). Bei Folge-Features nicht weiter runter.
+Hinweis Preis: alle 4 = grob 12-18 Tage Aufwand; 1000-1500 € ist deutlich unter Kristians erstem Angebot für genau diese 4 Features (18.06.: 2000 € + 20 €/Mon). Das war KEIN Website-Grundpreis. Bei Folge-Features nicht weiter runter.
 
 ## Chatbot LIVE (scharfgeschaltet 05.07)
 
