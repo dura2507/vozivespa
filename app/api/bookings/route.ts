@@ -5,7 +5,7 @@ import { sendOwnerBookingTelegram } from "@/lib/telegram";
 import { sendCustomerBookingReceivedEmail, sendOwnerBookingEmail } from "@/lib/email";
 import { markEmailReadByHeader } from "@/lib/imap-mark";
 import { isBookableReturnSlot, isBookablePickupSlot, parseTime, calculatePrice, outsideHoursSurcharge } from "@/lib/pricing";
-import { isBookingInSeason, isPickupInPast, SEASON_START_ISO, SEASON_END_ISO } from "@/lib/season";
+import { bookableSeason, isBookingInSeason, isPickupInPast } from "@/lib/season";
 import { onlinePaymentEnabled } from "@/lib/payments";
 import { getBikeWithPricing } from "@/lib/bike-pricing";
 import { describeConflict, findFreeUnit, getBikeUnitLabel } from "@/lib/availability";
@@ -141,7 +141,7 @@ export async function POST(request: Request) {
   if (!isBookingInSeason(from, to)) {
     return NextResponse.json(
       {
-        error: `Bookings are only available within our season (${SEASON_START_ISO} to ${SEASON_END_ISO}). Reach out via WhatsApp for off-season inquiries.`,
+        error: `Bookings are only available within our season (${bookableSeason().startIso} to ${bookableSeason().endIso}, 1 April to 31 October every year). Reach out via WhatsApp for off-season inquiries.`,
       },
       { status: 400 },
     );

@@ -220,7 +220,8 @@ LICENCE HELP
 - A2 / A: bigger bikes like the KTM 390.
 
 SEASON
-- We rent from April to October (Adriatic season).
+- We rent from 1 April to 31 October every year (Adriatic season).
+- Bookings are open all year round: during the winter break (November to March) visitors can already book the coming season on the website. A rental can't run across the winter break.
 
 TOURS & LOCAL TIPS (a conversion booster — when a visitor has picked or is choosing a vehicle, warmly suggest 1-3 fitting spots/routes and share the matching map link)
 - 50cc scooter (stay closer to Zadar): the Ugljan island loop (take the ferry Zadar → Preko, then ride the island), Vransko Lake nature park, plus nearby beaches, secret spots and good food in and around Zadar.

@@ -18,14 +18,28 @@ Last updated: 2026-11-02 (billing agreement for the next-season features).
   from Thomas/Priscilla, spam filter and small translations count as fixes/small stuff).
 - Next-season features are built now and billed AFTERWARDS by the real effort, minimum
   600 EUR, with a plain list for Thomas (what was built, why, roughly how long):
-  Saisonpreise + Erfahrungsnachweis. Vorbuchen 2027 is free (Kulanz, listed visibly).
-  Kaution nach Klasse only if Thomas wants it (needs his amounts).
+  Vorbuchen + Saisonpreise + Erfahrungsnachweis. NOTHING is free up front (Kristian,
+  2026-11-02): log real time for everything; at the end Kristian decides what to deduct
+  as a thank-you discount. Kaution nach Klasse and reading licence dates: dropped for now.
+- Decisions: Saisonpreise = an admin tab with all four tiers (day/weekend/week/month)
+  per season; a rental across the boundary costs each day its own season's share of the
+  applicable tier. Erfahrungsnachweis = only 50cc with a B licence: required tick "AM at
+  least 6 months before B" + photo of the licence back; Telegram gets a temporary LINK
+  (never the photo itself, so the deletion 1 day after return really removes it); a
+  "damage case, keep photo" switch in the admin.
+- Later (noted, not priced): (1) Thomas: many customers think a rental ends at closing
+  time; make the 24 h clearer, e.g. picking one day also marks the next day up to the
+  same time in the calendar. (2) Booking confirmation to the customer via WhatsApp too
+  (prio WhatsApp, else Telegram, email always). Note: a wa.me button can only prefill
+  text (links OK, no images); automatic sending needs the WhatsApp Business API (Meta
+  verification, per-conversation fees); a Telegram bot can't message a phone number,
+  only users who started the bot.
 - Keep the effort log below up to date while building (developer-equivalent hours, the
   same basis as before; own bugs found on the way are never billed).
 
 | Item | What was built (plain words, for Thomas) | Hours | Billed |
 |---|---|---|---|
-| Vorbuchen 2027 | (to fill) | | free |
+| Vorbuchen 2027 | Season is now a yearly rule (1.4.-31.10.), bookable all year for the running or coming season, never across the winter; both calendars open on the first bookable day; server checks, admin hints, homepage badge and chatbot follow the same rule; 3 check rounds (round 1: 3 bugs incl. wrong day for visitors in Asia/Australia, round 2: 1 bug, round 3 clean) | real time 2026-11-02 18:46-19:30 (~45 min incl. checks); developer-equivalent ca. 4-5 h | decide at end |
 | Saisonpreise | (to fill) | | yes |
 | Erfahrungsnachweis | (to fill) | | yes |
 

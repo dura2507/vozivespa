@@ -9,7 +9,7 @@ import {
   buildConflictCard,
 } from "@/lib/availability";
 import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
-import { SEASON_END_ISO } from "@/lib/season";
+import { seasonFor } from "@/lib/season";
 import { CATEGORIES } from "@/lib/mockData";
 
 export const runtime = "nodejs";
@@ -195,7 +195,7 @@ export async function PATCH(
           { bikeId: targetBikeId, dateFrom, dateTo, pickupTime, returnTime, excludeBookingId: targetBikeId === booking.bike_id ? booking.id : undefined },
           availability.conflict,
           modelName,
-          { seasonEndIso: SEASON_END_ISO },
+          { seasonEndIso: seasonFor(dateFrom).endIso },
         );
         return NextResponse.json(
           {
@@ -292,7 +292,7 @@ export async function PATCH(
             { bikeId, dateFrom, dateTo, pickupTime, returnTime, excludeGroupId: groupId },
             conflict,
             modelName,
-            { seasonEndIso: SEASON_END_ISO },
+            { seasonEndIso: seasonFor(dateFrom).endIso },
           );
           return NextResponse.json(
             { error: "Time conflict", detail: describeConflict(conflict), conflict: card },

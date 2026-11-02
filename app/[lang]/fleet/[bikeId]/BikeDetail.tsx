@@ -33,7 +33,7 @@ import {
   TURNAROUND_MINUTES,
   type ConfirmedBooking,
 } from "@/lib/pricing";
-import { SEASON_END_DATE, zagrebNow } from "@/lib/season";
+import { bookableSeason, isoToLocalDate, zagrebNow } from "@/lib/season";
 import { TOURS } from "@/lib/tours";
 import { agreementPdfPath } from "@/lib/docs";
 import SumUpCardWidget from "@/components/SumUpCardWidget";
@@ -95,6 +95,13 @@ export default function BikeDetail({
   onlinePayment: boolean;
 }) {
   const tF = dict.fleet;
+  // Bookable days: from today (Zadar time) or the season start, whichever is
+  // later, to the end of that season. In the winter break this is next
+  // season, so the calendar opens on April (lib/season.ts).
+  const season = bookableSeason();
+  const todayIso = zagrebNow().isoDate;
+  const firstBookable = isoToLocalDate(todayIso > season.startIso ? todayIso : season.startIso);
+  const seasonEnd = isoToLocalDate(season.endIso);
   const tBike = dict.bikes[bike.id as keyof typeof dict.bikes];
   const dateLocale: DateFnsLocale = ({ en: enUS, de, es, it, hr, hu, sk, cs, pt: ptBR } as Record<string, DateFnsLocale>)[lang] ?? enUS;
   const [activeImage, setActiveImage] = useState(bike.image);
@@ -258,14 +265,16 @@ export default function BikeDetail({
     const amRed: Date[] = []; // morning blocked -> free from later (left red)
     const pmRed: Date[] = []; // afternoon blocked -> free until earlier (right red)
     const middleOnly: Date[] = []; // only a mid-day window free (both ends red)
-    const todayMidnight = new Date();
-    todayMidnight.setHours(0, 0, 0, 0);
+    // Zadar's today, the same cutoff as { before: firstBookable }. The
+    // browser's own date is a day ahead for visitors far east of Zadar and
+    // would drop the server's red flag on a sold-out Zadar today.
+    const todayMidnight = isoToLocalDate(zagrebNow().isoDate);
     const futureOrToday = (d: Date) => d.getTime() >= todayMidnight.getTime();
 
     // Fully-out days come verbatim from the server (same engine as the submit
     // check). Never re-derived here — that's how the calendar and the
     // multi-booking used to drift apart. Past dates are already disabled by
-    // { before: new Date() }, so skip them.
+    // { before: firstBookable }, so skip them.
     const blockedSet = new Set(blockedDates);
     for (const iso of blockedDates) {
       const d = new Date(`${iso}T00:00:00`);
@@ -1190,14 +1199,14 @@ export default function BikeDetail({
                     onSelect={handleRangeSelect}
                     weekStartsOn={1}
                     numberOfMonths={isMobile ? 1 : 2}
-                    // Cap navigation: no scrolling into past months, no
-                    // jumping past next year's season either. Anyone
-                    // booking >18 months ahead should use WhatsApp.
-                    startMonth={new Date()}
-                    endMonth={SEASON_END_DATE}
+                    // Cap navigation to the bookable season: no past
+                    // months, no winter break, nothing past its end.
+                    defaultMonth={firstBookable}
+                    startMonth={firstBookable}
+                    endMonth={seasonEnd}
                     disabled={[
-                      { before: new Date() },
-                      { after: SEASON_END_DATE },
+                      { before: firstBookable },
+                      { after: seasonEnd },
                       ...bookedFullDays,
                     ]}
                     excludeDisabled

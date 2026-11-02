@@ -1,26 +1,48 @@
-// Rental season window. Bookings outside this range are blocked on the
-// public site — out-of-season visitors see a contact-only state. Owner
-// can still create manual bookings from the admin panel if a one-off
-// extension is needed.
-//
-// Update these two lines per year. Format: YYYY-MM-DD (local, no TZ).
-export const SEASON_START_ISO = "2026-04-01";
-export const SEASON_END_ISO = "2026-10-25";
+import { LAST_PICKUP_MINUTES } from "@/lib/pricing";
 
-export const SEASON_START_DATE = new Date(`${SEASON_START_ISO}T00:00:00`);
-export const SEASON_END_DATE = new Date(`${SEASON_END_ISO}T00:00:00`);
+// Rental season: every year from 1 April (first pickup) to 31 October (last
+// return), Thomas 2026-10-26. The site takes bookings all year round, but
+// only for days inside a season and never across the winter break. Outside
+// the season the owner can still create manual bookings from the admin panel.
+export const SEASON_START_MD = "04-01";
+export const SEASON_END_MD = "10-31";
 
-// True when an ISO date string (YYYY-MM-DD) sits inside the season,
-// inclusive on both ends.
-export function isIsoInSeason(iso: string): boolean {
-  return iso >= SEASON_START_ISO && iso <= SEASON_END_ISO;
+// The season running on `iso`, or the next one when `iso` falls in the
+// winter break.
+export function seasonFor(iso: string): { startIso: string; endIso: string } {
+  const year = Number(iso.slice(0, 4)) + (iso.slice(5) > SEASON_END_MD ? 1 : 0);
+  return { startIso: `${year}-${SEASON_START_MD}`, endIso: `${year}-${SEASON_END_MD}` };
 }
 
-// True when the entire booking window (from..to inclusive) is inside
-// the season. Used by the public booking endpoint to reject anything
-// that touches a closed day.
+// What the public site can be booked for right now: the running season, or
+// during the winter break the coming one. Later seasons are not open yet.
+// Once the last pickup slot of the season's final day (31.10, 18:30) has
+// started, nothing of this season is bookable any more, so the next one
+// opens right away instead of leaving the calendars empty until midnight.
+// ">=" on purpose: the calendars and blockedPickupDates count the 18:30 slot
+// as gone from 18:30:00.
+export function bookableSeason(): { startIso: string; endIso: string } {
+  const now = zagrebNow();
+  const running = seasonFor(now.isoDate);
+  if (now.isoDate === running.endIso && now.minutesOfDay >= LAST_PICKUP_MINUTES) {
+    const year = Number(running.endIso.slice(0, 4)) + 1;
+    return { startIso: `${year}-${SEASON_START_MD}`, endIso: `${year}-${SEASON_END_MD}` };
+  }
+  return running;
+}
+
+// True when the entire booking window (from..to inclusive) lies inside one
+// bookable season. Used by the public booking endpoints to reject anything
+// that touches a closed day: Oct 30 to Apr 2 has both ends "in season" but
+// spans the winter, and a season after the bookable one is not open yet.
 export function isBookingInSeason(from: string, to: string): boolean {
-  return isIsoInSeason(from) && isIsoInSeason(to);
+  const { startIso, endIso } = bookableSeason();
+  return from >= startIso && to <= endIso && from <= to;
+}
+
+// Local-midnight Date for an ISO day, for the calendar components.
+export function isoToLocalDate(iso: string): Date {
+  return new Date(`${iso}T00:00:00`);
 }
 
 // Current wallclock in the shop's timezone (Zagreb). All booking dates

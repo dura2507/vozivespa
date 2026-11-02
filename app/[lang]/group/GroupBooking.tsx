@@ -26,7 +26,7 @@ import {
   isLateReturn,
   outsideHoursSurcharge,
 } from "@/lib/pricing";
-import { SEASON_END_DATE, zagrebNow } from "@/lib/season";
+import { bookableSeason, isoToLocalDate, zagrebNow } from "@/lib/season";
 import { agreementPdfPath } from "@/lib/docs";
 import SumUpCardWidget from "@/components/SumUpCardWidget";
 
@@ -413,8 +413,16 @@ export default function GroupBooking({
   }
 
   const g = dict.group;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  // Bookable days: from today (Zadar time) or the season start, whichever is
+  // later, to the end of that season. In the winter break this is next
+  // season, so the calendar opens on April (lib/season.ts). `today` is
+  // Zadar's today too: it is the day greyed out once its last slot is gone,
+  // and the browser's own date is a day ahead for visitors far east of Zadar.
+  const season = bookableSeason();
+  const todayIso = zagrebNow().isoDate;
+  const today = isoToLocalDate(todayIso);
+  const firstBookable = isoToLocalDate(todayIso > season.startIso ? todayIso : season.startIso);
+  const seasonEnd = isoToLocalDate(season.endIso);
   const dfLocale = DATE_FNS_LOCALES[lang] ?? enUS;
   // "1 Bike" / "3 Bikes", "1 Helm" / "3 Helme": the noun after a count follows
   // the locale's plural rules (Slavic 1 / 2-4 / 5+ forms included).
@@ -528,11 +536,12 @@ export default function GroupBooking({
               onSelect={setRange}
               weekStartsOn={1}
               numberOfMonths={isWide ? 2 : 1}
-              startMonth={new Date()}
-              endMonth={SEASON_END_DATE}
+              defaultMonth={firstBookable}
+              startMonth={firstBookable}
+              endMonth={seasonEnd}
               disabled={[
-                { before: today },
-                { after: SEASON_END_DATE },
+                { before: firstBookable },
+                { after: seasonEnd },
                 ...(disableTodayNoSlots ? [today] : []),
               ]}
               min={1}

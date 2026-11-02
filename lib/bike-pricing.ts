@@ -6,7 +6,7 @@ import {
   SLOT_MINUTES,
   TURNAROUND_MINUTES,
 } from "@/lib/pricing";
-import { SEASON_END_ISO } from "@/lib/season";
+import { seasonFor, zagrebNow } from "@/lib/season";
 import { occupancyInterval } from "@/lib/availability";
 
 // Owner-editable price overrides live in the bike_price_overrides
@@ -368,10 +368,10 @@ export async function getAvailableNowCounts(): Promise<
   // Pickup is only useful if it falls inside shop hours AND leaves a
   // 30-min slot before close. Anything past 18:30 Zagreb bumps to the
   // next day 09:00, then we re-check booking conflicts on that day.
-  // Returns null when no slot before SEASON_END_ISO can fit.
+  // Returns null when no slot before the season end can fit.
   const lastPickupMin = (SHOP_CLOSE_HOUR - 1) * 60 + (60 - SLOT_MINUTES);
   const openLabel = `${String(SHOP_OPEN_HOUR).padStart(2, "0")}:00`;
-  const seasonCutoffMs = zagrebWallToMs(SEASON_END_ISO, "23:59");
+  const seasonCutoffMs = zagrebWallToMs(seasonFor(zagrebNow().isoDate).endIso, "23:59");
   function nextPickupableMoment(
     sortedBookings: Array<{ start: number; end: number }>,
     startFromMs: number,

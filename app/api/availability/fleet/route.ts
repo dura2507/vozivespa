@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 import { isBookablePickupSlot, isBookableReturnSlot } from "@/lib/pricing";
-import { SEASON_END_ISO } from "@/lib/season";
+import { seasonFor } from "@/lib/season";
 import { findFreeUnits, nextFreeWindow, earliestFreePickupSameDay, latestFreeReturnSameDay } from "@/lib/availability";
 import { getUnitCounts } from "@/lib/bike-pricing";
 
@@ -69,7 +69,7 @@ export async function GET(request: Request) {
         }
         if (!freeFromTime && !freeIfReturnBy) {
           try {
-            const w = await nextFreeWindow(supabase, window, { seasonEndIso: SEASON_END_ISO });
+            const w = await nextFreeWindow(supabase, window, { seasonEndIso: seasonFor(window.dateFrom).endIso });
             if (w) nextFree = { from: w.dateFrom, to: w.dateTo, pickupTime: w.pickupTime };
           } catch (err) {
             console.error("[/api/availability/fleet] nextFreeWindow", bikeId, err);

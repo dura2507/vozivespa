@@ -12,7 +12,7 @@ import {
   reserveBikeIds,
 } from "@/lib/availability";
 import { isValidSlot, isValidPickupSlot, parseTime } from "@/lib/pricing";
-import { SEASON_END_ISO } from "@/lib/season";
+import { seasonFor } from "@/lib/season";
 import { CATEGORIES } from "@/lib/mockData";
 
 export const runtime = "nodejs";
@@ -272,7 +272,7 @@ export async function POST(request: Request) {
       { bikeId, dateFrom, dateTo, pickupTime, returnTime },
       c,
       modelName,
-      { seasonEndIso: SEASON_END_ISO },
+      { seasonEndIso: seasonFor(dateFrom).endIso },
     );
     return NextResponse.json(
       { error: card.headline, detail: describeConflict(c), conflict: card },

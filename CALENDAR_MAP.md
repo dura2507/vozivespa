@@ -5,7 +5,7 @@ Re-read this before AND after touching anything that computes availability,
 demand, "units free", "busy", "blocked dates", or booking writes. All paths are
 repo-relative to the worktree root.
 
-Last updated: 2026-08-13 (Ghost Bike fully separated from model capacity). Keep this file in sync on every availability change
+Last updated: 2026-11-02 (season is a yearly rule: bookable all year for the running/next season). Keep this file in sync on every availability change
 (see the Change checklist at the bottom).
 
 **Canonical "physically out right now" helper: `occupancyInterval` (lib/availability.ts).**
@@ -18,6 +18,22 @@ window `[schedStart, schedEnd]`; picked-up (and `returned_at IS NULL`) = out fro
 (`RETURN_AUTO_FALLBACK_MS`), then auto-forgiven. The 24h cap MUST stay equal to
 `bucketBookings`' `AUTO_FALLBACK_MS`, or the "Currently out" list and the tile
 counts disagree (that mismatch was the 2026-07-18 "2 out but only 1 out" bug).
+
+## Season (lib/season.ts, 2026-11-02)
+
+Every year 1 April (first pickup) to 31 October (last return). `seasonFor(iso)` = the
+season running on that day, or the next one in the winter break. `bookableSeason()` =
+`seasonFor(zagrebNow)`: what the PUBLIC site can be booked for right now (in winter the
+coming season, later seasons not open yet); it already switches to the next season once
+31.10's last pickup slot (18:30, `LAST_PICKUP_MINUTES`) has started (`>=`, same moment
+`blockedPickupDates` and the calendars count it as gone), so the calendars are never empty. "Today" in both calendars is ZADAR's today (`isoToLocalDate(zagrebNow().isoDate)`),
+never the browser's date: visitors far east of Zadar are a day ahead in the evening. `isBookingInSeason(from,to)` = the whole
+window inside the bookable season (public single + group routes). Calendars (BikeDetail,
+GroupBooking) open on `max(today Zagreb, season start)` and stop at the season end.
+Season-end horizons: admin conflict-card hints use `seasonFor(dateFrom)`, the fleet
+availability hint `seasonFor(window.dateFrom)`, the admin per-unit panel and the homepage
+badge `seasonFor(today)`. Admin manual/edit bookings are NOT season-gated (owner escape
+hatch). There are no fixed season dates in the code any more; do not add new ones.
 
 ## Domain model in one paragraph
 

@@ -12,7 +12,7 @@ import {
   SLOT_MINUTES,
   LAST_PICKUP_MINUTES,
 } from "@/lib/pricing";
-import { SEASON_END_ISO } from "@/lib/season";
+import { seasonFor, zagrebNow } from "@/lib/season";
 import { occupancyInterval, reserveBikeIds } from "@/lib/availability";
 
 export type EnrichedBooking = BookingRow & {
@@ -612,7 +612,7 @@ export async function listUnitAvailability(
   const unitIds = allUnits.filter((u) => !u.is_backup).map((u) => u.id);
   const ghostUnitIds = allUnits.filter((u) => u.is_backup).map((u) => u.id);
   const bufferMs = TURNAROUND_MINUTES * 60_000;
-  const seasonCutoff = toMs(SEASON_END_ISO, "23:59");
+  const seasonCutoff = toMs(seasonFor(zagrebNow().isoDate).endIso, "23:59");
 
   // Collect busy intervals per unit. Whole-model blocks (unit_id null)
   // apply to every unit.
