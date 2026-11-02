@@ -10,7 +10,26 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-11-02 (bookings keep all 11 languages; DB migration applied on live).
+Last updated: 2026-11-02 (billing agreement for the next-season features).
+
+## 2026-11-02: billing agreement with Kristian (next-season features)
+
+- Aug-Oct work is NOT billed (Kristian: bot log belongs to the June bot deal, content came
+  from Thomas/Priscilla, spam filter and small translations count as fixes/small stuff).
+- Next-season features are built now and billed AFTERWARDS by the real effort, minimum
+  600 EUR, with a plain list for Thomas (what was built, why, roughly how long):
+  Saisonpreise + Erfahrungsnachweis. Vorbuchen 2027 is free (Kulanz, listed visibly).
+  Kaution nach Klasse only if Thomas wants it (needs his amounts).
+- Keep the effort log below up to date while building (developer-equivalent hours, the
+  same basis as before; own bugs found on the way are never billed).
+
+| Item | What was built (plain words, for Thomas) | Hours | Billed |
+|---|---|---|---|
+| Vorbuchen 2027 | (to fill) | | free |
+| Saisonpreise | (to fill) | | yes |
+| Erfahrungsnachweis | (to fill) | | yes |
+
+Previously: 2026-11-02 (bookings keep all 11 languages; DB migration applied on live).
 
 ## 2026-10-31: bookings keep the customer's language (all 11)
 
