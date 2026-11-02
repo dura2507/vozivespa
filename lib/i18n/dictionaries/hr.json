@@ -51,6 +51,7 @@
       "bookedUntilToday": "Na servisu do danas {time}",
       "bookedUntilTomorrow": "Na servisu do sutra {time}",
       "availableFrom": "Dostupno od {time}",
+      "seasonFrom": "Dostupno od {date}",
       "outOfService": "Na servisu",
       "helmetsIncluded": "Kacige uključene",
       "viewDetails": "Detalji"

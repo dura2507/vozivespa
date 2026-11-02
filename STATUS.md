@@ -39,7 +39,7 @@ Last updated: 2026-11-02 (billing agreement for the next-season features).
 
 | Item | What was built (plain words, for Thomas) | Hours | Billed |
 |---|---|---|---|
-| Vorbuchen 2027 | Season is now a yearly rule (1.4.-31.10.), bookable all year for the running or coming season, never across the winter; both calendars open on the first bookable day; server checks, admin hints, homepage badge and chatbot follow the same rule; 3 check rounds (round 1: 3 bugs incl. wrong day for visitors in Asia/Australia, round 2: 1 bug, round 3 clean) | real time 2026-11-02 18:46-19:30 (~45 min incl. checks); developer-equivalent ca. 4-5 h | decide at end |
+| Vorbuchen 2027 | Season is now a yearly rule (1.4.-31.10.), bookable all year for the running or coming season, never across the winter; both calendars open on the first bookable day; server checks, admin hints and chatbot follow the same rule; homepage pills say "Available from 01.04" in the winter break instead of "Available now" (11 languages); 3 check rounds on the calendar (round 1: 3 bugs incl. wrong day for visitors in Asia/Australia, round 2: 1 bug, round 3 clean) + 1 on the pills; live-tested single, group and mobile | real time 2026-11-02 18:46-19:40 (~1 h incl. all checks and live tests) + pills ~20 min; developer-equivalent ca. 4,5-5,5 h | suggestion 250 EUR (market value ~350 EUR); or the thank-you discount |
 | Saisonpreise | (to fill) | | yes |
 | Erfahrungsnachweis | (to fill) | | yes |
 

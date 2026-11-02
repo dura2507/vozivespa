@@ -51,6 +51,7 @@
       "bookedUntilToday": "In officina fino a oggi {time}",
       "bookedUntilTomorrow": "In officina fino a domani {time}",
       "availableFrom": "Disponibile da {time}",
+      "seasonFrom": "Disponibile dal {date}",
       "outOfService": "In officina",
       "helmetsIncluded": "Caschi inclusi",
       "viewDetails": "Dettagli"

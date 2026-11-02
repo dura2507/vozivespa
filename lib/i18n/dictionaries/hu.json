@@ -51,6 +51,7 @@
       "bookedUntilToday": "Szervizben ma eddig: {time}",
       "bookedUntilTomorrow": "Szervizben holnap eddig: {time}",
       "availableFrom": "Elérhető ettől: {time}",
+      "seasonFrom": "Elérhető ettől: {date}",
       "outOfService": "Szervizben",
       "helmetsIncluded": "Bukósisak benne van",
       "viewDetails": "Részletek"

@@ -51,6 +51,7 @@
       "bookedUntilToday": "W serwisie do dzisiaj {time}",
       "bookedUntilTomorrow": "W serwisie do jutra {time}",
       "availableFrom": "Dostępne od {time}",
+      "seasonFrom": "Dostępne od {date}",
       "outOfService": "W serwisie",
       "helmetsIncluded": "Kaski w zestawie",
       "viewDetails": "Szczegóły"

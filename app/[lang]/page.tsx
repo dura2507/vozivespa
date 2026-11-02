@@ -6,9 +6,10 @@ import Footer from "@/components/Footer";
 import { Flag, type FlagCode } from "@/components/Flag";
 import { GALLERY_IMAGES, BRAND, LICENCE_BADGE, REVIEWS } from "@/lib/mockData";
 import ReviewCarousel from "@/components/ReviewCarousel";
-import { getCategoriesWithPricing, getUnitCounts, getAvailableNowCounts } from "@/lib/bike-pricing";
+import { getCategoriesWithPricing, getUnitCounts, getAvailableNowCounts, getSeasonOpeningDays } from "@/lib/bike-pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
+import { bookableSeason, zagrebNow } from "@/lib/season";
 
 // Render on every request so the "available now" pills and any deployed fix
 // are always current. ISR (revalidate=120) was a Hobby-plan CPU workaround;
@@ -86,6 +87,23 @@ export default async function HomePage({
     getAvailableNowCounts(),
   ]);
   const nowMs = Date.now();
+  // Winter break (or 31.10 after the last pickup): nothing can be rented
+  // right now, so each pill says from when that bike can be rented again:
+  // the first free day of the coming season, the same day its calendar
+  // offers (lib/bike-pricing.ts getSeasonOpeningDays). Short month name,
+  // never "01.04", which reads as 4 January in Hungarian.
+  const nextSeasonStart = bookableSeason().startIso;
+  const seasonClosed = zagrebNow().isoDate < nextSeasonStart;
+  const openingDays = seasonClosed ? await getSeasonOpeningDays() : {};
+  const shortDate = new Intl.DateTimeFormat(lang === "pt" ? "pt-BR" : lang, {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
+  const seasonFromDate = (bikeId: string): string | null => {
+    const iso = bikeId in openingDays ? openingDays[bikeId] : nextSeasonStart;
+    return iso ? shortDate.format(new Date(`${iso}T12:00:00Z`)) : null;
+  };
 
   // Hero "from XX€" label tracks the cheapest day price across the
   // current fleet (mockData defaults + admin overrides), so a price
@@ -298,11 +316,14 @@ export default async function HomePage({
               // green "available" state and the timing detail differ.
               //   green → ≥1 unit free this very moment
               //   amber → unavailable (rented OR in service, indistinct)
+              //   amber → winter break: "Available from 1 Apr" (first free day)
               //   hidden → no fleet data yet (don't show a lying badge)
               const availState =
                 !avail || avail.total === 0
                   ? "unknown"
-                  : avail.available > 0
+                  : seasonClosed
+                    ? "season"
+                    : avail.available > 0
                     ? "available"
                     : avail.cause === "service"
                       ? "service"
@@ -349,6 +370,10 @@ export default async function HomePage({
                       />
                       {(() => {
                         if (availState === "available") return t.fleet.availableNow;
+                        if (availState === "season") {
+                          const from = seasonFromDate(cat.id);
+                          return from ? fmt(t.fleet.seasonFrom, { date: from }) : t.fleet.notAvailableNow;
+                        }
                         if (availState === "service") return t.fleet.outOfService;
                         if (!avail?.availableFromMs || avail.availableFromMs <= nowMs) {
                           return t.fleet.notAvailableNow;

@@ -51,6 +51,7 @@
       "bookedUntilToday": "In service until today {time}",
       "bookedUntilTomorrow": "In service until tomorrow {time}",
       "availableFrom": "Available from {time}",
+      "seasonFrom": "Available from {date}",
       "outOfService": "In service",
       "helmetsIncluded": "Helmets included",
       "viewDetails": "Details"

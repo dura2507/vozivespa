@@ -51,6 +51,7 @@
       "bookedUntilToday": "In Wartung bis heute {time}",
       "bookedUntilTomorrow": "In Wartung bis morgen {time}",
       "availableFrom": "Verfügbar ab {time}",
+      "seasonFrom": "Verfügbar ab {date}",
       "outOfService": "In Wartung",
       "helmetsIncluded": "Helme inklusive",
       "viewDetails": "Details"

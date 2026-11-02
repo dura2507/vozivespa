@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
-import { blockedPickupDates } from "@/lib/availability";
+import { blockedPickupDates, publicCalendarInputs } from "@/lib/availability";
 import { zagrebNow } from "@/lib/season";
 
 export const dynamic = "force-dynamic";
@@ -72,55 +72,16 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Could not load availability" }, { status: 500 });
   }
 
-  const trimT = (t: string) => t.slice(0, 5);
-
-  // A block is "effectively all-day" when it has no time bounds
-  // (start_time + end_time both null = legacy whole-day block) OR
-  // when it runs all the way to shop close (19:00). Owner asked: if
-  // a unit is blocked until close, treat it as the whole day — the
-  // remaining hours aren't useful for a rental anyway.
-  const isEffectivelyAllDay = (
-    start: string | null,
-    end: string | null,
-  ): boolean => {
-    if (!start || !end) return true;
-    return end >= "19:00:00";
-  };
-
-  const manualBlocks = (manualRes.data ?? []).map((row) => ({
-    from: row.date_from,
-    to: row.date_to,
-    startTime: row.start_time ? trimT(row.start_time) : null,
-    endTime: row.end_time ? trimT(row.end_time) : null,
-    unitId: row.bike_unit_id, // null = whole-model block
-    effectiveAllDay: isEffectivelyAllDay(row.start_time, row.end_time),
-  }));
-  const allBookings = (bookingsRes.data ?? []).map((row) => ({
-    from: row.date_from,
-    to: row.date_to,
-    pickupTime: trimT(row.pickup_time),
-    returnTime: trimT(row.return_time),
-    unitId: row.bike_unit_id,
-  }));
   const unitIds = (unitsRes.data ?? []).map((u) => (u as { id: string }).id);
-  // Reserve / backup units are off-the-books online (the ghost-bike flow
-  // parks a booking on a hidden reserve unit). Their bookings must never
-  // shrink PUBLIC availability. blockedPickupDates already scopes to
-  // unitIds, but we also drop reserve-unit rows from the payload so the
-  // returned `bookings` stays self-consistent with `unitIds` — otherwise a
-  // client slot filter can count a reserve booking against regular capacity
-  // (the same-day empty-pickup bug). Keep legacy null-unit rows (they
-  // conservatively block the whole model).
-  const publicUnitIds = new Set(unitIds);
-  const bookings = allBookings.filter(
-    (b) => !b.unitId || publicUnitIds.has(b.unitId),
-  );
-  // Same rule for manual blocks: a service block pinned to the ghost/backup
-  // reserve must never shrink PUBLIC capacity. blockedPickupDates guards
-  // internally too, but the payload has to stay self-consistent for the
-  // client-side slot filters. Whole-model blocks (unitId null) stay.
-  const publicBlocks = manualBlocks.filter(
-    (m) => !m.unitId || publicUnitIds.has(m.unitId),
+  // Raw rows -> public calendar inputs (lib/availability.ts, shared with the
+  // homepage season pill). Rows on a reserve/backup unit are dropped there so
+  // they never shrink PUBLIC availability and this payload stays
+  // self-consistent with `unitIds` for the client slot filters (the same-day
+  // empty-pickup bug); legacy null-unit rows and whole-model blocks stay.
+  const { bookings, blocks: publicBlocks } = publicCalendarInputs(
+    manualRes.data ?? [],
+    bookingsRes.data ?? [],
+    unitIds,
   );
 
   return NextResponse.json({

@@ -51,6 +51,7 @@
       "bookedUntilToday": "V servisu do dnešních {time}",
       "bookedUntilTomorrow": "V servisu do zítřejších {time}",
       "availableFrom": "Dostupné od {time}",
+      "seasonFrom": "Dostupné od {date}",
       "outOfService": "V servisu",
       "helmetsIncluded": "Helmy v ceně",
       "viewDetails": "Detaily"

@@ -6,8 +6,8 @@ import {
   SLOT_MINUTES,
   TURNAROUND_MINUTES,
 } from "@/lib/pricing";
-import { seasonFor, zagrebNow } from "@/lib/season";
-import { occupancyInterval } from "@/lib/availability";
+import { bookableSeason, seasonFor, zagrebNow } from "@/lib/season";
+import { blockedPickupDates, occupancyInterval, publicCalendarInputs } from "@/lib/availability";
 
 // Owner-editable price overrides live in the bike_price_overrides
 // table. Day rate has always been editable; weekend / week / month
@@ -237,6 +237,70 @@ function zagrebTimeParts(ms: number): {
 // earliest UTC ms timestamp at which any unit becomes free again.
 // The card uses it to render "Booked out until 11:30" instead of a
 // dead-end "All rented out" that makes visitors bounce.
+// Winter break: per model, the first day of the coming season that still has
+// a free pickup slot, so the homepage pill can say "Available from 5 Apr"
+// instead of "Available now". Same inputs (publicCalendarInputs) and engine
+// (blockedPickupDates) as the bike calendar, so the pill and the calendar
+// can never disagree. null = no free day all season. An empty object means
+// the lookup failed; the page then falls back to the season start.
+export async function getSeasonOpeningDays(): Promise<Record<string, string | null>> {
+  let supabase: ReturnType<typeof getServiceClient>;
+  try {
+    supabase = getServiceClient();
+  } catch (err) {
+    console.error("[bike-pricing] getSeasonOpeningDays (client)", err);
+    return {};
+  }
+  const season = bookableSeason();
+  const [unitsRes, bookingsRes, blocksRes] = await Promise.all([
+    supabase.from("bike_units").select("id, bike_id").eq("active", true).eq("is_backup", false),
+    supabase
+      .from("bookings")
+      .select("bike_id, bike_unit_id, date_from, date_to, pickup_time, return_time")
+      .in("status", ["confirmed", "pending"])
+      .is("returned_at", null)
+      .gte("date_to", season.startIso),
+    supabase
+      .from("blocked_dates")
+      .select("bike_id, bike_unit_id, date_from, date_to, start_time, end_time")
+      .is("booking_id", null)
+      .gte("date_to", season.startIso),
+  ]);
+  if (unitsRes.error || bookingsRes.error || blocksRes.error) {
+    console.error("[bike-pricing] getSeasonOpeningDays", unitsRes.error ?? bookingsRes.error ?? blocksRes.error);
+    return {};
+  }
+  const byBike = <T extends { bike_id: string }>(rows: T[], bikeId: string) =>
+    rows.filter((r) => r.bike_id === bikeId);
+  const now = zagrebNow();
+  const result: Record<string, string | null> = {};
+  for (const cat of CATEGORIES) {
+    const unitIds = byBike(unitsRes.data ?? [], cat.id).map((u) => u.id);
+    if (unitIds.length === 0) continue;
+    const { bookings, blocks } = publicCalendarInputs(
+      byBike(blocksRes.data ?? [], cat.id),
+      byBike(bookingsRes.data ?? [], cat.id),
+      unitIds,
+    );
+    const blocked = new Set(blockedPickupDates(bookings, blocks, unitIds, now));
+    let first: string | null = null;
+    for (let d = season.startIso; d <= season.endIso; d = nextIsoDay(d)) {
+      if (!blocked.has(d)) {
+        first = d;
+        break;
+      }
+    }
+    result[cat.id] = first;
+  }
+  return result;
+}
+
+function nextIsoDay(iso: string): string {
+  const d = new Date(`${iso}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
 export async function getAvailableNowCounts(): Promise<
   Record<
     string,

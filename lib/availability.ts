@@ -1177,6 +1177,59 @@ export type CalendarBlock = {
   unitId: string | null; // null = whole model
 };
 
+// Raw DB rows -> the PUBLIC calendar inputs for one model, exactly as
+// GET /api/availability serves them (and paints blockedPickupDates from).
+// Shared with the homepage season pill so the two can never disagree.
+// Rows parked on a backup (Ghost) unit are dropped; unassigned rows and
+// whole-model blocks stay.
+export function publicCalendarInputs(
+  blockRows: Array<{ date_from: string; date_to: string; start_time: string | null; end_time: string | null; bike_unit_id: string | null }>,
+  bookingRows: Array<{ date_from: string; date_to: string; pickup_time: string; return_time: string; bike_unit_id: string | null }>,
+  unitIds: string[],
+): {
+  bookings: CalendarBooking[];
+  blocks: Array<CalendarBlock & { effectiveAllDay: boolean }>;
+} {
+  const trimT = (t: string) => t.slice(0, 5);
+
+  // A block is "effectively all-day" when it has no time bounds
+  // (start_time + end_time both null = legacy whole-day block) OR
+  // when it runs all the way to shop close (19:00). Owner asked: if
+  // a unit is blocked until close, treat it as the whole day — the
+  // remaining hours aren't useful for a rental anyway.
+  const isEffectivelyAllDay = (
+    start: string | null,
+    end: string | null,
+  ): boolean => {
+    if (!start || !end) return true;
+    return end >= "19:00:00";
+  };
+
+  const manualBlocks = blockRows.map((row) => ({
+    from: row.date_from,
+    to: row.date_to,
+    startTime: row.start_time ? trimT(row.start_time) : null,
+    endTime: row.end_time ? trimT(row.end_time) : null,
+    unitId: row.bike_unit_id, // null = whole-model block
+    effectiveAllDay: isEffectivelyAllDay(row.start_time, row.end_time),
+  }));
+  const allBookings = bookingRows.map((row) => ({
+    from: row.date_from,
+    to: row.date_to,
+    pickupTime: trimT(row.pickup_time),
+    returnTime: trimT(row.return_time),
+    unitId: row.bike_unit_id,
+  }));
+  const publicUnitIds = new Set(unitIds);
+  const bookings = allBookings.filter(
+    (b) => !b.unitId || publicUnitIds.has(b.unitId),
+  );
+  const blocks = manualBlocks.filter(
+    (m) => !m.unitId || publicUnitIds.has(m.unitId),
+  );
+  return { bookings, blocks };
+}
+
 // Every future date on which NO pickup slot (09:00..18:30) can start a
 // same-day rental on any unit. Mirrors findFreeUnit exactly: bookings
 // block with the turnaround buffer, manual blocks without; whole-day
