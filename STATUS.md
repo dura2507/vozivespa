@@ -10,7 +10,7 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-10-31 (bookings keep all 11 languages; DB migration still to run by hand).
+Last updated: 2026-11-02 (bookings keep all 11 languages; DB migration applied on live).
 
 ## 2026-10-31: bookings keep the customer's language (all 11)
 
@@ -20,9 +20,9 @@ Last updated: 2026-10-31 (bookings keep all 11 languages; DB migration still to 
   isLocale() value, BookingRow.locale is Locale, walk-in language picker + dial codes
   (+36 hu, +421 sk, +420 cs, +351/+55 pt) and the admin language names know all 11.
 - DB: supabase/migrations/2026-10-31_booking_locale_all.sql widens bookings_locale_check.
-  It must be RUN BY HAND in the Supabase SQL editor (we don't write to the DB). Until then
-  each route retries a rejected insert as "en" (isLocaleCheckError in lib/supabase.ts), so
-  no booking is lost either way; once it has run, the fallback never fires.
+  APPLIED on live 2026-11-02 (Kristian asked Claude to run it in the Supabase SQL editor;
+  verified: constraint lists all 11, convalidated = true). The "en" retry in the routes
+  (isLocaleCheckError in lib/supabase.ts) stays as a harmless safety net.
 - Checked: tsc, production build, Komplettcheck (3 lenses: inserts/fallback, every locale
   reader, migration + admin UI) with 0 findings.
 
@@ -58,7 +58,7 @@ Previously: 2026-10-27 (rental agreement handed out per language; cancellation w
   public/docs/sickmotos-rental-agreement.pdf, run `swift scripts/split-agreement.swift`
   (it refuses to write if a page does not carry the expected language code), commit all 12.
   Known: the footer printed in his PDF says e.g. "Page 4 of 23". hu/sk/cs/pt bookings:
-  fixed 2026-10-31 (see above; needs the DB migration run by hand).
+  fixed 2026-10-31, DB migration applied 2026-11-02 (see above).
 - Wording (Kristian): FAQ cancellation "nicht erstattet" instead of "in keinem Fall
   erstattet" (all 11 languages + chatbot); agreement link label is just "Mietvertrag (PDF)".
 
@@ -151,7 +151,7 @@ Small agency note, same style as the Restaurant Neckarau mails. Everything lives
   https://rentamotozadar.com/krileo-k.png so mails never point at localhost.
 - Links: krileo.de for `de`, krileo.com otherwise, `?utm_source=rentamoto&utm_medium=email`
   or `chatbot`.
-- (Fixed 2026-10-31, migration to run by hand) Booking routes clamped the locale to 7
+- (Fixed 2026-10-31, migration applied 2026-11-02) Booking routes clamped the locale to 7
   languages, so hu/sk/cs/pt bookings got English mails (and the English credit).
 
 Previously: 2026-10-06 (Telegram group inbox via webhook).
@@ -613,8 +613,8 @@ flag flips. Do not enable online payments until these are done:
 - [ ] Admin blocks route: overnight time-bounded block falsely rejected (start>=end without
       dateFrom===dateTo check); per-unit block conflict blind to null-unit + pending bookings;
       multi-unit block POSTs fan out concurrently (TOCTOU on the same unit).
-- [x] Locale whitelist accepts 7 of 11 locales -> fixed 2026-10-31 in code; the DB migration
-      supabase/migrations/2026-10-31_booking_locale_all.sql still has to be run by hand.
+- [x] Locale whitelist accepts 7 of 11 locales -> fixed 2026-10-31 in code; DB migration
+      supabase/migrations/2026-10-31_booking_locale_all.sql applied on live 2026-11-02.
 - [ ] Telegram: group/single card edits drop the English translation block; contact/riderly
       code-span values double-escaped (tap-to-copy garbage); already-status paths sync only
       the tapped copy.
