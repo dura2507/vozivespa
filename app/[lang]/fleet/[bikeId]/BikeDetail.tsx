@@ -33,7 +33,7 @@ import {
   TURNAROUND_MINUTES,
   type ConfirmedBooking,
 } from "@/lib/pricing";
-import { bookableSeason, isoToLocalDate, zagrebNow } from "@/lib/season";
+import { calendarBounds, zagrebNow } from "@/lib/season";
 import { TOURS } from "@/lib/tours";
 import { agreementPdfPath } from "@/lib/docs";
 import SumUpCardWidget from "@/components/SumUpCardWidget";
@@ -96,12 +96,10 @@ export default function BikeDetail({
 }) {
   const tF = dict.fleet;
   // Bookable days: from today (Zadar time) or the season start, whichever is
-  // later, to the end of that season. In the winter break this is next
-  // season, so the calendar opens on April (lib/season.ts).
-  const season = bookableSeason();
-  const todayIso = zagrebNow().isoDate;
-  const firstBookable = isoToLocalDate(todayIso > season.startIso ? todayIso : season.startIso);
-  const seasonEnd = isoToLocalDate(season.endIso);
+  // later, to the end of the last open season, minus the winter break in
+  // between. In the winter break the calendar opens on April; during a
+  // season next year's season is open too (lib/season.ts).
+  const { first: firstBookable, last: seasonEnd, closed: winterBreaks } = calendarBounds();
   const tBike = dict.bikes[bike.id as keyof typeof dict.bikes];
   const dateLocale: DateFnsLocale = ({ en: enUS, de, es, it, hr, hu, sk, cs, pt: ptBR } as Record<string, DateFnsLocale>)[lang] ?? enUS;
   const [activeImage, setActiveImage] = useState(bike.image);
@@ -265,20 +263,25 @@ export default function BikeDetail({
     const amRed: Date[] = []; // morning blocked -> free from later (left red)
     const pmRed: Date[] = []; // afternoon blocked -> free until earlier (right red)
     const middleOnly: Date[] = []; // only a mid-day window free (both ends red)
-    // Zadar's today, the same cutoff as { before: firstBookable }. The
-    // browser's own date is a day ahead for visitors far east of Zadar and
-    // would drop the server's red flag on a sold-out Zadar today.
-    const todayMidnight = isoToLocalDate(zagrebNow().isoDate);
-    const futureOrToday = (d: Date) => d.getTime() >= todayMidnight.getTime();
+    // Only days the calendar can offer get a colour: from the first bookable
+    // day (Zadar's today, not the browser's, which is a day ahead for visitors
+    // far east of Zadar) to the last, minus the closed winter break. An owner
+    // walk-in or block in the winter must not paint a closed day as "booked"
+    // or "partly free"; it stays plain grey (lib/season.ts calendarBounds).
+    const { first, last, closed } = calendarBounds();
+    const paintable = (d: Date) =>
+      d.getTime() >= first.getTime() &&
+      d.getTime() <= last.getTime() &&
+      !closed.some((c) => d.getTime() >= c.from.getTime() && d.getTime() <= c.to.getTime());
 
     // Fully-out days come verbatim from the server (same engine as the submit
     // check). Never re-derived here — that's how the calendar and the
-    // multi-booking used to drift apart. Past dates are already disabled by
-    // { before: firstBookable }, so skip them.
+    // multi-booking used to drift apart. Days the calendar can't offer are
+    // disabled anyway, so skip them.
     const blockedSet = new Set(blockedDates);
     for (const iso of blockedDates) {
       const d = new Date(`${iso}T00:00:00`);
-      if (futureOrToday(d)) full.push(d);
+      if (paintable(d)) full.push(d);
     }
 
     // A day can only be PART free where a booking starts or ends — that's what
@@ -296,7 +299,7 @@ export default function BikeDetail({
         if (seen.has(iso) || blockedSet.has(iso)) continue;
         seen.add(iso);
         const d = new Date(`${iso}T00:00:00`);
-        if (!futureOrToday(d)) continue;
+        if (!paintable(d)) continue;
         // Bookable pickup slots for the day: a slot counts if some valid
         // return exists after it (a unit is free for a window starting there).
         const slots = allPickup.filter(
@@ -1199,14 +1202,16 @@ export default function BikeDetail({
                     onSelect={handleRangeSelect}
                     weekStartsOn={1}
                     numberOfMonths={isMobile ? 1 : 2}
-                    // Cap navigation to the bookable season: no past
-                    // months, no winter break, nothing past its end.
+                    // Cap navigation to the open seasons: no past months,
+                    // nothing past the last season's end; the winter break
+                    // between two open seasons is shown but disabled.
                     defaultMonth={firstBookable}
                     startMonth={firstBookable}
                     endMonth={seasonEnd}
                     disabled={[
                       { before: firstBookable },
                       { after: seasonEnd },
+                      ...winterBreaks,
                       ...bookedFullDays,
                     ]}
                     excludeDisabled

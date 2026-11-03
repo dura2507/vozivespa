@@ -14,9 +14,9 @@ export function seasonFor(iso: string): { startIso: string; endIso: string } {
   return { startIso: `${year}-${SEASON_START_MD}`, endIso: `${year}-${SEASON_END_MD}` };
 }
 
-// What the public site can be booked for right now: the running season, or
-// during the winter break the coming one. Later seasons are not open yet.
-// Once the last pickup slot of the season's final day (31.10, 18:30) has
+// The FIRST season the public site can be booked for right now: the running
+// one, or during the winter break the coming one (openSeasons() adds next
+// year's during a season). Once the last pickup slot of the season's final day (31.10, 18:30) has
 // started, nothing of this season is bookable any more, so the next one
 // opens right away instead of leaving the calendars empty until midnight.
 // ">=" on purpose: the calendars and blockedPickupDates count the 18:30 slot
@@ -31,18 +31,55 @@ export function bookableSeason(): { startIso: string; endIso: string } {
   return running;
 }
 
-// True when the entire booking window (from..to inclusive) lies inside one
-// bookable season. Used by the public booking endpoints to reject anything
-// that touches a closed day: Oct 30 to Apr 2 has both ends "in season" but
-// spans the winter, and a season after the bookable one is not open yet.
+// Every season the public site takes bookings for right now. In the winter
+// break only the coming one; during a season the running one AND the next,
+// so customers can already book next year (Kristian, 2026-11-02).
+export function openSeasons(): Array<{ startIso: string; endIso: string }> {
+  const first = bookableSeason();
+  if (zagrebNow().isoDate < first.startIso) return [first];
+  return [first, seasonFor(addDaysIso(first.endIso, 1))];
+}
+
+// True when the entire booking window (from..to inclusive) lies inside ONE
+// open season. Used by the public booking endpoints to reject anything that
+// touches a closed day: Oct 30 to Apr 2 has both ends "in season" but spans
+// the winter, and a season after the open ones is not bookable yet.
 export function isBookingInSeason(from: string, to: string): boolean {
-  const { startIso, endIso } = bookableSeason();
-  return from >= startIso && to <= endIso && from <= to;
+  return from <= to && openSeasons().some((s) => from >= s.startIso && to <= s.endIso);
 }
 
 // Local-midnight Date for an ISO day, for the calendar components.
 export function isoToLocalDate(iso: string): Date {
   return new Date(`${iso}T00:00:00`);
+}
+
+// Bounds for the public booking calendars (DayPicker): the first bookable
+// day (Zadar's today, or the season start in the winter break), the last one
+// (end of the last open season) and the closed winter break between two open
+// seasons. Same rule as isBookingInSeason.
+export function calendarBounds(): {
+  first: Date;
+  last: Date;
+  closed: Array<{ from: Date; to: Date }>;
+} {
+  const seasons = openSeasons();
+  const todayIso = zagrebNow().isoDate;
+  const firstIso = todayIso > seasons[0].startIso ? todayIso : seasons[0].startIso;
+  const closed = seasons.slice(1).map((s, i) => ({
+    from: isoToLocalDate(addDaysIso(seasons[i].endIso, 1)),
+    to: isoToLocalDate(addDaysIso(s.startIso, -1)),
+  }));
+  return {
+    first: isoToLocalDate(firstIso),
+    last: isoToLocalDate(seasons[seasons.length - 1].endIso),
+    closed,
+  };
+}
+
+function addDaysIso(iso: string, days: number): string {
+  const d = new Date(`${iso}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
 }
 
 // Current wallclock in the shop's timezone (Zagreb). All booking dates

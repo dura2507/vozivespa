@@ -23,17 +23,26 @@ counts disagree (that mismatch was the 2026-07-18 "2 out but only 1 out" bug).
 
 Every year 1 April (first pickup) to 31 October (last return). `seasonFor(iso)` = the
 season running on that day, or the next one in the winter break. `bookableSeason()` =
-`seasonFor(zagrebNow)`: what the PUBLIC site can be booked for right now (in winter the
-coming season, later seasons not open yet); it already switches to the next season once
+`seasonFor(zagrebNow)`, the FIRST open season; it already switches to the next season once
 31.10's last pickup slot (18:30, `LAST_PICKUP_MINUTES`) has started (`>=`, same moment
-`blockedPickupDates` and the calendars count it as gone), so the calendars are never empty. "Today" in both calendars is ZADAR's today (`isoToLocalDate(zagrebNow().isoDate)`),
-never the browser's date: visitors far east of Zadar are a day ahead in the evening. `isBookingInSeason(from,to)` = the whole
-window inside the bookable season (public single + group routes). Calendars (BikeDetail,
-GroupBooking) open on `max(today Zagreb, season start)` and stop at the season end.
+`blockedPickupDates` and the calendars count it as gone). `openSeasons()` = what the PUBLIC
+site takes bookings for: in the winter break only the coming season; during a season the
+running one AND next year's (Kristian 2026-11-02). `isBookingInSeason(from,to)` = the whole
+window inside ONE open season (public single + group routes; never across the winter).
+`calendarBounds()` = the calendars' DayPicker bounds: first = max(Zadar today, first season
+start), last = end of the last open season, closed = the winter break between two open
+seasons (both calendars disable it; GroupBooking uses `excludeDisabled` so a range can't
+span it). "Today" in both calendars is ZADAR's today (`isoToLocalDate(zagrebNow().isoDate)`),
+never the browser's date: visitors far east of Zadar are a day ahead in the evening.
 Season-end horizons: admin conflict-card hints use `seasonFor(dateFrom)`, the fleet
 availability hint `seasonFor(window.dateFrom)`, the admin per-unit panel and the homepage
-badge `seasonFor(today)`. Admin manual/edit bookings are NOT season-gated (owner escape
-hatch). There are no fixed season dates in the code any more; do not add new ones.
+"booked until" badge `seasonFor(today)`. Winter homepage pill: `getSeasonOpeningDays`
+(lib/bike-pricing.ts) = first free pickup day of `bookableSeason()` per model, computed with
+`publicCalendarInputs` + `blockedPickupDates`, the same inputs/engine as /api/availability.
+`blockedPickupDates` walks each row from max(row start, today) with an 800-day cap; the cap
+must stay above the longest public horizon (~580 days, two open seasons). Admin dates show
+the year when it is not this year. Admin manual/edit bookings are NOT season-gated (owner escape hatch). There are no fixed
+season dates in the code any more; do not add new ones.
 
 ## Domain model in one paragraph
 

@@ -26,7 +26,7 @@ import {
   isLateReturn,
   outsideHoursSurcharge,
 } from "@/lib/pricing";
-import { bookableSeason, isoToLocalDate, zagrebNow } from "@/lib/season";
+import { calendarBounds, isoToLocalDate, zagrebNow } from "@/lib/season";
 import { agreementPdfPath } from "@/lib/docs";
 import SumUpCardWidget from "@/components/SumUpCardWidget";
 
@@ -414,15 +414,13 @@ export default function GroupBooking({
 
   const g = dict.group;
   // Bookable days: from today (Zadar time) or the season start, whichever is
-  // later, to the end of that season. In the winter break this is next
-  // season, so the calendar opens on April (lib/season.ts). `today` is
+  // later, to the end of the last open season, minus the winter break in
+  // between. In the winter break the calendar opens on April; during a
+  // season next year's season is open too (lib/season.ts). `today` is
   // Zadar's today too: it is the day greyed out once its last slot is gone,
   // and the browser's own date is a day ahead for visitors far east of Zadar.
-  const season = bookableSeason();
-  const todayIso = zagrebNow().isoDate;
-  const today = isoToLocalDate(todayIso);
-  const firstBookable = isoToLocalDate(todayIso > season.startIso ? todayIso : season.startIso);
-  const seasonEnd = isoToLocalDate(season.endIso);
+  const today = isoToLocalDate(zagrebNow().isoDate);
+  const { first: firstBookable, last: seasonEnd, closed: winterBreaks } = calendarBounds();
   const dfLocale = DATE_FNS_LOCALES[lang] ?? enUS;
   // "1 Bike" / "3 Bikes", "1 Helm" / "3 Helme": the noun after a count follows
   // the locale's plural rules (Slavic 1 / 2-4 / 5+ forms included).
@@ -542,8 +540,12 @@ export default function GroupBooking({
               disabled={[
                 { before: firstBookable },
                 { after: seasonEnd },
+                ...winterBreaks,
                 ...(disableTodayNoSlots ? [today] : []),
               ]}
+              // A range across the winter break would only be rejected at
+              // submit: picking it starts a new range instead.
+              excludeDisabled
               min={1}
               classNames={{
                 root: "font-sans",

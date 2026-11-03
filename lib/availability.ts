@@ -1251,15 +1251,17 @@ export function blockedPickupDates(
   // a free 09:00 by definition.
   const candidates = new Set<string>([now.isoDate]);
   const addRange = (from: string, to: string) => {
-    let cur = new Date(`${from}T00:00:00`);
-    const end = new Date(`${to}T00:00:00`);
-    // Guard against reversed/garbage rows: cap the walk at 400 days.
-    for (let i = 0; cur.getTime() <= end.getTime() && i < 400; i++) {
-      const y = cur.getFullYear();
-      const m = String(cur.getMonth() + 1).padStart(2, "0");
-      const d = String(cur.getDate()).padStart(2, "0");
-      candidates.add(`${y}-${m}-${d}`);
-      cur = new Date(cur.getTime() + 86_400_000);
+    // Past days are skipped below anyway, so walk from today: a long block
+    // that started months ago must still reach the end of the calendar.
+    // Steps on ISO strings (UTC arithmetic): "+24h on local midnight" lost
+    // a day at the October clock change in a DST time zone.
+    let cur = from > now.isoDate ? from : now.isoDate;
+    // Guard against reversed/garbage rows. The cap must stay above the
+    // longest public horizon: during a season next year's season is open
+    // too, up to ~580 days ahead (lib/season.ts calendarBounds).
+    for (let i = 0; cur <= to && i < 800; i++) {
+      candidates.add(cur);
+      cur = addDaysIso(cur, 1);
     }
   };
   for (const b of bookings) addRange(b.from, b.to);

@@ -26,9 +26,22 @@ const ZAGREB_DT = new Intl.DateTimeFormat("de-DE", {
   minute: "2-digit",
   hour12: false,
 });
+const ZAGREB_DT_YEAR = new Intl.DateTimeFormat("de-DE", {
+  timeZone: "Europe/Zagreb",
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+const ZAGREB_YEAR = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Zagreb", year: "numeric" });
 function fmtDateTimeMs(ms: number): string {
-  // "05.07, 13:30"
-  return ZAGREB_DT.format(new Date(ms)).replace(",", " ·");
+  // "05.07 · 13:30"; with the year ("20.07.2028 · 10:00") when it is not this
+  // year, since customers can book next year's season during a season.
+  const d = new Date(ms);
+  const sameYear = ZAGREB_YEAR.format(d) === ZAGREB_YEAR.format(new Date());
+  return (sameYear ? ZAGREB_DT : ZAGREB_DT_YEAR).format(d).replace(",", " ·");
 }
 
 export const dynamic = "force-dynamic";

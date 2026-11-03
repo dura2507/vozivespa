@@ -2,7 +2,7 @@ import { NextResponse, after } from "next/server";
 import { getServiceClient, isLocaleCheckError, type BookingRow } from "@/lib/supabase";
 import { LOCALES } from "@/lib/i18n/config";
 import { isBookableReturnSlot, isBookablePickupSlot, parseTime, calculatePrice, outsideHoursSurcharge } from "@/lib/pricing";
-import { bookableSeason, isBookingInSeason, isPickupInPast } from "@/lib/season";
+import { isBookingInSeason, isPickupInPast } from "@/lib/season";
 import { findFreeUnits } from "@/lib/availability";
 import { getBikeWithPricing } from "@/lib/bike-pricing";
 import { sendOwnerGroupBookingTelegram } from "@/lib/telegram";
@@ -124,7 +124,7 @@ export async function POST(request: Request) {
   if (from > to) return NextResponse.json({ error: "from must be on or before to" }, { status: 400 });
   if (!isBookingInSeason(from, to)) {
     return NextResponse.json(
-      { error: `Bookings are only available within our season (${bookableSeason().startIso} to ${bookableSeason().endIso}, 1 April to 31 October every year).` },
+      { error: `Bookings are only available within our season (1 April to 31 October every year, not across the winter break).` },
       { status: 400 },
     );
   }
