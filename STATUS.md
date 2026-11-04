@@ -19,8 +19,8 @@ Last updated: 2026-11-04 (season prices live; DB migration for editing main-seas
   windows tested), PriceResult.peakDays, seasonChangesPrice / peakPriceIfDifferent for display.
 - Prices: lib/mockData.ts pricing.peak = Thomas' main-season day prices (code defaults);
   DB bike_price_overrides peak_* columns override them (supabase/migrations/
-  2026-11-03_price_overrides_peak.sql). OPEN: that migration must run before the admin's
-  "Main season" tab can SAVE; the site already works without it (select("*")).
+  2026-11-03_price_overrides_peak.sql, APPLIED live 2026-11-04, all peak_* still NULL, so
+  the code defaults apply until Thomas saves his own main-season prices in the admin).
 - Fixed on the way (own bugs, free): admin add-bike priced with HH:MM:SS times (could bill an
   extra day); billableDays counted elapsed time, so a browser in a DST zone showed a day
   more than the UTC server charged around the October clock change (now calendar days).
