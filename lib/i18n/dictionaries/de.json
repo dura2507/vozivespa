@@ -310,7 +310,9 @@
       "unlimitedKm": "Unbegrenzte Kilometer, alle Preise inklusive BASIS-Versicherung",
       "depositLine": "Kaution: {deposit} · Saison: {season}",
       "perDay": "/ Tag",
-      "fromPrefix": "ab"
+      "fromPrefix": "ab",
+      "peakLine": "Juni bis August: {price} / Tag",
+      "peakShort": "Jun.-Aug.: {price}"
     },
     "priceBox": {
       "perDay": "/ Tag",
@@ -368,7 +370,9 @@
       "selectDates": "Erst Abhol- und Rückgabedatum wählen",
       "notAvailableInWindow": "Im gewählten Zeitraum nicht verfügbar",
       "notAvailableHint": "Wähle andere Daten oder öffne die Multi-Buchung für ein alternatives Bike.",
-      "notAvailableCta": "Zur Multi-Buchung"
+      "notAvailableCta": "Zur Multi-Buchung",
+      "peakSplit": "{peak} von {n} Tagen zum Preis Juni bis August",
+      "peakAll": "Preis Juni bis August"
     },
     "form": {
       "title": "Deine Daten",

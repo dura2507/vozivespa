@@ -42,6 +42,11 @@ function fleetSummary(cats: Category[]): string {
       `  License: ${c.licenceCode}. Top speed ${c.maxSpeed}. Seats: ${c.seats}${c.experienceNote ? " (experience required)" : ""}.`,
       `  Prices: ${p.day}/day, ${p.weekend ?? "-"}/weekend, ${p.week}/week, ${p.month ?? "-"}/month.`,
     ];
+    // Main season (June to August), only when a tier costs something else.
+    const peak = (k: "day" | "weekend" | "week" | "month") => p.peak?.[k] ?? p[k];
+    if (p.peak && (["day", "weekend", "week", "month"] as const).some((k) => parseInt(peak(k), 10) !== parseInt(p[k], 10))) {
+      parts.push(`  Main season (June to August): ${peak("day")}/day, ${peak("weekend")}/weekend, ${peak("week")}/week, ${peak("month")}/month.`);
+    }
     return parts.join("\n");
   }).join("\n");
 }
@@ -190,12 +195,15 @@ PRICING — HOW TO QUOTE A PRICE (binding: every number you state MUST be correc
 - Use ONLY the exact rates from the FLEET list below (day / weekend / week / month). Never invent a rate.
 - A rental "day" = 24 hours from the pickup time, not calendar days (e.g. Mon 11:00 → Wed 11:00 = 2 days).
 - The number of DAYS alone decides which rate is allowed. Apply exactly this, no exceptions:
-  · 1-6 days: day rate × days. The week and month rates DO NOT APPLY to 1-6 days and must NOT be used, even if they would look cheaper. A 5-day or 6-day rental is day rate × days, it is NOT a week.
+  · 1-6 days: day rate × days (for a Friday pickup also apply the two weekend rules below; the lowest result wins). The week and month rates DO NOT APPLY to 1-6 days and must NOT be used, even if they would look cheaper. A 5-day or 6-day rental is day rate × days, it is NOT a week.
   · 7-29 days: the lower of (day rate × days) and (week rate × days / 7).
   · 30+ days: the lowest of (day rate × days), (week rate × days / 7), (month rate × days / 30).
-  · The weekend rate is a Friday-to-Sunday DEAL (a flat price for the whole Fri-Sun weekend), NOT a premium: on a Friday pickup returning that weekend, use it — it is CHEAPER than paying those days at the daily rate.
+  · Friday pickup returning that Sunday: the lower of (day rate × days) and the flat weekend rate. The weekend rate is a DEAL, never a premium, but Fri 10:00 to Sun 10:00 is only 2 days, so 2 × day rate can be lower.
+  · Friday pickup, 3-6 days: also compare (weekend rate × days / 3), rounded, and use the lowest. Example: Fri 10:00 to Wed 10:00 = 5 days = weekend rate × 5 / 3.
+  · Across 1 June / 1 September these two weekend formulas also use each day's own season's weekend rate (sum the per-day rates, then divide by 3, or for the flat rate by the number of days).
+- SEASONS: the normal rates apply in April, May, September and October. In the main season (1 June to 31 August) a model uses its "Main season" rates from the FLEET list (if it has none, the normal rates apply all year). Each rental day (24 h from the pickup time) costs the rate of the season that day starts in. Example: pickup 29 May 10:00, return 3 June 10:00 = 5 days = 3 days × normal day rate + 2 days × main-season day rate. For the week and month rates the same: each day costs its season's share (rate / 7 or rate / 30), then round the total. If a rental crosses 1 June or 1 September and you are not sure, give both rates and send the visitor to the booking page, which shows the exact split.
 - Rental total = per-bike total × number of bikes.
-- WEEKEND DEAL — promote it. The weekend rate is a SAVING, never a premium and never "more expensive". Whenever the visitor's dates include a weekend, or they mention Friday / Saturday / Sunday or a short 2-3 day trip, proactively point out the weekend deal and the concrete saving (e.g. "Fri-Sun on the Liberty 50 is 85 € instead of 90 € for three separate days"). If someone asks why the weekend costs more, correct them: it does not — it is a discounted flat rate.
+- WEEKEND DEAL — promote it. The weekend rate is a SAVING, never a premium and never "more expensive". Whenever the visitor's dates include a weekend, or they mention Friday / Saturday / Sunday or a short 2-3 day trip, proactively point out the weekend deal and the concrete saving (the saving for a 3-day Fri-Sun = 3 × that season's day rate minus that season's weekend rate, both taken from FLEET; never use a fixed example amount). If someone asks why the weekend costs more, correct them: it does not — it is a discounted flat rate.
 - Then ALWAYS break it down in EUROS (never leave "20%" without the euro amount):
   · Rental total: X €
   · Reservation now (20% to hold the booking): 0.20 × X, rounded €

@@ -157,7 +157,7 @@ The business rules the calendar must obey. Status: [live] already coded, [NEW] n
 | `isWindowFree` | lib/pricing.ts:191 | >=1 unit free for arbitrary window (outside-hours/trim) | all-incl-null OK |
 | `validPickupSlots` / `validReturnSlots` | lib/pricing.ts:210 / :232 | Slots leaving a bookable window | all-incl-null OK |
 | `fullyBookedDates` | lib/pricing.ts:252 | Legacy per-unit whole-day coverage | pinned-only, DEAD CODE (`if(!b.unitId)continue`). Delete or fix before reuse |
-| `billableDays` / `calculatePrice` | lib/pricing.ts:331 / :383 | Billable 24h units; cheapest applicable tier | n/a |
+| `billableDays` / `calculatePrice` | lib/pricing.ts | Billable 24h units; cheapest applicable tier. Season split (2026-11-03): billable day i (pickup date + i) costs its own season's tier rate, main season 1.6.-31.8. (`isPeakDay`, `pricing.peak`); rates are summed per day BEFORE dividing by the tier divisor, so a rental inside one season prices exactly as before | n/a |
 | Constants `TURNAROUND_MINUTES`, `SHOP_OPEN/CLOSE_HOUR`, `SLOT_MINUTES`, `GRACE_MINUTES`, `LAST_PICKUP_MINUTES` | lib/pricing.ts | Shop hours 09-19, 30-min slots, 30-min turnaround, 18:30 last pickup | n/a |
 
 **Adjacent demand surfaces (part of the engine, other files):**

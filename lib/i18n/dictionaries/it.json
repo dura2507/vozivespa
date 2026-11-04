@@ -310,7 +310,9 @@
       "unlimitedKm": "Km illimitati, tutti i prezzi includono l'assicurazione BASE",
       "depositLine": "Cauzione: {deposit} · Stagione: {season}",
       "perDay": "/ giorno",
-      "fromPrefix": "da"
+      "fromPrefix": "da",
+      "peakLine": "Da giugno ad agosto: {price} / giorno",
+      "peakShort": "Giu-ago: {price}"
     },
     "priceBox": {
       "perDay": "/ giorno",
@@ -368,7 +370,9 @@
       "selectDates": "Scegli prima data ritiro e riconsegna",
       "notAvailableInWindow": "Non disponibile in questo periodo",
       "notAvailableHint": "Scegli altre date o apri la prenotazione multipla per un'altra moto.",
-      "notAvailableCta": "Apri prenotazione multipla"
+      "notAvailableCta": "Apri prenotazione multipla",
+      "peakSplit": "{peak} su {n} giorni al prezzo da giugno ad agosto",
+      "peakAll": "Prezzo da giugno ad agosto"
     },
     "form": {
       "title": "I tuoi dati",

@@ -21,9 +21,15 @@ type OverrideRow = {
   weekend_price: string | null;
   week_price: string | null;
   month_price: string | null;
+  // Main-season (June to August) tiers, 2026-11-03 migration. Read with
+  // select("*") so the site keeps its prices before that migration has run.
+  peak_day_price?: string | null;
+  peak_weekend_price?: string | null;
+  peak_week_price?: string | null;
+  peak_month_price?: string | null;
 };
 
-type OverrideMap = Map<string, Partial<Record<TierKey, string>>>;
+type OverrideMap = Map<string, Partial<Record<TierKey, string>> & { peak?: Partial<Record<TierKey, string>> }>;
 
 type TierKey = "day" | "weekend" | "week" | "month";
 
@@ -39,7 +45,7 @@ async function loadOverrides(): Promise<OverrideMap> {
   }
   const { data, error } = await supabase
     .from("bike_price_overrides")
-    .select("bike_id, day_price, weekend_price, week_price, month_price");
+    .select("*");
   if (error) {
     // Don't take the whole site down for a pricing read - fall back to
     // mockData and log so it surfaces in Vercel logs.
@@ -48,11 +54,17 @@ async function loadOverrides(): Promise<OverrideMap> {
   }
   const out: OverrideMap = new Map();
   for (const r of (data ?? []) as OverrideRow[]) {
-    const tiers: Partial<Record<TierKey, string>> = {};
+    const tiers: Partial<Record<TierKey, string>> & { peak?: Partial<Record<TierKey, string>> } = {};
     if (r.day_price) tiers.day = r.day_price;
     if (r.weekend_price) tiers.weekend = r.weekend_price;
     if (r.week_price) tiers.week = r.week_price;
     if (r.month_price) tiers.month = r.month_price;
+    const peak: Partial<Record<TierKey, string>> = {};
+    if (r.peak_day_price) peak.day = r.peak_day_price;
+    if (r.peak_weekend_price) peak.weekend = r.peak_weekend_price;
+    if (r.peak_week_price) peak.week = r.peak_week_price;
+    if (r.peak_month_price) peak.month = r.peak_month_price;
+    if (Object.keys(peak).length > 0) tiers.peak = peak;
     out.set(r.bike_id, tiers);
   }
   return out;
@@ -60,19 +72,24 @@ async function loadOverrides(): Promise<OverrideMap> {
 
 function applyOverride(
   cat: Category,
-  tiers: Partial<Record<TierKey, string>> | undefined,
+  tiers: (Partial<Record<TierKey, string>> & { peak?: Partial<Record<TierKey, string>> }) | undefined,
 ): Category {
-  if (!tiers) return cat;
-  const dayPrice = tiers.day ?? cat.pricing.day;
+  const dayPrice = tiers?.day ?? cat.pricing.day;
+  const peak = { ...cat.pricing.peak, ...tiers?.peak };
+  // Headline price + the /day on the card show the cheaper season's day
+  // price, marked "from" when the main season (June to August) differs.
+  const offDay = parseEuro(dayPrice);
+  const peakDay = peak.day ? parseEuro(peak.day) : offDay;
   return {
     ...cat,
-    // Headline price + the /day on the card both follow the day tier.
-    price: dayPrice,
+    price: peakDay > 0 && peakDay < offDay ? peak.day! : dayPrice,
+    priceFrom: cat.priceFrom || (peakDay > 0 && peakDay !== offDay),
     pricing: {
       day: dayPrice,
-      weekend: tiers.weekend ?? cat.pricing.weekend,
-      week: tiers.week ?? cat.pricing.week,
-      month: tiers.month ?? cat.pricing.month,
+      weekend: tiers?.weekend ?? cat.pricing.weekend,
+      week: tiers?.week ?? cat.pricing.week,
+      month: tiers?.month ?? cat.pricing.month,
+      ...(Object.keys(peak).length > 0 ? { peak } : {}),
     },
   };
 }
@@ -104,6 +121,13 @@ export type PricingRow = {
   weekPrice: number;
   monthPrice: number;
   hasOverride: Record<TierKey, boolean>;
+  // Main season (June to August): the price that applies (own value, or the
+  // off-season one when none is set) and whether it is the owner's own.
+  peak: Record<TierKey, number>;
+  hasPeakOverride: Record<TierKey, boolean>;
+  // Preset main-season price from lib/mockData.ts (Thomas' day prices), or
+  // null: then a tier without an own value follows the off-season price.
+  peakDefault: Record<TierKey, number | null>;
 };
 
 function parseEuro(s: string): number {
@@ -115,6 +139,8 @@ export async function listPricingRows(): Promise<PricingRow[]> {
   const overrides = await loadOverrides();
   return CATEGORIES.map((cat) => {
     const tiers = overrides.get(cat.id) ?? {};
+    const effective = applyOverride(cat, overrides.get(cat.id)).pricing;
+    const peakOf = (k: TierKey) => parseEuro(effective.peak?.[k] ?? effective[k]);
     return {
       bikeId: cat.id,
       bikeName: cat.shortName ?? cat.model,
@@ -127,6 +153,19 @@ export async function listPricingRows(): Promise<PricingRow[]> {
         weekend: !!tiers.weekend,
         week: !!tiers.week,
         month: !!tiers.month,
+      },
+      peak: { day: peakOf("day"), weekend: peakOf("weekend"), week: peakOf("week"), month: peakOf("month") },
+      hasPeakOverride: {
+        day: !!tiers.peak?.day,
+        weekend: !!tiers.peak?.weekend,
+        week: !!tiers.peak?.week,
+        month: !!tiers.peak?.month,
+      },
+      peakDefault: {
+        day: cat.pricing.peak?.day ? parseEuro(cat.pricing.peak.day) : null,
+        weekend: cat.pricing.peak?.weekend ? parseEuro(cat.pricing.peak.weekend) : null,
+        week: cat.pricing.peak?.week ? parseEuro(cat.pricing.peak.week) : null,
+        month: cat.pricing.peak?.month ? parseEuro(cat.pricing.peak.month) : null,
       },
     };
   });
@@ -608,7 +647,18 @@ export async function getAvailableNowCounts(): Promise<
 // slot is written back as null so it reverts to the mockData default.
 export async function setPriceOverrides(
   bikeId: string,
-  prices: { day?: number | null; weekend?: number | null; week?: number | null; month?: number | null },
+  prices: {
+    day?: number | null;
+    weekend?: number | null;
+    week?: number | null;
+    month?: number | null;
+    // Main season (June to August). Only sent by the admin's main-season tab,
+    // so saving the off-season prices never touches these columns.
+    peakDay?: number | null;
+    peakWeekend?: number | null;
+    peakWeek?: number | null;
+    peakMonth?: number | null;
+  },
 ): Promise<void> {
   const supabase = getServiceClient();
   const row: Record<string, string | null> = {
@@ -630,6 +680,10 @@ export async function setPriceOverrides(
   set("weekend_price", prices.weekend);
   set("week_price", prices.week);
   set("month_price", prices.month);
+  set("peak_day_price", prices.peakDay);
+  set("peak_weekend_price", prices.peakWeekend);
+  set("peak_week_price", prices.peakWeek);
+  set("peak_month_price", prices.peakMonth);
 
   const { error } = await supabase
     .from("bike_price_overrides")

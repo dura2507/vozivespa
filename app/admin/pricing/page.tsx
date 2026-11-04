@@ -13,7 +13,8 @@ export default async function AdminPricingPage() {
       <p className="text-sm text-muted mb-8 max-w-prose">
         Edit any tier and click Save. The new price goes live on the next page
         load (home, info, fleet detail, booking flow). Day = single-day rate;
-        Weekend = Fri-Sun flat; Week = 7-day flat; Month = 30-day flat.
+        Weekend = Fri-Sun flat; Week = 7-day flat; Month = 30-day flat. Use the
+        tabs for the off-season and the main season (June to August).
       </p>
       <PricingManager initial={rows} />
     </div>

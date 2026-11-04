@@ -27,7 +27,39 @@ export type PriceResult = {
   totalPrice: number;
   appliedTier: AppliedTier;
   billableDays: number;
+  // How many of the billable days fall in the main season (June to August).
+  peakDays: number;
 };
+
+// Main season (Thomas, 2026-10-26): June to August every year. Each billable
+// day of a rental costs its own season's share of the applied tier.
+export const PEAK_START_MD = "06-01";
+export const PEAK_END_MD = "08-31";
+export function isPeakDay(iso: string): boolean {
+  const md = iso.slice(5);
+  return md >= PEAK_START_MD && md <= PEAK_END_MD;
+}
+
+// A tier's main-season price when it differs from the off-season one, else
+// null (then there is nothing extra to show for that tier).
+export function peakPriceIfDifferent(
+  pricing: PricingTiers,
+  tier: "day" | "weekend" | "week" | "month",
+): string | null {
+  const v = pricing.peak?.[tier];
+  if (!v) return null;
+  const peak = parseInt(v, 10);
+  return Number.isFinite(peak) && peak > 0 && peak !== parseInt(pricing[tier], 10) ? v : null;
+}
+
+// True when the season split changed this price: the rental reaches into
+// June to August and the tier it was priced with costs something else there
+// (a week rate that is the same in both seasons changes nothing).
+export function seasonChangesPrice(pricing: PricingTiers, res: PriceResult): boolean {
+  const t = res.appliedTier;
+  const tier = t.startsWith("weekend") ? "weekend" : t.startsWith("week") ? "week" : t.startsWith("month") ? "month" : "day";
+  return res.peakDays > 0 && peakPriceIfDifferent(pricing, tier) !== null;
+}
 
 export const TIER_LABEL: Record<AppliedTier, string> = {
   day: "Daily rate",
@@ -363,11 +395,15 @@ export function billableDays(
   const closeMin = SHOP_CLOSE_HOUR * 60;
   const pMin = Math.max(parseTime(pickupTime) ?? openMin, openMin);
   const rMin = Math.min(parseTime(returnTime) ?? closeMin, closeMin);
-  const pickup = new Date(fromDate);
-  pickup.setHours(Math.floor(pMin / 60), pMin % 60, 0, 0);
-  const ret = new Date(toDate);
-  ret.setHours(Math.floor(rMin / 60), rMin % 60, 0, 0);
-  const diffMin = (ret.getTime() - pickup.getTime()) / 60_000 - GRACE_MINUTES;
+  // Calendar days between the two dates, not elapsed real time: across the
+  // October clock change a browser in a DST time zone measured one hour more
+  // than the UTC server and could show a day more than is charged.
+  const dayDiff = Math.round(
+    (Date.UTC(toDate.getFullYear(), toDate.getMonth(), toDate.getDate()) -
+      Date.UTC(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate())) /
+      86_400_000,
+  );
+  const diffMin = dayDiff * 24 * 60 + rMin - pMin - GRACE_MINUTES;
   if (diffMin <= 0) return 1;
   return Math.max(1, Math.ceil(diffMin / (24 * 60)));
 }
@@ -382,6 +418,28 @@ function parsePricing(p: PricingTiers) {
     week: parseInt(p.week, 10) || 0,
     month: parseInt(p.month, 10) || 0,
   };
+}
+
+// Main-season tiers: each one falls back to the off-season tier when it is
+// not set (or not a valid price).
+function parsePeak(p: PricingTiers, off: NonNullable<ReturnType<typeof parsePricing>>) {
+  const tier = (v: string | undefined, fallback: number) => {
+    const n = v ? parseInt(v, 10) : NaN;
+    return Number.isFinite(n) && n > 0 ? n : fallback;
+  };
+  return {
+    day: tier(p.peak?.day, off.day),
+    weekend: tier(p.peak?.weekend, off.weekend),
+    week: tier(p.peak?.week, off.week),
+    month: tier(p.peak?.month, off.month),
+  };
+}
+
+// ISO day (YYYY-MM-DD) of a local-midnight Date plus `n` days, stepped on the
+// calendar date so a clock change can't skip or repeat a day.
+function localIsoPlusDays(d: Date, n: number): string {
+  const x = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate() + n));
+  return x.toISOString().slice(0, 10);
 }
 
 // Cheapest applicable tier for the given window.
@@ -410,11 +468,22 @@ export function calculatePrice(
 ): PriceResult | null {
   const p = parsePricing(pricing);
   if (!p) return null;
+  const pk = parsePeak(pricing, p);
 
   const days = billableDays(fromDate, toDate, pickupTime, returnTime);
 
+  // Season split (Kristian/Thomas, 2026-10-26): billable day i is the 24h
+  // that starts on the pickup date + i, and costs its own season's share of
+  // the applied tier. Summing the tier RATES per day before dividing keeps a
+  // rental inside one season priced exactly as before (e.g. a 10-day week-mix
+  // stays round(week * 10 / 7)).
+  let peakDays = 0;
+  for (let i = 0; i < days; i++) if (isPeakDay(localIsoPlusDays(fromDate, i))) peakDays++;
+  const offDays = days - peakDays;
+  const rateSum = (k: "day" | "weekend" | "week" | "month") => offDays * p[k] + peakDays * pk[k];
+
   type Candidate = { price: number; tier: AppliedTier };
-  const candidates: Candidate[] = [{ price: p.day * days, tier: "day" }];
+  const candidates: Candidate[] = [{ price: rateSum("day"), tier: "day" }];
 
   const isFriPickup = fromDate.getDay() === 5;
   const isSunReturn = toDate.getDay() === 0;
@@ -432,11 +501,13 @@ export function calculatePrice(
     const isSameWeekendReturn =
       isSunReturn && calendarDaysBetween(sundayOfPickupWeek, toDate) === 0;
     if (isSameWeekendReturn) {
-      candidates.push({ price: p.weekend, tier: "weekend" });
+      // Flat weekend price; across the season boundary each day pays its
+      // season's share of it.
+      candidates.push({ price: Math.round(rateSum("weekend") / days), tier: "weekend" });
     }
     if (days >= 3 && days <= 6) {
       candidates.push({
-        price: Math.round((p.weekend * days) / 3),
+        price: Math.round(rateSum("weekend") / 3),
         tier: "weekend-mix",
       });
     }
@@ -449,7 +520,7 @@ export function calculatePrice(
   // applying for the full duration up to the month threshold.
   if (p.week && days >= 7) {
     candidates.push({
-      price: Math.round((p.week * days) / 7),
+      price: Math.round(rateSum("week") / 7),
       tier: days === 7 || days % 7 === 0 ? "week" : "week-mix",
     });
   }
@@ -457,11 +528,11 @@ export function calculatePrice(
   // Same model for month tier — 30+ days scale pro-rata from month_rate.
   if (p.month && days >= 30) {
     candidates.push({
-      price: Math.round((p.month * days) / 30),
+      price: Math.round(rateSum("month") / 30),
       tier: days === 30 || days % 30 === 0 ? "month" : "month-mix",
     });
   }
 
   const best = candidates.reduce((a, b) => (b.price < a.price ? b : a));
-  return { totalPrice: best.price, appliedTier: best.tier, billableDays: days };
+  return { totalPrice: best.price, appliedTier: best.tier, billableDays: days, peakDays };
 }

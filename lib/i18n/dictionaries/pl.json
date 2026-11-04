@@ -310,7 +310,9 @@
       "unlimitedKm": "Bez limitu km, wszystkie ceny zawierają ubezpieczenie PODSTAWOWE",
       "depositLine": "Kaucja: {deposit} · Sezon: {season}",
       "perDay": "/ dzień",
-      "fromPrefix": "od"
+      "fromPrefix": "od",
+      "peakLine": "Od czerwca do sierpnia: {price} / dzień",
+      "peakShort": "Cze-sie: {price}"
     },
     "priceBox": {
       "perDay": "/ dzień",
@@ -368,7 +370,9 @@
       "selectDates": "Najpierw wybierz daty odbioru i zwrotu",
       "notAvailableInWindow": "Niedostępne w wybranym okresie",
       "notAvailableHint": "Wybierz inne daty lub otwórz rezerwację grupową dla innego motoru.",
-      "notAvailableCta": "Otwórz rezerwację grupową"
+      "notAvailableCta": "Otwórz rezerwację grupową",
+      "peakSplit": "{peak} z {n} dni w cenie od czerwca do sierpnia",
+      "peakAll": "Cena od czerwca do sierpnia"
     },
     "form": {
       "title": "Twoje dane",

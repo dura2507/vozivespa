@@ -10,7 +10,22 @@ Two things to know about how continuity works here:
 - **No secrets in this file, ever** (SumUp keys, Telegram bot tokens, chat ids stay
   in Vercel env / local only).
 
-Last updated: 2026-11-02 (billing agreement for the next-season features).
+Last updated: 2026-11-04 (season prices live; DB migration for editing main-season prices pending).
+
+## 2026-11-04: season prices (main season June to August)
+
+- lib/pricing.ts: isPeakDay (1.6.-31.8.), calculatePrice sums each billable day's own season
+  tier rate before dividing (identical to before for a rental inside one season: 98,820
+  windows tested), PriceResult.peakDays, seasonChangesPrice / peakPriceIfDifferent for display.
+- Prices: lib/mockData.ts pricing.peak = Thomas' main-season day prices (code defaults);
+  DB bike_price_overrides peak_* columns override them (supabase/migrations/
+  2026-11-03_price_overrides_peak.sql). OPEN: that migration must run before the admin's
+  "Main season" tab can SAVE; the site already works without it (select("*")).
+- Fixed on the way (own bugs, free): admin add-bike priced with HH:MM:SS times (could bill an
+  extra day); billableDays counted elapsed time, so a browser in a DST zone showed a day
+  more than the UTC server charged around the October clock change (now calendar days).
+
+Previously: 2026-11-02 (billing agreement for the next-season features).
 
 ## 2026-11-02: billing agreement with Kristian (next-season features)
 
@@ -41,7 +56,7 @@ Last updated: 2026-11-02 (billing agreement for the next-season features).
 |---|---|---|---|
 | Vorbuchen 2027 | Season is now a yearly rule (1.4.-31.10.), bookable all year for the running or coming season, never across the winter; both calendars open on the first bookable day; server checks, admin hints and chatbot follow the same rule; homepage pills say "Available from 01.04" in the winter break instead of "Available now" (11 languages); 3 check rounds on the calendar (round 1: 3 bugs incl. wrong day for visitors in Asia/Australia, round 2: 1 bug, round 3 clean) + 1 on the pills; live-tested single, group and mobile | real time 2026-11-02 18:46-19:40 (~1 h incl. all checks and live tests) + pills ~20 min; developer-equivalent ca. 4,5-5,5 h | suggestion for the whole Vorbuchen package incl. the row below: 350 EUR (developer-equivalent ca. 8-9 h, market value ~550 EUR); or the thank-you discount |
 | Vorbuchen: winter pill + next year during the season | Homepage pills in the winter break say "Available from <first free day>" per bike (same engine as the calendar, month names per language, 11 languages) instead of "Available now"; during a season the running AND next year's season are bookable, the winter break in between is closed in both calendars and on the server | real time 2026-11-02 19:45-20:45 + 2026-11-03 ~11:00-11:30 (~1,5 h incl. 5 check rounds: pill 2, next year 3; fixed on the way: long blocks only walked 400 days, a day lost at the October clock change in DST time zones, winter days painted as booked, admin dates without year); developer-equivalent ca. 3-4 h | part of Vorbuchen, decide at end |
-| Saisonpreise | (to fill) | | yes |
+| Saisonpreise | Main season 1.6.-31.8. with its own prices (Thomas' day prices preset: Liberty 50 30, Topcase 39, Liberty 125 55, Duke 125 55, Duke 390 75; Beta 55 all year); each rental day costs its own season's rate, so a rental across 1 June / 1 September is split per day; admin tab Off-season / Main season with all four tiers; bike page, group page, info page and chatbot show both seasons; 11 languages; 3 check rounds (round 1: 9 issues, round 2: 4, round 3 clean) | real time 2026-11-03 11:38-12:25 + 2026-11-04 15:51-17:35 (~2,5 h incl. checks); developer-equivalent ca. 8-10 h | yes; suggestion 400 EUR (market ~600 EUR) |
 | Erfahrungsnachweis | (to fill) | | yes |
 
 Previously: 2026-11-02 (bookings keep all 11 languages; DB migration applied on live).

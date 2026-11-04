@@ -76,11 +76,13 @@ export async function POST(
 
   const bike = await getBikeWithPricing(bikeId);
   if (!bike) return NextResponse.json({ error: "Unknown bike" }, { status: 404 });
+  // DB times come as HH:MM:SS; the price engine reads HH:MM (raw values fell
+  // back to 09:00-19:00 and could bill an extra day).
   const price = calculatePrice(
     new Date(`${booking.date_from}T00:00:00`),
     new Date(`${booking.date_to}T00:00:00`),
-    booking.pickup_time,
-    booking.return_time,
+    booking.pickup_time.slice(0, 5),
+    booking.return_time.slice(0, 5),
     bike.pricing,
   );
   if (!price) return NextResponse.json({ error: "Could not price this bike" }, { status: 400 });

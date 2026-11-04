@@ -310,7 +310,9 @@
       "unlimitedKm": "Neograničeni km, sve cijene uključuju OSNOVNO osiguranje",
       "depositLine": "Polog: {deposit} · Sezona: {season}",
       "perDay": "/ dan",
-      "fromPrefix": "od"
+      "fromPrefix": "od",
+      "peakLine": "Od lipnja do kolovoza: {price} / dan",
+      "peakShort": "Lip.-kol.: {price}"
     },
     "tierLabel": {
       "day": "Dnevna cijena",
@@ -368,7 +370,9 @@
       "selectDates": "Prvo odaberi datum preuzimanja i povrata",
       "notAvailableInWindow": "Nije dostupno u odabranom razdoblju",
       "notAvailableHint": "Odaberi druge datume ili otvori grupnu rezervaciju za drugi motor.",
-      "notAvailableCta": "Otvori grupnu rezervaciju"
+      "notAvailableCta": "Otvori grupnu rezervaciju",
+      "peakSplit": "{peak} od {n} dana po cijeni od lipnja do kolovoza",
+      "peakAll": "Cijena od lipnja do kolovoza"
     },
     "form": {
       "title": "Tvoji podaci",

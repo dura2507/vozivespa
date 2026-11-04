@@ -310,7 +310,9 @@
       "unlimitedKm": "Neomezené km, všechny ceny zahrnují ZÁKLADNÍ pojištění",
       "depositLine": "Kauce: {deposit} · Sezóna: {season}",
       "perDay": "/ den",
-      "fromPrefix": "od"
+      "fromPrefix": "od",
+      "peakLine": "Od června do srpna: {price} / den",
+      "peakShort": "Červen-srpen: {price}"
     },
     "priceBox": {
       "perDay": "/ den",
@@ -368,7 +370,9 @@
       "selectDates": "Nejprve vyber datum vyzvednutí a vrácení",
       "notAvailableInWindow": "Ve zvoleném období není dostupné",
       "notAvailableHint": "Vyber jiná data nebo otevři multi-rezervaci pro jiný motor.",
-      "notAvailableCta": "Otevřít multi-rezervaci"
+      "notAvailableCta": "Otevřít multi-rezervaci",
+      "peakSplit": "{peak} z {n} dní za cenu od června do srpna",
+      "peakAll": "Cena od června do srpna"
     },
     "form": {
       "title": "Tvoje údaje",

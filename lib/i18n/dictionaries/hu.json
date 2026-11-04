@@ -38,7 +38,7 @@
     "fleet": {
       "eyebrow": "Válaszd ki a járgányod",
       "title": "A flottánk",
-      "fromPrefix": "ettől",
+      "fromPrefix": "min.",
       "topSpeed": "Végsebesség",
       "experienceRequired": "Tapasztalat szükséges",
       "bookNow": "Foglalj most",
@@ -310,7 +310,9 @@
       "unlimitedKm": "Korlátlan km, minden ár tartalmazza az ALAPbiztosítást",
       "depositLine": "Kaució: {deposit} · Szezon: {season}",
       "perDay": "/ nap",
-      "fromPrefix": "ettől"
+      "fromPrefix": "min.",
+      "peakLine": "Júniustól augusztusig: {price} / nap",
+      "peakShort": "Jún.-aug.: {price}"
     },
     "priceBox": {
       "perDay": "/ nap",
@@ -368,7 +370,9 @@
       "selectDates": "Először válaszd ki az átvételi és visszaadási dátumokat",
       "notAvailableInWindow": "A kiválasztott időszakban nem elérhető",
       "notAvailableHint": "Válassz másik dátumot vagy nyisd meg a többes foglalást másik motorért.",
-      "notAvailableCta": "Többes foglalás megnyitása"
+      "notAvailableCta": "Többes foglalás megnyitása",
+      "peakSplit": "{n} napból {peak} nap június-augusztusi áron",
+      "peakAll": "Június-augusztusi ár"
     },
     "form": {
       "title": "Az adataid",

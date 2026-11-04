@@ -31,6 +31,8 @@ import {
   isLateReturn,
   outsideHoursSurcharge,
   TURNAROUND_MINUTES,
+  peakPriceIfDifferent,
+  seasonChangesPrice,
   type ConfirmedBooking,
 } from "@/lib/pricing";
 import { calendarBounds, zagrebNow } from "@/lib/season";
@@ -791,11 +793,12 @@ export default function BikeDetail({
     { label: tF.specs.year, value: bike.year },
   ];
 
-  const tiers: { label: string; sub: string; price: string }[] = [
-    { label: tF.pricing.daily, sub: tF.pricing.dailySub, price: bike.pricing.day },
-    { label: tF.pricing.weekend, sub: tF.pricing.weekendSub, price: bike.pricing.weekend },
-    { label: tF.pricing.week, sub: tF.pricing.weekSub, price: bike.pricing.week },
-    { label: tF.pricing.month, sub: tF.pricing.monthSub, price: bike.pricing.month },
+  // `peak` = the June to August price, only when it differs.
+  const tiers: { label: string; sub: string; price: string; peak: string | null }[] = [
+    { label: tF.pricing.daily, sub: tF.pricing.dailySub, price: bike.pricing.day, peak: peakPriceIfDifferent(bike.pricing, "day") },
+    { label: tF.pricing.weekend, sub: tF.pricing.weekendSub, price: bike.pricing.weekend, peak: peakPriceIfDifferent(bike.pricing, "weekend") },
+    { label: tF.pricing.week, sub: tF.pricing.weekSub, price: bike.pricing.week, peak: peakPriceIfDifferent(bike.pricing, "week") },
+    { label: tF.pricing.month, sub: tF.pricing.monthSub, price: bike.pricing.month, peak: peakPriceIfDifferent(bike.pricing, "month") },
   ];
 
   const inputClass =
@@ -894,7 +897,7 @@ export default function BikeDetail({
 
               <div className="bg-ink text-white p-6 mb-6">
                 <div className="flex items-baseline gap-2 mb-1">
-                  {bike.priceFrom && (
+                  {bike.priceFrom && bike.price === bike.pricing.day && (
                     <span className="text-white/50 text-xs tracking-widest uppercase mr-1">
                       {tF.priceBox.perDay.includes("from") ? "" : tF.pricing.fromPrefix}
                     </span>
@@ -904,6 +907,12 @@ export default function BikeDetail({
                   </span>
                   <span className="text-white/50 text-sm">{tF.priceBox.perDay}</span>
                 </div>
+                {/* Main season (June to August) costs more on most models. */}
+                {peakPriceIfDifferent(bike.pricing, "day") && (
+                  <p className="text-white text-sm font-semibold mb-1">
+                    {tF.pricing.peakLine.replace("{price}", peakPriceIfDifferent(bike.pricing, "day")!)}
+                  </p>
+                )}
                 <p className="text-white/60 text-xs tracking-wider uppercase">
                   {tF.priceBox.unlimitedLine.replace("{deposit}", BRAND.deposit)}
                 </p>
@@ -1029,6 +1038,11 @@ export default function BikeDetail({
                   <p className="font-barlow font-black text-3xl md:text-4xl text-red leading-none">
                     {t.price}
                   </p>
+                  {t.peak && (
+                    <p className="text-xs text-white/70 font-semibold mt-2">
+                      {tF.pricing.peakShort.replace("{price}", t.peak)}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
@@ -1418,6 +1432,16 @@ export default function BikeDetail({
                             {appliedTier && appliedTier !== "day" && (
                               <p className="text-[10px] tracking-[0.15em] uppercase text-muted font-bold mt-1">
                                 {tF.tierLabel[appliedTier]}
+                              </p>
+                            )}
+                            {/* Which of the days are charged at the June to August price. */}
+                            {priceResult && seasonChangesPrice(bike.pricing, priceResult) && (
+                              <p className="text-[10px] tracking-[0.15em] uppercase text-muted font-bold mt-1">
+                                {priceResult.peakDays === priceResult.billableDays
+                                  ? tF.calendar.peakAll
+                                  : tF.calendar.peakSplit
+                                      .replace("{peak}", String(priceResult.peakDays))
+                                      .replace("{n}", String(priceResult.billableDays))}
                               </p>
                             )}
                           </div>

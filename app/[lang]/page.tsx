@@ -106,10 +106,11 @@ export default async function HomePage({
   };
 
   // Hero "from XX€" label tracks the cheapest day price across the
-  // current fleet (mockData defaults + admin overrides), so a price
-  // change in /admin/pricing flows through automatically.
+  // current fleet (mockData defaults + admin overrides) and both seasons
+  // (cat.price is the cheaper season's day price), so a price change in
+  // /admin/pricing flows through automatically.
   const cheapestDayPrice = CATEGORIES.reduce<number>((min, cat) => {
-    const n = parseInt(cat.pricing.day.replace(/[^\d]/g, ""), 10);
+    const n = parseInt(String(cat.price).replace(/[^\d]/g, ""), 10);
     return Number.isFinite(n) && n > 0 && n < min ? n : min;
   }, Number.POSITIVE_INFINITY);
   const fromPriceLabel = Number.isFinite(cheapestDayPrice) ? `${cheapestDayPrice}€` : "35€";

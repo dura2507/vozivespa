@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getCategoriesWithPricing } from "@/lib/bike-pricing";
+import { peakPriceIfDifferent } from "@/lib/pricing";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 
@@ -133,9 +134,16 @@ export default async function InfoPage({
                   </div>
                   <div className="bg-sand px-4 py-3 flex items-center justify-between">
                     <p className="text-xs text-muted">{dict.fleet.pricing.daily}</p>
-                    <p className="font-barlow font-black text-ink text-2xl">
-                      {cat.price}<span className="text-sm text-muted font-normal">{cat.priceUnit}</span>
-                    </p>
+                    <div className="text-right">
+                      <p className="font-barlow font-black text-ink text-2xl">
+                        {cat.pricing.day}<span className="text-sm text-muted font-normal">{cat.priceUnit}</span>
+                      </p>
+                      {peakPriceIfDifferent(cat.pricing, "day") && (
+                        <p className="text-xs text-muted">
+                          {dict.fleet.pricing.peakShort.replace("{price}", peakPriceIfDifferent(cat.pricing, "day")!)}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

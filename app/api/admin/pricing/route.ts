@@ -6,7 +6,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // POST /api/admin/pricing
-// Body: { bikeId, dayPrice?, weekendPrice?, weekPrice?, monthPrice? }
+// Body: { bikeId, dayPrice?, weekendPrice?, weekPrice?, monthPrice?,
+//         peakDayPrice?, peakWeekendPrice?, peakWeekPrice?, peakMonthPrice? }
+// (peak* = main season, June to August)
 // All tier prices are optional bare euro integers (no currency suffix).
 // Pass `null` in any slot to clear the override and fall back to the
 // mockData default for that tier. Owner-only — gated by middleware.
@@ -17,6 +19,10 @@ export async function POST(request: Request) {
     weekendPrice?: unknown;
     weekPrice?: unknown;
     monthPrice?: unknown;
+    peakDayPrice?: unknown;
+    peakWeekendPrice?: unknown;
+    peakWeekPrice?: unknown;
+    peakMonthPrice?: unknown;
   };
   try {
     body = await request.json();
@@ -45,6 +51,10 @@ export async function POST(request: Request) {
       weekend: coerce(body.weekendPrice),
       week: coerce(body.weekPrice),
       month: coerce(body.monthPrice),
+      peakDay: coerce(body.peakDayPrice),
+      peakWeekend: coerce(body.peakWeekendPrice),
+      peakWeek: coerce(body.peakWeekPrice),
+      peakMonth: coerce(body.peakMonthPrice),
     };
   } catch (err) {
     return NextResponse.json(

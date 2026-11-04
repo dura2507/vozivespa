@@ -3,6 +3,9 @@ export type PricingTiers = {
   weekend: string;
   week: string;
   month: string;
+  // Main season (June to August, lib/pricing.ts isPeakDay). A tier left out
+  // costs the same as above. Thomas can change all four in the admin.
+  peak?: Partial<Record<"day" | "weekend" | "week" | "month", string>>;
 };
 
 export type Category = {
@@ -86,7 +89,7 @@ export const CATEGORIES: Category[] = [
     consumption: "~2,5 L / 100 km",
     range: "200-240 km",
     year: "2024",
-    pricing: { day: "35€", weekend: "85€", week: "190€", month: "620€" },
+    pricing: { day: "35€", weekend: "85€", week: "190€", month: "620€", peak: { day: "30€" } },
     season: "April to October",
     experienceNote: "Previous riding experience required. No first-time riders.",
   },
@@ -117,7 +120,7 @@ export const CATEGORIES: Category[] = [
     consumption: "~2,5 L / 100 km",
     range: "200-240 km",
     year: "2024",
-    pricing: { day: "39€", weekend: "95€", week: "210€", month: "690€" },
+    pricing: { day: "39€", weekend: "95€", week: "210€", month: "690€", peak: { day: "39€" } },
     season: "April to October",
     experienceNote: "Previous riding experience required. No first-time riders.",
   },
@@ -148,7 +151,7 @@ export const CATEGORIES: Category[] = [
     consumption: "~2,5 L / 100 km",
     range: "220-260 km",
     year: "2024",
-    pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€" },
+    pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€", peak: { day: "55€" } },
     season: "April to October",
   },
   {
@@ -209,7 +212,7 @@ export const CATEGORIES: Category[] = [
     consumption: "~2,5-3,0 L / 100 km",
     range: "300-400 km",
     year: "2014",
-    pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€" },
+    pricing: { day: "55€", weekend: "135€", week: "300€", month: "950€", peak: { day: "55€" } },
     season: "April to October",
   },
   {
@@ -239,7 +242,7 @@ export const CATEGORIES: Category[] = [
     consumption: "~3,5-4,0 L / 100 km",
     range: "300-380 km",
     year: "2014",
-    pricing: { day: "65€", weekend: "160€", week: "360€", month: "1150€" },
+    pricing: { day: "65€", weekend: "160€", week: "360€", month: "1150€", peak: { day: "75€" } },
     season: "April to October",
   },
 ];

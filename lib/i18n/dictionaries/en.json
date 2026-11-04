@@ -310,7 +310,9 @@
       "unlimitedKm": "Unlimited km, all prices include BASIC insurance",
       "depositLine": "Deposit: {deposit} · Season: {season}",
       "perDay": "/ day",
-      "fromPrefix": "from"
+      "fromPrefix": "from",
+      "peakLine": "June to August: {price} / day",
+      "peakShort": "Jun-Aug: {price}"
     },
     "priceBox": {
       "perDay": "/ day",
@@ -368,7 +370,9 @@
       "selectDates": "Select pickup and return dates first",
       "notAvailableInWindow": "Not available in this window",
       "notAvailableHint": "Pick different dates or open the multi-booking for an alternative bike.",
-      "notAvailableCta": "Open multi-booking"
+      "notAvailableCta": "Open multi-booking",
+      "peakSplit": "{peak} of {n} days at the June to August price",
+      "peakAll": "June to August price"
     },
     "form": {
       "title": "Your details",

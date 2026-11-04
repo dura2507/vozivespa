@@ -25,6 +25,7 @@ import {
   isEarlyPickup,
   isLateReturn,
   outsideHoursSurcharge,
+  seasonChangesPrice,
 } from "@/lib/pricing";
 import { calendarBounds, isoToLocalDate, zagrebNow } from "@/lib/season";
 import { agreementPdfPath } from "@/lib/docs";
@@ -224,6 +225,30 @@ export default function GroupBooking({
   }, [range, pickupTime, returnTime]);
 
   const qtyOf = (bikeId: string) => cart[bikeId]?.length ?? 0;
+
+  // "2 of 5 days at the June to August price" under the total, when the
+  // window reaches into the main season and that changed the price of a bike
+  // in the cart. The day split depends only on the window.
+  const seasonNote = useMemo(() => {
+    const f = range?.from ?? null;
+    const t = range?.to ?? range?.from ?? null;
+    if (!f || !t) return null;
+    let res: ReturnType<typeof calculatePrice> = null;
+    for (const b of bikes) {
+      if ((cart[b.id]?.length ?? 0) === 0) continue;
+      const r = calculatePrice(f, t, pickupTime, returnTime, b.pricing);
+      if (r && seasonChangesPrice(b.pricing, r)) {
+        res = r;
+        break;
+      }
+    }
+    if (!res) return null;
+    return res.peakDays === res.billableDays
+      ? dict.fleet.calendar.peakAll
+      : dict.fleet.calendar.peakSplit
+          .replace("{peak}", String(res.peakDays))
+          .replace("{n}", String(res.billableDays));
+  }, [range, pickupTime, returnTime, bikes, cart, dict]);
   const cartCount = Object.values(cart).reduce((a, arr) => a + arr.length, 0);
   // Security deposit is per vehicle (250€ each), not one flat deposit for
   // the whole group. The total shown to the customer is count × each.
@@ -737,7 +762,9 @@ export default function GroupBooking({
                           {bike.model}
                         </a>
                         <div className="text-sm text-muted mt-1">
-                          {price != null ? `${price}€ · ${g.period2}` : `${bike.pricing.day}${dict.fleet.priceBox.perDay}`} · {bike.maxSpeed} ·{" "}
+                          {price != null
+                            ? `${price}€ · ${g.period2}`
+                            : `${bike.priceFrom ? `${dict.fleet.pricing.fromPrefix} ` : ""}${bike.price}${dict.fleet.priceBox.perDay}`} · {bike.maxSpeed} ·{" "}
                           {bike.seats} {bike.seats > 1 ? g.seats : g.seat}
                         </div>
                         <div className="flex items-center gap-2.5 flex-wrap mt-1.5">
@@ -875,6 +902,9 @@ export default function GroupBooking({
                 <div className="text-right">
                   <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold">{dict.fleet.calendar.total}</p>
                   <p className="text-2xl font-bold text-red leading-tight">{cartTotal}€</p>
+                  {seasonNote && (
+                    <p className="text-[10px] tracking-[0.15em] uppercase text-ink/50 font-bold mt-0.5">{seasonNote}</p>
+                  )}
                 </div>
                 <button
                   type="button"
